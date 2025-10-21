@@ -1,0 +1,28 @@
+# GameMaker Studio 2 Ignore List
+
+# General
+build/
+*.build
+*.resource_order
+*.user
+*.yy.user
+*.backup.*
+*.properties.backup
+options/main/inherited/options_main.inherited.yy
+
+# Windows
+options/windows/options_windows.ini
+options/windows/installer/
+GameMakerStudio2_GMS2CACHE/
+
+# Mac
+options/mac/options_mac.ini
+
+# Linux
+options/linux/options_linux.ini
+
+# HTML5
+options/html5/options_html5.ini
+
+# Steam
+options/steam/options_steam.yy.user
