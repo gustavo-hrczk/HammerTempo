@@ -8,7 +8,7 @@ enum MINIGAME {
 }
 
 // Variável que guarda o estado atual do jogo
-estado_jogo = MINIGAME.RITMO; // Mudei para RITMO para testarmos direto
+estado_jogo = MINIGAME.NENHUM; // Mudei para RITMO para testarmos direto
 
 // Variáveis de controle do jogo
 fase_atual = 1;

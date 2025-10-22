@@ -28,8 +28,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"Sprite12",
-    "path":"sprites/Sprite12/Sprite12.yy",
+    "name":"o_zona_bom",
+    "path":"sprites/o_zona_bom/o_zona_bom.yy",
   },
   "spriteMaskId":null,
   "visible":false,

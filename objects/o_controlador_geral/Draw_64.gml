@@ -1,3 +1,9 @@
+// Se estivermos no estado de menu, não desenha nada e sai do evento.
+if (estado_jogo == MINIGAME.NENHUM) {
+    exit;
+}
+
+
 // Prepara o alinhamento e a cor do texto que vamos desenhar
 draw_set_font(f_padrao);
 draw_set_halign(fa_left);

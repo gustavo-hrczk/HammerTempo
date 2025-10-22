@@ -1,9 +1,13 @@
 {
   "$GMObject":"",
-  "%Name":"o_hitbox_perfeito",
-  "eventList":[],
+  "%Name":"o_menu_controlador",
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":64,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
-  "name":"o_hitbox_perfeito",
+  "name":"o_menu_controlador",
   "overriddenProperties":[],
   "parent":{
     "name":"Objects",
@@ -27,10 +31,7 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":{
-    "name":"o_zona_perfeita",
-    "path":"sprites/o_zona_perfeita/o_zona_perfeita.yy",
-  },
+  "spriteId":null,
   "spriteMaskId":null,
   "visible":true,
 }

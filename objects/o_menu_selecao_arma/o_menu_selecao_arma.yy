@@ -1,9 +1,12 @@
 {
   "$GMObject":"",
-  "%Name":"o_zona_erro",
-  "eventList":[],
+  "%Name":"o_menu_selecao_arma",
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
-  "name":"o_zona_erro",
+  "name":"o_menu_selecao_arma",
   "overriddenProperties":[],
   "parent":{
     "name":"Objects",
@@ -21,21 +24,13 @@
   "physicsRestitution":0.1,
   "physicsSensor":false,
   "physicsShape":1,
-  "physicsShapePoints":[
-    {"x":0.0,"y":0.0,},
-    {"x":32.0,"y":0.0,},
-    {"x":32.0,"y":32.0,},
-    {"x":0.0,"y":32.0,},
-  ],
+  "physicsShapePoints":[],
   "physicsStartAwake":true,
   "properties":[],
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":{
-    "name":"Zona_morta",
-    "path":"sprites/Zona_morta/Zona_morta.yy",
-  },
+  "spriteId":null,
   "spriteMaskId":null,
   "visible":true,
 }
