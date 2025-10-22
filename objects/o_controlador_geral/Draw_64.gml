@@ -1,27 +1,25 @@
-// Se estivermos no estado de menu, não desenha nada e sai do evento.
-if (estado_jogo == MINIGAME.NENHUM) {
-    exit;
+// Uma estrutura 'switch' para executar código diferente dependendo do estado do jogo
+switch (estado_jogo) {
+
+    case MINIGAME.NENHUM:
+        // Código a ser executado quando nenhum minigame está ativo
+        // Por exemplo, podemos checar se o jogador apertou "Enter" para começar
+        if (keyboard_check_pressed(vk_enter)) {
+            // Inicia o minigame de ritmo (vamos implementar isso na próxima etapa)
+            estado_jogo = MINIGAME.RITMO;
+            show_debug_message("Iniciando Minigame de Ritmo!");
+        }
+        break;
+
+    case MINIGAME.RITMO:
+        // Aqui vamos chamar a lógica do minigame de ritmo
+        break;
+
+    case MINIGAME.TEMPERA:
+        // Aqui vamos chamar a lógica do minigame de têmpera
+        break;
+
+    // ... e assim por diante para os outros minigames
 }
 
-
-// Prepara o alinhamento e a cor do texto que vamos desenhar
-draw_set_font(f_padrao);
-draw_set_halign(fa_left);
-draw_set_valign(fa_top);
-draw_set_color(c_white);
-
-// --- DESENHA INFORMAÇÕES DE DEBUG ---
-var _texto_estado = "Estado Atual: " + string(estado_jogo);
-draw_text(10, 10, _texto_estado);
-
-// --- DESENHA A PONTUAÇÃO ---
-draw_set_halign(fa_right); // Alinha à direita
-draw_text(room_width - 20, 20, "Pontos: " + string(pontuacao));
-draw_set_halign(fa_left); // Volta ao padrão
-
-// --- DESENHA O PROMPT PARA INICIAR ---
-if (estado_jogo == MINIGAME.NENHUM) {
-    draw_set_halign(fa_center);
-    draw_text(room_width / 2, room_height - 100, "Pressione ENTER para começar a forjar!");
-    draw_set_halign(fa_left); // Volta ao padrão
-}
+// (O resto do seu código do switch case fica abaixo disto)

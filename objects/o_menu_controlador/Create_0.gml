@@ -1,7 +1,14 @@
-// Array com o texto de cada opção do menu
-opcoes_menu = ["Começar Jogo", "Opções", "Créditos", "Sair do Jogo"];
+// enum para os estados do menu
+enum MENU_STATE {
+    IDLE,        // O menu está ativo, aguardando input
+    FADING_OUT   // O menu está escurecendo a tela para uma transição
+}
 
-// Variável que guarda o índice da opção selecionada (começa em 0, a primeira)
+// Opções do menu
+opcoes_menu = ["Começar Jogo", "Opções", "Créditos", "Sair do Jogo"];
 opcao_selecionada = 0;
 
-// (Seu código existente aqui: opcoes_menu, opcao_selecionada)
+// Variáveis para a máquina de estados e transição
+estado = MENU_STATE.IDLE;
+transicao_alpha = 0;
+transicao_velocidade = 0.03;

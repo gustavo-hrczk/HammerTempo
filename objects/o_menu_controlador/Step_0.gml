@@ -1,45 +1,67 @@
-// --- NAVEGAÇÃO COM AS SETAS ---
-var _cima = keyboard_check_pressed(vk_up);
-var _baixo = keyboard_check_pressed(vk_down);
-var _confirmar = keyboard_check_pressed(vk_enter);
+// Evento Step do objeto de menu
 
-var _total_opcoes = array_length(opcoes_menu);
+switch (estado) {
+    // =================================================================
+    // CASO 1: O MENU ESTÁ AGUARDANDO A AÇÃO DO JOGADOR
+    // =================================================================
+    case MENU_STATE.IDLE:
+        // --- CONTROLE DE NAVEGAÇÃO ---
+        var _move = keyboard_check_pressed(vk_down) - keyboard_check_pressed(vk_up);
+        if (_move != 0) {
+            opcao_selecionada += _move;
+            var _total_opcoes = array_length(opcoes_menu);
+            
+            // Lógica para o cursor "dar a volta" (loop)
+            if (opcao_selecionada < 0) {
+                opcao_selecionada = _total_opcoes - 1;
+            }
+            if (opcao_selecionada >= _total_opcoes) {
+                opcao_selecionada = 0;
+            }
+        }
 
-// Move a seleção para baixo
-if (_baixo) {
-    opcao_selecionada = (opcao_selecionada + 1) % _total_opcoes;
-}
+        // --- CONTROLE DE SELEÇÃO ---
+        if (keyboard_check_pressed(vk_enter)) {
+            
+            // VERIFICA SE A OPÇÃO É "COMEÇAR JOGO" (ÍNDICE 0)
+            if (opcao_selecionada == 0) {
+                // Se for, INICIA A TRANSIÇÃO DE FADE
+                estado = MENU_STATE.FADING_OUT;
+            } 
+            else {
+                // PARA AS OUTRAS OPÇÕES, A AÇÃO É IMEDIATA
+                switch (opcao_selecionada) {
+                    case 1: // Opções
+                        show_debug_message("Opção 'Opções' selecionada! (Ação Imediata)");
+                        // Exemplo: room_goto(rm_opcoes);
+                        break;
+                    
+                    case 2: // Créditos
+                        show_debug_message("Opção 'Créditos' selecionada! (Ação Imediata)");
+                        // Exemplo: room_goto(rm_creditos);
+                        break;
+                        
+                    case 3: // Sair do Jogo
+                        game_end();
+                        break;
+                }
+            }
+        }
+    break;
 
-// Move a seleção para cima
-if (_cima) {
-    // A matemática aqui garante que a seleção "dê a volta" corretamente de 0 para a última opção
-    opcao_selecionada = (opcao_selecionada - 1 + _total_opcoes) % _total_opcoes;
-}
-
-// --- AÇÃO AO CONFIRMAR ---
-if (_confirmar) {
-    
-    // Usa um 'switch' para decidir o que fazer baseado na opção selecionada
-    switch (opcao_selecionada) {
+    // =================================================================
+    // CASO 2: O MENU ESTÁ FAZENDO O "FADE OUT" (APENAS PARA "COMEÇAR JOGO")
+    // =================================================================
+    case MENU_STATE.FADING_OUT:
+        // Aumenta gradualmente a transparência do fade
+        transicao_alpha = min(1, transicao_alpha + transicao_velocidade);
         
-        case 0: // Começar Jogo
-            show_debug_message("Opção 'Começar Jogo' selecionada!");
-            
+        // Quando a tela estiver totalmente preta (alpha = 1)...
+        if (transicao_alpha == 1) {
+            // ...executa a ação de começar o jogo
             o_controlador_geral.fase_atual = 1;
-            o_controlador_geral.estado_jogo = MINIGAME.RITMO;
+            o_controlador_geral.estado_jogo = MINIGAME.RITMO; // Assumindo que MINIGAME.RITMO é um enum
             room_goto(rm_forja);
-            break;
-            
-        case 1: // Opções
-            show_debug_message("Opção 'Opções' selecionada! (Ainda não implementado)");
-            break;
-            
-        case 2: // NOVA: Créditos
-            show_debug_message("Opção 'Créditos' selecionada! (Ainda não implementado)");
-            break;
-            
-        case 3: // CORRIGIDO: Sair do Jogo
-            game_end();
-            break;
-    }
+        }
+    break;
 }
