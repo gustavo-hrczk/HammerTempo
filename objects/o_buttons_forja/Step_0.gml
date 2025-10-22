@@ -34,6 +34,7 @@ if (keyboard_check_pressed(minha_tecla[0])||keyboard_check_pressed(minha_tecla[1
 		 o_controlador_geral.stats_acertos_bons++; // <<< ADICIONE AQUI
 		 _nota_acertada.iniciar_fade_final(c_lime, true);
 		 o_ferreiro.iniciar_martelada_normal();
+		 
 		}
 	}
 }
