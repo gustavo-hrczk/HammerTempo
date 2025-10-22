@@ -7,6 +7,9 @@ switch (estado) {
     case MENU_STATE.IDLE:
         // --- CONTROLE DE NAVEGAÇÃO ---
         var _move = keyboard_check_pressed(vk_down) - keyboard_check_pressed(vk_up);
+		if (_move = 0) {
+			_move = keyboard_check_pressed(ord("S")) - keyboard_check_pressed(ord("W"));
+		}
         if (_move != 0) {
             opcao_selecionada += _move;
             var _total_opcoes = array_length(opcoes_menu);
@@ -21,7 +24,7 @@ switch (estado) {
         }
 
         // --- CONTROLE DE SELEÇÃO ---
-        if (keyboard_check_pressed(vk_enter)) {
+        if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
             
             // VERIFICA SE A OPÇÃO É "COMEÇAR JOGO" (ÍNDICE 0)
             if (opcao_selecionada == 0) {
