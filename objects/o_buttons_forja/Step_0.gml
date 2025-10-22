@@ -1,7 +1,7 @@
 // =================================================================
 // PARTE 1: LÓGICA DE ANIMAÇÃO NORMAL
 // =================================================================
-if (keyboard_check(minha_tecla)) {
+if (keyboard_check(minha_tecla[0])||keyboard_check(minha_tecla[1])) {
     if (image_index < image_number - 1) {
         image_index += 1;
     } else {
@@ -14,7 +14,7 @@ if (keyboard_check(minha_tecla)) {
 // =================================================================
 // PARTE 2: LÓGICA DE ACERTO (QUE AVISA A NOTA)
 // =================================================================
-if (keyboard_check_pressed(minha_tecla)) {
+if (keyboard_check_pressed(minha_tecla[0])||keyboard_check_pressed(minha_tecla[1])) {
 
     var _nota_acertada = instance_place(x, y, o_nota_seta);
 
@@ -22,18 +22,17 @@ if (keyboard_check_pressed(minha_tecla)) {
 
         // Verifica a precisão e avisa a nota para iniciar seu fade
 	if (place_meeting(_nota_acertada.x, _nota_acertada.y, o_hitbox_perfeito)) {
-    show_debug_message("PERFEITO!");
-    o_controlador_geral.pontuacao += 100;
-    o_controlador_geral.stats_acertos_perfeitos++; // <<< ADICIONE AQUI
-    _nota_acertada.iniciar_fade_final(c_silver, true);
-	o_ferreiro.iniciar_martelada_perfeita();
-		}
-		else if (place_meeting(_nota_acertada.x, _nota_acertada.y, o_hitbox_bom)) {
-		show_debug_message("BOM!");
-		o_controlador_geral.pontuacao += 50;
-		o_controlador_geral.stats_acertos_bons++; // <<< ADICIONE AQUI
-		_nota_acertada.iniciar_fade_final(c_lime, true);
-		o_ferreiro.iniciar_martelada_normal();
+		 show_debug_message("PERFEITO!");
+		 o_controlador_geral.pontuacao += 100;
+		 o_controlador_geral.stats_acertos_perfeitos++; // <<< ADICIONE AQUI
+		 _nota_acertada.iniciar_fade_final(c_silver, true);
+		 o_ferreiro.iniciar_martelada_perfeita();
+	}else if (place_meeting(_nota_acertada.x, _nota_acertada.y, o_hitbox_bom)) {
+		 show_debug_message("BOM!");
+		 o_controlador_geral.pontuacao += 50;
+		 o_controlador_geral.stats_acertos_bons++; // <<< ADICIONE AQUI
+		 _nota_acertada.iniciar_fade_final(c_lime, true);
+		 o_ferreiro.iniciar_martelada_normal();
 		}
 	}
 }

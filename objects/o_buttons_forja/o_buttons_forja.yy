@@ -31,7 +31,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"s_notas_setas",
+    "path":"sprites/s_notas_setas/s_notas_setas.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }
