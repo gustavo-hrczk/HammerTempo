@@ -1,25 +1,32 @@
-// Uma estrutura 'switch' para executar código diferente dependendo do estado do jogo
-switch (estado_jogo) {
+// Se estivermos no menu principal OU na seleção de fase, não desenha o HUD.
+// Se estivermos em qualquer estado que não seja o jogo ativo, não desenha o HUD.
+if (estado_jogo != MINIGAME.RITMO) { // << CONDIÇÃO ATUALIZADA
+    // Agora, desenha a contagem se estivermos no estado CONTAGEM
+if (estado_jogo == MINIGAME.CONTAGEM && contagem_timer > 0) {
 
-    case MINIGAME.NENHUM:
-        // Código a ser executado quando nenhum minigame está ativo
-        // Por exemplo, podemos checar se o jogador apertou "Enter" para começar
-        if (keyboard_check_pressed(vk_enter)) {
-            // Inicia o minigame de ritmo (vamos implementar isso na próxima etapa)
-            estado_jogo = MINIGAME.RITMO;
-            show_debug_message("Iniciando Minigame de Ritmo!");
-        }
-        break;
+    var _display_number = ceil(contagem_timer / room_speed);
 
-    case MINIGAME.RITMO:
-        // Aqui vamos chamar a lógica do minigame de ritmo
-        break;
+    draw_set_font(f_padrao);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_set_color(c_black);
 
-    case MINIGAME.TEMPERA:
-        // Aqui vamos chamar a lógica do minigame de têmpera
-        break;
+    // --- MUDANÇA IMPORTANTE AQUI ---
+    var _cx = display_get_gui_width() / 2;
+    var _cy_rodape = 600; // Posição Y no rodapé (a mesma do seletor de fases)
 
-    // ... e assim por diante para os outros minigames
+    draw_text(_cx, _cy_rodape - 40, "Etapa da forja começa em...");
+    draw_text_transformed(_cx, _cy_rodape + 40, string(_display_number), 3, 3, 0);
+
+    draw_set_halign(fa_left); // Reseta
+    }
+    exit; // Sai para não desenhar o HUD
 }
 
-// (O resto do seu código do switch case fica abaixo disto)
+// Desenha o estado atual para debug
+draw_text(10, 10, "Estado Atual: " + string(estado_jogo));
+
+// Desenha a pontuação
+draw_set_halign(fa_right);
+draw_text(room_width - 20, 20, "Pontos: " + string(pontuacao));
+draw_set_halign(fa_left); // Reseta

@@ -1,40 +1,27 @@
-// --- LÓGICA PARA CRIAR UMA NOVA NOTA ---
-
-// 1. Escolhe aleatoriamente o tipo da próxima nota (agora de 0 a 3).
-var _tipo_random = irandom_range(0, 3); // Alterado de 1 para 3
-
-// 2. Define a posição Y onde a nota deve aparecer, para alinhar com o alvo certo.
-var _pos_y;
-
-// Usaremos uma estrutura 'switch' que é mais limpa para múltiplas opções.
-switch (_tipo_random) {
-    
-    case 0: // Seta para Baixo
-        _pos_y = 674; // Sua posição Y para o alvo de Baixo
-        break;
-        
-    case 1: // Seta para Cima
-        _pos_y = 524; // Sua posição Y para o alvo de Cima
-        break;
-        
-    case 2: // NOVA: Seta para a Esquerda
-        // !! VOCÊ PRECISA INSERIR O VALOR CORRETO AQUI !!
-        _pos_y = 624; // Insira a posição Y do seu alvo da ESQUERDA
-        break;
-        
-    case 3: // NOVA: Seta para a Direita
-        // !! VOCÊ PRECISA INSERIR O VALOR CORRETO AQUI !!
-        _pos_y = 574; // Insira a posição Y do seu alvo da DIREITA
-        break;
+// Se estivermos no período de tolerância, não cria mais notas.
+if (esta_finalizando) {
+    exit;
 }
 
+// --- LÓGICA PARA CRIAR UMA NOVA NOTA ---
+// Sorteia um dos tipos permitidos (ex: se for 2, sorteia entre 0 e 1)
+var _tipo_random = irandom(tipos_permitidos - 1);
 
-// 3. Cria a instância da nota na camada correta.
-var _nova_nota = instance_create_layer(x, _pos_y, "Gameplay", o_nota_seta); // Camada "Gameplay"
+// ... (seu 'switch (_tipo_random)' com as posições Y continua o mesmo aqui) ...
+switch (_tipo_random) {
+    case 0: _pos_y = 665; break;
+    case 1: _pos_y = 515; break;
+    case 2: _pos_y = 615; break;
+    case 3: _pos_y = 565; break;
+}
 
-// 4. Configura a nota que acabamos de criar.
+// Cria a instância da nota e configura ela
+var _nova_nota = instance_create_layer(x, _pos_y, "Gameplay", o_nota_seta);
 _nova_nota.tipo_seta = _tipo_random;
+_nova_nota.velocidade = velocidade_das_notas; // <<< APLICA A VELOCIDADE DA FASE
 
+// >>> ADICIONE ESTA LINHA <<<
+o_controlador_geral.stats_total_notas++; // Incrementa o total de notas
 
 // --- REINICIA O ALARME PARA A PRÓXIMA NOTA ---
-alarm[0] = random_range(45, 90);
+alarm[0] = random_range(intervalo_min, intervalo_max);

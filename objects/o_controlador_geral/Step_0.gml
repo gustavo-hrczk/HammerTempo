@@ -1,25 +1,48 @@
-// Uma estrutura 'switch' para executar código diferente dependendo do estado do jogo
 switch (estado_jogo) {
-
-    case MINIGAME.NENHUM:
-        // Código a ser executado quando nenhum minigame está ativo
-        // Por exemplo, podemos checar se o jogador apertou "Enter" para começar
-        if (keyboard_check_pressed(vk_enter)) {
-            // Inicia o minigame de ritmo (vamos implementar isso na próxima etapa)
-            estado_jogo = MINIGAME.RITMO;
-            show_debug_message("Iniciando Minigame de Ritmo!");
+  
+  
+  case MINIGAME.SELECAO_FASE:
+        // Garante que o seletor de fases seja criado APENAS UMA VEZ.
+        if (!instance_exists(o_seletor_fases)) {
+            instance_create_layer(0, 0, "Gameplay", o_seletor_fases);
         }
         break;
-
-    case MINIGAME.RITMO:
-        // Aqui vamos chamar a lógica do minigame de ritmo
+  
+  case MINIGAME.CONTAGEM:
+        // Se o timer está ativo, faz a contagem regressiva
+        if (contagem_timer > 0) {
+            contagem_timer--;
+        }
+        // Quando o timer chegar a zero, muda para o estado de RITMO
+        else {
+            estado_jogo = MINIGAME.RITMO;
+        }
         break;
-
-    case MINIGAME.TEMPERA:
-        // Aqui vamos chamar a lógica do minigame de têmpera
+  
+case MINIGAME.RITMO:
+        // Garante que o spawner seja criado apenas uma vez.
+        if (!instance_exists(o_spawner_ritmo)) {
+            show_debug_message("Iniciando minigame de ritmo para a fase: " + fases_data[fase_atual].nome);
+            var _spawn_x = room_width + 100;
+            instance_create_layer(_spawn_x, 0, "Instances", o_spawner_ritmo);
+        }
+        
+        // --- NOVA LÓGICA DE VERIFICAÇÃO DE FIM DE JOGO ---
+        if (pontuacao <= -300) {
+            show_debug_message("Game Over por pontuação baixa!");
+            
+            // 1. Muda o estado do jogo para o resultado.
+            estado_jogo = MINIGAME.RESULTADO;
+            
+            // 2. Limpa a "bagunça" do minigame para que ele pare imediatamente.
+            if (instance_exists(o_spawner_ritmo)) {
+                instance_destroy(o_spawner_ritmo);
+            }
+            // Destrói todas as notas que ainda estão na tela.
+            instance_destroy(o_nota_seta); 
+            
+            // 3. Cria o objeto que vai mostrar a tela de resultado.
+            instance_create_layer(0, 0, "Gameplay", o_controlador_resultado);
+        }
         break;
-
-    // ... e assim por diante para os outros minigames
 }
-
-// (O resto do seu código do switch case fica abaixo disto)

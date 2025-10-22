@@ -52,15 +52,13 @@ switch (estado) {
     // =================================================================
     // CASO 2: O MENU ESTÁ FAZENDO O "FADE OUT" (APENAS PARA "COMEÇAR JOGO")
     // =================================================================
-    case MENU_STATE.FADING_OUT:
-        // Aumenta gradualmente a transparência do fade
+case MENU_STATE.FADING_OUT:
         transicao_alpha = min(1, transicao_alpha + transicao_velocidade);
         
-        // Quando a tela estiver totalmente preta (alpha = 1)...
         if (transicao_alpha == 1) {
-            // ...executa a ação de começar o jogo
-            o_controlador_geral.fase_atual = 1;
-            o_controlador_geral.estado_jogo = MINIGAME.RITMO; // Assumindo que MINIGAME.RITMO é um enum
+            // >>> ALTERAÇÃO IMPORTANTE AQUI <<<
+            // Em vez de ir para RITMO, vamos para a SELEÇÃO DE FASE
+            o_controlador_geral.estado_jogo = MINIGAME.SELECAO_FASE; 
             room_goto(rm_forja);
         }
     break;
