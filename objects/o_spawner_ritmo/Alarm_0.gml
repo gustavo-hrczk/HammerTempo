@@ -9,22 +9,23 @@ var _pos_y;
 // Usaremos uma estrutura 'switch' que é mais limpa para múltiplas opções.
 switch (_tipo_random) {
     
-    case 0: // Seta para Baixo
-        _pos_y = 674; // Sua posição Y para o alvo de Baixo
-        break;
-        
+
     case 1: // Seta para Cima
-        _pos_y = 524; // Sua posição Y para o alvo de Cima
+        _pos_y = 502; // Sua posição Y para o alvo de Cima
         break;
-        
+		
     case 2: // NOVA: Seta para a Esquerda
         // !! VOCÊ PRECISA INSERIR O VALOR CORRETO AQUI !!
-        _pos_y = 624; // Insira a posição Y do seu alvo da ESQUERDA
+        _pos_y = 612; // Insira a posição Y do seu alvo da ESQUERDA
         break;
-        
+		
     case 3: // NOVA: Seta para a Direita
         // !! VOCÊ PRECISA INSERIR O VALOR CORRETO AQUI !!
-        _pos_y = 574; // Insira a posição Y do seu alvo da DIREITA
+        _pos_y = 557; // Insira a posição Y do seu alvo da DIREITA
+        break;
+		
+    case 0: // Seta para Baixo
+        _pos_y = 667; // Sua posição Y para o alvo de Baixo
         break;
 }
 

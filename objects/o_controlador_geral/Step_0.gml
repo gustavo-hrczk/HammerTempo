@@ -6,12 +6,21 @@ switch (estado_jogo) {
         // Por exemplo, podemos checar se o jogador apertou "Enter" para começar
         if (keyboard_check_pressed(vk_enter)) {
             // Inicia o minigame de ritmo (vamos implementar isso na próxima etapa)
-            estado_jogo = MINIGAME.RITMO;
+            estado_jogo = MINIGAME.AQUECIMENTO;
             show_debug_message("Iniciando Minigame de Ritmo!");
         }
         break;
 
     case MINIGAME.RITMO:
+        // Aqui vamos chamar a lógica do minigame de ritmo
+        break;
+
+    case MINIGAME.AQUECIMENTO:
+	        if (keyboard_check_pressed(vk_enter)) {
+            // Inicia o minigame de ritmo (vamos implementar isso na próxima etapa)
+            estado_jogo = MINIGAME.AQUECIMENTO;
+            show_debug_message("Iniciando Minigame de Aquecimento!");
+        }
         // Aqui vamos chamar a lógica do minigame de ritmo
         break;
 
