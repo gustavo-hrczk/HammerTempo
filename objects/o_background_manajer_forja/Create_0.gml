@@ -1,11 +1,11 @@
 // --- ESTRUTURA DOS CENÁRIOS ---
 // Adicionamos o novo conjunto "Dia Padrão" no início (índice 0).
 background_sets = [
-    // 0: Dia Padrão (NOVO CONJUNTO)
-    [s_bg_stars, s_bg_far_clouds, s_bg_mid_clouds, s_bg_front_clouds],
-    
-    // 1: Manhã
+    // 0: Manhã
     [bg_manha01, bg_manha02, bg_manha03, bg_manha04],
+	
+    // 1: Dia Padrão (NOVO CONJUNTO)
+    [s_bg_stars, s_bg_far_clouds, s_bg_mid_clouds, s_bg_front_clouds],
     
     // 2: Tarde
     [bg_tarde01, bg_tarde02, bg_tarde03, bg_tarde04],
@@ -56,7 +56,7 @@ state = 0;
 current_set_index = 0;
 next_set_index = 1;
 
-time_between_changes = room_speed * 5; // Muda a cada 5 segundos
-transition_duration = room_speed * 1;   // Transição dura 1 segundo
+time_between_changes = room_speed * 20; // Muda a cada 5 segundos
+transition_duration = room_speed * 10;   // Transição dura 1 segundo
 transition_timer = time_between_changes;
 transition_progress = 0;
