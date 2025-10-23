@@ -32,6 +32,6 @@ if (opcao_selecionada >= total_opcoes) { opcao_selecionada -= total_opcoes; }
 // --- LÓGICA DE SELEÇÃO (ENTER) ---
 if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
     o_controlador_geral.fase_atual = opcao_selecionada;
-    o_controlador_geral.estado_jogo = 2; // Muda para RITMO
+    o_controlador_geral.estado_jogo = 3; // Muda para RITMO
     instance_destroy();
 }
