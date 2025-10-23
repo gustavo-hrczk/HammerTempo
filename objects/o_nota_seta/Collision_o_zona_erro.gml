@@ -1,3 +1,6 @@
+if (o_controlador_geral.pausa){
+	exit;
+}
 // Só executa a lógica de erro se a nota já não estiver morrendo.
 if (esta_morrendo == false) {
     

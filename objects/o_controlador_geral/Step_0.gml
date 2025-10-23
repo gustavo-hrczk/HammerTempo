@@ -23,6 +23,16 @@ case MINIGAME.SELECAO_FASE:
         break;
   
 case MINIGAME.RITMO:
+		if (keyboard_check_pressed(vk_escape)||keyboard_check_pressed(ord("P"))){
+			if(pausa){
+				pausa=false;
+			}else{
+				pausa=true;
+			}
+		}
+		if (pausa){
+			exit;
+		}
         // Garante que o spawner seja criado apenas uma vez.
         if (!instance_exists(o_spawner_ritmo)) {
             show_debug_message("Iniciando minigame de ritmo para a fase: " + fases_data[fase_atual].nome);

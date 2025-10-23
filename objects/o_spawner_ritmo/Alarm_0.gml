@@ -1,3 +1,6 @@
+if (o_controlador_geral.pausa){
+
+} else {
 // Se estivermos no período de tolerância, não cria mais notas.
 if (esta_finalizando) {
     exit;
@@ -24,4 +27,5 @@ _nova_nota.velocidade = velocidade_das_notas; // <<< APLICA A VELOCIDADE DA FASE
 o_controlador_geral.stats_total_notas++; // Incrementa o total de notas
 
 // --- REINICIA O ALARME PARA A PRÓXIMA NOTA ---
+}
 alarm[0] = random_range(intervalo_min, intervalo_max);
