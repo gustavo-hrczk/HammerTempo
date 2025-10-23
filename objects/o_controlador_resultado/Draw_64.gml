@@ -78,13 +78,27 @@ draw_set_valign(fa_middle); // Garante o alinhamento vertical
 draw_text(display_get_gui_width() / 2, _prompt_y, _prompt_text);
 
 // =================================================================
-// --- DESENHA A ARMA FORJADA (NOVA SEÇÃO) ---
+// --- DESENHA A ARMA FORJADA E SUA MOLDURA (NOVA SEÇÃO) ---
 // =================================================================
-var _arma_x = display_get_gui_width() / 2;
-var _arma_y = 200; // <<< AJUSTE AQUI a altura da imagem da arma
-var _arma_escala = 1; // <<< AJUSTE AQUI o tamanho da imagem
 
-draw_sprite_ext(sprite_da_arma_final, 0, _arma_x, _arma_y, _arma_escala, _arma_escala, 0, c_white, 1);
+// Posições baseadas no centro superior do painel de resultados (se você tiver um)
+var _panel_top_y = 200; // Altura do topo do seu painel de resultados (ajuste conforme necessário)
+var _center_x = display_get_gui_width() / 2;
+
+// Posição central para a arma e a moldura
+// Ajuste este valor para mover tudo para cima ou para baixo na tela.
+var _pos_y_arma_e_moldura = _panel_top_y - 45; // Por exemplo, 200 pixels acima do topo do painel
+
+// 1. Desenha a arma forjada
+// As sprites fixas de arma têm 250x250.
+// Vamos desenhá-las em sua escala original (1,1) para caberem bem na moldura.
+// Se você quiser que a arma seja menor dentro da moldura, ajuste a escala.
+draw_sprite_ext(sprite_da_arma_final, 0, _center_x, _pos_y_arma_e_moldura, 0.8, 0.8, 0, c_white, 1);
+
+// 2. Desenha a moldura por cima da arma
+// A moldura tem 300x300. Usaremos escala 1,1 se ela já tiver o tamanho que você quer.
+// Se quiser que a moldura seja um pouco maior ou menor, ajuste a escala.
+draw_sprite_ext(sprite_da_moldura_final, 0, _center_x, _pos_y_arma_e_moldura, 1.1, 1.1, 0, c_white, 1);
 
 // Reseta os alinhamentos
 draw_set_halign(fa_left);
