@@ -3,7 +3,7 @@
 enum MINIGAME {
     NENHUM,
     SELECAO_FASE,
-    CONTAGEM, // <<< NOVO ESTADO ADICIONADO AQUI
+    CONTAGEM,
     RITMO,
     TEMPERA,
     AFIACAO,
@@ -50,10 +50,14 @@ fases_data[0] = {
 	sprites_resultado: [s_adaga01, s_adaga02, s_adaga03, s_adaga04, s_adaga05],
     duracao_segundos: 40,
     velocidade_notas: 4,
-    intervalo_min_frames: 60, // Mais lento
-    intervalo_max_frames: 100,
     tipos_seta_permitidos: 2, // Apenas 0 e 1 (Baixo, Cima)
-	stats_limite_sequencia_errada: 4
+	stats_limite_sequencia_errada: 4,
+	beat_tempo_bpm: 90,
+    ritmo_patterns: [
+        [1, 1, 0.5, 0.5, 2],    // Padrão 1: Lento, Lento, Rápido, Rápido, Pausa.
+        [0.5, 0.5, 1, 1, 2],    // Padrão 2: Rápido, Rápido, Lento, Lento, Pausa. (Inverte a expectativa)
+        [1, 0.5, 0.5, 1, 2]     // Padrão 3: Lento, Rápido, Rápido, Lento, Pausa. (Um sanduíche rítmico)
+    ]
 };
 
 // Fase 2: Lança (Médio)
@@ -63,10 +67,14 @@ fases_data[1] = {
 	sprites_resultado: [s_lanca01, s_lanca02, s_lanca03, s_lanca04, s_lanca05],
     duracao_segundos: 40,
     velocidade_notas: 5,
-    intervalo_min_frames: 40,
-    intervalo_max_frames: 80,
     tipos_seta_permitidos: 4, // Todas as 4 setas
-	stats_limite_sequencia_errada: 5
+	stats_limite_sequencia_errada: 5,
+	beat_tempo_bpm: 110, // Ritmo mais acelerado
+    ritmo_patterns: [
+        [1, 0.5, 1, 0.5, 1],    // Padrão 1: Ritmo "galopante" (longo-curto, longo-curto).
+        [0.5, 0.5, 0.5, 0.5, 2], // Padrão 2: Sequência de 4 notas rápidas, seguida de uma pausa para respirar.
+        [1.5, 0.5, 1, 2]        // Padrão 3: Introduz a síncopa (batida quebrada), desafiando o timing.
+    ]
 };
 
 // Fase 3: Espada (Difícil)
@@ -74,12 +82,16 @@ fases_data[2] = {
     nome: "Forjar Espada",
 	dificuldade: "Difícil",
 	sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
-    duracao_segundos: 10,
+    duracao_segundos: 40,
     velocidade_notas: 6,
-    intervalo_min_frames: 30, // Mais rápido
-    intervalo_max_frames: 60,
     tipos_seta_permitidos: 4,
-	stats_limite_sequencia_errada: 6
+	stats_limite_sequencia_errada: 6,
+	beat_tempo_bpm: 130, // Bem rápido
+    ritmo_patterns: [
+        [0.5, 1, 0.5, 1.5, 0.5], // Padrão 1: Síncopa complexa, difícil de ler em alta velocidade.
+        [1, 1, 0.5, 0.5, 0.5, 0.5], // Padrão 2: Duas batidas lentas seguidas por uma rajada de notas rápidas.
+        [0.5, 0.5, 1, 0.5, 0.5, 1]  // Padrão 3: Um fluxo quase constante de notas com pouquíssima pausa.
+    ]
 };
 
 // Fase 3: Machado (Extremo)
@@ -89,10 +101,14 @@ fases_data[3] = {
 	sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
     duracao_segundos: 10,
     velocidade_notas: 8,
-    intervalo_min_frames: 20, // Mais rápido
-    intervalo_max_frames: 50,
     tipos_seta_permitidos: 4,
-	stats_limite_sequencia_errada: 6
+	stats_limite_sequencia_errada: 6,
+	beat_tempo_bpm: 140,
+    ritmo_patterns: [
+        [0.5, 1, 0.5, 1.5, 0.5], // Padrão 1: Síncopa complexa, difícil de ler em alta velocidade.
+        [1, 1, 0.5, 0.5, 0.5, 0.5], // Padrão 2: Duas batidas lentas seguidas por uma rajada de notas rápidas.
+        [0.5, 0.5, 1, 0.5, 0.5, 1]  // Padrão 3: Um fluxo quase constante de notas com pouquíssima pausa.
+    ]
 };
 
 // Fase 5: Modo Infinito (Começa fácil)

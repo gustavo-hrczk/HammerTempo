@@ -40,7 +40,7 @@ if (keyboard_check_pressed(minha_tecla[0])||keyboard_check_pressed(minha_tecla[1
 		 o_controlador_geral.pontuacao += 50 + (5*o_controlador_geral.stats_sequencia);
 		 o_controlador_geral.stats_sequencia++;
 		 o_controlador_geral.stats_acertos_bons++; // <<< ADICIONE AQUI
-		 _nota_acertada.iniciar_fade_final(c_lime, true);
+		 _nota_acertada.iniciar_fade_final(c_silver, true);
 		 o_ferreiro.iniciar_martelada_normal();
 		 
 		}

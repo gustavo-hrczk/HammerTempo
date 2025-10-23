@@ -1,17 +1,25 @@
+// Substitua TODO o seu Evento Step por esta versão completa:
+
 switch (estado_jogo) {
-case MINIGAME.SELECAO_FASE:
-        // >>> A CORREÇÃO ESTÁ AQUI <<<
+    
+    //case MINIGAME.TUTORIAL:
+    //    // Garante que a tela de tutorial seja criada apenas uma vez.
+    //    if (!instance_exists(o_tela_tutorial)) {
+    //        instance_create_layer(0, 0, "Instances", o_tela_tutorial);
+    //    }
+    //    break;
+        
+    case MINIGAME.SELECAO_FASE:
         // Só tenta criar o seletor se já estivermos na sala da forja.
         if (room == rm_forja) {
-            
             // Garante que o seletor de fases seja criado APENAS UMA VEZ.
             if (!instance_exists(o_seletor_fases)) {
                 instance_create_layer(0, 0, "Instances", o_seletor_fases);
             }
         }
         break;
-  
-  case MINIGAME.CONTAGEM:
+    
+    case MINIGAME.CONTAGEM:
         // Se o timer está ativo, faz a contagem regressiva
         if (contagem_timer > 0) {
             contagem_timer--;
@@ -21,18 +29,16 @@ case MINIGAME.SELECAO_FASE:
             estado_jogo = MINIGAME.RITMO;
         }
         break;
-  
-case MINIGAME.RITMO:
-		if (keyboard_check_pressed(vk_escape)||keyboard_check_pressed(ord("P"))){
-			if(pausa){
-				pausa=false;
-			}else{
-				pausa=true;
-			}
-		}
-		if (pausa){
-			exit;
-		}
+    
+    case MINIGAME.RITMO:
+        // Lógica de Pausa
+        if (keyboard_check_pressed(vk_escape) || keyboard_check_pressed(ord("P"))) {
+            pausa = !pausa; // Alterna o estado de pausa
+        }
+        if (pausa) {
+            exit; // Se estiver pausado, para a execução do resto do evento
+        }
+        
         // Garante que o spawner seja criado apenas uma vez.
         if (!instance_exists(o_spawner_ritmo)) {
             show_debug_message("Iniciando minigame de ritmo para a fase: " + fases_data[fase_atual].nome);
@@ -40,22 +46,23 @@ case MINIGAME.RITMO:
             instance_create_layer(_spawn_x, 0, "Gameplay", o_spawner_ritmo);
         }
         
-        // --- NOVA LÓGICA DE VERIFICAÇÃO DE FIM DE JOGO ---
+        // Lógica de Fim de Jogo por erros
         if (stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
-            show_debug_message("Game Over por pontuação baixa!");
+            show_debug_message("Game Over por excesso de erros!");
             
-            // 1. Muda o estado do jogo para o resultado.
             estado_jogo = MINIGAME.RESULTADO;
             
-            // 2. Limpa a "bagunça" do minigame para que ele pare imediatamente.
-            if (instance_exists(o_spawner_ritmo)) {
-                instance_destroy(o_spawner_ritmo);
-            }
-            // Destrói todas as notas que ainda estão na tela.
-            instance_destroy(o_nota_seta); 
+            // Limpa a "bagunça" do minigame
+            if (instance_exists(o_spawner_ritmo)) { instance_destroy(o_spawner_ritmo); }
+            instance_destroy(o_nota_seta);
             
-            // 3. Cria o objeto que vai mostrar a tela de resultado.
+            // Cria o objeto da tela de resultado
             instance_create_layer(0, 0, "Gameplay", o_controlador_resultado);
         }
+        break;
+        
+    case MINIGAME.RESULTADO:
+        // O o_controlador_resultado agora gerencia o que acontece.
+        // O controlador geral apenas espera.
         break;
 }

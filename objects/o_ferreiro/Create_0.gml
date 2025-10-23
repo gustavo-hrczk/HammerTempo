@@ -23,27 +23,25 @@ aplicar_shade_erro = function() {
     }
 }
 
-// Função para iniciar a martelada NORMAL
+// Função para iniciar a martelada NORMAL (VERSÃO CORRIGIDA)
 iniciar_martelada_normal = function() {
-    if (estado == FERRreiro_ESTADO.IDLE) { // Só martela se estiver parado
-        estado = FERRreiro_ESTADO.MARTELANDO;
-        sprite_index = s_ferreiro_martelada;
-        image_index = 0; // Começa a animação do início
-        image_speed = 1;
-    }
+    // A condição 'if (estado == FERRreiro_ESTADO.IDLE)' foi REMOVIDA.
+    // Agora a martelada pode ser iniciada a qualquer momento.
+    estado = FERRreiro_ESTADO.MARTELANDO;
+    sprite_index = s_ferreiro_martelada;
+    image_index = 0; // Força a animação a recomeçar do frame 0
+    image_speed = 1;
 }
 
-// Função para iniciar a martelada PERFEITA
+// Função para iniciar a martelada PERFEITA (VERSÃO CORRIGIDA)
 iniciar_martelada_perfeita = function() {
-    if (estado == FERRreiro_ESTADO.IDLE) {
-        estado = FERRreiro_ESTADO.MARTELANDO;
-        sprite_index = s_ferreiro_martelada;
-        image_index = 0;
-        image_speed = 0.8; // Um pouco mais lento e pesado
+    // A condição 'if (estado == FERRreiro_ESTADO.IDLE)' foi REMOVIDA.
+    estado = FERRreiro_ESTADO.MARTELANDO;
+    sprite_index = s_ferreiro_martelada;
+    image_index = 0; // Força a animação a recomeçar do frame 0
+    image_speed = 0.8;
 
-        // Cria o efeito de faíscas na posição da bigorna
-        if (instance_exists(o_bigorna)) {
-            instance_create_layer(o_bigorna.x, o_bigorna.y - 30, "Gameplay", o_faisca);
-        }
+    if (instance_exists(o_bigorna)) {
+        instance_create_layer(o_bigorna.x, o_bigorna.y, "Gameplay", o_faisca);
     }
 }
