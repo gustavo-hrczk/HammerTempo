@@ -15,11 +15,11 @@
     {"name":"inst_4D8EC97A","path":"rooms/rm_forja/rm_forja.yy",},
     {"name":"inst_47B889F6","path":"rooms/rm_forja/rm_forja.yy",},
     {"name":"inst_1419AB4D","path":"rooms/rm_forja/rm_forja.yy",},
-    {"name":"inst_FEA50F1","path":"rooms/rm_forja/rm_forja.yy",},
     {"name":"inst_48F30FA8","path":"rooms/rm_forja/rm_forja.yy",},
     {"name":"inst_6FA17372","path":"rooms/rm_forja/rm_forja.yy",},
     {"name":"inst_3117132D","path":"rooms/rm_forja/rm_forja.yy",},
     {"name":"inst_259426D3","path":"rooms/rm_forja/rm_forja.yy",},
+    {"name":"inst_31B8AB34","path":"rooms/rm_forja/rm_forja.yy",},
   ],
   "isDnd":false,
   "layers":[
@@ -40,8 +40,8 @@
         {"$GMRInstance":"v2","%Name":"inst_3117132D","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_3117132D","objectId":{"name":"o_ferreiro","path":"objects/o_ferreiro/o_ferreiro.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":661.0,"y":492.0,},
       ],"layers":[],"name":"Instances","properties":[],"resourceType":"GMRInstanceLayer","resourceVersion":"2.0","userdefinedDepth":false,"visible":true,},
     {"$GMRInstanceLayer":"","%Name":"Background","depth":200,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"instances":[
-        {"$GMRInstance":"v2","%Name":"inst_FEA50F1","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_FEA50F1","objectId":{"name":"o_background_manager","path":"objects/o_background_manager/o_background_manager.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":704.0,"y":96.0,},
-        {"$GMRInstance":"v2","%Name":"inst_259426D3","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_259426D3","objectId":{"name":"o_fumaca","path":"objects/o_fumaca/o_fumaca.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":0.728125,"scaleY":0.64375,"x":424.0,"y":-79.0,},
+        {"$GMRInstance":"v2","%Name":"inst_259426D3","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_259426D3","objectId":{"name":"o_fumaca","path":"objects/o_fumaca/o_fumaca.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":0.728125,"scaleY":0.44375,"x":424.0,"y":-15.0,},
+        {"$GMRInstance":"v2","%Name":"inst_31B8AB34","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_31B8AB34","objectId":{"name":"o_background_manajer_forja","path":"objects/o_background_manajer_forja/o_background_manajer_forja.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":160.0,"y":192.0,},
       ],"layers":[],"name":"Background","properties":[],"resourceType":"GMRInstanceLayer","resourceVersion":"2.0","userdefinedDepth":false,"visible":true,},
   ],
   "name":"rm_forja",
