@@ -43,6 +43,7 @@
     {"id":{"name":"o_buttons_forja","path":"objects/o_buttons_forja/o_buttons_forja.yy",},},
     {"id":{"name":"o_controlador_geral","path":"objects/o_controlador_geral/o_controlador_geral.yy",},},
     {"id":{"name":"o_controlador_resultado","path":"objects/o_controlador_resultado/o_controlador_resultado.yy",},},
+    {"id":{"name":"o_creditos","path":"objects/o_creditos/o_creditos.yy",},},
     {"id":{"name":"o_faisca","path":"objects/o_faisca/o_faisca.yy",},},
     {"id":{"name":"o_ferreiro","path":"objects/o_ferreiro/o_ferreiro.yy",},},
     {"id":{"name":"o_forja","path":"objects/o_forja/o_forja.yy",},},
@@ -59,6 +60,7 @@
     {"id":{"name":"o_tela_tutorial","path":"objects/o_tela_tutorial/o_tela_tutorial.yy",},},
     {"id":{"name":"o_transicao","path":"objects/o_transicao/o_transicao.yy",},},
     {"id":{"name":"o_zona_erro","path":"objects/o_zona_erro/o_zona_erro.yy",},},
+    {"id":{"name":"rm_creditos","path":"rooms/rm_creditos/rm_creditos.yy",},},
     {"id":{"name":"rm_forja","path":"rooms/rm_forja/rm_forja.yy",},},
     {"id":{"name":"rm_menu","path":"rooms/rm_menu/rm_menu.yy",},},
     {"id":{"name":"rm_splash","path":"rooms/rm_splash/rm_splash.yy",},},
@@ -138,6 +140,7 @@
     {"roomId":{"name":"rm_splash","path":"rooms/rm_splash/rm_splash.yy",},},
     {"roomId":{"name":"rm_menu","path":"rooms/rm_menu/rm_menu.yy",},},
     {"roomId":{"name":"rm_forja","path":"rooms/rm_forja/rm_forja.yy",},},
+    {"roomId":{"name":"rm_creditos","path":"rooms/rm_creditos/rm_creditos.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[
