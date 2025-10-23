@@ -1,6 +1,6 @@
 // Se a transição universal estiver acontecendo, o menu não aceita input do jogador.
 // A verificação 'instance_exists' garante que o jogo não quebre se o o_transicao ainda não foi criado.
-if (instance_exists(o_transicao) && o_transicao.estado != FADE.IDLE) {
+if (instance_exists(o_transicao) && o_transicao.estado = FADE.OUT) {
     exit;
 }
 
@@ -50,7 +50,7 @@ if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
             
         case 2: // Créditos
             show_debug_message("Opção 'Créditos' selecionada! (Ainda não implementado)");
-            // Exemplo de como usar: o_transicao.mudar_de_sala(rm_creditos);
+            room_goto(rm_creditos);
             break;
             
         case 3: // Sair do Jogo
