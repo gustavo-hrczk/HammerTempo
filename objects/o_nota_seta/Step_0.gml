@@ -1,3 +1,6 @@
+if (o_controlador_geral.pausa){
+	exit;
+}
 // Se a nota NÃO está morrendo, ela se comporta normalmente.
 if (esta_morrendo == false) {
     x -= velocidade;

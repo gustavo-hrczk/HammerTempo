@@ -1,4 +1,7 @@
 // Gerencia os estados de transição
+if (o_controlador_geral.pausa){
+	exit;
+}
 switch (state) {
     // ESTADO 0: Estável, aguardando o tempo para a próxima transição
     case 0:

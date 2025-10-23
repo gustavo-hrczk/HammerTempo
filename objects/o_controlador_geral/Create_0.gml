@@ -12,6 +12,7 @@ enum MINIGAME {
 
 // --- NOVAS VARIÁVEIS PARA ESTATÍSTICAS DA FASE ---//
 //--- FORJA ---//
+pausa = false;
 stats_total_notas = 0;
 stats_acertos_perfeitos = 0;
 stats_acertos_bons = 0;

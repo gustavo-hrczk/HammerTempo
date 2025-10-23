@@ -1,3 +1,6 @@
+if (o_controlador_geral.pausa){
+	exit;
+}
 // Obtenha as dimensões da GUI
 var _view_w = display_get_gui_width();
 var _view_h = display_get_gui_height();
