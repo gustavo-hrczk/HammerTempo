@@ -3,6 +3,7 @@
 enum MINIGAME {
     NENHUM,
     SELECAO_FASE,
+	TUTORIAL,
     CONTAGEM,
     RITMO,
     TEMPERA,
@@ -12,6 +13,7 @@ enum MINIGAME {
 
 // --- NOVAS VARIÁVEIS PARA ESTATÍSTICAS DA FASE ---//
 //--- FORJA ---//
+tutorial_ja_foi_visto = false; // Começa como 'falso'
 pausa = false;
 stats_total_notas = 0;
 stats_acertos_perfeitos = 0;

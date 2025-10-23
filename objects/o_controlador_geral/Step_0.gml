@@ -2,19 +2,19 @@
 
 switch (estado_jogo) {
     
-    //case MINIGAME.TUTORIAL:
-    //    // Garante que a tela de tutorial seja criada apenas uma vez.
-    //    if (!instance_exists(o_tela_tutorial)) {
-    //        instance_create_layer(0, 0, "Instances", o_tela_tutorial);
-    //    }
-    //    break;
+case MINIGAME.TUTORIAL:
+        // Garante que a tela de tutorial seja criada apenas uma vez.
+        if (!instance_exists(o_tela_tutorial)) {
+            instance_create_layer(0, 0, "Gameplay", o_tela_tutorial);
+        }
+        break;
         
     case MINIGAME.SELECAO_FASE:
         // Só tenta criar o seletor se já estivermos na sala da forja.
         if (room == rm_forja) {
             // Garante que o seletor de fases seja criado APENAS UMA VEZ.
             if (!instance_exists(o_seletor_fases)) {
-                instance_create_layer(0, 0, "Instances", o_seletor_fases);
+                instance_create_layer(0, 0, "Gameplay", o_seletor_fases);
             }
         }
         break;

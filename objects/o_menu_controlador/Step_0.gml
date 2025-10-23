@@ -26,15 +26,20 @@ if (_move != 0) {
 if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
     
     switch (opcao_selecionada) {
-        case 0: // Começar Jogo
-            // Configura o estado do jogo para a próxima sala
-            if (o_controlador_geral) {
+		case 0: // Começar Jogo
+            // --- LÓGICA DE DECISÃO INTELIGENTE ---
+            // Se o tutorial ainda NÃO foi visto...
+            if (o_controlador_geral.tutorial_ja_foi_visto == false) {
+                // ...vai para o estado de TUTORIAL.
+                o_controlador_geral.estado_jogo = MINIGAME.TUTORIAL;
+            }
+            // Se o tutorial JÁ foi visto...
+            else {
+                // ...pula direto para a SELEÇÃO DE FASE.
                 o_controlador_geral.estado_jogo = MINIGAME.SELECAO_FASE;
-            } else {
-                //o_controlador_geral.estado_jogo = MINIGAME.TUTORIAL;
             }
             
-            // Pede ao gerenciador universal para iniciar a transição
+            // Em ambos os casos, pede ao gerenciador para mudar para a sala da forja.
             room_goto(rm_forja);
             break;
             
