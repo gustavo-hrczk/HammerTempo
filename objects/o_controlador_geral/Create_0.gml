@@ -15,6 +15,7 @@ enum MINIGAME {
 stats_total_notas = 0;
 stats_acertos_perfeitos = 0;
 stats_acertos_bons = 0;
+stats_sequencia = 0;
 stats_erros = 0;
 stats_sequencia_errada = 0;
 stats_limite_sequencia_errada = 0;
@@ -25,6 +26,7 @@ resetar_estatisticas = function() {
     stats_acertos_perfeitos = 0;
     stats_acertos_bons = 0;
     stats_erros = 0;
+	stats_sequencia = 0;
 	stats_sequencia_errada = 0;
 	stats_limite_sequencia_errada = 0;
 }

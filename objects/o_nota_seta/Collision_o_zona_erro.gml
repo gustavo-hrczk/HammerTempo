@@ -12,4 +12,5 @@ if (esta_morrendo == false) {
     iniciar_fade_final(c_red, false);
     
 	o_controlador_geral.stats_sequencia_errada++;
+	o_controlador_geral.stats_sequencia=0;
 }
