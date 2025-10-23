@@ -46,6 +46,7 @@ fases_data = [];
 fases_data[0] = {
     nome: "Forjar Adaga",
 	dificuldade: "Fácil",
+	sprites_resultado: [s_adaga01, s_adaga02, s_adaga03, s_adaga04, s_adaga05],
     duracao_segundos: 40,
     velocidade_notas: 4,
     intervalo_min_frames: 60, // Mais lento
@@ -58,6 +59,7 @@ fases_data[0] = {
 fases_data[1] = {
     nome: "Forjar Lança",
 	dificuldade: "Médio",
+	sprites_resultado: [s_lanca01, s_lanca02, s_lanca03, s_lanca04, s_lanca05],
     duracao_segundos: 40,
     velocidade_notas: 5,
     intervalo_min_frames: 40,
@@ -70,6 +72,7 @@ fases_data[1] = {
 fases_data[2] = {
     nome: "Forjar Espada",
 	dificuldade: "Difícil",
+	sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
     duracao_segundos: 10,
     velocidade_notas: 6,
     intervalo_min_frames: 30, // Mais rápido
@@ -82,6 +85,7 @@ fases_data[2] = {
 fases_data[3] = {
     nome: "Forjar Machado",
 	dificuldade: "Extremo",
+	sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
     duracao_segundos: 10,
     velocidade_notas: 8,
     intervalo_min_frames: 20, // Mais rápido

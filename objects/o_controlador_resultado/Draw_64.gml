@@ -6,7 +6,7 @@ draw_set_valign(fa_top);
 var _col1_x = (display_get_gui_width() / 2) - 300;
 var _col2_x = (display_get_gui_width() / 2) + 50;
 
-var _base_y = 510;
+var _base_y = 540;
 var _line_gap = 30;
 var _line1_y = _base_y;
 var _line2_y = _base_y + _line_gap;
@@ -46,7 +46,7 @@ draw_set_color(c_black);
 // --- DESENHA O PROMPT PARA CONTINUAR (COM EFEITO PULSANTE) ---
 // =================================================================
 var _prompt_text = "Pressione ENTER para continuar";
-var _prompt_y = 680; // <<< AJUSTE AQUI a altura do prompt
+var _prompt_y = 700; // <<< AJUSTE AQUI a altura do prompt
 
 // --- DESENHA A CAIXA PULSANTE ATRÁS DO TEXTO ---
 var _texto_largura = string_width(_prompt_text);
@@ -76,6 +76,15 @@ draw_set_alpha(1);
 draw_set_color(c_yellow);
 draw_set_valign(fa_middle); // Garante o alinhamento vertical
 draw_text(display_get_gui_width() / 2, _prompt_y, _prompt_text);
+
+// =================================================================
+// --- DESENHA A ARMA FORJADA (NOVA SEÇÃO) ---
+// =================================================================
+var _arma_x = display_get_gui_width() / 2;
+var _arma_y = 200; // <<< AJUSTE AQUI a altura da imagem da arma
+var _arma_escala = 1; // <<< AJUSTE AQUI o tamanho da imagem
+
+draw_sprite_ext(sprite_da_arma_final, 0, _arma_x, _arma_y, _arma_escala, _arma_escala, 0, c_white, 1);
 
 // Reseta os alinhamentos
 draw_set_halign(fa_left);
