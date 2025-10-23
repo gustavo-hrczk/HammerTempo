@@ -26,7 +26,7 @@ if (is_endless_mode) {
         }
         
         // Reseta o timer para o próximo aumento
-        dificuldade_timer = 15 * room_speed;
+        dificuldade_timer = 2 * room_speed;
     }
 }
 // --- LÓGICA DAS FASES NORMAIS ---

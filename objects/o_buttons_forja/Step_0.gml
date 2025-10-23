@@ -24,12 +24,14 @@ if (keyboard_check_pressed(minha_tecla[0])||keyboard_check_pressed(minha_tecla[1
         // Verifica a precisão e avisa a nota para iniciar seu fade
 	if (_nota_acertada.x >= 97 && place_meeting(_nota_acertada.x, _nota_acertada.y, o_hitbox_perfeito)) {
 		 show_debug_message("PERFEITO!");
+		 o_controlador_geral.stats_sequencia_errada = 0;
 		 o_controlador_geral.pontuacao += 100;
 		 o_controlador_geral.stats_acertos_perfeitos++; // <<< ADICIONE AQUI
 		 _nota_acertada.iniciar_fade_final(c_silver, true);
 		 o_ferreiro.iniciar_martelada_perfeita();
 	}else if (place_meeting(_nota_acertada.x, _nota_acertada.y, o_hitbox_bom)) {
 		 show_debug_message("BOM!");
+		 o_controlador_geral.stats_sequencia_errada = 0;
 		 o_controlador_geral.pontuacao += 50;
 		 o_controlador_geral.stats_acertos_bons++; // <<< ADICIONE AQUI
 		 _nota_acertada.iniciar_fade_final(c_lime, true);

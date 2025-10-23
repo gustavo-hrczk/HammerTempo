@@ -71,6 +71,8 @@
     {"id":{"name":"bg_tarde02","path":"sprites/bg_tarde02/bg_tarde02.yy",},},
     {"id":{"name":"bg_tarde03","path":"sprites/bg_tarde03/bg_tarde03.yy",},},
     {"id":{"name":"bg_tarde04","path":"sprites/bg_tarde04/bg_tarde04.yy",},},
+=======
+>>>>>>> Stashed changes
     {"id":{"name":"o_zona_bom","path":"sprites/o_zona_bom/o_zona_bom.yy",},},
     {"id":{"name":"o_zona_perfeita","path":"sprites/o_zona_perfeita/o_zona_perfeita.yy",},},
     {"id":{"name":"s_alvo_baixo","path":"sprites/s_alvo_baixo/s_alvo_baixo.yy",},},

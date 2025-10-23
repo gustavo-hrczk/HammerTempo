@@ -28,7 +28,7 @@ case MINIGAME.RITMO:
         }
         
         // --- NOVA LÓGICA DE VERIFICAÇÃO DE FIM DE JOGO ---
-        if (pontuacao <= -300) {
+        if (stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
             show_debug_message("Game Over por pontuação baixa!");
             
             // 1. Muda o estado do jogo para o resultado.

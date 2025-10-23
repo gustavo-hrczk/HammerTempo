@@ -11,4 +11,5 @@ if (esta_morrendo == false) {
     // Inicia o fade-out (passando 'false' para não subir).
     iniciar_fade_final(c_red, false);
     
+	o_controlador_geral.stats_sequencia_errada++;
 }

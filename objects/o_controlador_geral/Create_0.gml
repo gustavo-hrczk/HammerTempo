@@ -16,6 +16,8 @@ stats_total_notas = 0;
 stats_acertos_perfeitos = 0;
 stats_acertos_bons = 0;
 stats_erros = 0;
+stats_sequencia_errada = 0;
+stats_limite_sequencia_errada = 0;
 // Função para resetar as estatísticas antes de começar uma fase
 resetar_estatisticas = function() {
     pontuacao = 0;
@@ -23,6 +25,8 @@ resetar_estatisticas = function() {
     stats_acertos_perfeitos = 0;
     stats_acertos_bons = 0;
     stats_erros = 0;
+	stats_sequencia_errada = 0;
+	stats_limite_sequencia_errada = 0;
 }
 
 // Variável que guarda o estado atual do jogo
@@ -44,7 +48,8 @@ fases_data[0] = {
     velocidade_notas: 4,
     intervalo_min_frames: 60, // Mais lento
     intervalo_max_frames: 100,
-    tipos_seta_permitidos: 2 // Apenas 0 e 1 (Baixo, Cima)
+    tipos_seta_permitidos: 2, // Apenas 0 e 1 (Baixo, Cima)
+	stats_limite_sequencia_errada: 4
 };
 
 // Fase 2: Lança (Médio)
@@ -55,7 +60,8 @@ fases_data[1] = {
     velocidade_notas: 5,
     intervalo_min_frames: 40,
     intervalo_max_frames: 80,
-    tipos_seta_permitidos: 4 // Todas as 4 setas
+    tipos_seta_permitidos: 4, // Todas as 4 setas
+	stats_limite_sequencia_errada: 5
 };
 
 // Fase 3: Espada (Difícil)
@@ -66,7 +72,8 @@ fases_data[2] = {
     velocidade_notas: 6,
     intervalo_min_frames: 30, // Mais rápido
     intervalo_max_frames: 60,
-    tipos_seta_permitidos: 4
+    tipos_seta_permitidos: 4,
+	stats_limite_sequencia_errada: 6
 };
 
 // Fase 3: Machado (Extremo)
@@ -77,7 +84,8 @@ fases_data[3] = {
     velocidade_notas: 8,
     intervalo_min_frames: 20, // Mais rápido
     intervalo_max_frames: 50,
-    tipos_seta_permitidos: 4
+    tipos_seta_permitidos: 4,
+	stats_limite_sequencia_errada: 6
 };
 
 // Fase 5: Modo Infinito (Começa fácil)
@@ -88,7 +96,8 @@ fases_data[4] = {
     velocidade_notas: 4, // Velocidade inicial
     intervalo_min_frames: 60, // Intervalo inicial
     intervalo_max_frames: 100,
-    tipos_seta_permitidos: 2 // Começa com apenas 2 setas
+    tipos_seta_permitidos: 2, // Começa com apenas 2 setas
+	stats_limite_sequencia_errada: 6
 };
 
 contagem_timer = -1; // Começa inativo
