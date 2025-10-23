@@ -114,16 +114,16 @@ fases_data[3] = {
 };
 
 // Fase 5: Modo Infinito (Começa fácil)
-fases_data[4] = {
-    nome: "Modo Infinito",
-    dificuldade: "Progressiva",
-    duracao_segundos: -1, // -1 significa que não tem fim
-    velocidade_notas: 4, // Velocidade inicial
-    intervalo_min_frames: 60, // Intervalo inicial
-    intervalo_max_frames: 100,
-    tipos_seta_permitidos: 2, // Começa com apenas 2 setas
-	stats_limite_sequencia_errada: 6
-};
+//fases_data[4] = {
+//    nome: "Modo Infinito",
+//    dificuldade: "Progressiva",
+//    duracao_segundos: -1, // -1 significa que não tem fim
+//    velocidade_notas: 4, // Velocidade inicial
+//    intervalo_min_frames: 60, // Intervalo inicial
+//    intervalo_max_frames: 100,
+//    tipos_seta_permitidos: 2, // Começa com apenas 2 setas
+//	stats_limite_sequencia_errada: 6
+//};
 
 contagem_timer = -1; // Começa inativo
 show_debug_message("Controlador Geral criado e configurado com sucesso!");
