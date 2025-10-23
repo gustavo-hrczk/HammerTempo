@@ -108,6 +108,7 @@
     {"id":{"name":"s_espada03","path":"sprites/s_espada03/s_espada03.yy",},},
     {"id":{"name":"s_espada04","path":"sprites/s_espada04/s_espada04.yy",},},
     {"id":{"name":"s_espada05","path":"sprites/s_espada05/s_espada05.yy",},},
+    {"id":{"name":"s_ferreiro_falha","path":"sprites/s_ferreiro_falha/s_ferreiro_falha.yy",},},
     {"id":{"name":"s_ferreiro_idle","path":"sprites/s_ferreiro_idle/s_ferreiro_idle.yy",},},
     {"id":{"name":"s_ferreiro_martelada","path":"sprites/s_ferreiro_martelada/s_ferreiro_martelada.yy",},},
     {"id":{"name":"s_ferreiro_miss","path":"sprites/s_ferreiro_miss/s_ferreiro_miss.yy",},},
