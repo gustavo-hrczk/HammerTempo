@@ -5,3 +5,9 @@ if (sprite_index == s_ferreiro_martelada) {
     sprite_index = s_ferreiro_idle;
     image_speed = 0.5; // << Define a velocidade da animação de idle
 }
+
+// Quando a animação de FALHA terminar...
+else if (sprite_index == s_ferreiro_falha) {
+    // ...entra no estado de pose estática de falha.
+    estado = FERRreiro_ESTADO.FALHOU_ESTATICO;
+}

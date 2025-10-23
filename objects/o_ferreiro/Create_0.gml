@@ -2,7 +2,9 @@
 enum FERRreiro_ESTADO {
     IDLE,
     MARTELANDO,
-    COMEMORANDO
+    COMEMORANDO,
+	FALHA,
+	FALHOU_ESTATICO
 }
 estado = FERRreiro_ESTADO.IDLE;
 
@@ -44,4 +46,16 @@ iniciar_martelada_perfeita = function() {
     if (instance_exists(o_bigorna)) {
         instance_create_layer(o_bigorna.x, o_bigorna.y, "Gameplay", o_faisca);
     }
+}
+	
+	// --- NOVAS FUNÇÕES DE ANIMAÇÃO DE RESULTADO ---
+iniciar_comemoracao = function() {
+    estado = FERRreiro_ESTADO.COMEMORANDO;
+}
+
+iniciar_animacao_falha = function() {
+    estado = FERRreiro_ESTADO.FALHA;
+    sprite_index = s_ferreiro_falha;
+    image_index = 0;
+    image_speed = 1;
 }
