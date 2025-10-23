@@ -125,5 +125,5 @@ fases_data[3] = {
 //	stats_limite_sequencia_errada: 6
 //};
 
-contagem_timer = -1; // Começa inativo
+contagem_timer = 150; // Começa inativo
 show_debug_message("Controlador Geral criado e configurado com sucesso!");
