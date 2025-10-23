@@ -22,6 +22,7 @@ stats_sequencia = 0;
 stats_erros = 0;
 stats_sequencia_errada = 0;
 stats_limite_sequencia_errada = 0;
+stats_spam_detect = 0;
 // Função para resetar as estatísticas antes de começar uma fase
 resetar_estatisticas = function() {
     pontuacao = 0;
@@ -32,6 +33,7 @@ resetar_estatisticas = function() {
 	stats_sequencia = 0;
 	stats_sequencia_errada = 0;
 	stats_limite_sequencia_errada = 0;
+	stats_spam_detect = 0;
 }
 
 // Variável que guarda o estado atual do jogo

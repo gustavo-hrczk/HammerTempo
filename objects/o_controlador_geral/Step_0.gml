@@ -46,7 +46,7 @@ case MINIGAME.CONTAGEM:
         }
         
         // Lógica de Fim de Jogo por erros
-        if (stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
+        if (stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada ||stats_spam_detect >= 10) {
             show_debug_message("Game Over por excesso de erros!");
             
             estado_jogo = MINIGAME.RESULTADO;
