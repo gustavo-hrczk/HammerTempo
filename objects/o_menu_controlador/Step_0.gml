@@ -1,68 +1,55 @@
-// Evento Step do objeto de menu
+// Se a transição universal estiver acontecendo, o menu não aceita input do jogador.
+// A verificação 'instance_exists' garante que o jogo não quebre se o o_transicao ainda não foi criado.
+if (instance_exists(o_transicao) && o_transicao.estado != FADE.IDLE) {
+    exit;
+}
 
-switch (estado) {
-    // =================================================================
-    // CASO 1: O MENU ESTÁ AGUARDANDO A AÇÃO DO JOGADOR
-    // =================================================================
-    case MENU_STATE.IDLE:
-        // --- CONTROLE DE NAVEGAÇÃO ---
-        var _move = keyboard_check_pressed(vk_down) - keyboard_check_pressed(vk_up);
-		if (_move = 0) {
-			_move = keyboard_check_pressed(ord("S")) - keyboard_check_pressed(ord("W"));
-		}
-        if (_move != 0) {
-            opcao_selecionada += _move;
-            var _total_opcoes = array_length(opcoes_menu);
+// --- CONTROLE DE NAVEGAÇÃO ---
+var _move = keyboard_check_pressed(vk_down) - keyboard_check_pressed(vk_up);
+if (_move == 0) { // Corrigido de '=' para '==' para comparação
+    _move = keyboard_check_pressed(ord("S")) - keyboard_check_pressed(ord("W"));
+}
+if (_move != 0) {
+    opcao_selecionada += _move;
+    var _total_opcoes = array_length(opcoes_menu);
+    
+    // Lógica para o cursor "dar a volta" (loop)
+    if (opcao_selecionada < 0) {
+        opcao_selecionada = _total_opcoes - 1;
+    }
+    if (opcao_selecionada >= _total_opcoes) {
+        opcao_selecionada = 0;
+    }
+}
+
+// --- CONTROLE DE SELEÇÃO ---
+if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
+    
+    switch (opcao_selecionada) {
+        case 0: // Começar Jogo
+            // Configura o estado do jogo para a próxima sala
+            if (o_controlador_geral) {
+                o_controlador_geral.estado_jogo = MINIGAME.SELECAO_FASE;
+            } else {
+                //o_controlador_geral.estado_jogo = MINIGAME.TUTORIAL;
+            }
             
-            // Lógica para o cursor "dar a volta" (loop)
-            if (opcao_selecionada < 0) {
-                opcao_selecionada = _total_opcoes - 1;
-            }
-            if (opcao_selecionada >= _total_opcoes) {
-                opcao_selecionada = 0;
-            }
-        }
-
-        // --- CONTROLE DE SELEÇÃO ---
-        if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
-            
-            // VERIFICA SE A OPÇÃO É "COMEÇAR JOGO" (ÍNDICE 0)
-            if (opcao_selecionada == 0) {
-                // Se for, INICIA A TRANSIÇÃO DE FADE
-                estado = MENU_STATE.FADING_OUT;
-            } 
-            else {
-                // PARA AS OUTRAS OPÇÕES, A AÇÃO É IMEDIATA
-                switch (opcao_selecionada) {
-                    case 1: // Opções
-                        show_debug_message("Opção 'Opções' selecionada! (Ação Imediata)");
-                        // Exemplo: room_goto(rm_opcoes);
-                        break;
-                    
-                    case 2: // Créditos
-                        show_debug_message("Opção 'Créditos' selecionada! (Ação Imediata)");
-                        // Exemplo: room_goto(rm_creditos);
-                        break;
-                        
-                    case 3: // Sair do Jogo
-                        game_end();
-                        break;
-                }
-            }
-        }
-    break;
-
-    // =================================================================
-    // CASO 2: O MENU ESTÁ FAZENDO O "FADE OUT" (APENAS PARA "COMEÇAR JOGO")
-    // =================================================================
-case MENU_STATE.FADING_OUT:
-        transicao_alpha = min(1, transicao_alpha + transicao_velocidade);
-        
-        if (transicao_alpha == 1) {
-            // >>> ALTERAÇÃO IMPORTANTE AQUI <<<
-            // Em vez de ir para RITMO, vamos para a SELEÇÃO DE FASE
-            o_controlador_geral.estado_jogo = MINIGAME.SELECAO_FASE; 
+            // Pede ao gerenciador universal para iniciar a transição
             room_goto(rm_forja);
-        }
-    break;
+            break;
+            
+        case 1: // Opções
+            show_debug_message("Opção 'Opções' selecionada! (Ainda não implementado)");
+            // Exemplo de como usar: o_transicao.mudar_de_sala(rm_opcoes);
+            break;
+            
+        case 2: // Créditos
+            show_debug_message("Opção 'Créditos' selecionada! (Ainda não implementado)");
+            // Exemplo de como usar: o_transicao.mudar_de_sala(rm_creditos);
+            break;
+            
+        case 3: // Sair do Jogo
+            game_end();
+            break;
+    }
 }

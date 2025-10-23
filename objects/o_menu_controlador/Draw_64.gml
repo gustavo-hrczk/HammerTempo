@@ -1,11 +1,11 @@
+
 //=================================================================
 // 1. DESENHO DA LOGO
 // =================================================================
 var _logo_pos_x = display_get_gui_width() / 2;
 var _logo_pos_y = (display_get_gui_height() / 2) - 320;
 var _logo_escala = 1.2;
-var _logo_alpha = 1;
-draw_sprite_ext(s_logo_jogo, 0, _logo_pos_x, _logo_pos_y, _logo_escala, _logo_escala, 0, c_white, _logo_alpha);
+draw_sprite_ext(s_logo_jogo, 0, _logo_pos_x, _logo_pos_y, _logo_escala, _logo_escala, 0, c_white, 1);
 
 // =================================================================
 // 2. SETUP E CÁLCULO DE DIMENSÕES PARA O MENU
@@ -79,17 +79,3 @@ for (var i = 0; i < array_length(opcoes_menu); i++) {
 }
 
 draw_set_halign(fa_left); // Reseta o alinhamento
-
-// =================================================================
-// 5. DESENHO DA TRANSIÇÃO DE FADE (POR CIMA DE TUDO)
-// =================================================================
-if (transicao_alpha > 0) {
-    var _gui_w = display_get_gui_width();
-    var _gui_h = display_get_gui_height();
-    
-    draw_set_color(c_black);
-    draw_set_alpha(transicao_alpha);
-    draw_rectangle(0, 0, _gui_w, _gui_h, false);
-    
-    draw_set_alpha(1);
-}

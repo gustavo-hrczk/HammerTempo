@@ -1,10 +1,13 @@
 switch (estado_jogo) {
-  
-  
-  case MINIGAME.SELECAO_FASE:
-        // Garante que o seletor de fases seja criado APENAS UMA VEZ.
-        if (!instance_exists(o_seletor_fases)) {
-            instance_create_layer(0, 0, "Gameplay", o_seletor_fases);
+case MINIGAME.SELECAO_FASE:
+        // >>> A CORREÇÃO ESTÁ AQUI <<<
+        // Só tenta criar o seletor se já estivermos na sala da forja.
+        if (room == rm_forja) {
+            
+            // Garante que o seletor de fases seja criado APENAS UMA VEZ.
+            if (!instance_exists(o_seletor_fases)) {
+                instance_create_layer(0, 0, "Instances", o_seletor_fases);
+            }
         }
         break;
   

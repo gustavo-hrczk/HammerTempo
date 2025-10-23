@@ -13,7 +13,7 @@ draw_set_valign(fa_middle);
 var _items_por_linha = 3;
 var _gap_horizontal = 350;
 var _gap_vertical = 80;
-var _start_y_base = 620; // Altura inicial da primeira linha
+var _start_y_base = 640; // Altura inicial da primeira linha
 
 var _num_linhas = ceil(total_opcoes / _items_por_linha);
 var _block_altura = (_num_linhas - 1) * _gap_vertical;

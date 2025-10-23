@@ -1,3 +1,5 @@
+
+
 // Objeto: o_background_manager
 // Evento: Draw -> Draw
 
