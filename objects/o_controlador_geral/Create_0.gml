@@ -69,7 +69,7 @@ fases_data[1] = {
 	sprites_resultado: [s_lanca01, s_lanca02, s_lanca03, s_lanca04, s_lanca05],
     duracao_segundos: 40,
     velocidade_notas: 5,
-    tipos_seta_permitidos: 4, // Todas as 4 setas
+    tipos_seta_permitidos: 3, // Todas as 4 setas
 	stats_limite_sequencia_errada: 5,
 	beat_tempo_bpm: 110, // Ritmo mais acelerado
     ritmo_patterns: [
