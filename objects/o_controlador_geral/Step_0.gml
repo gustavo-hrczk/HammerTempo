@@ -41,7 +41,7 @@ case MINIGAME.CONTAGEM:
         // Garante que o spawner seja criado apenas uma vez.
         if (!instance_exists(o_spawner_ritmo)) {
             show_debug_message("Iniciando minigame de ritmo para a fase: " + fases_data[fase_atual].nome);
-            var _spawn_x = room_width + 100;
+            var _spawn_x = room_width + 120;
             instance_create_layer(_spawn_x, 0, "Gameplay", o_spawner_ritmo);
         }
         

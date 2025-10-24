@@ -46,10 +46,10 @@ draw_set_color(c_black);
 // --- DESENHA O PROMPT PARA CONTINUAR (COM EFEITO PULSANTE) ---
 // =================================================================
 var _prompt_text = "Pressione ENTER para continuar";
-var _prompt_y = 700; // <<< AJUSTE AQUI a altura do prompt
+var _prompt_y = 720; // <<< AJUSTE AQUI a altura do prompt
 
 // --- DESENHA A CAIXA PULSANTE ATRÁS DO TEXTO ---
-var _texto_largura = string_width(_prompt_text);
+var _texto_largura = string_width(_prompt_text)+25;
 var _texto_altura = string_height(_prompt_text);
 var _highlight_padding = 5;
 

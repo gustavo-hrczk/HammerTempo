@@ -12,9 +12,9 @@ switch (estado_jogo) {
             draw_set_color(c_black);
 
             var _cx = display_get_gui_width() / 2;
-            var _cy_rodape = 600;
+            var _cy_rodape = 640;
 
-            draw_text(_cx, _cy_rodape - 40, "Prepare-se para forjar em...");
+            draw_text(_cx, _cy_rodape - 60, "Prepare-se para forjar em...");
             draw_text_transformed(_cx, _cy_rodape + 40, string(_display_number), 3, 3, 0);
 
             draw_set_halign(fa_left); // Reseta
