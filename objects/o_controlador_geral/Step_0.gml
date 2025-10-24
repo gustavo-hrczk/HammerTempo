@@ -21,6 +21,9 @@ case MINIGAME.TUTORIAL:
         break;
         
 case MINIGAME.SELECAO_FASE:
+		if(!audio_is_playing(snd_tema) || audio_sound_get_gain(snd_tema) <= 0){
+			o_audio_manager.play_music(snd_tema);
+		}
         // Só cria o seletor se estivermos na sala da forja.
         if (room == rm_forja) {
             if (!instance_exists(o_seletor_fases)) {
@@ -44,6 +47,9 @@ case MINIGAME.CONTAGEM:
             var _spawn_x = room_width + 120;
             instance_create_layer(_spawn_x, 0, "Gameplay", o_spawner_ritmo);
         }
+		if(!audio_is_playing(fases_data[fase_atual].musica_fase) || audio_sound_get_gain(fases_data[fase_atual].musica_fase) <= 0){
+			o_audio_manager.play_music(fases_data[fase_atual].musica_fase);
+		}
         
         // Lógica de Fim de Jogo por erros
         if (stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada ||stats_spam_detect >= 10) {
