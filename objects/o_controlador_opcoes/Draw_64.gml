@@ -70,7 +70,7 @@ for (var i = 0; i < array_length(opcoes_menu); i++) {
     if (i == opcao_selecionada) {
         _cor = c_yellow;
         
-        var _highlight_width = _max_texto_largura + 63;
+        var _highlight_width = _max_texto_largura + 95;
         var _highlight_height = 40;
         
         var _rect_x1 = _cx - (_highlight_width / 2);

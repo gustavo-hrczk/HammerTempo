@@ -1,5 +1,5 @@
-if (o_controlador_geral.pausa){
-	exit;
+if (!instance_exists(o_controlador_geral) || o_controlador_geral.estado_jogo != MINIGAME.RITMO) {
+    exit; // Para a execução de todo o código abaixo se não for a hora certa.
 }
 
 // =================================================================

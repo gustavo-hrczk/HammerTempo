@@ -36,7 +36,7 @@ var _box_y = _cy - (_box_altura / 2);
 // =================================================================
 // 3. DESENHO DO PAINEL DE FUNDO
 // =================================================================
-draw_sprite_stretched(s_menu_background_panel, 0, _box_x, _box_y, _box_largura, _box_altura);
+draw_sprite_stretched(s_menu_background_panel, 0, _box_x, _box_y, 248, 215);
 
 // =================================================================
 // 4. DESENHO DAS OPÇÕES DO MENU
@@ -50,7 +50,7 @@ for (var i = 0; i < array_length(opcoes_menu); i++) {
     if (i == opcao_selecionada) {
         _cor = c_yellow;
         
-        var _highlight_width = _max_texto_largura + 63;
+        var _highlight_width = _max_texto_largura + 75;
         var _highlight_height = 40;
         
         var _rect_x1 = _cx - (_highlight_width / 2);

@@ -62,7 +62,6 @@
     {"id":{"name":"o_tela_tutorial","path":"objects/o_tela_tutorial/o_tela_tutorial.yy",},},
     {"id":{"name":"o_transicao","path":"objects/o_transicao/o_transicao.yy",},},
     {"id":{"name":"o_zona_erro","path":"objects/o_zona_erro/o_zona_erro.yy",},},
-    {"id":{"name":"Object26","path":"objects/Object26/Object26.yy",},},
     {"id":{"name":"rm_creditos","path":"rooms/rm_creditos/rm_creditos.yy",},},
     {"id":{"name":"rm_forja","path":"rooms/rm_forja/rm_forja.yy",},},
     {"id":{"name":"rm_menu","path":"rooms/rm_menu/rm_menu.yy",},},

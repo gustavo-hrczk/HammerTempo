@@ -8,7 +8,7 @@
   "instanceCreationOrder":[
     {"name":"inst_5283ECB4","path":"rooms/rm_menu/rm_menu.yy",},
     {"name":"inst_58EA8F97","path":"rooms/rm_menu/rm_menu.yy",},
-    {"name":"inst_2F3B80C6","path":"rooms/rm_menu/rm_menu.yy",},
+    {"name":"inst_332E0CC1","path":"rooms/rm_menu/rm_menu.yy",},
   ],
   "isDnd":false,
   "layers":[
@@ -17,7 +17,7 @@
         {"$GMRInstance":"v2","%Name":"inst_58EA8F97","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_58EA8F97","objectId":{"name":"o_controlador_geral","path":"objects/o_controlador_geral/o_controlador_geral.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":17.0,"scaleY":19.0,"x":992.0,"y":0.0,},
       ],"layers":[],"name":"Instances","properties":[],"resourceType":"GMRInstanceLayer","resourceVersion":"2.0","userdefinedDepth":false,"visible":true,},
     {"$GMRInstanceLayer":"","%Name":"Background","depth":100,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"instances":[
-        {"$GMRInstance":"v2","%Name":"inst_2F3B80C6","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_2F3B80C6","objectId":{"name":"o_background_manager","path":"objects/o_background_manager/o_background_manager.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":672.0,"y":480.0,},
+        {"$GMRInstance":"v2","%Name":"inst_332E0CC1","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_332E0CC1","objectId":{"name":"o_background_manajer_forja","path":"objects/o_background_manajer_forja/o_background_manajer_forja.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":608.0,"y":256.0,},
       ],"layers":[],"name":"Background","properties":[],"resourceType":"GMRInstanceLayer","resourceVersion":"2.0","userdefinedDepth":false,"visible":true,},
   ],
   "name":"rm_menu",

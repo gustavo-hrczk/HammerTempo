@@ -90,7 +90,7 @@ var _prompt_y = _box_y + _box_altura - 480; // Posição relativa à base do pai
 
 // --- Lógica da Caixa Pulsante ---
 var _texto_largura = string_width(_prompt_text);
-var _highlight_width = _texto_largura + 40;
+var _highlight_width = _texto_largura + 766;
 var _highlight_height = 50;
 
 // ... (código da pulsação) ...

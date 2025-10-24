@@ -56,7 +56,7 @@ for (var i = 0; i < total_opcoes; i++) {
         
         // --- DESENHA A FAIXA DE DESTAQUE ---
         var _texto_largura = string_width(_nome_fase);
-        var _highlight_width = _texto_largura + 100;
+        var _highlight_width = 280;
         var _highlight_height = 70;
         // ... (lógica da caixa pulsante) ...
         var _min_alpha = 0.15;
@@ -71,9 +71,9 @@ for (var i = 0; i < total_opcoes; i++) {
         draw_set_alpha(1);
         
         // --- DESENHA O SELETOR (LÓGICA CORRIGIDA) ---
-        var _seletor_padding = 45;
+        var _seletor_padding = 125;
         // A posição X do seletor agora é calculada corretamente com base no _pos_x do item atual
-        var _seletor_x = _pos_x - (_texto_largura / 2) - _seletor_padding;
+        var _seletor_x = _pos_x - _seletor_padding;
         draw_sprite(s_menu_seletor, 0, _seletor_x, _pos_y);
     }
     
