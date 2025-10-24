@@ -3,6 +3,9 @@ if (o_controlador_geral.estado_jogo != 1) {
     exit;
 }
 
+if(keyboard_check(vk_escape)){
+	room_goto_previous();
+}
 // --- LÓGICA DE NAVEGAÇÃO EM GRADE ---
 var _items_por_linha = 3; // O mesmo valor do seu Draw Event
 

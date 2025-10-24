@@ -44,12 +44,12 @@ if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
             break;
             
         case 1: // Opções
-            show_debug_message("Opção 'Opções' selecionada! (Ainda não implementado)");
-            // Exemplo de como usar: o_transicao.mudar_de_sala(rm_opcoes);
+            show_debug_message("Opção 'Opções' selecionada!");
+            room_goto(rm_opcoes);
             break;
             
         case 2: // Créditos
-            show_debug_message("Opção 'Créditos' selecionada! (Ainda não implementado)");
+            show_debug_message("Opção 'Créditos' selecionada!");
             room_goto(rm_creditos);
             break;
             
