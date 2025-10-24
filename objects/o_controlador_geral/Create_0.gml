@@ -65,7 +65,7 @@ fases_data[0] = {
     velocidade_notas: 4,
     tipos_seta_permitidos: 2,
     stats_limite_sequencia_errada: 4,
-    beat_tempo_bpm: 90,
+    beat_tempo_bpm: 88,
     ritmo_patterns: [
         [1, 1, 1, 1],
         [1, 0.5, 0.5, 2],
@@ -81,11 +81,11 @@ fases_data[1] = {
     sprites_resultado: [s_lanca01, s_lanca02, s_lanca03, s_lanca04, s_lanca05],
     duracao_segundos: 40,
     velocidade_notas: 5,
-    tipos_seta_permitidos: 4,
+    tipos_seta_permitidos: 3,
     stats_limite_sequencia_errada: 5,
     beat_tempo_bpm: 100, 
     ritmo_patterns: [
-        [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 2]
+        [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 3]
     ]
 };
 
@@ -93,34 +93,38 @@ fases_data[1] = {
 fases_data[2] = {
     nome: "Forjar Espada",
     dificuldade: "Difícil",
-    musica_fase: snd_fase_03,
-    sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
-    duracao_segundos: 60,
-    velocidade_notas: 6,
-    tipos_seta_permitidos: 4,
+    musica_fase: snd_fase_03, // Substitua pelo asset de áudio de "Douce Dame Jolie"
+    sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05], // Assumindo sprites de espada
+    duracao_segundos: 60, 
+    // Velocidade ajustada para 110 BPM (Mais lenta que 130 BPM, mas ainda um bom desafio)
+    velocidade_notas: 5, 
+    tipos_seta_permitidos: 4, // 4 setas diferentes
     stats_limite_sequencia_errada: 6,
-    beat_tempo_bpm: 120,
+    
+    // >>> CONFIGURAÇÃO RITMICA PARA 110 BPM <<<
+    beat_tempo_bpm: 108, // BPM da música
     ritmo_patterns: [
-        // Síncopa e pulso forte. Simula o andamento da Cantiga.
-        [1, 0.5, 0.5, 1, 1, 2]
+        // Padrão 110 BPM: [Semínima, Semínima, Colcheia, Colcheia, Semínima]
+        // Batida firme (1), Batida firme (1), Rápido (0.5), Rápido (0.5), Batida firme (1)
+        [1, 1, 0.5, 0.5, 1] 
     ]
 };
 
-// Fase 3: Machado (Extremo)
-fases_data[3] = {
-    nome: "Forjar Machado",
-	dificuldade: "Extremo",
-	musica_fase: snd_fase_04,
-	sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
-    duracao_segundos: 60,
-    velocidade_notas: 8,
-    tipos_seta_permitidos: 4,
-	stats_limite_sequencia_errada: 6,
-	beat_tempo_bpm: 130,
-    ritmo_patterns: [
-        [0.5, 0.5, 1, 0.5, 0.5, 1, 1]
-    ]
-};
+//// Fase 3: Machado (Extremo)
+//fases_data[3] = {
+//    nome: "Forjar Machado",
+//	dificuldade: "Extremo",
+//	musica_fase: snd_fase_04,
+//	sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
+//    duracao_segundos: 60,
+//    velocidade_notas: 6,
+//    tipos_seta_permitidos: 4,
+//	stats_limite_sequencia_errada: 6,
+//	beat_tempo_bpm: 125,
+//    ritmo_patterns: [
+//        [1, 0.5, 0.5, 1, 1]
+//    ]
+//};
 
 // Fase 5: Modo Infinito (Começa fácil)
 //fases_data[4] = {
