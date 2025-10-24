@@ -1,56 +1,59 @@
-// Este objeto só funciona se o jogo estiver no estado de SELECAO_FASE
+// Este objeto só funciona se o jogo estiver no estado de SELECAO_FASE (1)
 if (o_controlador_geral.estado_jogo != MINIGAME.SELECAO_FASE) {
     exit;
 }
 
 if (keyboard_check(vk_escape)) {
-    room_goto(rm_menu); // Alterado para ir para o menu, não a sala anterior
+    // Usamos o gerenciador de transição universal para voltar suavemente
+	audio_play_sound(snd_menu_return, 10, false);
+    o_transicao.mudar_de_sala(rm_menu);
 }
 
-// --- LÓGICA DE NAVEGAÇÃO EM GRADE ---
-var _items_por_linha = 3;
 
-// Navegação Horizontal (Esquerda/Direita)
+// --- LÓGICA DE NAVEGAÇÃO EM GRADE (CORRIGIDA) ---
+var _items_por_linha = 3; 
+
+// 1. Calcula o movimento HORIZONTAL, somando as setas e as teclas
 var _move_h = keyboard_check_pressed(vk_right) - keyboard_check_pressed(vk_left);
-if (_move_h == 0) { // <<< CORRIGIDO: Usando '==' para comparação
-    _move_h = keyboard_check_pressed(ord("D")) - keyboard_check_pressed(ord("A"));
-}
-if (_move_h != 0) {
-    opcao_selecionada += _move_h;
-}
+// Adiciona o movimento WASD
+_move_h += keyboard_check_pressed(ord("D")) - keyboard_check_pressed(ord("A"));
 
-// Navegação Vertical (Cima/Baixo)
+// 2. Calcula o movimento VERTICAL
 var _move_v = keyboard_check_pressed(vk_down) - keyboard_check_pressed(vk_up);
-if (_move_v == 0) { // <<< CORRIGIDO: Usando '==' para comparação
-    _move_v = keyboard_check_pressed(ord("S")) - keyboard_check_pressed(ord("W"));
-}
-if (_move_v != 0) {
-    opcao_selecionada += _move_v * _items_por_linha;
-}
+// Adiciona o movimento WASD
+_move_v += keyboard_check_pressed(ord("S")) - keyboard_check_pressed(ord("W"));
 
-// Lógica para o cursor "dar a volta" e se manter dentro dos limites
-if (opcao_selecionada < 0) { opcao_selecionada = total_opcoes - 1; }
-if (opcao_selecionada >= total_opcoes) { opcao_selecionada = 0; }
+
+// --- Lógica para MUDAR A OPÇÃO E TOCAR SOM ---
+if (_move_h != 0 || _move_v != 0) { 
+
+    // Toca o som de navegação (Lógica de alternância)
+    var _som_a_tocar = o_controlador_geral.nav_sounds[o_controlador_geral.nav_sound_index];
+    o_audio_manager.play_sfx(_som_a_tocar);
+    o_controlador_geral.nav_sound_index = 1 - o_controlador_geral.nav_sound_index;
+    
+    // Calcula o novo índice
+    var _novo_indice = opcao_selecionada + _move_h + (_move_v * _items_por_linha);
+
+    // Lógica para o cursor "dar a volta" e se manter dentro dos limites
+    if (_novo_indice < 0) { 
+        _novo_indice += total_opcoes; 
+    }
+    if (_novo_indice >= total_opcoes) { 
+        _novo_indice -= total_opcoes; 
+    }
+    
+    opcao_selecionada = _novo_indice;
+}
 
 
 // --- LÓGICA DE SELEÇÃO (ENTER) ---
 if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
-    
-	
-	o_audio_manager.fade_out_music(3);
-    // 1. Zera as estatísticas para a nova partida
+    audio_play_sound(snd_menu_confirm, 10, false);
+    // (Sua lógica de seleção e iniciar CONTAGEM continua aqui)
     o_controlador_geral.resetar_estatisticas();
-    
-    // 2. Informa ao controlador qual fase foi escolhida
     o_controlador_geral.fase_atual = opcao_selecionada;
-    
-    // 3. >>> A CORREÇÃO PRINCIPAL ESTÁ AQUI <<<
-    // Muda o estado do jogo para CONTAGEM
     o_controlador_geral.estado_jogo = MINIGAME.CONTAGEM;
-    
-    // 4. Define o tempo inicial da contagem no controlador geral
     o_controlador_geral.contagem_timer = 3 * room_speed;
-    
-    // 5. O trabalho deste objeto acabou. Ele se autodestrói.
     instance_destroy();
 }

@@ -1,6 +1,6 @@
 // Se a transição universal estiver acontecendo, o menu não aceita input do jogador.
 // A verificação 'instance_exists' garante que o jogo não quebre se o o_transicao ainda não foi criado.
-if (instance_exists(o_transicao) && o_transicao.estado = FADE.OUT) {
+if (instance_exists(o_transicao) && o_transicao.estado == FADE.OUT) {
     exit;
 }
 
@@ -16,14 +16,22 @@ if (instance_exists(o_transicao) && o_transicao.estado = FADE.OUT) {
 //    // ... (resto do seu código de seleção)
 //}
 
+
+
 // --- CONTROLE DE NAVEGAÇÃO ---
 var _move = keyboard_check_pressed(vk_down) - keyboard_check_pressed(vk_up);
 if (_move == 0) { // Corrigido de '=' para '==' para comparação
     _move = keyboard_check_pressed(ord("S")) - keyboard_check_pressed(ord("W"));
 }
+
 if (_move != 0) {
     opcao_selecionada += _move;
     var _total_opcoes = array_length(opcoes_menu);
+	
+	// >>> IMPLEMENTAÇÃO CORRETA DO SOM AQUI <<<
+    var _som_a_tocar = o_controlador_geral.nav_sounds[o_controlador_geral.nav_sound_index];
+    o_audio_manager.play_sfx(_som_a_tocar);
+    o_controlador_geral.nav_sound_index = 1 - o_controlador_geral.nav_sound_index;
     
     // Lógica para o cursor "dar a volta" (loop)
     if (opcao_selecionada < 0) {
@@ -36,7 +44,8 @@ if (_move != 0) {
 
 // --- CONTROLE DE SELEÇÃO ---
 if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
-    
+    // Toca o som de confirmação antes de executar a ação.
+	audio_play_sound(snd_menu_confirm, 10, false);
     switch (opcao_selecionada) {
 		case 0: // Começar Jogo
             // --- LÓGICA DE DECISÃO INTELIGENTE ---

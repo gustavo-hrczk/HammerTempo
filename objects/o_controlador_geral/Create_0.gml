@@ -11,6 +11,13 @@ enum MINIGAME {
     RESULTADO
 }
 
+// Array com os dois sons que irão se alternar
+nav_sounds[0] = snd_menu01; 
+nav_sounds[1] = snd_menu02; // Certifique-se de que este som exista!
+
+// Índice para controlar qual som tocar (começa em 0)
+nav_sound_index = 0;
+
 // --- NOVAS VARIÁVEIS PARA ESTATÍSTICAS DA FASE ---//
 //--- FORJA ---//
 tutorial_ja_foi_visto = false; // Começa como 'falso'
@@ -66,35 +73,36 @@ fases_data[0] = {
     ]
 };
 
-// Fase 2: Lança (Médio)
+// Fase 2: Lança (Médio - BPM: 100)
 fases_data[1] = {
     nome: "Forjar Lança",
-	dificuldade: "Médio",
-	musica_fase: snd_fase_02,
-	sprites_resultado: [s_lanca01, s_lanca02, s_lanca03, s_lanca04, s_lanca05],
+    dificuldade: "Médio",
+    musica_fase: snd_fase_02,
+    sprites_resultado: [s_lanca01, s_lanca02, s_lanca03, s_lanca04, s_lanca05],
     duracao_segundos: 40,
     velocidade_notas: 5,
-    tipos_seta_permitidos: 3, // Todas as 4 setas
-	stats_limite_sequencia_errada: 5,
-	beat_tempo_bpm: 110, // Ritmo mais acelerado
+    tipos_seta_permitidos: 4,
+    stats_limite_sequencia_errada: 5,
+    beat_tempo_bpm: 100, 
     ritmo_patterns: [
-        [1, 0.5, 1, 0.5, 1],    // Padrão 1: Ritmo "galopante" (longo-curto, longo-curto).
+        [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 2]
     ]
 };
 
-// Fase 3: Espada (Difícil)
+// Fase 3: Espada (Difícil - BPM: 120 - Ritmo de Cantiga)
 fases_data[2] = {
     nome: "Forjar Espada",
-	dificuldade: "Difícil",
-	musica_fase: snd_fase_03,
-	sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
-    duracao_segundos: 40,
+    dificuldade: "Difícil",
+    musica_fase: snd_fase_03,
+    sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
+    duracao_segundos: 60,
     velocidade_notas: 6,
     tipos_seta_permitidos: 4,
-	stats_limite_sequencia_errada: 6,
-	beat_tempo_bpm: 130, // Bem rápido
+    stats_limite_sequencia_errada: 6,
+    beat_tempo_bpm: 120,
     ritmo_patterns: [
-        [0.5, 1, 0.5, 1.5, 0.5], // Padrão 1: Síncopa complexa, difícil de ler em alta velocidade.
+        // Síncopa e pulso forte. Simula o andamento da Cantiga.
+        [1, 0.5, 0.5, 1, 1, 2]
     ]
 };
 
@@ -102,14 +110,15 @@ fases_data[2] = {
 fases_data[3] = {
     nome: "Forjar Machado",
 	dificuldade: "Extremo",
+	musica_fase: snd_fase_04,
 	sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
     duracao_segundos: 60,
     velocidade_notas: 8,
     tipos_seta_permitidos: 4,
 	stats_limite_sequencia_errada: 6,
-	beat_tempo_bpm: 140,
+	beat_tempo_bpm: 130,
     ritmo_patterns: [
-        [0.5, 1, 0.5, 1.5, 0.5], // Padrão 1: Síncopa complexa, difícil de ler em alta velocidade.
+        [0.5, 0.5, 1, 0.5, 0.5, 1, 1]
     ]
 };
 

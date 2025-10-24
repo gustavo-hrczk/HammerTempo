@@ -38,7 +38,6 @@ var _box_x = _cx - (_box_largura / 2);
 draw_set_halign(fa_left); // Alinhado à esquerda para blocos de texto
 draw_set_color(c_black);
 var _texto_instrucoes = "Use as  <SETAS>  ou  <W A S D>  do teclado para acertar as notas no ritmo da forja.\n\n" + 
-						"Use as teclas  <ESC>  ou  <P>  para pausar o jogo.\n" + 
                        "Seu objetivo é forjar a melhor arma possível acertando as notas com precisão para aumentar sua pontuação.\n\n" +
                        "Cuidado! Errar muitas notas seguidas pode arruinar seu trabalho.";
 

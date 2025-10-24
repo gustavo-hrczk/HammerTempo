@@ -1,6 +1,6 @@
 {
   "$GMSound":"",
-  "%Name":"snd_fase_04",
+  "%Name":"snd_menu_return",
   "audioGroupId":{
     "name":"audiogroup_default",
     "path":"audiogroups/audiogroup_default",
@@ -9,8 +9,8 @@
   "bitRate":128,
   "compression":0,
   "conversionMode":0,
-  "duration":238.00163,
-  "name":"snd_fase_04",
+  "duration":0.44408163,
+  "name":"snd_menu_return",
   "parent":{
     "name":"Sounds",
     "path":"folders/Sounds.yy",
@@ -19,7 +19,7 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"snd_fase_04.mp3",
+  "soundFile":"snd_menu_return.mp3",
   "type":0,
   "volume":1.0,
 }
