@@ -17,3 +17,15 @@ mudar_de_sala = function(sala_alvo) {
         proxima_sala = sala_alvo;
     }
 }
+
+// Função ADICIONAL para mudar de sala SEM iniciar o FADE.OUT.
+// Usar para retornar a telas de menu que já foram carregadas.
+mudar_de_sala_imediato = function(sala_alvo) {
+    // 1. Muda a sala imediatamente
+    room_goto(sala_alvo); 
+    
+    // 2. Define o estado para IDLE (não vai fazer fade-in nem fade-out)
+    // E garante que o alpha seja 0 (transparente)
+    estado = FADE.IDLE;
+    alpha = 0; 
+}

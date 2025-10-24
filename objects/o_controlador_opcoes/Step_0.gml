@@ -29,22 +29,29 @@ if (_move != 0) {
 if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("A")) || keyboard_check_pressed(ord("D")) || keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
     
     switch (opcao_selecionada) {
-		case 0: // volume
-            if(keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A"))){
-				if(opcoes_volume-0.01 <= 0){
+case 0: // volume
+            if(keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A"))){
+				// Diminui o volume em 1, com limite mínimo em 0
+				if(opcoes_volume - 1 <= 0){
 					opcoes_volume = 0
 				} else {
-					opcoes_volume -= 0.01
+					opcoes_volume -= 1 // Alterado de 0.01 para 1
 				}
 			}
 			if(keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"))){
-				if(opcoes_volume+0.01 >= 1){
-					opcoes_volume = 1
+				// Aumenta o volume em 1, com limite máximo em 10
+				if(opcoes_volume + 1 >= 10){ // Alterado de 1 para 10
+					opcoes_volume = 10
 				} else {
-					opcoes_volume += 0.01
+					opcoes_volume += 1 // Alterado de 0.01 para 1
 				}
 			}
-            break;
+            
+            // CONVERSÃO E APLICAÇÃO:
+            // O GameMaker espera um valor de 0 a 1, então dividimos o 0-10 por 10.
+            audio_master_gain(opcoes_volume / 10);
+            
+            break;
             
         case 1: // fullscreen
             if(keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A"))){

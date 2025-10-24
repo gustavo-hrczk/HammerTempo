@@ -53,7 +53,7 @@ for (var i = 0; i < array_length(opcoes_menu); i++) {
 	var texto = "";
     switch (i){
 		case 0:
-			texto = string_concat(opcoes_menu[i], ":      ", floor(opcoes_volume*100),"%");
+			texto = string_concat(opcoes_menu[i], ":      ", floor(opcoes_volume));
 			break;
 		case 1:
 			if(opcoes_tela_cheia){

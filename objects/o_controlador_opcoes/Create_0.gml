@@ -3,5 +3,5 @@ opcoes_menu = ["Volume", "Tela Cheia", "Aplicar!"];
 opcao_selecionada = 0;
 
 
-opcoes_volume = 1;
+opcoes_volume = 10;
 opcoes_tela_cheia = false;

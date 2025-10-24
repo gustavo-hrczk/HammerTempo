@@ -6,8 +6,8 @@ if (o_controlador_geral.estado_jogo != MINIGAME.SELECAO_FASE) {
 // --- LÓGICA DE RETORNO (ESC) ---
 if (keyboard_check_pressed(vk_escape)) {
     // Usamos o gerenciador de transição universal para voltar suavemente
-    audio_play_sound(snd_voltar_cancelar, 10, false);
-    o_transicao.mudar_de_sala(rm_menu);
+    audio_play_sound(snd_menu_return, 10, false);
+    room_goto(rm_menu);
     exit;
 }
 
