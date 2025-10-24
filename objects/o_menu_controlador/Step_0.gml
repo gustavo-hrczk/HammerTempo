@@ -17,6 +17,7 @@ if (instance_exists(o_transicao) && o_transicao.estado == FADE.OUT) {
 //}
 
 
+audio_sound_gain(snd_tema,o_controlador_opcoes.opcoes_volume,0);
 
 // --- CONTROLE DE NAVEGAÇÃO ---
 var _move = keyboard_check_pressed(vk_down) - keyboard_check_pressed(vk_up);
@@ -46,6 +47,7 @@ if (_move != 0) {
 if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
     // Toca o som de confirmação antes de executar a ação.
 	audio_play_sound(snd_menu_confirm, 10, false);
+	audio_sound_gain(snd_menu_confirm, o_controlador_opcoes.opcoes_volume,0);
     switch (opcao_selecionada) {
 		case 0: // Começar Jogo
             // --- LÓGICA DE DECISÃO INTELIGENTE ---

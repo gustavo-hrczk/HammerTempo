@@ -6,6 +6,7 @@ if (o_controlador_geral.estado_jogo != MINIGAME.SELECAO_FASE) {
 if (keyboard_check(vk_escape)) {
     // Usamos o gerenciador de transição universal para voltar suavemente
 	audio_play_sound(snd_menu_return, 10, false);
+	audio_sound_gain(snd_menu_return, o_controlador_opcoes.opcoes_volume,0);
     o_transicao.mudar_de_sala(rm_menu);
 }
 
@@ -50,6 +51,7 @@ if (_move_h != 0 || _move_v != 0) {
 // --- LÓGICA DE SELEÇÃO (ENTER) ---
 if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
     audio_play_sound(snd_menu_confirm, 10, false);
+	audio_sound_gain(snd_menu_confirm, o_controlador_opcoes.opcoes_volume,0);
     // (Sua lógica de seleção e iniciar CONTAGEM continua aqui)
     o_controlador_geral.resetar_estatisticas();
     o_controlador_geral.fase_atual = opcao_selecionada;

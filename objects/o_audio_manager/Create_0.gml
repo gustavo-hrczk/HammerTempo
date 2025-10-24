@@ -6,13 +6,14 @@ fade_speed = 0;
 play_sfx = function(som_asset) {
     if (audio_is_playing(som_asset)) { audio_stop_sound(som_asset); }
     audio_play_sound(som_asset, 1, false);
+	audio_sound_gain(som_asset, o_controlador_opcoes.opcoes_volume,0);
 }
 play_music = function(musica_asset) {
     if (!audio_is_playing(musica_asset) || audio_sound_get_gain(musica_asset) > 0) {
         if (musica_atual != -1) { audio_stop_sound(musica_atual); }
         audio_play_sound(musica_asset, 1, true);
         audio_resume_sound(musica_asset);
-		audio_sound_gain(musica_asset,1,0);
+		audio_sound_gain(musica_asset,o_controlador_opcoes.opcoes_volume,0);
         musica_atual = musica_asset;
         is_fading_out = false;
     }

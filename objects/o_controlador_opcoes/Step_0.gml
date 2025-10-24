@@ -59,7 +59,8 @@ if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(vk_right) || keybo
 			if(keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)){
 				window_set_fullscreen(opcoes_tela_cheia)
 				audio_play_sound(snd_menu_confirm, 10, false);
-					room_goto(rm_menu);
+				audio_sound_gain(snd_menu_confirm, o_controlador_opcoes.opcoes_volume,0);
+				room_goto(rm_menu);
 			}
             break;
     }

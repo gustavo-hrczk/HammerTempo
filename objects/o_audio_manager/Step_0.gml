@@ -8,7 +8,7 @@ if (is_fading_out && musica_atual != -1) {
     var _new_gain = max(0, _current_gain - fade_speed);
     
     // Aplica o novo volume
-    audio_sound_gain(musica_atual, _new_gain, 0);
+    audio_sound_gain(musica_atual, max(o_controlador_opcoes.opcoes_volume,_new_gain), 0);
     
     // Se o volume chegou a zero, para a música completamente
     if (_new_gain == 0) {
