@@ -35,6 +35,7 @@ if (keyboard_check_pressed(minha_tecla[0])||keyboard_check_pressed(minha_tecla[1
 			 o_controlador_geral.stats_acertos_perfeitos++; // <<< ADICIONE AQUI
 			 _nota_acertada.iniciar_fade_final(c_silver, true);
 			 o_ferreiro.iniciar_martelada_perfeita();
+			            o_audio_manager.play_martelada_sequencial_sfx();
 		}else if (place_meeting(_nota_acertada.x, _nota_acertada.y, o_hitbox_bom)) {
 			 show_debug_message("BOM!");
 			 o_controlador_geral.stats_sequencia_errada = 0;
@@ -43,12 +44,10 @@ if (keyboard_check_pressed(minha_tecla[0])||keyboard_check_pressed(minha_tecla[1
 			 o_controlador_geral.stats_acertos_bons++; // <<< ADICIONE AQUI
 			 _nota_acertada.iniciar_fade_final(c_silver, true);
 			 o_ferreiro.iniciar_martelada_normal();
+			             o_audio_manager.play_martelada_sequencial_sfx();
 			 
 		}
 		
-		if (_nota_acertada) {
-            o_audio_manager.play_martelada_sequencial_sfx();
-        }
 	} else {
 		o_controlador_geral.stats_spam_detect++;
 	}
