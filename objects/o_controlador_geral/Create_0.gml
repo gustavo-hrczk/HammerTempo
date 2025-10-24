@@ -103,7 +103,7 @@ fases_data[3] = {
     nome: "Forjar Machado",
 	dificuldade: "Extremo",
 	sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
-    duracao_segundos: 10,
+    duracao_segundos: 60,
     velocidade_notas: 8,
     tipos_seta_permitidos: 4,
 	stats_limite_sequencia_errada: 6,

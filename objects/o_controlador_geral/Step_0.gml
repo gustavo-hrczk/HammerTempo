@@ -1,11 +1,11 @@
 // Substitua TODO o seu Evento Step por esta versão completa e robusta:
 
 // Lógica de Pausa (se existir, deve ficar no topo)
-if (keyboard_check_pressed(vk_escape) || keyboard_check_pressed(ord("P"))) {
-    if (estado_jogo == MINIGAME.RITMO || estado_jogo == MINIGAME.CONTAGEM) {
-        pausa = !pausa; // Alterna o estado de pausa
-    }
-}
+//if (keyboard_check_pressed(vk_escape) || keyboard_check_pressed(ord("P"))) {
+//    if (estado_jogo == MINIGAME.RITMO || estado_jogo == MINIGAME.CONTAGEM) {
+//        pausa = !pausa; // Alterna o estado de pausa
+//    }
+//}
 if (pausa) {
     exit; // Se estiver pausado, para a execução do resto do evento
 }

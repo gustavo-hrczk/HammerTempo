@@ -1,5 +1,5 @@
 // Se estivermos no período de tolerância, não cria mais notas.
-if (esta_finalizando) {
+if (esta_finalizando || o_controlador_geral.pausa) {
     exit;
 }
 
