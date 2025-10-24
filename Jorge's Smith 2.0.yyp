@@ -37,6 +37,7 @@
   "resources":[
     {"id":{"name":"f_padrao_pequena","path":"fonts/f_padrao_pequena/f_padrao_pequena.yy",},},
     {"id":{"name":"f_padrao","path":"fonts/f_padrao/f_padrao.yy",},},
+    {"id":{"name":"o_audio_manager","path":"objects/o_audio_manager/o_audio_manager.yy",},},
     {"id":{"name":"o_background_manager","path":"objects/o_background_manager/o_background_manager.yy",},},
     {"id":{"name":"o_background_manajer_forja","path":"objects/o_background_manajer_forja/o_background_manajer_forja.yy",},},
     {"id":{"name":"o_bigorna","path":"objects/o_bigorna/o_bigorna.yy",},},
@@ -67,6 +68,7 @@
     {"id":{"name":"rm_menu","path":"rooms/rm_menu/rm_menu.yy",},},
     {"id":{"name":"rm_opcoes","path":"rooms/rm_opcoes/rm_opcoes.yy",},},
     {"id":{"name":"rm_splash","path":"rooms/rm_splash/rm_splash.yy",},},
+    {"id":{"name":"snd_tema","path":"sounds/snd_tema/snd_tema.yy",},},
     {"id":{"name":"bg_manha01","path":"sprites/bg_manha01/bg_manha01.yy",},},
     {"id":{"name":"bg_manha02","path":"sprites/bg_manha02/bg_manha02.yy",},},
     {"id":{"name":"bg_manha03","path":"sprites/bg_manha03/bg_manha03.yy",},},

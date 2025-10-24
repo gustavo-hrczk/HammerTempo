@@ -4,6 +4,18 @@ if (instance_exists(o_transicao) && o_transicao.estado = FADE.OUT) {
     exit;
 }
 
+//// Dentro de if (_move != 0)
+//if (_move != 0) {
+//    o_audio_manager.play_sfx(snd_navegacao_menu);
+//    // ... (resto do seu código de navegação)
+//}
+
+//// Dentro de if (keyboard_check_pressed(vk_enter)...)
+//if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
+//    o_audio_manager.play_sfx(snd_confirmacao_menu);
+//    // ... (resto do seu código de seleção)
+//}
+
 // --- CONTROLE DE NAVEGAÇÃO ---
 var _move = keyboard_check_pressed(vk_down) - keyboard_check_pressed(vk_up);
 if (_move == 0) { // Corrigido de '=' para '==' para comparação
