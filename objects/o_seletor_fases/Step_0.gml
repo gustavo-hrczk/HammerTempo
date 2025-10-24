@@ -36,6 +36,8 @@ if (opcao_selecionada >= total_opcoes) { opcao_selecionada = 0; }
 // --- LÓGICA DE SELEÇÃO (ENTER) ---
 if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
     
+	
+	o_audio_manager.fade_out_music(3);
     // 1. Zera as estatísticas para a nova partida
     o_controlador_geral.resetar_estatisticas();
     

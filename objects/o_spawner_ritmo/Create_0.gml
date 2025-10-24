@@ -10,6 +10,8 @@ dificuldade_level = 0;
 dificuldade_timer = 15 * room_speed;
 esta_finalizando = false;
 
+o_audio_manager.play_music(_dados_fase.musica_fase);
+
 // --- NOVA LÓGICA DE RITMO ---
 // Calcula quantos frames dura uma batida completa, com base no BPM
 var _bpm = _dados_fase.beat_tempo_bpm;

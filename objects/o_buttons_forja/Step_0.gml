@@ -45,6 +45,10 @@ if (keyboard_check_pressed(minha_tecla[0])||keyboard_check_pressed(minha_tecla[1
 			 o_ferreiro.iniciar_martelada_normal();
 			 
 		}
+		
+		if (_nota_acertada) {
+            o_audio_manager.play_martelada_sequencial_sfx();
+        }
 	} else {
 		o_controlador_geral.stats_spam_detect++;
 	}
