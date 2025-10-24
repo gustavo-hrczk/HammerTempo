@@ -1,6 +1,6 @@
 // Impede que a mesma frase aleatória seja escolhida toda vez que o jogo inicia
 randomize();
-audio_sound_gain((o_controlador_geral.fases_data[o_controlador_geral.fase_atual].musica_fase),0,500);
+audio_sound_gain((o_controlador_geral.fases_data[o_controlador_geral.fase_atual].musica_fase),0,1000);
 if(audio_sound_get_gain(o_controlador_geral.fases_data[o_controlador_geral.fase_atual].musica_fase) == 0){
 	audio_stop_all();
 }
@@ -95,16 +95,16 @@ if (_resultado_index <= 1) { // Falha ou Aceitável
     frase_escolhida = frases_ruins[irandom(array_length(frases_ruins) - 1)];
 	if(!audio_is_playing(snd_resultado_ruim)){
 		audio_play_sound(snd_resultado_ruim, 10, false);
-		audio_sound_gain(snd_resultado_ruim,o_controlador_opcoes.opcoes_volume,0);
+		audio_sound_gain(snd_resultado_ruim,1,0);
 	} else {
 		audio_resume_sound(snd_resultado_ruim);
-		audio_sound_gain(snd_resultado_ruim,o_controlador_opcoes.opcoes_volume,0);
+		audio_sound_gain(snd_resultado_ruim,1,0);
 	}
 } else if (_resultado_index <= 3) { // Bom ou Excelente
     frase_escolhida = frases_boas[irandom(array_length(frases_boas) - 1)];
 	if(!audio_is_playing(snd_resultado_bom)){
 		audio_play_sound(snd_resultado_bom, 10, false);
-		audio_sound_gain(snd_resultado_bom,o_controlador_opcoes.opcoes_volume,0);
+		audio_sound_gain(snd_resultado_bom,1,0);
 	} else {
 		audio_resume_sound(snd_resultado_bom);
 		audio_sound_gain(snd_resultado_bom,1,0);
@@ -113,10 +113,10 @@ if (_resultado_index <= 1) { // Falha ou Aceitável
     frase_escolhida = frases_otimas[irandom(array_length(frases_otimas) - 1)];
 	if(!audio_is_playing(snd_resultado_bom)){
 		audio_play_sound(snd_resultado_bom, 10, false);
-		audio_sound_gain(snd_resultado_bom,o_controlador_opcoes.opcoes_volume,0);
+		audio_sound_gain(snd_resultado_bom,1,0);
 	} else {
 		audio_resume_sound(snd_resultado_bom);
-		audio_sound_gain(snd_resultado_bom,o_controlador_opcoes.opcoes_volume,0);
+		audio_sound_gain(snd_resultado_bom,1,0);
 	}
 }
 
