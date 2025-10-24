@@ -24,10 +24,3 @@ pattern_index = 0;
 
 // Inicia o alarme para a primeira nota
 alarm[0] = 60;
-
-switch (o_controlador_geral.fase_atual)
-{
-	case 0:
-	audio_play_sound(MusicaDificuldadeFacil,10,true);
-	break;
-	}

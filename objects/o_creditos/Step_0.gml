@@ -1,8 +1,8 @@
 //Define a rolagem do texto
-y_pos -= scroll_speed;
+y_pos -= scroll_speed / 2;
 
 // Verifica se os créditos já passaram completamente
-if (y_pos < -string_height_ext(credit_text, line_height, 2280) ) {
+if (y_pos < -string_height_ext(credit_text, line_height, 1080) ) {
     room_goto(rm_menu);
 } 
 
