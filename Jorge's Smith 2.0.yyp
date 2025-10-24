@@ -38,7 +38,6 @@
     {"id":{"name":"f_padrao_pequena","path":"fonts/f_padrao_pequena/f_padrao_pequena.yy",},},
     {"id":{"name":"f_padrao","path":"fonts/f_padrao/f_padrao.yy",},},
     {"id":{"name":"o_audio_manager","path":"objects/o_audio_manager/o_audio_manager.yy",},},
-    {"id":{"name":"o_background_manager","path":"objects/o_background_manager/o_background_manager.yy",},},
     {"id":{"name":"o_background_manajer_forja","path":"objects/o_background_manajer_forja/o_background_manajer_forja.yy",},},
     {"id":{"name":"o_bigorna","path":"objects/o_bigorna/o_bigorna.yy",},},
     {"id":{"name":"o_buttons_forja","path":"objects/o_buttons_forja/o_buttons_forja.yy",},},

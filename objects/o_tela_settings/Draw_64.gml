@@ -59,7 +59,7 @@ draw_text_ext(_texto_x, _texto_y, _texto_instrucoes, 35, _texto_largura_max);
 draw_set_halign(fa_center);
 draw_set_valign(fa_middle); // Centraliza o prompt verticalmente
 
-var _prompt_text = "Pressione ENTER para começar";
+var _prompt_text = "Pressione ENTER ou ESPAÇO para começar";
 var _prompt_y = _box_y + _box_altura - 60; // Posição relativa à base do painel
 
 // --- Lógica da Caixa Pulsante ---
