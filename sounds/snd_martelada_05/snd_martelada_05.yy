@@ -21,5 +21,5 @@
   "sampleRate":44100,
   "soundFile":"snd_martelada_05.wav",
   "type":0,
-  "volume":0.5,
+  "volume":0.2,
 }

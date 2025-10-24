@@ -122,5 +122,23 @@ credit_text = "CREDITOS \n"+
 "Data de Aquisição: 22/10/2025 \n" + 
 
 "\n_____________________________________________________ \n" +
-"5. RECOMENDAÇÃO \n" +
+
+"5. MÚSICAS E ARRANJOS \n" +
+"Todas as melodias das FASES são de domínio público (Séculos X-XIV). \n\n" +
+"Fase 1 Adaga: Istampitta Ghaetta.\n" +
+"Compositor: Desconhecido.\n" +
+"Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
+
+"Fase 2 Lança: Des Oge Mais Quer' Eu Trobar Medieval Tunes Vol.1 (6 of 12) (Trecho)\n" +
+"Compositor: Desconhecido.\n" +
+"Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
+
+"Fase 3 Espada: Des Oge Mais Quer' Eu Trobar Medieval Tunes Vol.1 (6 of 12) (Trecho)\n" +
+"Compositor: Desconhecido.\n" +
+"Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
+
+"\n_____________________________________________________ \n" +
+"6. RECOMENDAÇÃO \n" +
 "É altamente recomendável que o desenvolvedor mantenha uma cópia do arquivo original da licença e dos termos de uso do asset em seu sistema de gerenciamento de arquivos.";
+
+
