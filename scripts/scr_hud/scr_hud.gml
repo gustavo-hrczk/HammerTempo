@@ -279,9 +279,10 @@ function hud_draw() {
     // JULGAMENTOS — sobem a partir da base do bloco e somem no caminho
     // ---------------------------------------------------------------
     var _jx = HUD_BLOCO_X + (HUD_BLOCO_W / 2);
-    // 28 px abaixo da base do bloco. É o limite: o corredor das notas começa em
-    // y = 515 e o texto tem 30 px, então a origem não pode passar de 500.
-    var _jy_base = HUD_BLOCO_Y + HUD_BLOCO_H + 28;
+    // 30 px abaixo da base do bloco. O corredor das notas começa em y = 515 e o
+    // texto tem 30 px de altura, então a borda de baixo encosta nele por 2 px —
+    // o limite prático de quanto a origem pode descer.
+    var _jy_base = HUD_BLOCO_Y + HUD_BLOCO_H + 30;
 
     draw_set_font(f_padrao);
 
@@ -292,7 +293,7 @@ function hud_draw() {
         // sobe rápido e vai freando. A distância é curta de propósito: subindo
         // demais o texto atravessava o bloco inteiro e perdia a âncora visual.
         // O erro afunda pouco, só o suficiente para a direção marcar a falha.
-        var _distancia = _j.sobe ? 40 : 18;
+        var _distancia = _j.sobe ? 33 : 16;
         var _desloca = _distancia * (1 - power(1 - _prog, 2));
         if (_j.sobe) _desloca = -_desloca;
 
