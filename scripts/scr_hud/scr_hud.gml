@@ -20,6 +20,9 @@
 /// Combo só é anunciado a partir daqui.
 #macro HUD_COMBO_MINIMO 5
 
+/// Topo da rampa de cor do combo: daqui para cima a cor pulsa.
+#macro HUD_COMBO_MAXIMO 45
+
 /// Texto com contorno preto, legível sobre o céu e sobre o painel.
 ///
 /// Regra rígida deste projeto: **fonte de pixel só aceita escala inteira**. Escala
@@ -191,7 +194,15 @@ function hud_cor_combo(_combo) {
     var _brasa   = make_colour_rgb(168, 40, 16);   // 4,86:1
     var _carmim  = make_colour_rgb(158, 22, 40);   // 5,57:1  - núcleo incandescente
 
-    if (_combo >= 45) return _carmim;
+    // No topo da rampa não há mais para onde esquentar, então a cor passa a
+    // pulsar de leve — o jogador percebe que chegou ao máximo. O pico do pulso
+    // foi medido em 5,03:1 de contraste, bem acima do mínimo de 4,5:1.
+    if (_combo >= HUD_COMBO_MAXIMO) {
+        var _pico = make_colour_rgb(169, 28, 35);
+        var _pulso = (sin(current_time * 0.006) + 1) / 2;
+        return merge_colour(_carmim, _pico, _pulso);
+    }
+
     if (_combo >= 30) return merge_colour(_brasa, _carmim, (_combo - 30) / 15);
     if (_combo >= 15) return merge_colour(_cobre, _brasa, (_combo - 15) / 15);
     return merge_colour(_terra, _cobre, (_combo - HUD_COMBO_MINIMO) / 10);
@@ -276,9 +287,10 @@ function hud_draw() {
         var _j = global.hud_julgamentos[i];
         var _prog = _j.timer / _j.dur;
 
-        // sobe rápido e vai freando; o erro afunda pouco, só o suficiente para a
-        // direção do movimento distinguir falha de acerto
-        var _distancia = _j.sobe ? 70 : 20;
+        // sobe rápido e vai freando. A distância é curta de propósito: subindo
+        // demais o texto atravessava o bloco inteiro e perdia a âncora visual.
+        // O erro afunda pouco, só o suficiente para a direção marcar a falha.
+        var _distancia = _j.sobe ? 40 : 18;
         var _desloca = _distancia * (1 - power(1 - _prog, 2));
         if (_j.sobe) _desloca = -_desloca;
 
