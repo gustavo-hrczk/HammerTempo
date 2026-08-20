@@ -18,9 +18,10 @@ enum MINIGAME {
 
 /// Estados do fade universal (o_transicao).
 enum FADE {
-    IN,   // de preto para transparente (revelando a sala)
-    OUT,  // de transparente para preto (escondendo a sala)
-    IDLE  // nenhuma transição ativa
+    IN,     // de preto para transparente (revelando a sala)
+    OUT,    // de transparente para preto (escondendo a sala)
+    IDLE,   // nenhuma transição ativa
+    ESPERA  // tela preta parada, o "respiro" entre uma sala e outra
 }
 
 /// Estados de animação do ferreiro (o_ferreiro).

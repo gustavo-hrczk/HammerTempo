@@ -68,14 +68,15 @@ function hud_texto_painel(_x, _y, _texto, _cor, _fonte = -1, _halign = fa_left) 
 }
 
 /// Barra horizontal simples, com moldura escura.
-function hud_barra(_x, _y, _largura, _altura, _fracao, _cor_a, _cor_b) {
+function hud_barra(_x, _y, _largura, _altura, _fracao, _cor_a, _cor_b, _alpha = 1) {
     _fracao = clamp(_fracao, 0, 1);
 
-    draw_set_alpha(0.55);
+    draw_set_alpha(0.55 * _alpha);
     draw_set_color(c_black);
     draw_rectangle(_x, _y, _x + _largura, _y + _altura, false);
     draw_set_alpha(1);
 
+    draw_set_alpha(_alpha);
     if (_fracao > 0) {
         draw_rectangle_colour(_x, _y, _x + (_largura * _fracao), _y + _altura,
                               _cor_a, _cor_b, _cor_b, _cor_a, false);
@@ -83,6 +84,7 @@ function hud_barra(_x, _y, _largura, _altura, _fracao, _cor_a, _cor_b) {
 
     draw_set_color(c_black);
     draw_rectangle(_x, _y, _x + _largura, _y + _altura, true);
+    draw_set_alpha(1);
 }
 
 /// Prepara as variáveis de animação do HUD. Chamado pelo controlador geral.
@@ -97,6 +99,7 @@ function hud_init() {
     global.hud_combo_quebra = 0;
     global.hud_fase_timer = 0;
     global.hud_aviso_pulso = 0;
+    global.hud_entrada = 0;
 }
 
 /// Reinicia o HUD no começo de cada partida.
@@ -109,11 +112,16 @@ function hud_resetar() {
     global.hud_combo_exibido = 0;
     global.hud_combo_quebra = 0;
     global.hud_fase_timer = 0;
+    global.hud_entrada = 0;
 }
 
 /// Anima os valores do HUD. Chamado uma vez por frame durante a partida.
 function hud_update() {
     var _ctrl = o_controlador_geral;
+
+    // O HUD e os trilhos entram em fade quando a contagem termina, em vez de
+    // aparecerem de uma vez junto com a primeira nota.
+    global.hud_entrada = min(1, global.hud_entrada + (1 / (room_speed * 0.45)));
 
     // pontuação sobe suavemente até o valor real
     var _alvo = _ctrl.pontuacao;
@@ -214,7 +222,10 @@ function hud_draw() {
     var _fase = _ctrl.fases_data[_ctrl.fase_atual];
     var _gw = display_get_gui_width();
 
+    var _entrada = global.hud_entrada;
+
     draw_set_font(f_padrao);
+    draw_set_alpha(_entrada);
 
     // ---------------------------------------------------------------
     // BLOCO PRINCIPAL — mesmo painel usado nos menus, para o HUD falar
@@ -234,11 +245,11 @@ function hud_draw() {
         var _dur = room_speed * 0.7;
         var _prog = 1 - (global.hud_ganho_timer / _dur);
 
-        draw_set_alpha(1 - (_prog * _prog));
+        draw_set_alpha((1 - (_prog * _prog)) * _entrada);
         hud_texto_painel(_dir, HUD_BLOCO_Y + 14 - (_prog * 22),
                          "+" + string(global.hud_ganho_valor),
                          global.hud_ganho_cor, f_padrao, fa_right);
-        draw_set_alpha(1);
+        draw_set_alpha(_entrada);
     }
 
     var _acertos = _ctrl.stats_acertos_perfeitos + _ctrl.stats_acertos_otimos + _ctrl.stats_acertos_bons;
@@ -248,10 +259,10 @@ function hud_draw() {
     hud_texto_painel(_dir, HUD_BLOCO_Y + 72, string(round(_precisao)) + "%", _tinta, f_padrao, fa_right);
 
     // linha separando os dados fixos do combo
-    draw_set_alpha(0.25);
+    draw_set_alpha(0.25 * _entrada);
     draw_set_color(_tinta);
     draw_line(_esq, HUD_BLOCO_Y + 86, _dir, HUD_BLOCO_Y + 86);
-    draw_set_alpha(1);
+    draw_set_alpha(_entrada);
 
     // combo — só existe a partir de HUD_COMBO_MINIMO acertos seguidos
     var _combo_x = HUD_BLOCO_X + (HUD_BLOCO_W / 2);
@@ -267,12 +278,12 @@ function hud_draw() {
         var _qprog = 1 - (global.hud_combo_quebra / _qdur);
         var _tremor = (1 - _qprog) * 5;
 
-        draw_set_alpha(1 - _qprog);
+        draw_set_alpha((1 - _qprog) * _entrada);
         hud_texto_painel(_combo_x + random_range(-_tremor, _tremor),
                          _combo_y + random_range(-_tremor, _tremor),
                          "Combo x" + string(global.hud_combo_exibido),
                          make_colour_rgb(120, 105, 95), f_padrao, fa_center);
-        draw_set_alpha(1);
+        draw_set_alpha(_entrada);
     }
 
     // ---------------------------------------------------------------
@@ -303,7 +314,7 @@ function hud_draw() {
         // clarão de cor nos primeiros frames
         var _cor = (_prog < 0.12) ? merge_colour(_j.cor, c_white, 0.55) : _j.cor;
 
-        draw_set_alpha(_alpha);
+        draw_set_alpha(_alpha * _entrada);
         hud_texto(_jx + _j.desvio_x, round(_jy_base + _desloca), _j.texto, _cor, 1);
     }
 
@@ -318,7 +329,7 @@ function hud_draw() {
             ? 1
             : 1 - ((global.hud_fase_timer - _fade_inicio) / room_speed);
 
-        draw_set_alpha(_alpha);
+        draw_set_alpha(_alpha * _entrada);
         draw_set_font(f_padrao);
         hud_texto(_gw / 2, 40, string_upper(_fase.nome), c_white, 1);
         draw_set_font(f_padrao_pequena);
@@ -333,7 +344,7 @@ function hud_draw() {
     if (instance_exists(o_spawner_ritmo) && o_spawner_ritmo.duracao_total > 0) {
         _progresso = 1 - (o_spawner_ritmo.minha_duracao / o_spawner_ritmo.duracao_total);
     }
-    hud_barra(300, 708, 680, 10, _progresso, make_colour_rgb(255, 122, 69), c_yellow);
+    hud_barra(300, 708, 680, 10, _progresso, make_colour_rgb(255, 122, 69), c_yellow, _entrada);
 
     // ---------------------------------------------------------------
     // AVISO DE FORJA ESFRIANDO — só quando falta 1 erro para falhar
@@ -342,7 +353,7 @@ function hud_draw() {
     if (_ctrl.stats_sequencia_errada >= _limite - 1 && _ctrl.stats_sequencia_errada < _limite) {
         var _pulso = 0.22 + 0.22 * ((sin(global.hud_aviso_pulso) + 1) / 2);
 
-        draw_set_alpha(_pulso);
+        draw_set_alpha(_pulso * _entrada);
         draw_set_color(make_colour_rgb(200, 30, 20));
         draw_rectangle(0, 0, _gw, 46, false);
         draw_rectangle(0, 0, 54, display_get_gui_height(), false);

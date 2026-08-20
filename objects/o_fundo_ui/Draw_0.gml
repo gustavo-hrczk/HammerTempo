@@ -15,7 +15,8 @@ var _offset = (_lane_altura - _altura) / 2;
 
 var _x_inicio = RITMO_LINHA_X;          // nasce na zona de acerto
 var _x_fim = 820;                       // e se desfaz bem antes da borda direita
-var _alpha_inicio = 0.10;
+// segue o mesmo fade de entrada do HUD, para nada aparecer de uma vez só
+var _alpha_inicio = 0.10 * global.hud_entrada;
 var _cor = c_black;
 
 for (var i = 0; i < array_length(_lanes); i++) {

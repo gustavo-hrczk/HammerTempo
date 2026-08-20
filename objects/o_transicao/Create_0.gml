@@ -11,11 +11,18 @@ alpha = 1;        // Começa totalmente preto
 velocidade = 1 / FLUXO_FADE_FRAMES; // 250 ms, padrão de todas as telas
 proxima_sala = -1;
 
+// Respiro opcional: quantos frames a tela fica parada no preto entre uma sala e
+// outra. Zero na maioria das trocas, para o ritmo continuar rápido; a abertura
+// usa um valor maior, porque ali a pausa é parte da apresentação.
+espera_frames = 0;
+espera_timer = 0;
+
 // Função para ser chamada por outros objetos para iniciar uma transição
-mudar_de_sala = function(sala_alvo) {
+mudar_de_sala = function(sala_alvo, _espera = 0) {
     if (estado == FADE.IDLE) {
         estado = FADE.OUT;
         proxima_sala = sala_alvo;
+        espera_frames = _espera;
     }
 }
 
