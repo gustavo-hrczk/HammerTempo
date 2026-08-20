@@ -10,8 +10,8 @@ var _cx = display_get_gui_width() / 2;
 var _col_esq = _cx - 300;
 var _col_dir = _cx + 300;
 
-var _linha1 = 524;
-var _linha2 = 556;
+var _linha1 = 522;
+var _linha2 = 558;
 
 var _perfeitas = o_controlador_geral.stats_acertos_perfeitos;
 var _otimas = o_controlador_geral.stats_acertos_otimos;
@@ -26,7 +26,9 @@ draw_set_valign(fa_middle);
 draw_set_color(c_black);
 
 // --- GRADE DE ESTATÍSTICAS ---
-draw_set_font(f_padrao_pequena);
+// Em f_padrao: com a grade 2x3 o espaço permite o tamanho cheio, e os números
+// são a informação que o jogador mais quer ler nesta tela.
+draw_set_font(f_padrao);
 
 draw_text(_col_esq, _linha1, "Perfeitas: " + string(_perfeitas));
 draw_text(_cx,      _linha1, "Ótimas: " + string(_otimas));

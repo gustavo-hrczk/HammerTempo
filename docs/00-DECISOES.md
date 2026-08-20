@@ -205,3 +205,32 @@ estourar o painel — a frase de feedback invadia a caixa do prompt em 7 px. Vir
 linhas por três colunas em `f_padrao_pequena`: julgamentos lado a lado em cima, erros/total/
 precisão embaixo. Economiza uma linha inteira, agrupa as três faixas visualmente e ainda exibe a
 precisão, que antes só existia durante a partida.
+
+**D-37 · Cascata de julgamentos em fila.** O slot único era substituído a cada acerto e, como o
+jogador acerta em sequência — é a proposta do jogo —, o texto era trocado no meio da animação e
+aos olhos virava tremulação. Cada acerto passou a empilhar um item próprio: nasce em `y = 502`,
+sobe 33 px com desaceleração e some ao longo de 0,7 s, com teto de 3 simultâneos. Como cada um
+nasce num instante diferente, ficam em alturas diferentes e a sobreposição vira leitura de
+sequência. O erro afunda 16 px em vez de subir.
+
+**D-38 · Ganho de efeito medido, não estimado.** As amostras de martelada estão em ~−11 dBFS RMS,
+muito mais quentes que as faixas das fases. A primeira tentativa (ganho 0,55) equivalia a apenas
+−5,2 dB e foi imperceptível. Volume aparente cai pela metade a cada ~−10 dB, então o valor ficou
+em **0,32 (−9,9 dB)**. Duas assimetrias herdadas ficam anotadas: `snd_menu_confirm` é o mesmo
+áudio de `snd_martelada_01`, e a navegação de menu está 13 dB abaixo da confirmação. As duas se
+resolvem de vez quando existirem volumes separados de música e efeitos.
+
+**D-39 · Respiro entre telas, por transição.** O `o_transicao` ganhou o estado `ESPERA`: a tela
+pode ficar parada no preto entre uma sala e outra. Fica em zero na maioria das trocas — a decisão
+de "fade rápido e uniforme" continua valendo para menu ↔ fase — e só a abertura usa 0,35 s, onde
+a pausa é parte da apresentação.
+
+**D-40 · Nada aparece de uma vez.** O tema do menu entra com crossfade de 1,2 s (a sala carrega
+com a tela ainda preta, e o volume cheio no escuro soava abrupto), e HUD, trilhos e barra de
+progresso entram em fade de 0,45 s quando a contagem termina.
+
+**D-41 · A IDE do GameMaker desfaz edições externas.** Com o projeto aberto, a IDE reescreve
+arquivos a partir do buffer dela e apaga alterações feitas por fora — aconteceu com
+`o_controlador_geral/Draw_64.gml`, que voltou sozinho ao estado anterior e nem entrou no commit.
+Enquanto houver edição de código por fora, ou o projeto fica fechado na IDE, ou é preciso
+recarregar antes de testar. Toda alteração passou a ser verificada no disco depois de escrita.
