@@ -25,7 +25,7 @@ frases_boas = [
     "O ritmo está surgindo, continue aquecendo o martelo!",
     "Boa batida! o mestre ferreiro ficaria orgulhoso.",
     "Sente o ritmo? Ele está quase em sincronia com o fogo.",
-    "Cada golpe afina o aço… e o seu talento."
+    "Cada golpe afina o aço... e o seu talento."
 ];
 
 frases_otimas = [

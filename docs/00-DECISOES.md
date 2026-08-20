@@ -76,3 +76,55 @@ extremo (dezenas de toques por segundo, como no teste automatizado), a penalidad
 da partida. Para um jogador humano isso não acontece, e a regra é o que impede "ganhar martelando"
 quando o leaderboard entrar (Sprint 4). Se no playtest parecer punitivo demais, o número está em
 um único lugar (`o_buttons_forja/Step_0.gml`).
+
+---
+
+## Sprint 3 — UI/UX
+
+**D-13 · O HUD mora junto da margem de acerto.** A primeira proposta colocava pontuação e
+precisão no canto superior direito. Errado: o olho do jogador fica preso no canto inferior
+esquerdo, onde as notas são julgadas. Todo o bloco de informação passou para logo acima da
+margem de acerto. Também ficou registrado que **a área bege à direita não é espaço livre** —
+é o corredor por onde as notas atravessam a tela inteira.
+
+**D-14 · Moldura do HUD reaproveita o painel dos menus.** `s_menu_background_panel` esticado,
+o mesmo pergaminho do menu principal e das opções, para o HUD falar a mesma língua visual.
+A placa de madeira testada antes foi descartada.
+
+**D-15 · Textos do painel em tamanho nativo da fonte.** Nada de `draw_text_transformed` nos
+valores de pontuação e precisão: fonte de pixel escalada perde o traçado. Rótulos em
+`f_padrao_pequena`, valores em `f_padrao`, ambos em escala 1. O combo é a única exceção — ele
+pulsa de propósito, por ser o elemento que reage a cada acerto.
+
+**D-16 · Combo só a partir de 5 acertos seguidos**, rotulado "Combo xN" (só o `xN` era confuso).
+O bônus de pontos continua somando desde o primeiro acerto; o que começa em 5 é o anúncio.
+
+**D-17 · Julgamento sai da bigorna.** A ideia da cascata saindo da bigorna foi implementada e
+depois movida para logo acima do bloco de HUD, para não dividir a atenção. O erro afunda em
+vermelho enquanto os acertos sobem — a direção do movimento distingue sucesso de falha.
+
+**D-18 · Acerto = absorção pelo alvo.** O antigo "sobe e desvanece" era lento e datado. Agora a
+nota encolhe e desliza para dentro do alvo em ~6 frames, e o alvo dá um pop de escala. A reação
+acontece onde o olho já está.
+
+**D-19 · Trilhos por lane em degradê contínuo.** Alpha 0 do lado direito, onde a nota nasce,
+subindo até 10% junto ao alvo. Duas versões anteriores foram descartadas: faixa cheia com alpha
+constante (pesada) e faixa segmentada (degraus visíveis de alpha). O degradê é desenhado com
+`draw_primitive` e alpha por vértice.
+
+**D-20 · Efeitos de impacto removidos, aguardando referências.** Anel de choque e tremor da
+bigorna, clarão do martelo e brilho da forja por combo foram implementados, testados e retirados
+por não terem ficado bons. A faísca do acerto perfeito (que já existia desde a jam) e o
+afundamento do alvo continuam.
+
+**D-21 · Pitch da martelada revertido.** Variar o tom por julgamento e por combo descaracterizou
+o som. `play_martelada_sequencial_sfx()` voltou ao comportamento original.
+
+**D-22 · Tamanho de janela virou opção no menu** (640x360 / 1024x576 / 1280x720, mais tela
+cheia), padrão 1024x576, salvo em disco. O **espaço de design continua 1280x720** em todos os
+casos: só a janela encolhe e o jogo é escalado para caber nela.
+
+**D-23 · Limite de caracteres da fonte.** A Kobold 7 está compilada com as faixas 32–127 e
+192–255. Acentuadas funcionam; `·`, `…`, `º`, `ª` e afins viram um quadrado vazio. Ampliar as
+faixas exigiria a fonte instalada em toda máquina que compila, então a regra é **não usar esses
+caracteres**. Duas ocorrências foram corrigidas (uma delas vinha da jam, na tela de resultado).

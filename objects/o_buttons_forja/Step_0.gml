@@ -6,6 +6,10 @@ if (o_controlador_geral.pausa) {
     exit;
 }
 
+// --- decaimento do feedback visual ---
+pop = max(0, pop - 0.14);
+afundamento = max(0, afundamento - 0.8);
+
 // =================================================================
 // PARTE 1: ANIMAÇÃO DO ALVO ENQUANTO A AÇÃO ESTÁ PRESSIONADA
 // =================================================================
@@ -24,6 +28,8 @@ if (input_held(minha_acao)) {
 if (!input_pressed(minha_acao)) {
     exit;
 }
+
+afundamento = 5;
 
 var _nota = ritmo_nota_alcancavel(meu_tipo);
 
@@ -47,22 +53,34 @@ o_controlador_geral.stats_sequencia_errada = 0;
 switch (_julgamento) {
 
     case JULGAMENTO.PERFEITO:
-        o_controlador_geral.pontuacao += 100 + (10 * o_controlador_geral.stats_sequencia);
+        var _ganho = 100 + (10 * o_controlador_geral.stats_sequencia);
+        o_controlador_geral.pontuacao += _ganho;
         o_controlador_geral.stats_sequencia++;
         o_controlador_geral.stats_acertos_perfeitos++;
-        _nota.iniciar_fade_final(c_silver, true);
+
+        _nota.absorver();
+        pop = 1;
         o_ferreiro.iniciar_martelada_perfeita();
         o_audio_manager.play_martelada_sequencial_sfx();
+
+        julgamento_criar("PERFEITO!", c_yellow, true, _ganho);
+
         debug_registrar_julgamento("PERFEITO", _erro_ms);
         break;
 
     case JULGAMENTO.BOM:
-        o_controlador_geral.pontuacao += 50 + (5 * o_controlador_geral.stats_sequencia);
+        var _ganho_bom = 50 + (5 * o_controlador_geral.stats_sequencia);
+        o_controlador_geral.pontuacao += _ganho_bom;
         o_controlador_geral.stats_sequencia++;
         o_controlador_geral.stats_acertos_bons++;
-        _nota.iniciar_fade_final(c_silver, true);
+
+        _nota.absorver();
+        pop = 0.7;
         o_ferreiro.iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
+
+        julgamento_criar("BOM!", make_colour_rgb(205, 235, 165), true, _ganho_bom);
+
         debug_registrar_julgamento("BOM", _erro_ms);
         break;
 }

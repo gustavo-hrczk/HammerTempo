@@ -1,24 +1,25 @@
 velocidade = 5;
 tipo_seta = 0;
 image_speed = 0;
-esta_morrendo = false;
-sobe_ao_morrer = false;
+escala = 1;
 
-// Função para iniciar o fade final
-iniciar_fade_final = function(cor, _deve_subir) {
-    if (esta_morrendo == false) {
-        esta_morrendo = true;
-        image_blend = cor;
-        sobe_ao_morrer = _deve_subir;
-        if (_deve_subir) {
-            velocidade = 0;
-        }
-    }
+// 0 = viva, 1 = absorvida pelo alvo (acerto), 2 = perdida (erro)
+modo = 0;
+
+/// Acerto: a nota é sugada para dentro do alvo, encolhendo em poucos frames.
+/// Substitui o antigo "sobe e desvanece", que era lento e tirava o olho da margem.
+absorver = function() {
+    if (modo != 0) exit;
+    modo = 1;
+    velocidade = 0;
+    image_blend = c_white;
 }
 
-// Nota perdida: contabiliza o erro uma única vez.
+/// Nota perdida: contabiliza o erro uma única vez e sai de cena em vermelho.
 registrar_erro = function() {
-    if (esta_morrendo) exit;
+    if (modo != 0) exit;
+    modo = 2;
+    image_blend = c_red;
 
     o_controlador_geral.stats_erros++;
     o_controlador_geral.pontuacao = max(0, o_controlador_geral.pontuacao - 50);
@@ -26,8 +27,8 @@ registrar_erro = function() {
     o_controlador_geral.stats_sequencia = 0;
 
     if (instance_exists(o_ferreiro)) {
-        o_ferreiro.aplicar_shade_erro();
+        o_ferreiro.aplicar_dano();
     }
 
-    iniciar_fade_final(c_red, false);
+    julgamento_criar("ERRO", make_colour_rgb(235, 95, 75), false);
 }

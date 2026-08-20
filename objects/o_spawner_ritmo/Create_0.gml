@@ -5,6 +5,7 @@ var _dados_fase = o_controlador_geral.fases_data[o_controlador_geral.fase_atual]
 minha_duracao = (_dados_fase.duracao_segundos == -1) ? -1 : _dados_fase.duracao_segundos * room_speed;
 velocidade_das_notas = _dados_fase.velocidade_notas;
 tipos_permitidos = _dados_fase.tipos_seta_permitidos;
+duracao_total = minha_duracao; // usada pela barra de progresso do HUD
 is_endless_mode = (minha_duracao == -1);
 dificuldade_level = 0;
 dificuldade_timer = 15 * room_speed;
@@ -15,7 +16,7 @@ esta_finalizando = false;
 intervalo_min = 60;
 intervalo_max = 100;
 
-o_audio_manager.play_music(_dados_fase.musica_fase);
+// A música já entrou em crossfade na contagem regressiva, pelo controlador geral.
 
 // --- RITMO ---
 // Calcula quantos frames dura uma batida completa, com base no BPM.

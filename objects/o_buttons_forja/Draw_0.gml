@@ -1,7 +1,14 @@
-// Este objeto só deve se desenhar se o jogo estiver no estado RITMO.
-// Agora ele verifica o estado pelo nome, não pelo número.
-if (o_controlador_geral.estado_jogo == MINIGAME.RITMO) {
-
-    // draw_self() é o comando que diz "desenhe o meu próprio sprite".
-    draw_self();
+if (!instance_exists(o_controlador_geral) || o_controlador_geral.estado_jogo != MINIGAME.RITMO) {
+    exit;
 }
+
+// O alvo afunda quando pressionado e dá um pop de escala ao absorver a nota:
+// é ele quem reage ao acerto, mantendo o olho na margem.
+var _s = 1 + (pop * 0.22);
+var _w = sprite_get_width(sprite_index);
+var _h = sprite_get_height(sprite_index);
+
+var _dx = x + (_w * (1 - _s)) / 2;
+var _dy = y + afundamento + (_h * (1 - _s)) / 2;
+
+draw_sprite_ext(sprite_index, image_index, _dx, _dy, _s, _s, 0, c_white, 1);

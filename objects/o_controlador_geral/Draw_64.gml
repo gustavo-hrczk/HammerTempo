@@ -20,8 +20,7 @@ switch (estado_jogo) {
         break;
 
     case MINIGAME.RITMO:
-        // O HUD de partida (pontuação, combo, julgamento, integridade da forja e
-        // progresso) é a entrega principal da Sprint 3 — auditoria UI-02.
+        hud_draw();
         break;
 }
 

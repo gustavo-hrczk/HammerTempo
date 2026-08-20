@@ -16,7 +16,7 @@ var _option_gap = 45;
 var _cy = (display_get_gui_height() / 2) + 140;
 
 var _box_largura = 300;
-var _box_altura = 150;
+var _box_altura = 195;
 var _box_x = _cx - (_box_largura / 2);
 var _box_y = _cy - (_box_altura / 2);
 
@@ -38,8 +38,9 @@ for (var i = 0; i < _total_opcoes; i++) {
     var _texto = opcoes_menu[i];
 
     switch (i) {
-        case 0: _texto += ":      " + string(floor(opcoes_volume)); break;
-        case 1: _texto += opcoes_tela_cheia ? ":      Sim" : ":      Não"; break;
+        case 0: _texto += ":  " + string(floor(opcoes_volume)); break;
+        case 1: _texto += ":  " + string(JANELA_TAMANHOS[opcoes_janela][0]) + "x" + string(JANELA_TAMANHOS[opcoes_janela][1]); break;
+        case 2: _texto += opcoes_tela_cheia ? ":  Sim" : ":  Não"; break;
     }
 
     if (i == opcao_selecionada) {

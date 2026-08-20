@@ -1,5 +1,5 @@
 // Se a transição universal estiver acontecendo, o menu não aceita input do jogador.
-if (instance_exists(o_transicao) && o_transicao.estado == FADE.OUT) {
+if (fluxo_ocupado()) {
     exit;
 }
 
@@ -36,15 +36,15 @@ if (input_pressed(ACAO.CONFIRMAR)) {
             } else {
                 o_controlador_geral.estado_jogo = MINIGAME.SELECAO_FASE;
             }
-            room_goto(rm_forja);
+            ir_para_sala(rm_forja);
             break;
 
         case 1: // Opções
-            room_goto(rm_opcoes);
+            ir_para_sala(rm_opcoes);
             break;
 
         case 2: // Créditos
-            room_goto(rm_creditos);
+            ir_para_sala(rm_creditos);
             break;
 
         case 3: // Sair do Jogo

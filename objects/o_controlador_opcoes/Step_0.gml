@@ -1,4 +1,4 @@
-if (room != rm_opcoes) {
+if (room != rm_opcoes || fluxo_ocupado()) {
     exit;
 }
 
@@ -7,7 +7,7 @@ if (room != rm_opcoes) {
 if (input_pressed(ACAO.VOLTAR)) {
     save_aplicar_opcoes();
     o_audio_manager.play_sfx(snd_menu_return);
-    room_goto(rm_menu);
+    ir_para_sala(rm_menu);
     exit;
 }
 
@@ -42,21 +42,29 @@ switch (opcao_selecionada) {
         }
         break;
 
-    case 1: // Tela cheia
+    case 1: // Tamanho da janela
+        if (_ajuste != 0) {
+            var _total = array_length(JANELA_TAMANHOS);
+            opcoes_janela = (opcoes_janela + _ajuste + _total) mod _total;
+        }
+        break;
+
+    case 2: // Tela cheia
         if (_ajuste != 0) {
             opcoes_tela_cheia = !opcoes_tela_cheia;
         }
         break;
 
-    case 2: // Aplicar
+    case 3: // Aplicar
         if (input_pressed(ACAO.CONFIRMAR)) {
             save_set_opcao("volume", opcoes_volume);
+            save_set_opcao("janela", opcoes_janela);
             save_set_opcao("tela_cheia", opcoes_tela_cheia);
             save_gravar();
             save_aplicar_opcoes();
 
             o_audio_manager.play_sfx(snd_menu_confirm);
-            room_goto(rm_menu);
+            ir_para_sala(rm_menu);
         }
         break;
 }

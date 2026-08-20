@@ -6,3 +6,8 @@ meu_tipo = -1;
 // Inicia a animação parada no primeiro frame.
 image_speed = 0;
 image_index = 0;
+
+// Feedback de toque: o alvo afunda ao ser pressionado e dá um pop ao absorver
+// uma nota.
+pop = 0;
+afundamento = 0;

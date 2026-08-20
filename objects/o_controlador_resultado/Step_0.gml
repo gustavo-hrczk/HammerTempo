@@ -9,5 +9,5 @@ if (input_pressed(ACAO.CONFIRMAR)) {
     o_controlador_geral.resetar_estatisticas();
 
     instance_destroy();
-    room_goto(rm_forja);
+    ir_para_sala(rm_forja);
 }

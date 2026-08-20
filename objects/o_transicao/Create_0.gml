@@ -8,7 +8,7 @@ if (instance_number(object_index) > 1) {
 
 estado = FADE.IN; // Sempre começa fazendo fade-in na primeira sala
 alpha = 1;        // Começa totalmente preto
-velocidade = 0.02;
+velocidade = 1 / FLUXO_FADE_FRAMES; // 250 ms, padrão de todas as telas
 proxima_sala = -1;
 
 // Função para ser chamada por outros objetos para iniciar uma transição

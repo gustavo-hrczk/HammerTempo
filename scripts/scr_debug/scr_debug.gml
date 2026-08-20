@@ -41,7 +41,10 @@ function debug_draw() {
             "  audio: " + string(instance_number(o_audio_manager)) +
             "  fundo: " + string(instance_number(o_background_manajer_forja)),
         "estado: " + string(o_controlador_geral.estado_jogo),
-        "notas vivas: " + string(instance_number(o_nota_seta)),
+        "notas vivas: " + string(instance_number(o_nota_seta)) +
+            "  telas: tut=" + string(instance_number(o_tela_tutorial)) +
+            " sel=" + string(instance_number(o_seletor_fases)) +
+            " res=" + string(instance_number(o_controlador_resultado)),
         "pontos: " + string(o_controlador_geral.pontuacao) +
             "  combo: " + string(o_controlador_geral.stats_sequencia) +
             "  perfeitos: " + string(o_controlador_geral.stats_acertos_perfeitos) +

@@ -29,5 +29,7 @@ enum FERREIRO_ESTADO {
     MARTELANDO,
     COMEMORANDO,
     FALHA,
-    FALHOU_ESTATICO
+    FALHOU_ESTATICO,
+    DANO,      // frame vermelho ao perder uma nota
+    ANDANDO    // passeia pela forja fora da partida
 }

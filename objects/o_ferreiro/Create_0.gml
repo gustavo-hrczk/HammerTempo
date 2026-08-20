@@ -1,48 +1,63 @@
 estado = FERREIRO_ESTADO.IDLE;
 
-// --- FUNÇÃO PARA O "SHADE" DE ERRO (VERSÃO APRIMORADA) ---
-aplicar_shade_erro = function() {
-    if (estado == FERREIRO_ESTADO.IDLE) {
-        
-        // --- A MUDANÇA MÁGICA ESTÁ AQUI ---
-        // Cria uma nova cor misturando branco e vermelho
-        // O último valor (0.5) é a intensidade do vermelho. 0.3 = sutil, 0.7 = forte.
-        var _cor_tint = merge_color(c_white, c_red, 0.5); // <<< AJUSTE AQUI a intensidade
-        
-        // Pinta o sprite atual com a nossa nova cor translúcida
-        image_blend = _cor_tint;
-        
-        // Aciona o Alarme 0 para voltar à cor normal
-        alarm[0] = room_speed * 0.2;
-    }
+// Posição de trabalho, junto à bigorna. O ócio da seleção de fase sempre termina
+// aqui antes da partida começar.
+home_x = x;
+passeio_min = x - 110;
+passeio_max = x + 30;
+indo_para_casa = false;
+
+// --- ÓCIO ORGÂNICO ---
+// Em vez de um vaivém de metrônomo, ele alterna pausas e caminhadas curtas para
+// destinos aleatórios, com tempos variados.
+ocio_timer = 60;
+ocio_destino = x;
+
+dano_timer = 0;
+
+// --- REAÇÃO AO ERRO ---
+// Usa o frame vermelho de dano que já estava no projeto e nunca tinha sido usado.
+aplicar_dano = function() {
+    if (estado == FERREIRO_ESTADO.MARTELANDO) exit;
+    if (estado == FERREIRO_ESTADO.FALHA || estado == FERREIRO_ESTADO.FALHOU_ESTATICO) exit;
+
+    estado = FERREIRO_ESTADO.DANO;
+    sprite_index = s_ferreiro_miss;
+    image_index = 0;
+    image_speed = 0;
+    image_xscale = 1;
+    dano_timer = room_speed * 0.18;
 }
 
-// Função para iniciar a martelada NORMAL (VERSÃO CORRIGIDA)
+// Função para iniciar a martelada NORMAL
 iniciar_martelada_normal = function() {
-    // A condição 'if (estado == FERREIRO_ESTADO.IDLE)' foi REMOVIDA.
-    // Agora a martelada pode ser iniciada a qualquer momento.
     estado = FERREIRO_ESTADO.MARTELANDO;
     sprite_index = s_ferreiro_martelada;
-    image_index = 0; // Força a animação a recomeçar do frame 0
+    image_index = 0;
     image_speed = 1;
+    image_xscale = 1;
+    x = home_x;
 }
 
-// Função para iniciar a martelada PERFEITA (VERSÃO CORRIGIDA)
+// Função para iniciar a martelada PERFEITA
 iniciar_martelada_perfeita = function() {
-    // A condição 'if (estado == FERREIRO_ESTADO.IDLE)' foi REMOVIDA.
     estado = FERREIRO_ESTADO.MARTELANDO;
     sprite_index = s_ferreiro_martelada;
-    image_index = 0; // Força a animação a recomeçar do frame 0
+    image_index = 0;
     image_speed = 0.8;
+    image_xscale = 1;
+    x = home_x;
 
+    // faísca no acerto perfeito, como era antes dos efeitos de impacto
     if (instance_exists(o_bigorna)) {
-        instance_create_layer(o_bigorna.x, o_bigorna.y, "Gameplay", o_faisca);
+        instance_create_layer(o_bigorna.x + 40, o_bigorna.y - 10, "Gameplay", o_faisca);
     }
 }
-	
-	// --- NOVAS FUNÇÕES DE ANIMAÇÃO DE RESULTADO ---
+
+// --- ANIMAÇÕES DE RESULTADO ---
 iniciar_comemoracao = function() {
     estado = FERREIRO_ESTADO.COMEMORANDO;
+    image_xscale = 1;
 }
 
 iniciar_animacao_falha = function() {
@@ -50,4 +65,5 @@ iniciar_animacao_falha = function() {
     sprite_index = s_ferreiro_falha;
     image_index = 0;
     image_speed = 1;
+    image_xscale = 1;
 }

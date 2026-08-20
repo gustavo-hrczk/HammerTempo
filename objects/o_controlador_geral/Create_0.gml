@@ -21,6 +21,7 @@ display_set_gui_size(1280, 720);
 
 input_init();
 debug_init();
+hud_init();
 save_carregar();
 save_aplicar_opcoes();
 
@@ -55,6 +56,7 @@ resetar_estatisticas = function() {
 
 // Variável que guarda o estado atual do jogo
 estado_jogo = MINIGAME.NENHUM; // O jogo sempre começa no menu principal
+estado_anterior = MINIGAME.NENHUM; // usado para disparar o que acontece na virada de estado
 
 // Variáveis de controle do jogo
 fase_atual = 0; // Guarda o ÍNDICE da fase selecionada

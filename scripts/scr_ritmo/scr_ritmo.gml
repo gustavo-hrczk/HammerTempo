@@ -41,7 +41,7 @@ function ritmo_nota_alcancavel(_tipo) {
     var _menor_erro = RITMO_JANELA_BOM + 1;
 
     with (o_nota_seta) {
-        if (esta_morrendo || tipo_seta != _tipo) continue;
+        if (modo != 0 || tipo_seta != _tipo) continue;
 
         var _erro = abs((x - RITMO_LINHA_X) / velocidade);
         if (_erro <= RITMO_JANELA_BOM && _erro < _menor_erro) {

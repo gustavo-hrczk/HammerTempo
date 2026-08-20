@@ -1,12 +1,12 @@
 // Este objeto só funciona no estado de seleção de fase
-if (o_controlador_geral.estado_jogo != MINIGAME.SELECAO_FASE) {
+if (o_controlador_geral.estado_jogo != MINIGAME.SELECAO_FASE || fluxo_ocupado()) {
     exit;
 }
 
 // --- RETORNO AO MENU ---
 if (input_pressed(ACAO.VOLTAR)) {
     o_audio_manager.play_sfx(snd_menu_return);
-    room_goto(rm_menu);
+    ir_para_sala(rm_menu);
     exit;
 }
 

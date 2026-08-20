@@ -12,6 +12,7 @@ function save_padrao() {
         opcoes: {
             volume: 10,        // 0 a 10
             tela_cheia: false,
+            janela: 1,         // índice em JANELA_TAMANHOS (padrão 1024x576)
             offset_ms: 0       // calibração de latência (Sprint 5)
         },
         leaderboard: {
@@ -89,12 +90,36 @@ function save_gravar() {
     }
 }
 
-/// Aplica as opções salvas ao jogo (volume e tela cheia).
+/// Tamanhos de janela oferecidos nas opções. O espaço de design continua sempre
+/// 1280x720: só a janela encolhe, e o jogo é escalado para caber nela.
+#macro JANELA_TAMANHOS [[640, 360], [1024, 576], [1280, 720]]
+
+/// Aplica as opções salvas ao jogo (volume, tamanho de janela e tela cheia).
 function save_aplicar_opcoes() {
     audio_master_gain(global.save.opcoes.volume / 10);
-    if (window_get_fullscreen() != global.save.opcoes.tela_cheia) {
-        window_set_fullscreen(global.save.opcoes.tela_cheia);
+
+    var _cheia = global.save.opcoes.tela_cheia;
+    if (window_get_fullscreen() != _cheia) {
+        window_set_fullscreen(_cheia);
     }
+
+    if (!_cheia) {
+        var _tamanhos = JANELA_TAMANHOS;
+        var _i = clamp(global.save.opcoes.janela, 0, array_length(_tamanhos) - 1);
+        var _t = _tamanhos[_i];
+
+        if (window_get_width() != _t[0] || window_get_height() != _t[1]) {
+            window_set_size(_t[0], _t[1]);
+            window_center();
+        }
+    }
+}
+
+/// Rótulo do tamanho de janela, para a tela de opções.
+function save_texto_janela() {
+    var _tamanhos = JANELA_TAMANHOS;
+    var _i = clamp(global.save.opcoes.janela, 0, array_length(_tamanhos) - 1);
+    return string(_tamanhos[_i][0]) + "x" + string(_tamanhos[_i][1]);
 }
 
 /// Atalho de leitura de uma opção.
