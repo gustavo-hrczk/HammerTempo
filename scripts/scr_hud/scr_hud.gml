@@ -279,7 +279,9 @@ function hud_draw() {
     // JULGAMENTOS — sobem a partir da base do bloco e somem no caminho
     // ---------------------------------------------------------------
     var _jx = HUD_BLOCO_X + (HUD_BLOCO_W / 2);
-    var _jy_base = HUD_BLOCO_Y + HUD_BLOCO_H + 16;
+    // 28 px abaixo da base do bloco. É o limite: o corredor das notas começa em
+    // y = 515 e o texto tem 30 px, então a origem não pode passar de 500.
+    var _jy_base = HUD_BLOCO_Y + HUD_BLOCO_H + 28;
 
     draw_set_font(f_padrao);
 

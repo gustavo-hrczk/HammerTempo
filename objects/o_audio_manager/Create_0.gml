@@ -16,9 +16,9 @@ entrando_speed = 0;
 
 // --- FUNÇÕES DE ÁUDIO ---
 
-play_sfx = function(som_asset) {
+play_sfx = function(som_asset, _ganho = 1) {
     if (audio_is_playing(som_asset)) { audio_stop_sound(som_asset); }
-    audio_sound_gain(som_asset, 1, 0);
+    audio_sound_gain(som_asset, _ganho, 0);
     audio_play_sound(som_asset, 1, false);
 }
 
@@ -102,10 +102,15 @@ sons_martelada = [
 martelada_index_atual = 0;
 martelada_direcao = 1;
 
+// As amostras de martelada são bem mais altas que as faixas das fases e estavam
+// encobrindo a música. Ponto único de ajuste até existirem volumes separados de
+// música e efeitos nas opções.
+ganho_martelada = 0.55;
+
 // Toca os sons de martelada em vai-e-vem, dando variação a cada acerto.
 // Variação de pitch foi testada e descartada: descaracterizava o som da martelada.
 play_martelada_sequencial_sfx = function() {
-    play_sfx(sons_martelada[martelada_index_atual]);
+    play_sfx(sons_martelada[martelada_index_atual], ganho_martelada);
 
     if (martelada_direcao == 1) {
         if (martelada_index_atual >= array_length(sons_martelada) - 1) {
