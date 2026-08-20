@@ -263,8 +263,11 @@ function hud_draw() {
         draw_set_font(f_padrao);
         draw_set_alpha(1 - (_jprog * _jprog));
 
+        // 26 px abaixo da base do bloco. O limite é o corredor das notas, que
+        // começa em y = 515: com a fonte de 30 px, o texto fica em 483..513 e
+        // sobe a partir daí.
         hud_texto(HUD_BLOCO_X + (HUD_BLOCO_W / 2),
-                  HUD_BLOCO_Y + HUD_BLOCO_H + 16 + _jdesloca,
+                  HUD_BLOCO_Y + HUD_BLOCO_H + 26 + _jdesloca,
                   global.hud_julg_texto, _cor_julg, 1);
 
         draw_set_alpha(1);
