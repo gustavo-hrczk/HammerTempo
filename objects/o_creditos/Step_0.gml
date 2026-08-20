@@ -7,7 +7,7 @@ if (y_pos < -string_height_ext(credit_text, line_height, 1080) ) {
 } 
 
 // Botão para pular os créditos 
-if (keyboard_check_pressed(vk_space) || keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_escape)) {
-    audio_play_sound(snd_menu_return, 10, false);
-	room_goto(rm_menu);
-} // Permite pular
+if (input_pressed(ACAO.CONFIRMAR) || input_pressed(ACAO.VOLTAR)) {
+    o_audio_manager.play_sfx(snd_menu_return);
+    room_goto(rm_menu);
+}

@@ -15,3 +15,19 @@ iniciar_fade_final = function(cor, _deve_subir) {
         }
     }
 }
+
+// Nota perdida: contabiliza o erro uma única vez.
+registrar_erro = function() {
+    if (esta_morrendo) exit;
+
+    o_controlador_geral.stats_erros++;
+    o_controlador_geral.pontuacao = max(0, o_controlador_geral.pontuacao - 50);
+    o_controlador_geral.stats_sequencia_errada++;
+    o_controlador_geral.stats_sequencia = 0;
+
+    if (instance_exists(o_ferreiro)) {
+        o_ferreiro.aplicar_shade_erro();
+    }
+
+    iniciar_fade_final(c_red, false);
+}

@@ -1,16 +1,8 @@
-// Enum para os estados do ferreiro
-enum FERRreiro_ESTADO {
-    IDLE,
-    MARTELANDO,
-    COMEMORANDO,
-	FALHA,
-	FALHOU_ESTATICO
-}
-estado = FERRreiro_ESTADO.IDLE;
+estado = FERREIRO_ESTADO.IDLE;
 
 // --- FUNÇÃO PARA O "SHADE" DE ERRO (VERSÃO APRIMORADA) ---
 aplicar_shade_erro = function() {
-    if (estado == FERRreiro_ESTADO.IDLE) {
+    if (estado == FERREIRO_ESTADO.IDLE) {
         
         // --- A MUDANÇA MÁGICA ESTÁ AQUI ---
         // Cria uma nova cor misturando branco e vermelho
@@ -27,9 +19,9 @@ aplicar_shade_erro = function() {
 
 // Função para iniciar a martelada NORMAL (VERSÃO CORRIGIDA)
 iniciar_martelada_normal = function() {
-    // A condição 'if (estado == FERRreiro_ESTADO.IDLE)' foi REMOVIDA.
+    // A condição 'if (estado == FERREIRO_ESTADO.IDLE)' foi REMOVIDA.
     // Agora a martelada pode ser iniciada a qualquer momento.
-    estado = FERRreiro_ESTADO.MARTELANDO;
+    estado = FERREIRO_ESTADO.MARTELANDO;
     sprite_index = s_ferreiro_martelada;
     image_index = 0; // Força a animação a recomeçar do frame 0
     image_speed = 1;
@@ -37,8 +29,8 @@ iniciar_martelada_normal = function() {
 
 // Função para iniciar a martelada PERFEITA (VERSÃO CORRIGIDA)
 iniciar_martelada_perfeita = function() {
-    // A condição 'if (estado == FERRreiro_ESTADO.IDLE)' foi REMOVIDA.
-    estado = FERRreiro_ESTADO.MARTELANDO;
+    // A condição 'if (estado == FERREIRO_ESTADO.IDLE)' foi REMOVIDA.
+    estado = FERREIRO_ESTADO.MARTELANDO;
     sprite_index = s_ferreiro_martelada;
     image_index = 0; // Força a animação a recomeçar do frame 0
     image_speed = 0.8;
@@ -50,11 +42,11 @@ iniciar_martelada_perfeita = function() {
 	
 	// --- NOVAS FUNÇÕES DE ANIMAÇÃO DE RESULTADO ---
 iniciar_comemoracao = function() {
-    estado = FERRreiro_ESTADO.COMEMORANDO;
+    estado = FERREIRO_ESTADO.COMEMORANDO;
 }
 
 iniciar_animacao_falha = function() {
-    estado = FERRreiro_ESTADO.FALHA;
+    estado = FERREIRO_ESTADO.FALHA;
     sprite_index = s_ferreiro_falha;
     image_index = 0;
     image_speed = 1;

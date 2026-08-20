@@ -1,41 +1,68 @@
+// Guarda de instância única (auditoria CV-01)
+if (instance_number(object_index) > 1) {
+    instance_destroy();
+    exit;
+}
+
 musica_atual = -1;
 is_fading_out = false;
 fade_speed = 0;
 
 // --- FUNÇÕES DE ÁUDIO ---
+
 play_sfx = function(som_asset) {
     if (audio_is_playing(som_asset)) { audio_stop_sound(som_asset); }
+    audio_sound_gain(som_asset, 1, 0);
     audio_play_sound(som_asset, 1, false);
 }
+
+/// Toca uma música em loop.
+/// A versão anterior (auditoria CV-02) desistia quando a faixa já estava tocando com
+/// ganho 0 — o que deixava a fase muda ao ser rejogada, porque a tela de resultado
+/// zerava o ganho do asset sem nunca pará-lo. Agora a faixa anterior é sempre parada
+/// e o ganho é explicitamente restaurado.
 play_music = function(musica_asset) {
-    if (!audio_is_playing(musica_asset) || audio_sound_get_gain(musica_asset) > 0) {
-        if (musica_atual != -1) { audio_stop_sound(musica_atual); }
-        audio_play_sound(musica_asset, 1, true);
-        audio_resume_sound(musica_asset);
-		audio_sound_gain(musica_asset,1,0);
-        musica_atual = musica_asset;
-        is_fading_out = false;
+    // Já está tocando normalmente? Não reinicia.
+    if (musica_atual == musica_asset && audio_is_playing(musica_asset) && !is_fading_out) {
+        audio_sound_gain(musica_asset, 1, 0);
+        return;
     }
+
+    if (musica_atual != -1) {
+        audio_stop_sound(musica_atual);
+    }
+    if (audio_is_playing(musica_asset)) {
+        audio_stop_sound(musica_asset);
+    }
+
+    audio_sound_gain(musica_asset, 1, 0);
+    audio_play_sound(musica_asset, 1, true);
+
+    musica_atual = musica_asset;
+    is_fading_out = false;
 }
+
 stop_music = function() {
     if (musica_atual != -1) {
         audio_stop_sound(musica_atual);
+        audio_sound_gain(musica_atual, 1, 0); // deixa o asset pronto para a próxima vez
         musica_atual = -1;
     }
+    is_fading_out = false;
 }
+
 fade_out_music = function(duracao_segundos) {
     if (musica_atual != -1 && !is_fading_out) {
         is_fading_out = true;
         var _current_gain = audio_sound_get_gain(musica_atual);
-        fade_speed = _current_gain / (duracao_segundos * room_speed);
+        fade_speed = _current_gain / max(1, duracao_segundos * room_speed);
     }
 }
 
 // =================================================================
-// --- LÓGICA DO SEQUENCIADOR DE MARTELADA ---
+// --- SEQUENCIADOR DE MARTELADA ---
 // =================================================================
 
-// 1. O catálogo de sons, em ordem
 sons_martelada = [
     snd_martelada_01,
     snd_martelada_02,
@@ -44,33 +71,22 @@ sons_martelada = [
     snd_martelada_05
 ];
 
-// 2. Variáveis de controle da sequência
 martelada_index_atual = 0;
 martelada_direcao = 1;
 
-// 3. A função que toca o som em sequência
+// Toca os sons de martelada em vai-e-vem, dando variação a cada acerto.
 play_martelada_sequencial_sfx = function() {
-    
-    // >>> A CORREÇÃO ESTÁ AQUI <<<
-    // Agora usa o nome correto do array: 'sons_martelada'
-    var _som_para_tocar = sons_martelada[martelada_index_atual];
-    
-    // Toca o som
-    play_sfx(_som_para_tocar);
-    
-    // --- ATUALIZA O ÍNDICE PARA A PRÓXIMA BATIDA ---
+    play_sfx(sons_martelada[martelada_index_atual]);
+
     if (martelada_direcao == 1) {
         if (martelada_index_atual >= array_length(sons_martelada) - 1) {
             martelada_direcao = -1;
         }
-    }
-    else {
+    } else {
         if (martelada_index_atual <= 0) {
             martelada_direcao = 1;
         }
     }
-    
+
     martelada_index_atual += martelada_direcao;
 }
-
-sons_martelada = [snd_martelada_01, snd_martelada_02, snd_martelada_03, snd_martelada_04, snd_martelada_05];

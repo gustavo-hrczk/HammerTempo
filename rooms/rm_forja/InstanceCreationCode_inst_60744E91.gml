@@ -1,3 +1,3 @@
 sprite_index = s_alvo_cima;
-minha_tecla = [vk_up,ord("W")];
+minha_acao = ACAO.LANE_CIMA;
 meu_tipo = 1;

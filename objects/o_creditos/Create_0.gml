@@ -1,5 +1,5 @@
 // Variáveis para controlar a posição e a velocidade
-y_pos = 3020; // Posição Y inicial 
+y_pos = display_get_gui_height() + 40; // começa logo abaixo da tela
 scroll_speed = 3; // Velocidade de rolagem 
 line_height = 35; // Altura entre as linhas 	
 

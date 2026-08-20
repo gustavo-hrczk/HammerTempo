@@ -1,10 +1,13 @@
-// Espera o jogador pressionar Enter para continuar
-if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space)) {
-	audio_play_sound(snd_menu_confirm, 10, false);
+// Espera o jogador confirmar para voltar à seleção de fases
+if (input_pressed(ACAO.CONFIRMAR)) {
+    o_audio_manager.play_sfx(snd_menu_confirm);
+
+    audio_stop_sound(snd_resultado_bom);
+    audio_stop_sound(snd_resultado_ruim);
+
     o_controlador_geral.estado_jogo = MINIGAME.SELECAO_FASE;
+    o_controlador_geral.resetar_estatisticas();
+
     instance_destroy();
-    room_goto(rm_forja); // << Garanta que esta linha existe!
-	o_controlador_geral.resetar_estatisticas();
-	audio_stop_sound(snd_resultado_bom);
-	audio_stop_sound(snd_resultado_ruim);
+    room_goto(rm_forja);
 }

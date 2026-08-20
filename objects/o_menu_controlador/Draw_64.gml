@@ -50,25 +50,8 @@ for (var i = 0; i < array_length(opcoes_menu); i++) {
     if (i == opcao_selecionada) {
         _cor = c_yellow;
         
-        var _highlight_width = _max_texto_largura + 75;
-        var _highlight_height = 40;
-        
-        var _rect_x1 = _cx - (_highlight_width / 2);
-        var _rect_y1 = _pos_y - (_highlight_height / 2);
-        var _rect_x2 = _cx + (_highlight_width / 2);
-        var _rect_y2 = _pos_y + (_highlight_height / 2);
-        
-        var _min_alpha = 0.15;
-        var _max_alpha = 0.5;
-        var _pulse_speed = 0.004;
-        var _normalized_sine = (sin(current_time * _pulse_speed) + 1) / 2;
-        var _current_pulse_alpha = _min_alpha + (_max_alpha - _min_alpha) * _normalized_sine;
-        
-        draw_set_color(c_black);
-        draw_set_alpha(_current_pulse_alpha);
-        draw_rectangle(_rect_x1, _rect_y1, _rect_x2, _rect_y2, false);
-        draw_set_alpha(1);
-        
+        ui_caixa_pulsante(_cx, _pos_y, _max_texto_largura + 75, 40);
+
         var _texto_largura_atual = string_width(opcoes_menu[i]);
         var _seletor_padding = 25;
         var _seletor_x = _cx - (_texto_largura_atual / 2) - _seletor_padding;
@@ -78,4 +61,4 @@ for (var i = 0; i < array_length(opcoes_menu); i++) {
     draw_text_color(_cx, _pos_y, opcoes_menu[i], _cor, _cor, _cor, _cor, 1);
 }
 
-draw_set_halign(fa_left); // Reseta o alinhamento
+ui_reset();

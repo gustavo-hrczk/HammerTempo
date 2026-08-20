@@ -1,5 +1,5 @@
-// Este menu só desenha se o jogo estiver no estado de SELECAO_FASE (1)
-if (o_controlador_geral.estado_jogo != 1) {
+// Este menu só desenha no estado de seleção de fase
+if (o_controlador_geral.estado_jogo != MINIGAME.SELECAO_FASE) {
     exit;
 }
 
@@ -55,21 +55,8 @@ for (var i = 0; i < total_opcoes; i++) {
         _cor_nome = c_yellow;
         
         // --- DESENHA A FAIXA DE DESTAQUE ---
-        var _texto_largura = string_width(_nome_fase);
-        var _highlight_width = 280;
-        var _highlight_height = 70;
-        // ... (lógica da caixa pulsante) ...
-        var _min_alpha = 0.15;
-        var _max_alpha = 0.5;
-        var _pulse_speed = 0.004;
-        var _normalized_sine = (sin(current_time * _pulse_speed) + 1) / 2;
-        var _current_pulse_alpha = _min_alpha + (_max_alpha - _min_alpha) * _normalized_sine;
-        
-        draw_set_color(c_black);
-        draw_set_alpha(_current_pulse_alpha);
-        draw_rectangle(_pos_x - _highlight_width/2, _pos_y - _highlight_height/2, _pos_x + _highlight_width/2, _pos_y + _highlight_height/2, false);
-        draw_set_alpha(1);
-        
+        ui_caixa_pulsante(_pos_x, _pos_y, 280, 70);
+
         // --- DESENHA O SELETOR (LÓGICA CORRIGIDA) ---
         var _seletor_padding = 125;
         // A posição X do seletor agora é calculada corretamente com base no _pos_x do item atual
@@ -86,6 +73,4 @@ for (var i = 0; i < total_opcoes; i++) {
     draw_text_color(_pos_x, _pos_y + 18, "(" + _dificuldade + ")", _cor_dificuldade, _cor_dificuldade, _cor_dificuldade, _cor_dificuldade, 1);
 }
 
-// Reseta a fonte e o alinhamento
-draw_set_font(f_padrao);
-draw_set_halign(fa_left);
+ui_reset();

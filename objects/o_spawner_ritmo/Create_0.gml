@@ -10,10 +10,17 @@ dificuldade_level = 0;
 dificuldade_timer = 15 * room_speed;
 esta_finalizando = false;
 
+// Usadas apenas pelo modo infinito. Ficavam sem inicialização, o que quebraria a
+// fase no primeiro aumento de dificuldade (auditoria GP-05).
+intervalo_min = 60;
+intervalo_max = 100;
+
 o_audio_manager.play_music(_dados_fase.musica_fase);
 
-// --- NOVA LÓGICA DE RITMO ---
-// Calcula quantos frames dura uma batida completa, com base no BPM
+// --- RITMO ---
+// Calcula quantos frames dura uma batida completa, com base no BPM.
+// A sincronia real com a música (relógio derivado do áudio) é a entrega da
+// Sprint 5 — auditoria GP-03.
 var _bpm = _dados_fase.beat_tempo_bpm;
 beat_interval_frames = (60 / _bpm) * room_speed;
 

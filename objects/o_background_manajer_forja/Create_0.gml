@@ -1,9 +1,3 @@
-// >>> O NOVO "GUARDA DE PORTÃO" <<<
-// Só desenha o fundo se NÃO estivermos na sala de splash.
-if (room == rm_splash) {
-    exit; // Para a execução e não desenha nada.
-}
-
 // --- ESTRUTURA DOS CENÁRIOS ---
 // Adicionamos o novo conjunto "Dia Padrão" no início (índice 0).
 background_sets = [

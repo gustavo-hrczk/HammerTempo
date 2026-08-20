@@ -1,27 +1,30 @@
-if (o_controlador_geral.pausa){
-	exit;
+if (o_controlador_geral.pausa) {
+    exit;
 }
+
 // Se a nota NÃO está morrendo, ela se comporta normalmente.
 if (esta_morrendo == false) {
     x -= velocidade;
     image_index = tipo_seta;
+
+    // A nota é dada como perdida assim que passa da janela de acerto — o mesmo
+    // limite usado pelo julgamento, então não existe mais a faixa em que a tecla
+    // certa não valia nada (auditoria GP-02).
+    if (ritmo_nota_perdida(id)) {
+        registrar_erro();
+    }
 }
 // Se a nota ESTÁ morrendo...
 else {
-    // >>> A GRANDE MUDANÇA <<<
-    // A nota continua se movendo para a esquerda, pois a 'velocidade'
-    // só foi zerada se foi um acerto.
+    // Continua se movendo para a esquerda: a 'velocidade' só foi zerada em caso de acerto.
     x -= velocidade;
 
-    // A nota só se move para cima se for um acerto.
     if (sobe_ao_morrer) {
         y -= 2;
     }
 
-    // O fade-out acontece em ambos os casos.
     image_alpha -= 0.03;
 
-    // Se a nota ficou completamente invisível, ela se autodestrói.
     if (image_alpha <= 0) {
         instance_destroy();
     }

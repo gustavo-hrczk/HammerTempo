@@ -1,35 +1,46 @@
-// Enum para controlar os estados do jogo de forma legível
-// Enum para controlar os estados do jogo de forma legível
-enum MINIGAME {
-    NENHUM,
-    SELECAO_FASE,
-	TUTORIAL,
-    CONTAGEM,
-    RITMO,
-    TEMPERA,
-    AFIACAO,
-    RESULTADO
+// =================================================================
+// GUARDA DE INSTÂNCIA ÚNICA
+// Objetos persistentes colocados em rooms não persistentes eram recriados a cada
+// reentrada, acumulando cópias que disputavam o mesmo estado (auditoria CV-01).
+// =================================================================
+if (instance_number(object_index) > 1) {
+    instance_destroy();
+    exit;
 }
 
-// Array com os dois sons que irão se alternar
-nav_sounds[0] = snd_menu01; 
-nav_sounds[1] = snd_menu02; // Certifique-se de que este som exista!
+// =================================================================
+// BOOT DO JOGO
+// Este objeto nasce em rm_splash e é o primeiro a rodar: é aqui que a camada
+// GUI, o input, o save e a aleatoriedade são preparados, uma única vez.
+// =================================================================
+randomize();
 
-// Índice para controlar qual som tocar (começa em 0)
+// A GUI passa a ter exatamente o tamanho das rooms de jogo, então coordenada de
+// GUI e coordenada de room voltam a ser a mesma coisa (auditoria UI-01).
+display_set_gui_size(1280, 720);
+
+input_init();
+debug_init();
+save_carregar();
+save_aplicar_opcoes();
+
+// Array com os dois sons que irão se alternar na navegação de menu
+nav_sounds[0] = snd_menu01;
+nav_sounds[1] = snd_menu02;
 nav_sound_index = 0;
 
-// --- NOVAS VARIÁVEIS PARA ESTATÍSTICAS DA FASE ---//
-//--- FORJA ---//
-tutorial_ja_foi_visto = false; // Começa como 'falso'
+// --- ESTATÍSTICAS DA FASE ---
+tutorial_ja_foi_visto = false;
 pausa = false;
+pontuacao = 0;
 stats_total_notas = 0;
 stats_acertos_perfeitos = 0;
 stats_acertos_bons = 0;
 stats_sequencia = 0;
 stats_erros = 0;
 stats_sequencia_errada = 0;
-stats_limite_sequencia_errada = 0;
-stats_spam_detect = 0;
+stats_toques_invalidos = 0;
+
 // Função para resetar as estatísticas antes de começar uma fase
 resetar_estatisticas = function() {
     pontuacao = 0;
@@ -37,10 +48,9 @@ resetar_estatisticas = function() {
     stats_acertos_perfeitos = 0;
     stats_acertos_bons = 0;
     stats_erros = 0;
-	stats_sequencia = 0;
-	stats_sequencia_errada = 0;
-	stats_limite_sequencia_errada = 0;
-	stats_spam_detect = 0;
+    stats_sequencia = 0;
+    stats_sequencia_errada = 0;
+    stats_toques_invalidos = 0;
 }
 
 // Variável que guarda o estado atual do jogo
@@ -48,14 +58,12 @@ estado_jogo = MINIGAME.NENHUM; // O jogo sempre começa no menu principal
 
 // Variáveis de controle do jogo
 fase_atual = 0; // Guarda o ÍNDICE da fase selecionada
-pontuacao = 0;
 
 // --- ESTRUTURA DE DADOS DAS FASES ---
 // Um array que guarda as configurações de cada fase como um objeto (struct)
 fases_data = [];
 
-// Fase 1: Adaga (Fácil)
-// Fase 1: Adaga (Fácil) - BPM: 90
+// Fase 1: Adaga (Fácil) - BPM: 88
 fases_data[0] = {
     nome: "Forjar Adaga",
     dificuldade: "Fácil",
@@ -83,60 +91,31 @@ fases_data[1] = {
     velocidade_notas: 5,
     tipos_seta_permitidos: 3,
     stats_limite_sequencia_errada: 5,
-    beat_tempo_bpm: 100, 
+    beat_tempo_bpm: 100,
     ritmo_patterns: [
         [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 3]
     ]
 };
 
-// Fase 3: Espada (Difícil - BPM: 120 - Ritmo de Cantiga)
+// Fase 3: Espada (Difícil - BPM: 108)
 fases_data[2] = {
     nome: "Forjar Espada",
     dificuldade: "Difícil",
-    musica_fase: snd_fase_03, // Substitua pelo asset de áudio de "Douce Dame Jolie"
-    sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05], // Assumindo sprites de espada
-    duracao_segundos: 60, 
-    // Velocidade ajustada para 110 BPM (Mais lenta que 130 BPM, mas ainda um bom desafio)
-    velocidade_notas: 5, 
-    tipos_seta_permitidos: 4, // 4 setas diferentes
+    musica_fase: snd_fase_03,
+    sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
+    duracao_segundos: 60,
+    velocidade_notas: 5,
+    tipos_seta_permitidos: 4,
     stats_limite_sequencia_errada: 6,
-    
-    // >>> CONFIGURAÇÃO RITMICA PARA 110 BPM <<<
-    beat_tempo_bpm: 108, // BPM da música
+    beat_tempo_bpm: 108,
     ritmo_patterns: [
-        // Padrão 110 BPM: [Semínima, Semínima, Colcheia, Colcheia, Semínima]
-        // Batida firme (1), Batida firme (1), Rápido (0.5), Rápido (0.5), Batida firme (1)
-        [1, 1, 0.5, 0.5, 1] 
+        [1, 1, 0.5, 0.5, 1]
     ]
 };
 
-//// Fase 3: Machado (Extremo)
-//fases_data[3] = {
-//    nome: "Forjar Machado",
-//	dificuldade: "Extremo",
-//	musica_fase: snd_fase_04,
-//	sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
-//    duracao_segundos: 60,
-//    velocidade_notas: 6,
-//    tipos_seta_permitidos: 4,
-//	stats_limite_sequencia_errada: 6,
-//	beat_tempo_bpm: 125,
-//    ritmo_patterns: [
-//        [1, 0.5, 0.5, 1, 1]
-//    ]
-//};
-
-// Fase 5: Modo Infinito (Começa fácil)
-//fases_data[4] = {
-//    nome: "Modo Infinito",
-//    dificuldade: "Progressiva",
-//    duracao_segundos: -1, // -1 significa que não tem fim
-//    velocidade_notas: 4, // Velocidade inicial
-//    intervalo_min_frames: 60, // Intervalo inicial
-//    intervalo_max_frames: 100,
-//    tipos_seta_permitidos: 2, // Começa com apenas 2 setas
-//	stats_limite_sequencia_errada: 6
-//};
+// Fase 4: Machado (Extremo) e Modo Infinito entram na Sprint 7, junto com o
+// novo pipeline de mapeamento rítmico. Os assets (snd_fase_04, s_machado01..05)
+// já existem no projeto.
 
 contagem_timer = 150; // Começa inativo
 show_debug_message("Controlador Geral criado e configurado com sucesso!");

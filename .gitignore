@@ -26,3 +26,9 @@ options/html5/options_html5.ini
 
 # Steam
 options/steam/options_steam.yy.user
+# Backups do projeto (mantidos localmente, fora do versionamento)
+HammerTempo.rar
+HammerTempo-main.zip
+
+# Save local do jogo
+*.json.bak
