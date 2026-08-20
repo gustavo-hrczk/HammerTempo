@@ -21,21 +21,37 @@
 #macro HUD_COMBO_MINIMO 5
 
 /// Texto com contorno preto, legível sobre o céu e sobre o painel.
+///
+/// Regra rígida deste projeto: **fonte de pixel só aceita escala inteira**. Escala
+/// fracionária faz um mesmo glifo ter pixels de tamanhos diferentes, e como a escala
+/// muda a cada frame o padrão "ferve" na tela. A posição também é arredondada, senão
+/// o texto cai fora da grade de pixels e borra do mesmo jeito.
 function hud_texto(_x, _y, _texto, _cor, _escala = 1, _halign = fa_center) {
-    draw_set_halign(_halign);
-    draw_set_valign(fa_middle);
+    _escala = max(1, round(_escala));
 
+    var _largura = string_width(_texto) * _escala;
+    var _altura = string_height(_texto) * _escala;
+
+    var _px = _x;
+    if (_halign == fa_center) _px = _x - (_largura / 2);
+    else if (_halign == fa_right) _px = _x - _largura;
+
+    _px = floor(_px);
+    var _py = floor(_y - (_altura / 2));
+
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+
+    // contorno de 4 direções, deslocamento inteiro proporcional à escala
     draw_set_color(c_black);
-    var _off = max(1, round(2 * _escala));
-    for (var _dx = -1; _dx <= 1; _dx++) {
-        for (var _dy = -1; _dy <= 1; _dy++) {
-            if (_dx == 0 && _dy == 0) continue;
-            draw_text_transformed(_x + (_dx * _off), _y + (_dy * _off), _texto, _escala, _escala, 0);
-        }
-    }
+    var _off = _escala;
+    draw_text_transformed(_px - _off, _py, _texto, _escala, _escala, 0);
+    draw_text_transformed(_px + _off, _py, _texto, _escala, _escala, 0);
+    draw_text_transformed(_px, _py - _off, _texto, _escala, _escala, 0);
+    draw_text_transformed(_px, _py + _off, _texto, _escala, _escala, 0);
 
     draw_set_color(_cor);
-    draw_text_transformed(_x, _y, _texto, _escala, _escala, 0);
+    draw_text_transformed(_px, _py, _texto, _escala, _escala, 0);
 }
 
 /// Texto sólido do painel, desenhado no tamanho nativo da fonte — igual ao resto
@@ -233,22 +249,19 @@ function hud_draw() {
         var _jdur = room_speed * 0.55;
         var _jprog = 1 - (global.hud_julg_timer / _jdur);
 
-        // estoura para fora e assenta
-        var _jescala = 1.3 - (0.3 * min(1, _jprog * 3));
-        var _jdesloca = (global.hud_julg_sobe ? -1 : 1) * _jprog * 10;
+        // Sem escala fracionária: o impacto vem do deslocamento e da opacidade,
+        // mais um clarão de cor nos primeiros frames.
+        var _jdesloca = (global.hud_julg_sobe ? -1 : 1) * round(_jprog * 10);
+        var _cor_julg = (_jprog < 0.15)
+            ? merge_colour(global.hud_julg_cor, c_white, 0.6)
+            : global.hud_julg_cor;
 
         draw_set_font(f_padrao);
-        draw_set_halign(fa_center);
-        draw_set_valign(fa_middle);
         draw_set_alpha(1 - (_jprog * _jprog));
 
-        var _jx = HUD_BLOCO_X + (HUD_BLOCO_W / 2);
-        var _jy = HUD_BLOCO_Y + HUD_BLOCO_H + 16 + _jdesloca;
-
-        draw_set_color(c_black);
-        draw_text_transformed(_jx + 2, _jy + 2, global.hud_julg_texto, _jescala, _jescala, 0);
-        draw_set_color(global.hud_julg_cor);
-        draw_text_transformed(_jx, _jy, global.hud_julg_texto, _jescala, _jescala, 0);
+        hud_texto(HUD_BLOCO_X + (HUD_BLOCO_W / 2),
+                  HUD_BLOCO_Y + HUD_BLOCO_H + 16 + _jdesloca,
+                  global.hud_julg_texto, _cor_julg, 1);
 
         draw_set_alpha(1);
     }
@@ -263,8 +276,10 @@ function hud_draw() {
             : 1 - ((global.hud_fase_timer - _fade_inicio) / room_speed);
 
         draw_set_alpha(_alpha);
-        hud_texto(_gw / 2, 40, string_upper(_fase.nome), c_white, 0.85);
-        hud_texto(_gw / 2, 72, _fase.dificuldade + "  -  " + string(_fase.beat_tempo_bpm) + " BPM", c_white, 0.55);
+        draw_set_font(f_padrao);
+        hud_texto(_gw / 2, 40, string_upper(_fase.nome), c_white, 1);
+        draw_set_font(f_padrao_pequena);
+        hud_texto(_gw / 2, 74, _fase.dificuldade + "  -  " + string(_fase.beat_tempo_bpm) + " BPM", c_white, 1);
         draw_set_alpha(1);
     }
 
@@ -291,7 +306,8 @@ function hud_draw() {
         draw_rectangle(_gw - 54, 0, _gw, display_get_gui_height(), false);
         draw_set_alpha(1);
 
-        hud_texto(_gw / 2, 24, "A FORJA ESTÁ ESFRIANDO!", make_colour_rgb(255, 190, 170), 0.8);
+        draw_set_font(f_padrao);
+        hud_texto(_gw / 2, 24, "A FORJA ESTÁ ESFRIANDO!", make_colour_rgb(255, 190, 170), 1);
     }
 
     ui_reset();

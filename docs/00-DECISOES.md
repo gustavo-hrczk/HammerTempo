@@ -158,3 +158,18 @@ aos 30, quase branco a partir de 45. Ao quebrar, o último valor treme e some em
 **D-31 · Nunca executar a janela do jogo sem permissão.** Compilar (sem abrir janela) pode a
 qualquer momento; abrir o jogo exige aval explícito a cada vez, porque a automação de captura
 clica na janela e rouba o foco do teclado da máquina.
+
+**D-32 · Fonte de pixel só aceita escala inteira.** O contador da contagem estava em escala
+fracionária contínua (3,0 a 4,7), o que faz um mesmo glifo ter pixels de tamanhos diferentes —
+e, como a escala muda a cada frame, o padrão "ferve" na tela. A regra passou a valer para todo
+texto do jogo:
+
+- tamanho vem das duas fontes do projeto (`f_padrao` 30 px, `f_padrao_pequena` 23 px);
+- ênfase só em **múltiplos inteiros** (2x, 3x, 4x);
+- a **posição** também é arredondada, senão o texto cai fora da grade de pixels e borra igual;
+- contorno em 4 direções com deslocamento inteiro, e não 8 cópias com deslocamento proporcional.
+
+A contagem regressiva pulsa em degraus (5x → 4x → 3x), que é como pixel art anima de verdade.
+Nome da fase, julgamento e aviso de forja fria foram convertidos para tamanho nativo. A alternativa
+de criar uma fonte dedicada de ~90 px foi considerada e fica anotada como melhoria — a Kobold 7
+está instalada na máquina de desenvolvimento, mas criar o asset exige a IDE.
