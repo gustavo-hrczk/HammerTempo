@@ -47,7 +47,8 @@ function debug_draw() {
             " res=" + string(instance_number(o_controlador_resultado)),
         "pontos: " + string(o_controlador_geral.pontuacao) +
             "  combo: " + string(o_controlador_geral.stats_sequencia) +
-            "  perfeitos: " + string(o_controlador_geral.stats_acertos_perfeitos) +
+            "  perf: " + string(o_controlador_geral.stats_acertos_perfeitos) +
+            "  otim: " + string(o_controlador_geral.stats_acertos_otimos) +
             "  bons: " + string(o_controlador_geral.stats_acertos_bons),
         "perdidas: " + string(o_controlador_geral.stats_erros) +
             "  seguidas: " + string(o_controlador_geral.stats_sequencia_errada) +

@@ -72,6 +72,25 @@ switch (_julgamento) {
         debug_registrar_julgamento("PERFEITO", _erro_ms);
         break;
 
+    case JULGAMENTO.OTIMO:
+        var _ganho_otimo = 75 + (7 * o_controlador_geral.stats_sequencia);
+        o_controlador_geral.pontuacao += _ganho_otimo;
+        o_controlador_geral.stats_sequencia++;
+        o_controlador_geral.stats_acertos_otimos++;
+
+        _nota.estourar(make_colour_rgb(250, 195, 120));
+        pop = 0.8;
+        brilho = 0.75;
+        brilho_cor = make_colour_rgb(245, 160, 60);
+        o_ferreiro.iniciar_martelada_normal();
+        o_audio_manager.play_martelada_sequencial_sfx();
+
+        hud_registrar_julgamento("ÓTIMO!", make_colour_rgb(245, 160, 60), true);
+        hud_registrar_ganho(_ganho_otimo, make_colour_rgb(190, 110, 20));
+
+        debug_registrar_julgamento("ÓTIMO", _erro_ms);
+        break;
+
     case JULGAMENTO.BOM:
         var _ganho_bom = 50 + (5 * o_controlador_geral.stats_sequencia);
         o_controlador_geral.pontuacao += _ganho_bom;

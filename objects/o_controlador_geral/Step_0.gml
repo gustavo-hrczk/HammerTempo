@@ -15,6 +15,10 @@ if (estado_jogo != estado_anterior) {
             // instante exato em que a faixa começa — que é a criação do spawner.
             // Adiantar a música para a contagem deslocava tudo em 3 segundos.
             hud_resetar();
+
+            // O tema do menu sai suave durante os 3 s de contagem, em vez de ser
+            // cortado quando a fase começa.
+            o_audio_manager.fade_out_music(2.2);
             break;
 
         case MINIGAME.SELECAO_FASE:

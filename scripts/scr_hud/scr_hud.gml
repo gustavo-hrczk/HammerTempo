@@ -208,7 +208,7 @@ function hud_draw() {
         draw_set_alpha(1);
     }
 
-    var _acertos = _ctrl.stats_acertos_perfeitos + _ctrl.stats_acertos_bons;
+    var _acertos = _ctrl.stats_acertos_perfeitos + _ctrl.stats_acertos_otimos + _ctrl.stats_acertos_bons;
     var _julgadas = _acertos + _ctrl.stats_erros;
     var _precisao = (_julgadas > 0) ? (_acertos / _julgadas) * 100 : 100;
     hud_texto_painel(_esq, HUD_BLOCO_Y + 72, "Precisão", _tinta, f_padrao_pequena, fa_left);

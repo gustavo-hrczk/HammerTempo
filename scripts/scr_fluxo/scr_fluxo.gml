@@ -7,6 +7,10 @@
 
 /// Troca de sala com fade. Cai para room_goto se o gerenciador não existir.
 function ir_para_sala(_sala) {
+    // Já estamos na sala pedida: piscar a tela à toa só atrapalha. Acontecia ao
+    // voltar da tela de resultado para o seletor, que vivem na mesma room.
+    if (room == _sala) return;
+
     if (instance_exists(o_transicao)) {
         o_transicao.mudar_de_sala(_sala);
     } else {

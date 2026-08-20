@@ -16,7 +16,7 @@ switch (modo) {
         break;
 
     case 1: // estourou no acerto
-        escala += (1.9 - escala) * 0.32;
+        escala += (1.45 - escala) * 0.3;
         image_alpha -= 0.14;
 
         if (image_alpha <= 0) {

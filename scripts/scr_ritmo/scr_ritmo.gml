@@ -12,13 +12,17 @@
 #macro RITMO_LINHA_X 98
 
 /// Janelas de julgamento, em frames a 60 fps.
-#macro RITMO_JANELA_PERFEITO 3   // +-50 ms
-#macro RITMO_JANELA_BOM      8   // +-133 ms
+/// Três faixas: o "perfeito" antigo (+-50 ms) saía com frequência alta demais para
+/// quem já pegou o ritmo, então virou o intervalo do "ótimo" e o perfeito apertou.
+#macro RITMO_JANELA_PERFEITO 2     // +-33 ms
+#macro RITMO_JANELA_OTIMO    4.5   // +-75 ms
+#macro RITMO_JANELA_BOM      8     // +-133 ms
 
 /// Resultado possível de uma tentativa de acerto.
 enum JULGAMENTO {
     NENHUM,   // não havia nota alcançável
     PERFEITO,
+    OTIMO,
     BOM
 }
 
@@ -57,6 +61,7 @@ function ritmo_nota_alcancavel(_tipo) {
 function ritmo_julgar(_nota) {
     var _erro = abs(ritmo_erro_frames(_nota));
     if (_erro <= RITMO_JANELA_PERFEITO) return JULGAMENTO.PERFEITO;
+    if (_erro <= RITMO_JANELA_OTIMO)    return JULGAMENTO.OTIMO;
     if (_erro <= RITMO_JANELA_BOM)      return JULGAMENTO.BOM;
     return JULGAMENTO.NENHUM;
 }

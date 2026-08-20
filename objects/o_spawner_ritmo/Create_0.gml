@@ -10,6 +10,7 @@ is_endless_mode = (minha_duracao == -1);
 dificuldade_level = 0;
 dificuldade_timer = 15 * room_speed;
 esta_finalizando = false;
+esperando_respiro = false;   // pausa entre a última nota e a tela de resultado
 
 // Usadas apenas pelo modo infinito. Ficavam sem inicialização, o que quebraria a
 // fase no primeiro aumento de dificuldade (auditoria GP-05).

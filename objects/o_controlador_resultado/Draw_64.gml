@@ -6,8 +6,8 @@ draw_set_valign(fa_top);
 var _col1_x = (display_get_gui_width() / 2) - 300;
 var _col2_x = (display_get_gui_width() / 2) + 50;
 
-var _base_y = 524;
-var _line_gap = 28;
+var _base_y = 512;
+var _line_gap = 27;
 var _line1_y = _base_y;
 var _line2_y = _base_y + _line_gap;
 var _line3_y = _base_y + (_line_gap * 2);
@@ -17,13 +17,14 @@ var _line3_y = _base_y + (_line_gap * 2);
 draw_set_font(f_padrao); // Define a fonte padrão
 draw_set_color(c_black);
 draw_text(_col1_x, _line1_y, "Notas Perfeitas: " + string(o_controlador_geral.stats_acertos_perfeitos));
-draw_text(_col1_x, _line2_y, "Notas Boas: " + string(o_controlador_geral.stats_acertos_bons));
+draw_text(_col1_x, _line2_y, "Notas Ótimas: " + string(o_controlador_geral.stats_acertos_otimos));
+draw_text(_col1_x, _line3_y, "Notas Boas: " + string(o_controlador_geral.stats_acertos_bons));
 
 draw_text(_col2_x, _line1_y, "Erros: " + string(o_controlador_geral.stats_erros));
 draw_text(_col2_x, _line2_y, "Total de Notas: " + string(o_controlador_geral.stats_total_notas));
 
 draw_set_halign(fa_center);
-draw_text(display_get_gui_width() / 2, _line3_y, "Pontuação: " + string(o_controlador_geral.pontuacao));
+draw_text(display_get_gui_width() / 2, _line3_y + 32, "Pontuação: " + string(o_controlador_geral.pontuacao));
 
 // =================================================================
 // --- DESENHA A FRASE DE FEEDBACK (NOVA SEÇÃO) ---
@@ -31,7 +32,7 @@ draw_text(display_get_gui_width() / 2, _line3_y, "Pontuação: " + string(o_cont
 // (A frase já foi escolhida no Evento Create)
 
 // Posição Y para a frase, logo abaixo da pontuação
-var _frase_y = _line3_y + 34;
+var _frase_y = _line3_y + 64;
 
 // Mude a cor e o estilo se quiser
 draw_set_color(c_gray); // Um cinza claro para diferenciar

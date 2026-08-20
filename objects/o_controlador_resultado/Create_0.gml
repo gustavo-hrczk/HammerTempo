@@ -63,8 +63,9 @@ sprite_da_moldura_final = sprites_das_molduras[0]; // Padrão é a primeira
 var _fase_jogada = o_controlador_geral.fase_atual;
 var _total_notas = o_controlador_geral.stats_total_notas;
 var _acertos_perfeitos = o_controlador_geral.stats_acertos_perfeitos;
+var _acertos_otimos = o_controlador_geral.stats_acertos_otimos;
 var _acertos_bons = o_controlador_geral.stats_acertos_bons;
-var _total_acertos = _acertos_perfeitos + _acertos_bons;
+var _total_acertos = _acertos_perfeitos + _acertos_otimos + _acertos_bons;
 
 // Calcula a porcentagem de acertos
 var _porcentagem_acerto_total = 0;

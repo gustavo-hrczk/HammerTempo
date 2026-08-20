@@ -2,29 +2,29 @@ switch (estado_jogo) {
 
     case MINIGAME.CONTAGEM:
         if (contagem_timer > 0) {
-            var _display_number = ceil(contagem_timer / room_speed);
+            var _numero = string(ceil(contagem_timer / room_speed));
 
-            // Volta para a faixa onde as notas vão correr, centralizada nela: é para
-            // lá que o olho precisa estar quando a fase começar.
+            // Mesma fonte e mesmo tratamento do resto do jogo: sem contorno, sem
+            // pulso, sem variação de opacidade. Do ajuste anterior ficou só o
+            // enquadramento — centralizado na faixa por onde as notas vão correr.
             var _cx = display_get_gui_width() / 2;
             var _cy = (HUD_CORREDOR_TOPO + HUD_CORREDOR_BASE) / 2;
 
-            // Pulso por segundo em DEGRAUS: 5x, 4x e assenta em 3x. Escala inteira
-            // preserva a grade de pixels da fonte — fracionária faz o glifo ferver.
-            var _no_segundo = contagem_timer mod room_speed;
-            var _escala = 3;
-            if (_no_segundo > room_speed * 0.90)      _escala = 5;
-            else if (_no_segundo > room_speed * 0.80) _escala = 4;
-
-            var _frac = _no_segundo / room_speed;
-
-            draw_set_font(f_padrao_pequena);
-            hud_texto(_cx, _cy - 58, "Prepare-se para forjar em...", c_black, 1);
-
             draw_set_font(f_padrao);
-            draw_set_alpha(0.6 + (0.4 * _frac));
-            hud_texto(_cx, _cy + 26, string(_display_number), make_colour_rgb(200, 70, 30), _escala);
-            draw_set_alpha(1);
+            draw_set_color(c_black);
+            draw_set_halign(fa_center);
+            draw_set_valign(fa_middle);
+
+            draw_text(_cx, _cy - 58, "Prepare-se para forjar em...");
+
+            // escala 3 é inteira; a posição é arredondada para não sair da grade
+            draw_set_halign(fa_left);
+            draw_set_valign(fa_top);
+            var _largura = string_width(_numero) * 3;
+            var _altura = string_height(_numero) * 3;
+            draw_text_transformed(floor(_cx - (_largura / 2)),
+                                  floor(_cy + 26 - (_altura / 2)),
+                                  _numero, 3, 3, 0);
 
             ui_reset();
         }
