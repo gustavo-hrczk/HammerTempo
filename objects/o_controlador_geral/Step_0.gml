@@ -24,6 +24,13 @@ if (estado_jogo != estado_anterior) {
         case MINIGAME.SELECAO_FASE:
             o_audio_manager.play_music_crossfade(snd_tema, 0.6);
             break;
+
+        case MINIGAME.RESULTADO:
+            // Rede de segurança: nada de gameplay sobrevive à tela de resultado,
+            // seja o fim normal da fase ou a derrota.
+            if (instance_exists(o_spawner_ritmo)) { instance_destroy(o_spawner_ritmo); }
+            instance_destroy(o_nota_seta);
+            break;
     }
 
     estado_anterior = estado_jogo;
@@ -63,7 +70,10 @@ switch (estado_jogo) {
         hud_update();
 
         // Garante que o spawner seja criado apenas uma vez.
-        if (room == rm_forja && !instance_exists(o_spawner_ritmo)) {
+        // A checagem de fase_falhou é essencial: no game over o estado continua
+        // sendo RITMO durante o respiro, e sem ela o spawner destruído voltava no
+        // frame seguinte, gerando notas por cima da tela de resultado.
+        if (room == rm_forja && !fase_falhou && !instance_exists(o_spawner_ritmo)) {
             show_debug_message("Iniciando minigame de ritmo para a fase: " + fases_data[fase_atual].nome);
             var _spawn_x = room_width + 120;
             instance_create_layer(_spawn_x, 0, "Gameplay", o_spawner_ritmo);
@@ -93,8 +103,9 @@ switch (estado_jogo) {
         if (fase_falhou) {
             falha_timer--;
             if (falha_timer <= 0) {
+                // estado_anterior NÃO é definido aqui de propósito: é a virada de
+                // estado que dispara a limpeza do gameplay, no bloco de transições.
                 estado_jogo = MINIGAME.RESULTADO;
-                estado_anterior = MINIGAME.RESULTADO;
                 instance_create_layer(0, 0, "Gameplay", o_controlador_resultado);
             }
         }
