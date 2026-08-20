@@ -72,18 +72,31 @@ switch (estado_jogo) {
         // Lógica de Fim de Jogo por notas perdidas em sequência.
         // Toques inválidos não encerram mais a partida (auditoria GP-04): eles só
         // custam pontos, para não expulsar quem está experimentando o jogo.
-        if (stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
+        if (!fase_falhou && stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
             show_debug_message("Game Over por excesso de notas perdidas!");
 
-            estado_jogo = MINIGAME.RESULTADO;
-            estado_anterior = MINIGAME.RESULTADO;
+            fase_falhou = true;
+            falha_timer = room_speed * 1.6;
 
-            // Limpa a "bagunça" do minigame
+            // Para de gerar notas e manda as que estão na tela saírem de cena sem
+            // virarem erro — elas não são culpa do jogador.
             if (instance_exists(o_spawner_ritmo)) { instance_destroy(o_spawner_ritmo); }
-            instance_destroy(o_nota_seta);
+            with (o_nota_seta) { sumir(); }
 
-            // Cria o objeto da tela de resultado
-            instance_create_layer(0, 0, "Gameplay", o_controlador_resultado);
+            // A derrota já acontece aqui, durante o respiro: o ferreiro reage e a
+            // música sai em fade, em vez de a fase ser cortada em seco.
+            if (instance_exists(o_ferreiro)) { o_ferreiro.iniciar_animacao_falha(); }
+            o_audio_manager.fade_out_music(1.4);
+        }
+
+        // Respiro entre a derrota e a tela de resultado.
+        if (fase_falhou) {
+            falha_timer--;
+            if (falha_timer <= 0) {
+                estado_jogo = MINIGAME.RESULTADO;
+                estado_anterior = MINIGAME.RESULTADO;
+                instance_create_layer(0, 0, "Gameplay", o_controlador_resultado);
+            }
         }
         break;
 

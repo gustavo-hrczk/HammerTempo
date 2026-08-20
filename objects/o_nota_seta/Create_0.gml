@@ -3,7 +3,7 @@ tipo_seta = 0;
 image_speed = 0;
 escala = 1;
 
-// 0 = viva, 1 = absorvida pelo alvo (acerto), 2 = perdida (erro)
+// 0 = viva, 1 = estourou no acerto, 2 = perdida (erro), 3 = saindo de cena
 modo = 0;
 
 /// Acerto: a nota estoura como uma bolha — cresce rápido enquanto some, no lugar
@@ -13,6 +13,13 @@ estourar = function(_cor = c_white) {
     modo = 1;
     velocidade = 0;
     image_blend = _cor;
+}
+
+/// Sai de cena sem contabilizar nada. Usada no game over: as notas que ainda
+/// estavam na tela não são culpa do jogador, então não viram erro.
+sumir = function() {
+    if (modo != 0) exit;
+    modo = 3;
 }
 
 /// Nota perdida: contabiliza o erro uma única vez e sai de cena em vermelho.

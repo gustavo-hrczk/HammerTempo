@@ -43,6 +43,11 @@ stats_erros = 0;
 stats_sequencia_errada = 0;
 stats_toques_invalidos = 0;
 
+// A fase terminou em derrota? Game over é game over: a tela de resultado não pode
+// premiar quem estava com boa precisão e perdeu mesmo assim.
+fase_falhou = false;
+falha_timer = 0;
+
 // Função para resetar as estatísticas antes de começar uma fase
 resetar_estatisticas = function() {
     pontuacao = 0;
@@ -54,6 +59,8 @@ resetar_estatisticas = function() {
     stats_sequencia = 0;
     stats_sequencia_errada = 0;
     stats_toques_invalidos = 0;
+    fase_falhou = false;
+    falha_timer = 0;
 }
 
 // Variável que guarda o estado atual do jogo

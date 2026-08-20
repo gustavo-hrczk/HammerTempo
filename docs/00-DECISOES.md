@@ -234,3 +234,14 @@ arquivos a partir do buffer dela e apaga alterações feitas por fora — aconte
 `o_controlador_geral/Draw_64.gml`, que voltou sozinho ao estado anterior e nem entrou no commit.
 Enquanto houver edição de código por fora, ou o projeto fica fechado na IDE, ou é preciso
 recarregar antes de testar. Toda alteração passou a ser verificada no disco depois de escrita.
+
+**D-42 · Game over é game over, independente da precisão.** A tela de resultado escolhia jingle,
+animação e arma só pela taxa de acerto. Um jogador avançado que perdesse a fase com 95% de
+precisão recebia jingle de vitória, comemoração e a melhor arma — o oposto do que tinha acabado
+de acontecer. Agora o controlador marca `fase_falhou` e o resultado força a faixa de falha.
+
+**D-43 · Derrota também tem respiro.** O game over cortava a partida em seco. Passou a ter 1,6 s
+entre a última nota perdida e a tela de resultado: o spawner é destruído, as notas que ainda
+estavam na tela **saem de cena sem virar erro** (não são culpa do jogador), o ferreiro já reage
+com a animação de falha e a música sai em fade de 1,4 s. Durante esse intervalo as teclas não
+pontuam nem penalizam — a partida já acabou.

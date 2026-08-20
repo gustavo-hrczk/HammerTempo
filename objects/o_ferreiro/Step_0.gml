@@ -55,11 +55,14 @@ if (instance_exists(o_controlador_geral)) {
             estado = FERREIRO_ESTADO.COMEMORANDO;
         }
     }
-    // Durante a partida ele nunca sai do lugar.
+    // Durante a partida ele nunca sai do lugar. A falha é exceção: no game over a
+    // animação começa ainda em RITMO, durante o respiro antes do resultado.
     else if (_jogo == MINIGAME.RITMO) {
         x = home_x;
         image_xscale = 1;
-        if (estado != FERREIRO_ESTADO.MARTELANDO) {
+        if (estado != FERREIRO_ESTADO.MARTELANDO
+            && estado != FERREIRO_ESTADO.FALHA
+            && estado != FERREIRO_ESTADO.FALHOU_ESTATICO) {
             estado = FERREIRO_ESTADO.IDLE;
         }
     }

@@ -83,6 +83,13 @@ else if (_porcentagem_acerto_total < 95) { _resultado_index = 2; } // Bom
 else if (_porcentagem_acerto_total < 100) { _resultado_index = 3; } // Excelente
 else { _resultado_index = 4; } // Perfeito (100% de acertos)
 
+// Game over é game over. Quem perde a fase por excesso de notas perdidas recebe o
+// resultado de falha, mesmo que a precisão até ali estivesse alta — antes o jogador
+// avançado levava jingle de vitória, comemoração e a melhor arma ao ser derrotado.
+if (o_controlador_geral.fase_falhou) {
+    _resultado_index = 0;
+}
+
 // Pega os dados da fase que acabamos de jogar
 var _dados_fase = o_controlador_geral.fases_data[_fase_jogada];
 
@@ -109,8 +116,12 @@ if (instance_exists(o_ferreiro)) {
     
     // Se a performance foi "Falha" ou "Aceitável"...
     if (_resultado_index <= 1) {
-        // ...manda o ferreiro tocar a animação de falha.
-        o_ferreiro.iniciar_animacao_falha();
+        // ...manda o ferreiro tocar a animação de falha. No game over ela já
+        // começou durante o respiro, então não pode ser reiniciada aqui.
+        if (o_ferreiro.estado != FERREIRO_ESTADO.FALHA
+            && o_ferreiro.estado != FERREIRO_ESTADO.FALHOU_ESTATICO) {
+            o_ferreiro.iniciar_animacao_falha();
+        }
     }
     // Se a performance foi "Bom" ou melhor...
     else {

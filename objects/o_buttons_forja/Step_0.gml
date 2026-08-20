@@ -6,6 +6,15 @@ if (o_controlador_geral.pausa) {
     exit;
 }
 
+// Durante o respiro da derrota a partida já acabou: martelar não pontua nem
+// penaliza, só a animação do alvo continua respondendo.
+if (o_controlador_geral.fase_falhou) {
+    afundamento = max(0, afundamento - 0.8);
+    pop = max(0, pop - 0.14);
+    brilho = max(0, brilho - 0.10);
+    exit;
+}
+
 // --- decaimento do feedback visual ---
 pop = max(0, pop - 0.14);
 brilho = max(0, brilho - 0.10);

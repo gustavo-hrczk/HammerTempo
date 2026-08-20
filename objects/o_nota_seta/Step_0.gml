@@ -32,4 +32,13 @@ switch (modo) {
             instance_destroy();
         }
         break;
+
+    case 3: // saindo de cena no game over
+        x -= velocidade;
+        image_alpha -= 0.07;
+
+        if (image_alpha <= 0) {
+            instance_destroy();
+        }
+        break;
 }
