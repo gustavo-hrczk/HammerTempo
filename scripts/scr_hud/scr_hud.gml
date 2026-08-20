@@ -161,18 +161,22 @@ function hud_registrar_julgamento(_texto, _cor, _sobe = true) {
     global.hud_julg_timer = room_speed * 0.55;
 }
 
-/// Cor do combo, esquentando conforme a sequência cresce: brasa escura, laranja,
-/// ouro e por fim quase branco — a mesma leitura de temperatura do metal na forja.
+/// Cor do combo, medida contra o pergaminho do painel (rgb 229,214,161).
+///
+/// A rampa anterior ia até o ouro e o branco-quente e ficava ILEGÍVEL: o ouro
+/// tinha 1,14:1 de contraste sobre o painel claro. Num fundo claro, calor não pode
+/// ser expresso por luminosidade — aqui ele vem de matiz e saturação, com todas as
+/// paradas escuras o bastante (contraste medido entre 4,6:1 e 5,6:1).
 function hud_cor_combo(_combo) {
-    if (_combo >= 45) return make_colour_rgb(255, 240, 205);
+    var _terra   = make_colour_rgb(122, 84, 52);   // 4,60:1  - metal ainda frio
+    var _cobre   = make_colour_rgb(150, 66, 24);   // 4,68:1
+    var _brasa   = make_colour_rgb(168, 40, 16);   // 4,86:1
+    var _carmim  = make_colour_rgb(158, 22, 40);   // 5,57:1  - núcleo incandescente
 
-    if (_combo >= 30) {
-        return merge_colour(make_colour_rgb(255, 190, 60), make_colour_rgb(255, 240, 205), (_combo - 30) / 15);
-    }
-    if (_combo >= 15) {
-        return merge_colour(make_colour_rgb(226, 120, 30), make_colour_rgb(255, 190, 60), (_combo - 15) / 15);
-    }
-    return merge_colour(make_colour_rgb(178, 58, 22), make_colour_rgb(226, 120, 30), (_combo - HUD_COMBO_MINIMO) / 10);
+    if (_combo >= 45) return _carmim;
+    if (_combo >= 30) return merge_colour(_brasa, _carmim, (_combo - 30) / 15);
+    if (_combo >= 15) return merge_colour(_cobre, _brasa, (_combo - 15) / 15);
+    return merge_colour(_terra, _cobre, (_combo - HUD_COMBO_MINIMO) / 10);
 }
 
 /// Desenha o HUD da partida (evento Draw GUI).

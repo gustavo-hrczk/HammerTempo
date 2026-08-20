@@ -3,51 +3,53 @@ draw_set_halign(fa_left);
 draw_set_valign(fa_top);
 
 // --- POSICIONAMENTO ---
-var _col1_x = (display_get_gui_width() / 2) - 300;
-var _col2_x = (display_get_gui_width() / 2) + 50;
+// Com a faixa "ótimas" a lista de duas colunas passou a estourar o painel: a frase
+// de feedback invadia a caixa do prompt. Virou uma grade 2x3 em fonte pequena, que
+// economiza uma linha inteira e ainda agrupa os três julgamentos lado a lado.
+var _cx = display_get_gui_width() / 2;
+var _col_esq = _cx - 300;
+var _col_dir = _cx + 300;
 
-var _base_y = 512;
-var _line_gap = 27;
-var _line1_y = _base_y;
-var _line2_y = _base_y + _line_gap;
-var _line3_y = _base_y + (_line_gap * 2);
+var _linha1 = 524;
+var _linha2 = 556;
 
+var _perfeitas = o_controlador_geral.stats_acertos_perfeitos;
+var _otimas = o_controlador_geral.stats_acertos_otimos;
+var _boas = o_controlador_geral.stats_acertos_bons;
+var _erros = o_controlador_geral.stats_erros;
 
-// --- DESENHA AS ESTATÍSTICAS ---
-draw_set_font(f_padrao); // Define a fonte padrão
-draw_set_color(c_black);
-draw_text(_col1_x, _line1_y, "Notas Perfeitas: " + string(o_controlador_geral.stats_acertos_perfeitos));
-draw_text(_col1_x, _line2_y, "Notas Ótimas: " + string(o_controlador_geral.stats_acertos_otimos));
-draw_text(_col1_x, _line3_y, "Notas Boas: " + string(o_controlador_geral.stats_acertos_bons));
-
-draw_text(_col2_x, _line1_y, "Erros: " + string(o_controlador_geral.stats_erros));
-draw_text(_col2_x, _line2_y, "Total de Notas: " + string(o_controlador_geral.stats_total_notas));
+var _julgadas = _perfeitas + _otimas + _boas + _erros;
+var _precisao = (_julgadas > 0) ? ((_perfeitas + _otimas + _boas) / _julgadas) * 100 : 0;
 
 draw_set_halign(fa_center);
-draw_text(display_get_gui_width() / 2, _line3_y + 32, "Pontuação: " + string(o_controlador_geral.pontuacao));
-
-// =================================================================
-// --- DESENHA A FRASE DE FEEDBACK (NOVA SEÇÃO) ---
-// =================================================================
-// (A frase já foi escolhida no Evento Create)
-
-// Posição Y para a frase, logo abaixo da pontuação
-var _frase_y = _line3_y + 64;
-
-// Mude a cor e o estilo se quiser
-draw_set_color(c_gray); // Um cinza claro para diferenciar
-
-draw_text(display_get_gui_width() / 2, _frase_y, frase_escolhida);
-
-// Volta para a fonte e cor padrão para o resto
-// draw_set_font(f_padrao);
+draw_set_valign(fa_middle);
 draw_set_color(c_black);
 
+// --- GRADE DE ESTATÍSTICAS ---
+draw_set_font(f_padrao_pequena);
+
+draw_text(_col_esq, _linha1, "Perfeitas: " + string(_perfeitas));
+draw_text(_cx,      _linha1, "Ótimas: " + string(_otimas));
+draw_text(_col_dir, _linha1, "Boas: " + string(_boas));
+
+draw_text(_col_esq, _linha2, "Erros: " + string(_erros));
+draw_text(_cx,      _linha2, "Total: " + string(o_controlador_geral.stats_total_notas));
+draw_text(_col_dir, _linha2, "Precisão: " + string(round(_precisao)) + "%");
+
+// --- PONTUAÇÃO EM DESTAQUE ---
+draw_set_font(f_padrao);
+draw_text(_cx, 594, "Pontuação: " + string(o_controlador_geral.pontuacao));
+
+// --- FRASE DE FEEDBACK (escolhida no evento Create) ---
+draw_set_font(f_padrao_pequena);
+draw_set_color(c_gray);
+draw_text(_cx, 628, frase_escolhida);
+draw_set_color(c_black);
 
 // --- PROMPT PARA CONTINUAR ---
 // A GUI agora tem 720 px de altura (antes herdava os 768 do splash), então o prompt
 // desceu para dentro da tela — auditoria UI-01.
-ui_prompt(display_get_gui_width() / 2, 678, ui_texto_confirmar() + " para continuar", 65);
+ui_prompt(_cx, 676, ui_texto_confirmar() + " para continuar", 65);
 
 // =================================================================
 // --- DESENHA A ARMA FORJADA E SUA MOLDURA (NOVA SEÇÃO) ---
@@ -55,7 +57,7 @@ ui_prompt(display_get_gui_width() / 2, 678, ui_texto_confirmar() + " para contin
 
 // Posições baseadas no centro superior do painel de resultados (se você tiver um)
 var _panel_top_y = 200; // Altura do topo do seu painel de resultados (ajuste conforme necessário)
-var _center_x = display_get_gui_width() / 2;
+var _center_x = _cx;
 
 // Posição central para a arma e a moldura
 // Ajuste este valor para mover tudo para cima ou para baixo na tela.

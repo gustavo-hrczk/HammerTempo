@@ -190,3 +190,18 @@ da faixa um único frame.
 descartado. Do ajuste ficou só o **enquadramento**: centralizada na faixa por onde as notas vão
 correr. O texto usa `f_padrao` com o mesmo tratamento do resto do jogo — sem contorno, sem
 variação de opacidade — e o número em escala 3 com posição arredondada.
+
+**D-35 · Paleta do combo medida, não estimada.** A rampa "temperatura do metal" (D-29) subia até
+ouro e branco-quente — e o painel do HUD é um pergaminho claro (rgb 229,214,161). Medindo o
+contraste: o ouro dava **1,14:1** e o branco-quente **1,29:1**, ou seja, texto praticamente
+invisível. Em fundo claro, calor não pode ser expresso por luminosidade.
+
+A rampa nova expressa calor por **matiz e saturação**, mantendo todas as paradas escuras:
+terra (4,60:1) → cobre (4,68:1) → brasa (4,86:1) → carmim (5,57:1). Todas acima de 4,5:1, o
+mínimo de contraste para texto. Sempre que um texto for sobre o pergaminho, medir antes.
+
+**D-36 · Tela de resultado em grade 2x3.** Com a faixa "ótimas" a lista de duas colunas passou a
+estourar o painel — a frase de feedback invadia a caixa do prompt em 7 px. Virou uma grade de duas
+linhas por três colunas em `f_padrao_pequena`: julgamentos lado a lado em cima, erros/total/
+precisão embaixo. Economiza uma linha inteira, agrupa as três faixas visualmente e ainda exibe a
+precisão, que antes só existia durante a partida.
