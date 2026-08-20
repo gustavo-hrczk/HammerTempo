@@ -63,7 +63,7 @@ fase (música toca?) → ESC → menu → repetir 5 ciclos (FPS estável? estado
 
 ---
 
-## Sprint 3 — UI/UX ← PRÓXIMA
+## Sprint 3 — UI/UX — EM ANDAMENTO
 
 **Objetivo:** o jogador entender o que está acontecendo, o tempo todo.
 
@@ -94,6 +94,36 @@ fase (música toca?) → ESC → menu → repetir 5 ciclos (FPS estável? estado
   SFX de navegação, salvar em disco
 - Tutorial refeito com ícones das teclas **e** dos botões do controle
 - Seletor de fases com arte da arma, dificuldade, BPM e melhor pontuação local
+
+### 3.5 Situação ao fim da sessão de 20/08/2026
+
+**Entregue e validado em playtest:**
+
+| Item | Detalhe |
+|---|---|
+| HUD de partida | Bloco ancorado à margem de acerto, no mesmo eixo das teclas. Pontuação com contagem animada, precisão, combo a partir de 5 com cor progressiva e tremor na quebra, nome da fase na abertura, barra de progresso, aviso de forja esfriando |
+| Julgamento | Cascata em fila de até 3, subindo e sumindo; ganho de pontos saindo do próprio número da pontuação |
+| Terceira faixa | BOM → ÓTIMO → PERFEITO, com cor própria no texto, no brilho do botão e no estouro da nota |
+| Leitura das notas | Trilhos por lane em degradê a partir da zona de acerto, contorno escuro nas notas, brilho de aproximação |
+| Acerto | "Bolha que estoura" no lugar do "sobe e desvanece"; pop e brilho do alvo diferenciados por faixa |
+| Ferreiro | Sprite `s_ferreiro_andando` importada do pacote original; ócio orgânico fora da partida; frame vermelho de dano no erro |
+| Fades | Transições padronizadas em 250 ms, respiro de 0,35 s na abertura, crossfade do tema, entrada do HUD em 0,45 s, respiro de 1,8 s no fim da fase |
+| Tela de resultado | Grade 2x3, sem estouro, com precisão |
+| Opções | Tamanho de janela configurável (640/1024/1280 + tela cheia), salvo em disco |
+| Correções | Caracteres fora da fonte, escala fracionária de fonte, sincronia música/notas, volume da martelada |
+
+**Pendente nesta sprint:**
+
+- **Pausa durante a partida** (ESC) com "Continuar / Reiniciar / Sair" — auditoria CV-07
+- **Volumes separados de música e efeitos** nas opções. Resolve de quebra duas assimetrias
+  herdadas: `snd_menu_confirm` é o mesmo áudio da martelada, e a navegação de menu está 13 dB
+  abaixo da confirmação
+- **Tutorial com ícones de teclado e de controle**
+- **Seletor de fases** com arte da arma, BPM e melhor pontuação local
+- **Efeitos de impacto** na bigorna e no martelo — removidos, aguardando referências externas
+- **Sobreposição residual** de 11 px entre o julgamento no fim da subida e o combo
+- **`Smith_sharpen` e `Smith_Sieve`** — importar daria ações reais ao ócio do ferreiro, em vez de
+  só andar e parar
 
 **Validação:** sessão de teste com 3–5 pessoas de fora da equipe, cronometrando quanto tempo levam
 para entender o objetivo sem explicação verbal.

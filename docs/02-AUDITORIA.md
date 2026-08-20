@@ -422,3 +422,33 @@ Validado com build real (runtime 2024.13.1.242) e captura de tela a cada etapa.
 | UI-11 | Os créditos começavam 3020 px abaixo do topo — **~25 s de tela vazia** antes do primeiro texto aparecer | 🟡 | ✅ Corrigido — a rolagem começa logo abaixo da tela |
 | UI-13 | Na tela de resultado, a frase de feedback colidia com o prompt depois da mudança de GUI | 🟡 | ✅ Corrigido — linhas reposicionadas |
 | GP-09 | Sob *mashing* extremo, a penalidade de 10 pontos por toque inválido zera a pontuação da partida | 🔵 | Aberto — decisão de balanceamento, precisa de playtest |
+
+
+---
+
+## 8. Status após a Sprint 3 (UI/UX, parcial)
+
+| ID | Achado | Status |
+|---|---|---|
+| UI-02 | Ausência total de HUD | ✅ **Fechado** — bloco completo ancorado à margem de acerto |
+| UI-03 | Feedback visual mínimo no acerto | ✅ **Fechado** — bolha, pop e brilho do alvo por faixa de julgamento |
+| CV-03 | Tema cortado em seco | ✅ **Fechado** — fade de 2,2 s durante a contagem, sem mover o início da faixa |
+| CV-06 | Transições sem fade | ✅ **Fechado** — 250 ms em todas as trocas, com respiro opcional |
+| UI-07 | Texto do tutorial em Y absoluto | ✅ **Fechado** na Sprint 2 |
+| UI-11 | Créditos começavam 25 s abaixo da tela | ✅ **Fechado** na Sprint 2 |
+| GP-01 | Frequência de "perfeito" alta demais | ✅ **Fechado** — três faixas, perfeito em ±33 ms |
+| UI-04 | Zonas de acerto invisíveis | 🟡 **Substituído** — em vez de desenhar as zonas, a leitura vem dos trilhos, do contorno das notas e do brilho de aproximação (decisão do playtest) |
+| CV-07 | Sem pausa na partida | ⬜ Pendente |
+| UI-05 | Opções sem volumes separados | 🟡 Parcial — ganhou tamanho de janela; falta separar música e efeitos |
+| UI-09 | Seletor de fases em linha | ⬜ Pendente |
+
+### Achados novos desta sprint
+
+| ID | Achado | Severidade | Status |
+|---|---|---|---|
+| UI-14 | Fonte de pixel em escala fracionária faz o glifo "ferver" a cada frame; havia em cinco textos | 🟡 | ✅ Corrigido — escala e posição inteiras, num ponto único |
+| UI-15 | Rampa de cor do combo ia até o branco sobre painel claro: contraste de 1,14:1, texto invisível | 🟠 | ✅ Corrigido — paleta medida, todas as paradas acima de 4,5:1 |
+| CV-08 | Adiantar a música para a contagem deslocou a faixa 3 s em relação às notas | 🔴 | ✅ Corrigido — a música volta a começar junto com o spawner |
+| AU-01 | Marteladas em ~−11 dBFS RMS encobrindo a música | 🟡 | ✅ Corrigido — ganho em 0,32 (−9,9 dB) |
+| AU-02 | `snd_menu_confirm` é o mesmo áudio de `snd_martelada_01`; navegação 13 dB abaixo da confirmação | 🔵 | Aberto — resolve com volumes separados |
+| PJ-07 | A IDE do GameMaker, com o projeto aberto, desfaz edições feitas por fora | 🟡 | Contornado — verificar no disco após cada escrita |
