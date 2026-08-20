@@ -88,10 +88,7 @@ function hud_init() {
     global.hud_ganho_valor = 0;
     global.hud_ganho_timer = 0;
     global.hud_ganho_cor = c_white;
-    global.hud_julg_texto = "";
-    global.hud_julg_cor = c_white;
-    global.hud_julg_timer = 0;
-    global.hud_julg_sobe = true;
+    global.hud_julgamentos = [];
     global.hud_combo_anterior = 0;
     global.hud_combo_exibido = 0;
     global.hud_combo_quebra = 0;
@@ -104,8 +101,7 @@ function hud_resetar() {
     global.hud_pontos_exibidos = 0;
     global.hud_ganho_valor = 0;
     global.hud_ganho_timer = 0;
-    global.hud_julg_texto = "";
-    global.hud_julg_timer = 0;
+    global.hud_julgamentos = [];
     global.hud_combo_anterior = 0;
     global.hud_combo_exibido = 0;
     global.hud_combo_quebra = 0;
@@ -139,7 +135,15 @@ function hud_update() {
     global.hud_fase_timer++;
     global.hud_aviso_pulso += 0.12;
     global.hud_ganho_timer = max(0, global.hud_ganho_timer - 1);
-    global.hud_julg_timer = max(0, global.hud_julg_timer - 1);
+
+    // envelhece a fila de julgamentos, do fim para o começo por causa da remoção
+    for (var i = array_length(global.hud_julgamentos) - 1; i >= 0; i--) {
+        var _j = global.hud_julgamentos[i];
+        _j.timer++;
+        if (_j.timer >= _j.dur) {
+            array_delete(global.hud_julgamentos, i, 1);
+        }
+    }
 }
 
 /// Registra um ganho de pontos, que sobe a partir do próprio número da pontuação.
@@ -151,14 +155,28 @@ function hud_registrar_ganho(_valor, _cor = c_white) {
     global.hud_ganho_timer = room_speed * 0.7;
 }
 
-/// Julgamento do acerto, exibido na parte de baixo do bloco. Fica no HUD (e não num
-/// objeto solto) porque o painel é desenhado no Draw GUI: em espaço de room, o texto
-/// apareceria atrás dele. Um julgamento novo sempre substitui o anterior.
+/// Julgamento do acerto. Fica no HUD (e não num objeto solto) porque o painel é
+/// desenhado no Draw GUI: em espaço de room, o texto apareceria atrás dele.
+///
+/// Cada acerto empilha um item novo em vez de substituir o anterior. Como o jogador
+/// acerta em sequência — é a proposta do jogo —, o slot único fazia o texto ser
+/// trocado no meio da animação e aos olhos virava tremulação. Agora cada julgamento
+/// sobe e some no seu próprio tempo, e os que ainda estão subindo ficam em alturas
+/// diferentes: a sobreposição vira leitura de sequência.
 function hud_registrar_julgamento(_texto, _cor, _sobe = true) {
-    global.hud_julg_texto = _texto;
-    global.hud_julg_cor = _cor;
-    global.hud_julg_sobe = _sobe;
-    global.hud_julg_timer = room_speed * 0.55;
+    array_push(global.hud_julgamentos, {
+        texto: _texto,
+        cor: _cor,
+        sobe: _sobe,
+        timer: 0,
+        dur: room_speed * 0.7,
+        desvio_x: irandom_range(-9, 9)
+    });
+
+    // teto de 3 simultâneos: acima disso vira poluição
+    while (array_length(global.hud_julgamentos) > 3) {
+        array_delete(global.hud_julgamentos, 0, 1);
+    }
 }
 
 /// Cor do combo, medida contra o pergaminho do painel (rgb 229,214,161).
@@ -247,31 +265,34 @@ function hud_draw() {
     }
 
     // ---------------------------------------------------------------
-    // JULGAMENTO — logo abaixo do bloco, na faixa livre antes do corredor
+    // JULGAMENTOS — sobem a partir da base do bloco e somem no caminho
     // ---------------------------------------------------------------
-    if (global.hud_julg_timer > 0) {
-        var _jdur = room_speed * 0.55;
-        var _jprog = 1 - (global.hud_julg_timer / _jdur);
+    var _jx = HUD_BLOCO_X + (HUD_BLOCO_W / 2);
+    var _jy_base = HUD_BLOCO_Y + HUD_BLOCO_H + 16;
 
-        // Sem escala fracionária: o impacto vem do deslocamento e da opacidade,
-        // mais um clarão de cor nos primeiros frames.
-        var _jdesloca = (global.hud_julg_sobe ? -1 : 1) * round(_jprog * 10);
-        var _cor_julg = (_jprog < 0.15)
-            ? merge_colour(global.hud_julg_cor, c_white, 0.6)
-            : global.hud_julg_cor;
+    draw_set_font(f_padrao);
 
-        draw_set_font(f_padrao);
-        draw_set_alpha(1 - (_jprog * _jprog));
+    for (var i = 0; i < array_length(global.hud_julgamentos); i++) {
+        var _j = global.hud_julgamentos[i];
+        var _prog = _j.timer / _j.dur;
 
-        // 26 px abaixo da base do bloco. O limite é o corredor das notas, que
-        // começa em y = 515: com a fonte de 30 px, o texto fica em 483..513 e
-        // sobe a partir daí.
-        hud_texto(HUD_BLOCO_X + (HUD_BLOCO_W / 2),
-                  HUD_BLOCO_Y + HUD_BLOCO_H + 26 + _jdesloca,
-                  global.hud_julg_texto, _cor_julg, 1);
+        // sobe rápido e vai freando; o erro afunda pouco, só o suficiente para a
+        // direção do movimento distinguir falha de acerto
+        var _distancia = _j.sobe ? 70 : 20;
+        var _desloca = _distancia * (1 - power(1 - _prog, 2));
+        if (_j.sobe) _desloca = -_desloca;
 
-        draw_set_alpha(1);
+        // opaco no impacto, some no resto do trajeto
+        var _alpha = (_prog < 0.25) ? 1 : 1 - ((_prog - 0.25) / 0.75);
+
+        // clarão de cor nos primeiros frames
+        var _cor = (_prog < 0.12) ? merge_colour(_j.cor, c_white, 0.55) : _j.cor;
+
+        draw_set_alpha(_alpha);
+        hud_texto(_jx + _j.desvio_x, round(_jy_base + _desloca), _j.texto, _cor, 1);
     }
+
+    draw_set_alpha(1);
 
     // ---------------------------------------------------------------
     // NOME DA FASE — abertura, some depois de 4 s
