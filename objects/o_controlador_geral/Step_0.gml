@@ -76,7 +76,6 @@ switch (estado_jogo) {
             // Limpa a "bagunça" do minigame
             if (instance_exists(o_spawner_ritmo)) { instance_destroy(o_spawner_ritmo); }
             instance_destroy(o_nota_seta);
-            instance_destroy(o_julgamento);
 
             // Cria o objeto da tela de resultado
             instance_create_layer(0, 0, "Gameplay", o_controlador_resultado);

@@ -60,7 +60,6 @@
     {"id":{"name":"o_fundo_ui","path":"objects/o_fundo_ui/o_fundo_ui.yy",},},
     {"id":{"name":"o_hitbox_bom","path":"objects/o_hitbox_bom/o_hitbox_bom.yy",},},
     {"id":{"name":"o_hitbox_perfeito","path":"objects/o_hitbox_perfeito/o_hitbox_perfeito.yy",},},
-    {"id":{"name":"o_julgamento","path":"objects/o_julgamento/o_julgamento.yy",},},
     {"id":{"name":"o_menu_controlador","path":"objects/o_menu_controlador/o_menu_controlador.yy",},},
     {"id":{"name":"o_nota_seta","path":"objects/o_nota_seta/o_nota_seta.yy",},},
     {"id":{"name":"o_seletor_fases","path":"objects/o_seletor_fases/o_seletor_fases.yy",},},

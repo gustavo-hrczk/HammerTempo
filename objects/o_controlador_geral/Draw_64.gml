@@ -4,16 +4,24 @@ switch (estado_jogo) {
         if (contagem_timer > 0) {
             var _display_number = ceil(contagem_timer / room_speed);
 
-            draw_set_font(f_padrao);
-            draw_set_halign(fa_center);
-            draw_set_valign(fa_middle);
-            draw_set_color(c_black);
-
+            // Volta para a faixa onde as notas vão correr, centralizada nela: é para
+            // lá que o olho precisa estar quando a fase começar.
             var _cx = display_get_gui_width() / 2;
-            var _cy_rodape = 640;
+            var _cy = (HUD_CORREDOR_TOPO + HUD_CORREDOR_BASE) / 2;
 
-            draw_text(_cx, _cy_rodape - 60, "Prepare-se para forjar em...");
-            draw_text_transformed(_cx, _cy_rodape + 40, string(_display_number), 3, 3, 0);
+            // Pulso por segundo: o número entra grande e assenta, e a opacidade
+            // acompanha, dando ritmo à contagem.
+            var _frac = (contagem_timer mod room_speed) / room_speed;
+            var _pop = power(_frac, 5);
+            var _escala = 3 + (_pop * 1.7);
+
+            draw_set_font(f_padrao_pequena);
+            hud_texto(_cx, _cy - 58, "Prepare-se para forjar em...", c_black, 1);
+
+            draw_set_font(f_padrao);
+            draw_set_alpha(0.55 + (0.45 * _frac));
+            hud_texto(_cx, _cy + 26, string(_display_number), make_colour_rgb(200, 70, 30), _escala);
+            draw_set_alpha(1);
 
             ui_reset();
         }

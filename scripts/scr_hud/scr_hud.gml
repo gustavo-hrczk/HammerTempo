@@ -9,14 +9,13 @@
 #macro HUD_CORREDOR_BASE 707
 
 /// Bloco de informação, ancorado logo acima da margem de acerto.
-#macro HUD_BLOCO_X 14
+/// A largura e o X são escolhidos para que o CENTRO do bloco caia exatamente no
+/// centro da coluna de teclas (RITMO_LINHA_X + metade da largura do alvo = 120):
+/// bloco, julgamento e teclas compartilham o mesmo eixo vertical.
+#macro HUD_BLOCO_W 230
+#macro HUD_BLOCO_X 5
 #macro HUD_BLOCO_Y 344
-#macro HUD_BLOCO_W 330
 #macro HUD_BLOCO_H 128
-
-/// Onde o julgamento nasce: logo acima do bloco.
-#macro HUD_JULGAMENTO_X 179
-#macro HUD_JULGAMENTO_Y 314
 
 /// Combo só é anunciado a partir daqui.
 #macro HUD_COMBO_MINIMO 5
@@ -70,8 +69,16 @@ function hud_barra(_x, _y, _largura, _altura, _fracao, _cor_a, _cor_b) {
 /// Prepara as variáveis de animação do HUD. Chamado pelo controlador geral.
 function hud_init() {
     global.hud_pontos_exibidos = 0;
-    global.hud_combo_escala = 1;
+    global.hud_ganho_valor = 0;
+    global.hud_ganho_timer = 0;
+    global.hud_ganho_cor = c_white;
+    global.hud_julg_texto = "";
+    global.hud_julg_cor = c_white;
+    global.hud_julg_timer = 0;
+    global.hud_julg_sobe = true;
     global.hud_combo_anterior = 0;
+    global.hud_combo_exibido = 0;
+    global.hud_combo_quebra = 0;
     global.hud_fase_timer = 0;
     global.hud_aviso_pulso = 0;
 }
@@ -79,8 +86,13 @@ function hud_init() {
 /// Reinicia o HUD no começo de cada partida.
 function hud_resetar() {
     global.hud_pontos_exibidos = 0;
-    global.hud_combo_escala = 1;
+    global.hud_ganho_valor = 0;
+    global.hud_ganho_timer = 0;
+    global.hud_julg_texto = "";
+    global.hud_julg_timer = 0;
     global.hud_combo_anterior = 0;
+    global.hud_combo_exibido = 0;
+    global.hud_combo_quebra = 0;
     global.hud_fase_timer = 0;
 }
 
@@ -96,15 +108,55 @@ function hud_update() {
         global.hud_pontos_exibidos += (_alvo - global.hud_pontos_exibidos) * 0.25;
     }
 
-    // combo dá um "pop" toda vez que cresce
-    if (_ctrl.stats_sequencia > global.hud_combo_anterior) {
-        global.hud_combo_escala = 1.5;
+    // o combo tem tamanho fixo: quem comunica o crescimento é a cor, que vai
+    // esquentando. A quebra ganha um tremor curto com o último valor alcançado.
+    var _combo = _ctrl.stats_sequencia;
+
+    if (_combo < global.hud_combo_anterior && global.hud_combo_anterior >= HUD_COMBO_MINIMO) {
+        global.hud_combo_exibido = global.hud_combo_anterior;
+        global.hud_combo_quebra = room_speed * 0.4;
     }
-    global.hud_combo_anterior = _ctrl.stats_sequencia;
-    global.hud_combo_escala += (1 - global.hud_combo_escala) * 0.2;
+
+    global.hud_combo_anterior = _combo;
+    global.hud_combo_quebra = max(0, global.hud_combo_quebra - 1);
 
     global.hud_fase_timer++;
     global.hud_aviso_pulso += 0.12;
+    global.hud_ganho_timer = max(0, global.hud_ganho_timer - 1);
+    global.hud_julg_timer = max(0, global.hud_julg_timer - 1);
+}
+
+/// Registra um ganho de pontos, que sobe a partir do próprio número da pontuação.
+/// Precisa ser desenhado pelo HUD (e não por um objeto): o painel está no Draw GUI,
+/// então qualquer coisa em espaço de room apareceria atrás dele.
+function hud_registrar_ganho(_valor, _cor = c_white) {
+    global.hud_ganho_valor = _valor;
+    global.hud_ganho_cor = _cor;
+    global.hud_ganho_timer = room_speed * 0.7;
+}
+
+/// Julgamento do acerto, exibido na parte de baixo do bloco. Fica no HUD (e não num
+/// objeto solto) porque o painel é desenhado no Draw GUI: em espaço de room, o texto
+/// apareceria atrás dele. Um julgamento novo sempre substitui o anterior.
+function hud_registrar_julgamento(_texto, _cor, _sobe = true) {
+    global.hud_julg_texto = _texto;
+    global.hud_julg_cor = _cor;
+    global.hud_julg_sobe = _sobe;
+    global.hud_julg_timer = room_speed * 0.55;
+}
+
+/// Cor do combo, esquentando conforme a sequência cresce: brasa escura, laranja,
+/// ouro e por fim quase branco — a mesma leitura de temperatura do metal na forja.
+function hud_cor_combo(_combo) {
+    if (_combo >= 45) return make_colour_rgb(255, 240, 205);
+
+    if (_combo >= 30) {
+        return merge_colour(make_colour_rgb(255, 190, 60), make_colour_rgb(255, 240, 205), (_combo - 30) / 15);
+    }
+    if (_combo >= 15) {
+        return merge_colour(make_colour_rgb(226, 120, 30), make_colour_rgb(255, 190, 60), (_combo - 15) / 15);
+    }
+    return merge_colour(make_colour_rgb(178, 58, 22), make_colour_rgb(226, 120, 30), (_combo - HUD_COMBO_MINIMO) / 10);
 }
 
 /// Desenha o HUD da partida (evento Draw GUI).
@@ -121,12 +173,24 @@ function hud_draw() {
     // ---------------------------------------------------------------
     draw_sprite_stretched(s_menu_background_panel, 0, HUD_BLOCO_X, HUD_BLOCO_Y, HUD_BLOCO_W, HUD_BLOCO_H);
 
-    var _esq = HUD_BLOCO_X + 24;
-    var _dir = HUD_BLOCO_X + HUD_BLOCO_W - 24;
+    var _esq = HUD_BLOCO_X + 20;
+    var _dir = HUD_BLOCO_X + HUD_BLOCO_W - 20;
     var _tinta = make_colour_rgb(40, 28, 18); // marrom bem escuro, casa com o pergaminho
 
     hud_texto_painel(_esq, HUD_BLOCO_Y + 32, "Pontos", _tinta, f_padrao_pequena, fa_left);
     hud_texto_painel(_dir, HUD_BLOCO_Y + 32, string(round(global.hud_pontos_exibidos)), _tinta, f_padrao, fa_right);
+
+    // ganho de pontos subindo a partir do próprio número
+    if (global.hud_ganho_timer > 0) {
+        var _dur = room_speed * 0.7;
+        var _prog = 1 - (global.hud_ganho_timer / _dur);
+
+        draw_set_alpha(1 - (_prog * _prog));
+        hud_texto_painel(_dir, HUD_BLOCO_Y + 14 - (_prog * 22),
+                         "+" + string(global.hud_ganho_valor),
+                         global.hud_ganho_cor, f_padrao, fa_right);
+        draw_set_alpha(1);
+    }
 
     var _acertos = _ctrl.stats_acertos_perfeitos + _ctrl.stats_acertos_bons;
     var _julgadas = _acertos + _ctrl.stats_erros;
@@ -140,16 +204,53 @@ function hud_draw() {
     draw_line(_esq, HUD_BLOCO_Y + 86, _dir, HUD_BLOCO_Y + 86);
     draw_set_alpha(1);
 
-    // combo — só existe a partir de HUD_COMBO_MINIMO acertos seguidos.
-    // Aqui a escala varia de propósito: é o único elemento que reage a cada acerto.
+    // combo — só existe a partir de HUD_COMBO_MINIMO acertos seguidos
+    var _combo_x = HUD_BLOCO_X + (HUD_BLOCO_W / 2);
+    var _combo_y = HUD_BLOCO_Y + 106;
+
     if (_ctrl.stats_sequencia >= HUD_COMBO_MINIMO) {
+        hud_texto_painel(_combo_x, _combo_y, "Combo x" + string(_ctrl.stats_sequencia),
+                         hud_cor_combo(_ctrl.stats_sequencia), f_padrao, fa_center);
+    }
+    else if (global.hud_combo_quebra > 0) {
+        // sequência quebrada: o número treme e some depressa
+        var _qdur = room_speed * 0.4;
+        var _qprog = 1 - (global.hud_combo_quebra / _qdur);
+        var _tremor = (1 - _qprog) * 5;
+
+        draw_set_alpha(1 - _qprog);
+        hud_texto_painel(_combo_x + random_range(-_tremor, _tremor),
+                         _combo_y + random_range(-_tremor, _tremor),
+                         "Combo x" + string(global.hud_combo_exibido),
+                         make_colour_rgb(120, 105, 95), f_padrao, fa_center);
+        draw_set_alpha(1);
+    }
+
+    // ---------------------------------------------------------------
+    // JULGAMENTO — logo abaixo do bloco, na faixa livre antes do corredor
+    // ---------------------------------------------------------------
+    if (global.hud_julg_timer > 0) {
+        var _jdur = room_speed * 0.55;
+        var _jprog = 1 - (global.hud_julg_timer / _jdur);
+
+        // estoura para fora e assenta
+        var _jescala = 1.3 - (0.3 * min(1, _jprog * 3));
+        var _jdesloca = (global.hud_julg_sobe ? -1 : 1) * _jprog * 10;
+
         draw_set_font(f_padrao);
         draw_set_halign(fa_center);
         draw_set_valign(fa_middle);
-        draw_set_color(make_colour_rgb(178, 58, 22));
-        var _e = min(global.hud_combo_escala, 1.25);
-        draw_text_transformed(HUD_BLOCO_X + (HUD_BLOCO_W / 2), HUD_BLOCO_Y + 106,
-                              "Combo x" + string(_ctrl.stats_sequencia), _e, _e, 0);
+        draw_set_alpha(1 - (_jprog * _jprog));
+
+        var _jx = HUD_BLOCO_X + (HUD_BLOCO_W / 2);
+        var _jy = HUD_BLOCO_Y + HUD_BLOCO_H + 16 + _jdesloca;
+
+        draw_set_color(c_black);
+        draw_text_transformed(_jx + 2, _jy + 2, global.hud_julg_texto, _jescala, _jescala, 0);
+        draw_set_color(global.hud_julg_cor);
+        draw_text_transformed(_jx, _jy, global.hud_julg_texto, _jescala, _jescala, 0);
+
+        draw_set_alpha(1);
     }
 
     // ---------------------------------------------------------------
@@ -194,49 +295,4 @@ function hud_draw() {
     }
 
     ui_reset();
-}
-
-/// Cria um julgamento logo acima do bloco de HUD, no campo de visão de quem está
-/// olhando para a margem de acerto. Os anteriores encolhem e aceleram, formando a
-/// cascata; no máximo 3 ficam na tela ao mesmo tempo.
-function julgamento_criar(_texto, _cor, _sobe = true, _pontos = 0) {
-    with (o_julgamento) {
-        escala_alvo *= 0.7;
-        vel_y *= 1.35;
-        if (vida < 10) vida = 10;
-    }
-
-    if (instance_number(o_julgamento) >= 3) {
-        var _mais_velho = noone;
-        var _maior_vida = -1;
-        with (o_julgamento) {
-            if (vida > _maior_vida) {
-                _maior_vida = vida;
-                _mais_velho = id;
-            }
-        }
-        if (_mais_velho != noone) instance_destroy(_mais_velho);
-    }
-
-    var _j = instance_create_layer(HUD_JULGAMENTO_X, HUD_JULGAMENTO_Y, "Gameplay", o_julgamento);
-    _j.texto = _texto;
-    _j.cor = _cor;
-    _j.escala = 0.4;
-    _j.escala_alvo = _sobe ? 1.15 : 0.9;
-    _j.vel_y = _sobe ? -2.2 : 2.2;
-    _j.vel_x = random_range(-0.5, 0.5);
-
-    // pontos ganhos acompanham o julgamento, menores e mais discretos
-    if (_pontos != 0) {
-        var _p = instance_create_layer(HUD_JULGAMENTO_X + 96, HUD_JULGAMENTO_Y + 20, "Gameplay", o_julgamento);
-        _p.texto = "+" + string(_pontos);
-        _p.cor = c_white;
-        _p.escala = 0.3;
-        _p.escala_alvo = 0.6;
-        _p.vel_y = -1.6;
-        _p.vel_x = 0.4;
-        _p.vida = 6;
-    }
-
-    return _j;
 }

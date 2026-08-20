@@ -6,13 +6,13 @@ escala = 1;
 // 0 = viva, 1 = absorvida pelo alvo (acerto), 2 = perdida (erro)
 modo = 0;
 
-/// Acerto: a nota é sugada para dentro do alvo, encolhendo em poucos frames.
-/// Substitui o antigo "sobe e desvanece", que era lento e tirava o olho da margem.
-absorver = function() {
+/// Acerto: a nota estoura como uma bolha — cresce rápido enquanto some, no lugar
+/// onde foi acertada. Substitui a absorção, que ficou apagada demais.
+estourar = function(_cor = c_white) {
     if (modo != 0) exit;
     modo = 1;
     velocidade = 0;
-    image_blend = c_white;
+    image_blend = _cor;
 }
 
 /// Nota perdida: contabiliza o erro uma única vez e sai de cena em vermelho.
@@ -30,5 +30,5 @@ registrar_erro = function() {
         o_ferreiro.aplicar_dano();
     }
 
-    julgamento_criar("ERRO", make_colour_rgb(235, 95, 75), false);
+    hud_registrar_julgamento("ERRO", make_colour_rgb(235, 95, 75), false);
 }

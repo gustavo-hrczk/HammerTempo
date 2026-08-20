@@ -8,6 +8,7 @@ if (o_controlador_geral.pausa) {
 
 // --- decaimento do feedback visual ---
 pop = max(0, pop - 0.14);
+brilho = max(0, brilho - 0.10);
 afundamento = max(0, afundamento - 0.8);
 
 // =================================================================
@@ -58,12 +59,15 @@ switch (_julgamento) {
         o_controlador_geral.stats_sequencia++;
         o_controlador_geral.stats_acertos_perfeitos++;
 
-        _nota.absorver();
+        _nota.estourar(make_colour_rgb(255, 226, 140));
         pop = 1;
+        brilho = 1;
+        brilho_cor = make_colour_rgb(255, 214, 90);
         o_ferreiro.iniciar_martelada_perfeita();
         o_audio_manager.play_martelada_sequencial_sfx();
 
-        julgamento_criar("PERFEITO!", c_yellow, true, _ganho);
+        hud_registrar_julgamento("PERFEITO!", make_colour_rgb(255, 214, 90), true);
+        hud_registrar_ganho(_ganho, make_colour_rgb(214, 150, 20));
 
         debug_registrar_julgamento("PERFEITO", _erro_ms);
         break;
@@ -74,12 +78,15 @@ switch (_julgamento) {
         o_controlador_geral.stats_sequencia++;
         o_controlador_geral.stats_acertos_bons++;
 
-        _nota.absorver();
-        pop = 0.7;
+        _nota.estourar(make_colour_rgb(205, 235, 190));
+        pop = 0.55;
+        brilho = 0.5;
+        brilho_cor = make_colour_rgb(180, 225, 150);
         o_ferreiro.iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
 
-        julgamento_criar("BOM!", make_colour_rgb(205, 235, 165), true, _ganho_bom);
+        hud_registrar_julgamento("BOM!", make_colour_rgb(180, 225, 150), true);
+        hud_registrar_ganho(_ganho_bom, make_colour_rgb(96, 140, 60));
 
         debug_registrar_julgamento("BOM", _erro_ms);
         break;

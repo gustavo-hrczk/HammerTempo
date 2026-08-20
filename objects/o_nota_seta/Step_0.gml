@@ -15,10 +15,9 @@ switch (modo) {
         }
         break;
 
-    case 1: // absorvida pelo alvo
-        x += (RITMO_LINHA_X - x) * 0.4;
-        escala += (0.15 - escala) * 0.45;
-        image_alpha -= 0.16;
+    case 1: // estourou no acerto
+        escala += (1.9 - escala) * 0.32;
+        image_alpha -= 0.14;
 
         if (image_alpha <= 0) {
             instance_destroy();

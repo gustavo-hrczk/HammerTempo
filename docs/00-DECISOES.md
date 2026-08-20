@@ -128,3 +128,33 @@ casos: só a janela encolhe e o jogo é escalado para caber nela.
 192–255. Acentuadas funcionam; `·`, `…`, `º`, `ª` e afins viram um quadrado vazio. Ampliar as
 faixas exigiria a fonte instalada em toda máquina que compila, então a regra é **não usar esses
 caracteres**. Duas ocorrências foram corrigidas (uma delas vinha da jam, na tela de resultado).
+
+**D-24 · Contagem regressiva volta para o corredor das notas.** Ela tinha sido movida para junto
+do bloco de HUD e ficou deslocada; agora é desenhada centralizada na faixa por onde as notas vão
+correr — é para lá que o olho precisa estar quando a fase começa. Ganhou pulso por segundo: o
+número entra grande e assenta, com a opacidade acompanhando.
+
+**D-25 · O ganho de pontos sobe a partir do próprio número da pontuação**, não solto sobre a
+caixa. Tamanho aumentado (`f_padrao`) e cor por julgamento: dourado no perfeito, verde no bom.
+
+**D-26 · Acerto = "bolha que estoura".** A absorção pelo alvo (D-18) foi testada e descartada por
+ficar apagada. Agora a nota cresce enquanto some, no lugar onde foi acertada.
+
+**D-27 · Redundância dupla no julgamento.** Perfeito e bom se distinguem por **texto** e por
+**brilho colorido no botão** (dourado x verde), além da força do pop e da cor do estouro da nota.
+
+**D-28 · O julgamento saiu do espaço de room e foi para o HUD.** O objeto `o_julgamento` foi
+removido do projeto: como o painel é desenhado no Draw GUI, qualquer texto em espaço de room
+aparecia atrás dele. Agora o HUD desenha tudo na mesma passada, e o texto fica na base do bloco.
+Um julgamento novo substitui o anterior, em vez de empilhar cascata.
+
+**D-29 · Combo com tamanho fixo e cor progressiva.** O pulso de escala saiu. Quem comunica o
+crescimento é a cor, que segue a temperatura do metal: brasa escura aos 5, laranja aos 15, ouro
+aos 30, quase branco a partir de 45. Ao quebrar, o último valor treme e some em 0,4 s.
+
+**D-30 · Bloco, julgamento e teclas no mesmo eixo vertical.** O bloco foi estreitado de 330 para
+230 px e reposicionado para que seu centro caia exatamente no centro da coluna de teclas (x = 120).
+
+**D-31 · Nunca executar a janela do jogo sem permissão.** Compilar (sem abrir janela) pode a
+qualquer momento; abrir o jogo exige aval explícito a cada vez, porque a automação de captura
+clica na janela e rouba o foco do teclado da máquina.
