@@ -10,10 +10,11 @@ if (estado_jogo != estado_anterior) {
     switch (estado_jogo) {
 
         case MINIGAME.CONTAGEM:
-            // A música da fase já entra na contagem regressiva, com crossfade a
-            // partir do tema: antes o tema era cortado em seco (auditoria CV-03).
+            // A música NÃO começa aqui. Enquanto o mapa rítmico não for derivado do
+            // próprio áudio (Sprint 5), o alinhamento entre notas e música depende do
+            // instante exato em que a faixa começa — que é a criação do spawner.
+            // Adiantar a música para a contagem deslocava tudo em 3 segundos.
             hud_resetar();
-            o_audio_manager.play_music_crossfade(fases_data[fase_atual].musica_fase, 0.6);
             break;
 
         case MINIGAME.SELECAO_FASE:

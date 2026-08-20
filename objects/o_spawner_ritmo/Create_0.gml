@@ -16,7 +16,10 @@ esta_finalizando = false;
 intervalo_min = 60;
 intervalo_max = 100;
 
-// A música já entrou em crossfade na contagem regressiva, pelo controlador geral.
+// A música começa exatamente aqui, junto com o agendamento da primeira nota: é
+// esse instante que define o alinhamento entre a faixa e as notas. O crossfade
+// suaviza a saída do tema sem mexer na posição da faixa.
+o_audio_manager.play_music_crossfade(_dados_fase.musica_fase, 0.4);
 
 // --- RITMO ---
 // Calcula quantos frames dura uma batida completa, com base no BPM.

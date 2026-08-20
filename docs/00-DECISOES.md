@@ -173,3 +173,20 @@ A contagem regressiva pulsa em degraus (5x → 4x → 3x), que é como pixel art
 Nome da fase, julgamento e aviso de forja fria foram convertidos para tamanho nativo. A alternativa
 de criar uma fonte dedicada de ~90 px foi considerada e fica anotada como melhoria — a Kobold 7
 está instalada na máquina de desenvolvimento, mas criar o asset exige a IDE.
+
+**D-33 · O instante em que a música começa é o que ancora a sincronia — não mexer nele.**
+A Sprint 3 adiantou a música da fase para a contagem regressiva (era o item CV-03, "tema cortado
+em seco"). Isso deslocou a faixa em **3 segundos** em relação às notas, que continuam sendo
+agendadas a partir da criação do spawner, e a dessincronia apareceu em playtest.
+
+Enquanto o mapa não for derivado do próprio áudio (Sprint 5), **o alinhamento entre notas e
+música é acidental e depende do instante exato em que a faixa começa**. Regra até lá: a música da
+fase começa na criação do `o_spawner_ritmo`, na mesma linha em que a primeira nota é agendada.
+O ganho de agradabilidade do CV-03 foi preservado de outra forma: em vez de adiantar a faixa,
+ela entra com crossfade de 0,4 s a partir do tema — o volume suaviza a troca sem mover a posição
+da faixa um único frame.
+
+**D-34 · Contagem regressiva volta a ser estática.** O pulso em degraus (D-32) foi testado e
+descartado. Do ajuste ficou só o **enquadramento**: centralizada na faixa por onde as notas vão
+correr. O texto usa `f_padrao` com o mesmo tratamento do resto do jogo — sem contorno, sem
+variação de opacidade — e o número em escala 3 com posição arredondada.
