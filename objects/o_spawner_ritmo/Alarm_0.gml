@@ -1,5 +1,12 @@
 // Se estivermos no período de tolerância, não cria mais notas.
-if (esta_finalizando || o_controlador_geral.pausa) {
+if (esta_finalizando) {
+    exit;
+}
+
+// Durante a pausa o alarme precisa ser REAGENDADO, não apenas ignorado: sair aqui
+// sem reagendar mataria o fluxo de notas para sempre ao despausar.
+if (o_controlador_geral.pausa) {
+    alarm[0] = 5;
     exit;
 }
 

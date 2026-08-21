@@ -308,8 +308,9 @@ function hud_draw() {
         var _desloca = _distancia * (1 - power(1 - _prog, 2));
         if (_j.sobe) _desloca = -_desloca;
 
-        // opaco no impacto, some no resto do trajeto
-        var _alpha = (_prog < 0.25) ? 1 : 1 - ((_prog - 0.25) / 0.75);
+        // Opaco no impacto e totalmente apagado aos 65% do trajeto: o movimento
+        // continua o mesmo, mas o texto já sumiu antes de subir sobre o combo.
+        var _alpha = (_prog < 0.2) ? 1 : max(0, 1 - ((_prog - 0.2) / 0.45));
 
         // clarão de cor nos primeiros frames
         var _cor = (_prog < 0.12) ? merge_colour(_j.cor, c_white, 0.55) : _j.cor;

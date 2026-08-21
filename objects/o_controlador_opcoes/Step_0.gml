@@ -34,30 +34,40 @@ var _ajuste = input_eixo_h();
 
 switch (opcao_selecionada) {
 
-    case 0: // Volume
+    case 0: // Volume da música
         if (_ajuste != 0) {
-            opcoes_volume = clamp(opcoes_volume + _ajuste, 0, 10);
-            // Prévia imediata: o jogador escuta o volume enquanto ajusta.
-            audio_master_gain(opcoes_volume / 10);
+            opcoes_musica = clamp(opcoes_musica + _ajuste, 0, 10);
+            previa_audio();
         }
         break;
 
-    case 1: // Tamanho da janela
+    case 1: // Volume dos efeitos
+        if (_ajuste != 0) {
+            opcoes_sfx = clamp(opcoes_sfx + _ajuste, 0, 10);
+            previa_audio();
+            // toca uma martelada como amostra: efeito sem referência sonora não
+            // dá para ajustar de ouvido
+            o_audio_manager.play_martelada_sequencial_sfx();
+        }
+        break;
+
+    case 2: // Tamanho da janela
         if (_ajuste != 0) {
             var _total = array_length(JANELA_TAMANHOS);
             opcoes_janela = (opcoes_janela + _ajuste + _total) mod _total;
         }
         break;
 
-    case 2: // Tela cheia
+    case 3: // Tela cheia
         if (_ajuste != 0) {
             opcoes_tela_cheia = !opcoes_tela_cheia;
         }
         break;
 
-    case 3: // Aplicar
+    case 4: // Aplicar
         if (input_pressed(ACAO.CONFIRMAR)) {
-            save_set_opcao("volume", opcoes_volume);
+            save_set_opcao("volume_musica", opcoes_musica);
+            save_set_opcao("volume_sfx", opcoes_sfx);
             save_set_opcao("janela", opcoes_janela);
             save_set_opcao("tela_cheia", opcoes_tela_cheia);
             save_gravar();

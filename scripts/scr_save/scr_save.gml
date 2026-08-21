@@ -10,11 +10,13 @@ function save_padrao() {
     return {
         versao: SAVE_VERSAO,
         opcoes: {
-            volume: 10,        // 0 a 10
+            volume_musica: 8,  // 0 a 10
+            volume_sfx: 7,     // 0 a 10 — as amostras de efeito são mais quentes
             tela_cheia: false,
             janela: 1,         // índice em JANELA_TAMANHOS (padrão 1024x576)
             offset_ms: 0       // calibração de latência (Sprint 5)
         },
+        recordes: {},          // id da fase -> melhor pontuação
         leaderboard: {
             arcade: [],
             livre: {}
@@ -31,6 +33,15 @@ function save_normalizar(_dados) {
     if (!variable_struct_exists(_dados, "opcoes") || !is_struct(_dados.opcoes)) {
         _dados.opcoes = _padrao.opcoes;
     } else {
+        // Migração: o save antigo tinha um único "volume" (master). Ele vira o
+        // ponto de partida dos dois volumes separados, para ninguém abrir o jogo
+        // e achar que o som foi resetado.
+        if (variable_struct_exists(_dados.opcoes, "volume")
+            && !variable_struct_exists(_dados.opcoes, "volume_musica")) {
+            _dados.opcoes.volume_musica = _dados.opcoes.volume;
+            _dados.opcoes.volume_sfx = _dados.opcoes.volume;
+        }
+
         var _chaves = variable_struct_get_names(_padrao.opcoes);
         for (var i = 0; i < array_length(_chaves); i++) {
             var _k = _chaves[i];
@@ -38,6 +49,10 @@ function save_normalizar(_dados) {
                 _dados.opcoes[$ _k] = _padrao.opcoes[$ _k];
             }
         }
+    }
+
+    if (!variable_struct_exists(_dados, "recordes") || !is_struct(_dados.recordes)) {
+        _dados.recordes = {};
     }
 
     if (!variable_struct_exists(_dados, "leaderboard") || !is_struct(_dados.leaderboard)) {
@@ -56,6 +71,11 @@ function save_normalizar(_dados) {
 
 /// Carrega o save para global.save. Nunca falha: em caso de erro, recria o padrão.
 function save_carregar() {
+    // defaults dos ganhos antes de qualquer coisa tocar, para o caso de a ordem de
+    // criação mudar no futuro
+    global.ganho_musica = 0.8;
+    global.ganho_sfx = 0.7;
+
     global.save = save_padrao();
 
     if (!file_exists(SAVE_ARQUIVO)) {
@@ -94,9 +114,20 @@ function save_gravar() {
 /// 1280x720: só a janela encolhe, e o jogo é escalado para caber nela.
 #macro JANELA_TAMANHOS [[640, 360], [1024, 576], [1280, 720]]
 
-/// Aplica as opções salvas ao jogo (volume, tamanho de janela e tela cheia).
+/// Aplica as opções salvas ao jogo (volumes, tamanho de janela e tela cheia).
+///
+/// Música e efeitos têm ganhos separados em vez de um master único: as amostras de
+/// efeito são bem mais quentes que as faixas das fases (as marteladas estão em
+/// ~-11 dBFS RMS), então um controle só nunca equilibra os dois.
 function save_aplicar_opcoes() {
-    audio_master_gain(global.save.opcoes.volume / 10);
+    audio_master_gain(1);
+    global.ganho_musica = global.save.opcoes.volume_musica / 10;
+    global.ganho_sfx = global.save.opcoes.volume_sfx / 10;
+
+    // a faixa que já está tocando acompanha a mudança na hora
+    if (instance_exists(o_audio_manager)) {
+        o_audio_manager.aplicar_volume_musica();
+    }
 
     var _cheia = global.save.opcoes.tela_cheia;
     if (window_get_fullscreen() != _cheia) {
@@ -120,6 +151,29 @@ function save_texto_janela() {
     var _tamanhos = JANELA_TAMANHOS;
     var _i = clamp(global.save.opcoes.janela, 0, array_length(_tamanhos) - 1);
     return string(_tamanhos[_i][0]) + "x" + string(_tamanhos[_i][1]);
+}
+
+/// Identificador estável da fase. Não usa o índice direto de propósito: inserir uma
+/// fase no meio da lista não pode embaralhar os recordes já conquistados.
+function save_id_fase(_indice) {
+    var _n = _indice + 1;
+    return (_n < 10) ? ("fase_0" + string(_n)) : ("fase_" + string(_n));
+}
+
+/// Melhor pontuação registrada na fase. Zero se nunca foi jogada.
+function save_recorde(_indice) {
+    var _id = save_id_fase(_indice);
+    if (!variable_struct_exists(global.save.recordes, _id)) return 0;
+    return global.save.recordes[$ _id];
+}
+
+/// Grava a pontuação se ela superar o recorde. Devolve true quando é recorde novo.
+function save_registrar_recorde(_indice, _pontos) {
+    if (_pontos <= save_recorde(_indice)) return false;
+
+    global.save.recordes[$ save_id_fase(_indice)] = _pontos;
+    save_gravar();
+    return true;
 }
 
 /// Atalho de leitura de uma opção.

@@ -7,17 +7,18 @@ if (musica_saindo != -1) {
         audio_stop_sound(musica_saindo);
         // devolve o ganho do asset ao normal: sem isso, tocar a mesma faixa de novo
         // resultava numa fase muda (auditoria CV-02).
-        audio_sound_gain(musica_saindo, 1, 0);
+        audio_sound_gain(musica_saindo, alvo_musica(), 0);
         musica_saindo = -1;
     }
 }
 
 // --- FAIXA ENTRANDO (crossfade) ---
 if (entrando && musica_atual != -1) {
-    var _gain_entrando = min(1, audio_sound_get_gain(musica_atual) + entrando_speed);
+    var _alvo = alvo_musica();
+    var _gain_entrando = min(_alvo, audio_sound_get_gain(musica_atual) + entrando_speed);
     audio_sound_gain(musica_atual, _gain_entrando, 0);
 
-    if (_gain_entrando >= 1) {
+    if (_gain_entrando >= _alvo) {
         entrando = false;
     }
 }
@@ -32,7 +33,7 @@ if (is_fading_out && musica_atual != -1) {
 
     if (_new_gain <= 0) {
         audio_stop_sound(musica_atual);
-        audio_sound_gain(musica_atual, 1, 0);
+        audio_sound_gain(musica_atual, alvo_musica(), 0);
         musica_atual = -1;
         is_fading_out = false;
     }

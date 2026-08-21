@@ -245,3 +245,37 @@ entre a última nota perdida e a tela de resultado: o spawner é destruído, as 
 estavam na tela **saem de cena sem virar erro** (não são culpa do jogador), o ferreiro já reage
 com a animação de falha e a música sai em fade de 1,4 s. Durante esse intervalo as teclas não
 pontuam nem penalizam — a partida já acabou.
+
+---
+
+## Sprint 3 — fechamento
+
+**D-44 · Pausa com menu, e o cuidado com os alarmes.** A variável `pausa` existia desde a jam,
+era checada em seis lugares e nunca era ativada (CV-07). Agora ESC durante a partida abre
+"Continuar / Reiniciar fase / Sair para o menu", com a música congelada por `audio_pause_sound`.
+
+O detalhe que quase virou bug: **alarme do GameMaker continua contando mesmo com o Step
+bloqueado**. O `Alarm_0` do spawner saía cedo quando pausado — mas sair sem reagendar mataria o
+fluxo de notas para sempre ao despausar. Ele passou a **reagendar** (`alarm[0] = 5`) em vez de
+apenas ignorar. Vale para qualquer alarme que venha a existir.
+
+**D-45 · Volumes separados de música e efeitos.** Um master único nunca equilibraria os dois: as
+amostras de efeito estão em ~−11 dBFS RMS contra faixas de fase bem mais baixas. Cada um ganhou
+seu controle (0 a 10), aplicado como multiplicador em `global.ganho_musica` e `global.ganho_sfx`
+em vez de audio groups — evita mexer no `.yy` de 16 sons. Padrões: música 8, efeitos 7.
+
+Saves antigos migram sozinhos: o valor único de `volume` vira o ponto de partida dos dois. E o
+ajuste é **audível enquanto se mexe** — a faixa em execução acompanha na hora, e mudar o volume
+de efeitos dispara uma martelada de amostra, porque efeito sem referência sonora não dá para
+ajustar de ouvido.
+
+**D-46 · Recorde por fase, com id estável.** `save.recordes` guarda a melhor pontuação por fase,
+indexada por **id textual** (`fase_01`) e não pelo índice do array: inserir uma fase no meio da
+lista não pode embaralhar recordes já conquistados. O seletor mostra o recorde, e a tela de
+resultado anuncia quando ele é superado. É também a base sobre a qual o leaderboard da Sprint 4
+vai ser construído.
+
+**D-47 · O tutorial mostra as teclas em vez de descrevê-las.** As sprites dos alvos já são
+teclas desenhadas — o pacote de arte é uma folha de teclado. O texto "Use as `<SETAS>` ou
+`<W A S D>`" virou os quatro alvos desenhados com a letra correspondente embaixo. Numa feira
+ninguém lê instrução, e o jogador reconhece na tela o ícone que acabou de ver.

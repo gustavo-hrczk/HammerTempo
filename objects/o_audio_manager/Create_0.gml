@@ -18,8 +18,21 @@ entrando_speed = 0;
 
 play_sfx = function(som_asset, _ganho = 1) {
     if (audio_is_playing(som_asset)) { audio_stop_sound(som_asset); }
-    audio_sound_gain(som_asset, _ganho, 0);
+    audio_sound_gain(som_asset, _ganho * global.ganho_sfx, 0);
     audio_play_sound(som_asset, 1, false);
+}
+
+/// Volume alvo da música, já com a opção do jogador aplicada.
+alvo_musica = function() {
+    return global.ganho_musica;
+}
+
+/// Atualiza na hora a faixa que já está tocando, para o ajuste no menu de opções
+/// ser audível enquanto o jogador mexe no valor.
+aplicar_volume_musica = function() {
+    if (musica_atual != -1 && !is_fading_out && !entrando) {
+        audio_sound_gain(musica_atual, global.ganho_musica, 0);
+    }
 }
 
 /// Toca uma música em loop, com corte seco.
@@ -27,14 +40,14 @@ play_sfx = function(som_asset, _ganho = 1) {
 /// ganho 0 — o que deixava a fase muda ao ser rejogada.
 play_music = function(musica_asset) {
     if (musica_atual == musica_asset && audio_is_playing(musica_asset) && !is_fading_out) {
-        audio_sound_gain(musica_asset, 1, 0);
+        audio_sound_gain(musica_asset, alvo_musica(), 0);
         return;
     }
 
     if (musica_atual != -1) { audio_stop_sound(musica_atual); }
     if (audio_is_playing(musica_asset)) { audio_stop_sound(musica_asset); }
 
-    audio_sound_gain(musica_asset, 1, 0);
+    audio_sound_gain(musica_asset, alvo_musica(), 0);
     audio_play_sound(musica_asset, 1, true);
 
     musica_atual = musica_asset;
@@ -64,14 +77,23 @@ play_music_crossfade = function(musica_asset, duracao_segundos = 0.5) {
 
     musica_atual = musica_asset;
     entrando = true;
-    entrando_speed = 1 / _frames;
+    entrando_speed = alvo_musica() / _frames;
     is_fading_out = false;
+}
+
+/// Congela e descongela a faixa atual, para a pausa da partida.
+pausar_musica = function() {
+    if (musica_atual != -1) { audio_pause_sound(musica_atual); }
+}
+
+retomar_musica = function() {
+    if (musica_atual != -1) { audio_resume_sound(musica_atual); }
 }
 
 stop_music = function() {
     if (musica_atual != -1) {
         audio_stop_sound(musica_atual);
-        audio_sound_gain(musica_atual, 1, 0); // deixa o asset pronto para a próxima vez
+        audio_sound_gain(musica_atual, alvo_musica(), 0); // deixa o asset pronto para a próxima vez
         musica_atual = -1;
     }
     is_fading_out = false;

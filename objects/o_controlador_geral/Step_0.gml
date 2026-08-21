@@ -1,5 +1,39 @@
+// =================================================================
+// PAUSA — precisa vir antes de tudo, porque congela o resto do evento
+// =================================================================
 if (pausa) {
-    exit; // Se estiver pausado, para a execução do resto do evento
+
+    var _mv = input_eixo_v();
+    if (_mv != 0) {
+        var _total = array_length(pausa_opcoes);
+        pausa_opcao = (pausa_opcao + _mv + _total) mod _total;
+        o_audio_manager.play_sfx(nav_sounds[nav_sound_index]);
+        nav_sound_index = 1 - nav_sound_index;
+    }
+
+    // O mesmo botão que pausou também despausa. A ordem importa: esta checagem
+    // vem antes da de entrar em pausa, então um toque só nunca faz as duas coisas.
+    if (input_pressed(ACAO.PAUSAR)) {
+        o_audio_manager.play_sfx(snd_menu_return);
+        retomar_partida();
+    }
+    else if (input_pressed(ACAO.CONFIRMAR)) {
+        o_audio_manager.play_sfx(snd_menu_confirm);
+        switch (pausa_opcao) {
+            case 0: retomar_partida();   break;
+            case 1: reiniciar_partida(); break;
+            case 2: abandonar_partida(); break;
+        }
+    }
+
+    exit; // pausado: nada mais roda
+}
+
+// Entrar em pausa só faz sentido com a partida em andamento e ainda não perdida.
+if (estado_jogo == MINIGAME.RITMO && !fase_falhou && input_pressed(ACAO.PAUSAR)) {
+    o_audio_manager.play_sfx(snd_menu_confirm);
+    pausar_partida();
+    exit;
 }
 
 // =================================================================

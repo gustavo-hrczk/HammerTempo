@@ -44,6 +44,10 @@ frases_otimas = [
 // Variável para guardar a frase escolhida para esta rodada
 frase_escolhida = "";
 
+// Recorde da fase: registrado aqui e anunciado na tela quando é superado.
+recorde_novo = save_registrar_recorde(o_controlador_geral.fase_atual,
+                                      o_controlador_geral.pontuacao);
+
 // --- NOVO ARRAY PARA AS MOLDURAS ---
 // A ordem DEVE corresponder aos níveis de performance:
 // Índice 0 = Falha, 1 = Aceitável, 2 = Bom, 3 = Excelente, 4 = Perfeito

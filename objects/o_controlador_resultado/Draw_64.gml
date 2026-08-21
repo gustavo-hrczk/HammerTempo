@@ -42,6 +42,14 @@ draw_text(_col_dir, _linha2, "Precisão: " + string(round(_precisao)) + "%");
 draw_set_font(f_padrao);
 draw_text(_cx, 594, "Pontuação: " + string(o_controlador_geral.pontuacao));
 
+// --- RECORDE NOVO ---
+if (recorde_novo) {
+    draw_set_font(f_padrao_pequena);
+    draw_set_color(make_colour_rgb(178, 58, 22));
+    draw_text(_cx + 190, 594, "NOVO RECORDE!");
+    draw_set_color(c_black);
+}
+
 // --- FRASE DE FEEDBACK (escolhida no evento Create) ---
 draw_set_font(f_padrao_pequena);
 draw_set_color(c_gray);

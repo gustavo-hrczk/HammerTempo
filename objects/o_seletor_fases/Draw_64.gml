@@ -4,73 +4,64 @@ if (o_controlador_geral.estado_jogo != MINIGAME.SELECAO_FASE) {
 }
 
 // =================================================================
-// 1. SETUP DA GRADE E POSICIONAMENTO
+// CARTÕES DE FASE
+// Cada fase mostra a arma que se pretende forjar, a dificuldade, o andamento e o
+// recorde local — informação que antes só existia depois de jogar.
 // =================================================================
+var _cx = display_get_gui_width() / 2;
+var _gap_coluna = 360;
+
+var _y_icone   = 566;
+var _y_nome    = 622;
+var _y_detalhe = 648;
+var _y_recorde = 672;
+
+var _tinta = make_colour_rgb(40, 28, 18);
+
 draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
 
-// --- Variáveis de Ajuste da Grade ---
-var _items_por_linha = 3;
-var _gap_horizontal = 350;
-var _gap_vertical = 80;
-var _start_y_base = 640; // Altura inicial da primeira linha
+// --- título ---
+draw_set_font(f_padrao_pequena);
+draw_set_color(_tinta);
+draw_text(_cx, 510, "Selecione a arma para forjar");
 
-var _num_linhas = ceil(total_opcoes / _items_por_linha);
-var _block_altura = (_num_linhas - 1) * _gap_vertical;
-var _start_y = _start_y_base - (_block_altura / 2);
+// --- cartões ---
+var _inicio_x = _cx - (((min(3, total_opcoes) - 1) * _gap_coluna) / 2);
 
-var _cx = display_get_gui_width() / 2;
-// A linha abaixo agora usa min() para funcionar corretamente com menos de 3 itens na última linha
-var _start_x = _cx - ((min(_items_por_linha, total_opcoes) - 1) * _gap_horizontal) / 2;
-
-
-// =================================================================
-// 2. DESENHO DO TÍTULO INSTRUCIONAL (NOVA SEÇÃO)
-// =================================================================
-var _titulo_y = _start_y - 50; // Posição acima da primeira linha
-draw_set_font(f_padrao_pequena); // Usa a fonte pequena
-draw_set_color(c_dkgray);   // Cor cinza escuro
-draw_text(_cx, _titulo_y, "Selecione a arma para forjar");
-
-
-// =================================================================
-// 3. DESENHO DAS OPÇÕES DE FASE EM GRADE
-// =================================================================
 for (var i = 0; i < total_opcoes; i++) {
-    
-    var _col = i % _items_por_linha;
-    var _row = i div _items_por_linha;
-    
-    var _pos_x = _start_x + (_col * _gap_horizontal);
-    var _pos_y = _start_y + (_row * _gap_vertical);
-    
-    var _fase_data = opcoes_fase[i];
-    var _nome_fase = _fase_data.nome;
-    var _dificuldade = _fase_data.dificuldade;
-    
-    var _cor_nome = c_black;
-    var _cor_dificuldade = c_dkgray; // Cinza escuro para consistência
-    
-    if (i == opcao_selecionada) {
-        _cor_nome = c_yellow;
-        
-        // --- DESENHA A FAIXA DE DESTAQUE ---
-        ui_caixa_pulsante(_pos_x, _pos_y, 280, 70);
 
-        // --- DESENHA O SELETOR (LÓGICA CORRIGIDA) ---
-        var _seletor_padding = 125;
-        // A posição X do seletor agora é calculada corretamente com base no _pos_x do item atual
-        var _seletor_x = _pos_x - _seletor_padding;
-        draw_sprite(s_menu_seletor, 0, _seletor_x, _pos_y);
+    var _pos_x = _inicio_x + (i * _gap_coluna);
+    var _fase = opcoes_fase[i];
+    var _selecionada = (i == opcao_selecionada);
+
+    if (_selecionada) {
+        ui_caixa_pulsante(_pos_x, (_y_icone + _y_recorde) / 2, 300, 180);
     }
-    
-    // --- DESENHA O NOME DA FASE ---
+
+    // arma dentro da moldura, do mesmo jeito que aparece na tela de resultado
+    var _arma = _fase.sprites_resultado[array_length(_fase.sprites_resultado) - 1];
+    draw_sprite_ext(_arma, 0, _pos_x, _y_icone, 0.26, 0.26, 0, c_white, 1);
+    draw_sprite_ext(s_canva01, 0, _pos_x, _y_icone, 0.34, 0.34, 0, c_white, 1);
+
+    // nome
     draw_set_font(f_padrao);
-    draw_text_color(_pos_x, _pos_y - 12, _nome_fase, _cor_nome, _cor_nome, _cor_nome, _cor_nome, 1);
-    
-    // --- DESENHA A DIFICULDADE ---
+    draw_set_color(_selecionada ? c_yellow : _tinta);
+    draw_text(_pos_x, _y_nome, _fase.nome);
+
+    // dificuldade e andamento
     draw_set_font(f_padrao_pequena);
-    draw_text_color(_pos_x, _pos_y + 18, "(" + _dificuldade + ")", _cor_dificuldade, _cor_dificuldade, _cor_dificuldade, _cor_dificuldade, 1);
+    draw_set_color(_tinta);
+    draw_text(_pos_x, _y_detalhe, _fase.dificuldade + "  -  " + string(_fase.beat_tempo_bpm) + " BPM");
+
+    // recorde local
+    var _recorde = save_recorde(i);
+    draw_text(_pos_x, _y_recorde, (_recorde > 0) ? ("Recorde: " + string(_recorde)) : "Ainda não forjada");
+
+    // cursor da opção escolhida
+    if (_selecionada) {
+        draw_sprite(s_menu_seletor, 0, _pos_x - 150, _y_nome);
+    }
 }
 
 ui_reset();

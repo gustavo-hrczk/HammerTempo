@@ -43,6 +43,45 @@ stats_erros = 0;
 stats_sequencia_errada = 0;
 stats_toques_invalidos = 0;
 
+// --- PAUSA DA PARTIDA ---
+// A variável `pausa` existia desde a jam e era checada em seis lugares, mas nunca
+// era ativada (auditoria CV-07). Agora ela tem um menu.
+pausa_opcao = 0;
+pausa_opcoes = ["Continuar", "Reiniciar fase", "Sair para o menu"];
+
+pausar_partida = function() {
+    if (pausa) exit;
+    pausa = true;
+    pausa_opcao = 0;
+    o_audio_manager.pausar_musica();
+}
+
+retomar_partida = function() {
+    if (!pausa) exit;
+    pausa = false;
+    o_audio_manager.retomar_musica();
+}
+
+/// Limpa o gameplay em curso. Usada tanto por reiniciar quanto por sair.
+limpar_partida = function() {
+    pausa = false;
+    o_audio_manager.retomar_musica();
+    if (instance_exists(o_spawner_ritmo)) { instance_destroy(o_spawner_ritmo); }
+    instance_destroy(o_nota_seta);
+    resetar_estatisticas();
+}
+
+reiniciar_partida = function() {
+    limpar_partida();
+    estado_jogo = MINIGAME.CONTAGEM;
+    contagem_timer = 3 * room_speed;
+}
+
+abandonar_partida = function() {
+    limpar_partida();
+    estado_jogo = MINIGAME.SELECAO_FASE;
+}
+
 // A fase terminou em derrota? Game over é game over: a tela de resultado não pode
 // premiar quem estava com boa precisão e perdeu mesmo assim.
 fase_falhou = false;
