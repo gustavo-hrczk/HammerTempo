@@ -217,6 +217,56 @@ function hud_cor_combo(_combo) {
 }
 
 /// Desenha o HUD da partida (evento Draw GUI).
+/// Vinheta de perigo: moldura de brasa que fecha o alto da tela quando falta um
+/// erro para a forja apagar.
+///
+/// A versão anterior eram três retângulos chapados (topo, esquerda e direita) com
+/// alpha próprio. Onde eles se cruzavam o alpha somava, e os dois cantos de cima
+/// viravam quadrados nitidamente mais escuros que o resto — as "faixas sobrepostas".
+/// As laterais ainda desciam até o pé da tela, atravessando o corredor das notas.
+///
+/// Agora é uma moldura só, recortada em meia-esquadria: os três trapézios encostam
+/// nas diagonais dos cantos sem nunca se cobrir, então não há alpha somado em lugar
+/// nenhum. O alpha é cheio na borda da tela e zero na borda de dentro, o que troca o
+/// corte reto por um degradê. As laterais morrem no topo do corredor, para não
+/// tingir as faixas onde as notas correm.
+function hud_vinheta_perigo(_alpha) {
+    var _gw = display_get_gui_width();
+
+    var _esp_topo = 64;                 // profundidade do degradê no alto
+    var _esp_lado = 96;                 // profundidade do degradê nas laterais
+    var _fim_lado = HUD_CORREDOR_TOPO;  // onde a lateral se desfaz, antes das notas
+
+    var _cor = make_colour_rgb(200, 30, 20);
+
+    // topo: as duas pontas de baixo são os pontos de esquadria dos cantos
+    draw_primitive_begin(pr_trianglestrip);
+    draw_vertex_colour(0,   0, _cor, _alpha);
+    draw_vertex_colour(_esp_lado,       _esp_topo, _cor, 0);
+    draw_vertex_colour(_gw, 0, _cor, _alpha);
+    draw_vertex_colour(_gw - _esp_lado, _esp_topo, _cor, 0);
+    draw_primitive_end();
+
+    // esquerda: parte do mesmo ponto de esquadria e se apaga descendo
+    draw_primitive_begin(pr_trianglestrip);
+    draw_vertex_colour(0,         0,         _cor, _alpha);
+    draw_vertex_colour(_esp_lado, _esp_topo, _cor, 0);
+    draw_vertex_colour(0,         _fim_lado, _cor, 0);
+    draw_vertex_colour(_esp_lado, _fim_lado, _cor, 0);
+    draw_primitive_end();
+
+    // direita: espelho da esquerda
+    draw_primitive_begin(pr_trianglestrip);
+    draw_vertex_colour(_gw,             0,         _cor, _alpha);
+    draw_vertex_colour(_gw - _esp_lado, _esp_topo, _cor, 0);
+    draw_vertex_colour(_gw,             _fim_lado, _cor, 0);
+    draw_vertex_colour(_gw - _esp_lado, _fim_lado, _cor, 0);
+    draw_primitive_end();
+
+    draw_set_alpha(1);
+    draw_set_color(c_white);
+}
+
 function hud_draw() {
     var _ctrl = o_controlador_geral;
     var _fase = _ctrl.fases_data[_ctrl.fase_atual];
@@ -352,14 +402,11 @@ function hud_draw() {
     // ---------------------------------------------------------------
     var _limite = _fase.stats_limite_sequencia_errada;
     if (_ctrl.stats_sequencia_errada >= _limite - 1 && _ctrl.stats_sequencia_errada < _limite) {
-        var _pulso = 0.22 + 0.22 * ((sin(global.hud_aviso_pulso) + 1) / 2);
+        // o degradê tem metade da tinta de uma faixa chapada da mesma largura, então
+        // o pulso sobe de 0,22-0,44 para 0,30-0,60 e o aviso continua com o mesmo peso
+        var _pulso = 0.30 + 0.30 * ((sin(global.hud_aviso_pulso) + 1) / 2);
 
-        draw_set_alpha(_pulso * _entrada);
-        draw_set_color(make_colour_rgb(200, 30, 20));
-        draw_rectangle(0, 0, _gw, 46, false);
-        draw_rectangle(0, 0, 54, display_get_gui_height(), false);
-        draw_rectangle(_gw - 54, 0, _gw, display_get_gui_height(), false);
-        draw_set_alpha(1);
+        hud_vinheta_perigo(_pulso * _entrada);
 
         draw_set_font(f_padrao);
         hud_texto(_gw / 2, 24, "A FORJA ESTÁ ESFRIANDO!", make_colour_rgb(255, 190, 170), 1);

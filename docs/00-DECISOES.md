@@ -381,3 +381,19 @@ com eles em vez de encabeçá-los. Passou para f_padrao (30 px), o corpo dos nom
 A linha ficou 7 px mais alta, então o cartão inteiro desceu 7 px: só assim a caixa de destaque
 (que nasce no topo da moldura da arma) não invade o título, e o recorde ainda sobra 12 px do
 fim do pergaminho.
+
+**D-60 · A zona de perigo virou uma moldura só, em meia-esquadria.** O aviso de forja
+esfriando eram três retângulos chapados desenhados um sobre o outro — topo (0,0)-(1280,46),
+esquerda (0,0)-(54,720) e direita (1226,0)-(1280,720) — cada um com o mesmo alpha pulsante.
+Nos dois cantos de cima os retângulos se cruzavam e o alpha somava: onde o resto da faixa
+estava em 0,22-0,44, o canto ia a 0,44-0,69. Eram dois quadrados visivelmente mais escuros,
+as "faixas sobrepostas" relatadas.
+
+A moldura agora é desenhada como três trapézios que se encostam nas diagonais dos cantos,
+sem nunca se cobrir — não há alpha somado em ponto nenhum. Cada trapézio tem alpha cheio na
+borda da tela e zero na borda de dentro, o que troca o corte reto por um degradê de 64 px no
+alto e 96 px nas laterais. Como um degradê deixa metade da tinta de uma faixa chapada de
+mesma largura, o pulso subiu de 0,22-0,44 para 0,30-0,60 e o aviso manteve o peso.
+
+As laterais também deixaram de descer até o pé da tela: morrem em `HUD_CORREDOR_TOPO`, para
+não tingir as faixas por onde as notas correm.
