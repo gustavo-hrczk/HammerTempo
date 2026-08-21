@@ -2,43 +2,19 @@ if (room != rm_opcoes) {
     exit;
 }
 
-// =================================================================
-// 1. LOGO
-// =================================================================
+// Mesma logo, mesma moldura e mesmos itens do menu principal: a troca entre as duas
+// telas não pode deslocar nem repintar nada.
+ui_logo();
+ui_painel_menu();
+
 var _cx = display_get_gui_width() / 2;
-draw_sprite_ext(s_logo_jogo, 0, _cx, (display_get_gui_height() / 2) - 300, 1.2, 1.2, 0, c_white, 1);
+var _cy = (display_get_gui_height() / 2) + UI_PAINEL_Y;
 
-// =================================================================
-// 2. PAINEL
-// =================================================================
-var _option_gap = 44;
-var _total_opcoes = array_length(opcoes_menu);
-var _cy = (display_get_gui_height() / 2) + 150;
+var _total = array_length(opcoes_menu);
+var _primeiro = _cy - (((_total - 1) * UI_ITEM_GAP) / 2);
 
-var _box_largura = 380;
-var _box_altura = (_total_opcoes * _option_gap) + 44;
-var _box_x = _cx - (_box_largura / 2);
-var _box_y = _cy - (_box_altura / 2);
-
-draw_sprite_stretched(s_option_menu, 0, _box_x, _box_y, _box_largura, _box_altura);
-
-var _tinta = make_colour_rgb(40, 28, 18);
-var _destaque = make_colour_rgb(178, 58, 22);
-
-// =================================================================
-// 3. OPÇÕES
-// =================================================================
-var _texto_start_y = _cy - ((_total_opcoes - 1) * _option_gap) / 2;
-
-for (var i = 0; i < _total_opcoes; i++) {
-    var _pos_y = _texto_start_y + (i * _option_gap);
-    var _selecionado = (i == opcao_selecionada);
-
-    if (_selecionado) {
-        ui_caixa_pulsante(_cx, _pos_y, _box_largura - 44, 36);
-    }
-
-    var _cor = _selecionado ? _destaque : _tinta;
+for (var i = 0; i < _total; i++) {
+    var _pos_y = _primeiro + (i * UI_ITEM_GAP);
     var _valor = "";
 
     switch (i) {
@@ -48,30 +24,16 @@ for (var i = 0; i < _total_opcoes; i++) {
         case 3: _valor = opcoes_tela_cheia ? "Sim" : "Não"; break;
     }
 
-    draw_set_font(f_padrao);
-    draw_set_valign(fa_middle);
-
-    if (_valor == "") {
-        // "Aplicar!" não tem valor: fica centralizado
-        draw_set_halign(fa_center);
-        draw_set_color(_cor);
-        draw_text(_cx, _pos_y, opcoes_menu[i]);
-    } else {
-        draw_set_halign(fa_left);
-        draw_set_color(_cor);
-        draw_text(_box_x + 34, _pos_y, opcoes_menu[i]);
-
-        draw_set_halign(fa_right);
-        draw_text(_box_x + _box_largura - 34, _pos_y, _valor);
-    }
+    ui_item_menu(_cx, _pos_y, opcoes_menu[i], i == opcao_selecionada, _valor);
 }
 
-// =================================================================
-// 4. AJUDA
-// =================================================================
+// --- AJUDA ---
+var _painel_base = (display_get_gui_height() / 2) + UI_PAINEL_Y + (UI_PAINEL_H / 2);
+
 draw_set_font(f_padrao_pequena);
 draw_set_halign(fa_center);
+draw_set_valign(fa_middle);
 draw_set_color(c_black);
-draw_text(_cx, _box_y + _box_altura + 34, "ESQUERDA e DIREITA ajustam  -  APLICAR salva  -  VOLTAR descarta");
+draw_text(_cx, _painel_base + 30, "ESQUERDA e DIREITA ajustam  -  APLICAR salva  -  VOLTAR descarta");
 
 ui_reset();

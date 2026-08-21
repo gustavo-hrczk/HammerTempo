@@ -324,3 +324,13 @@ por direcional, que funciona igual em teclado e em alavanca de arcade.
 
 A lista completa vai para uma tela própria no menu, mas o recorde continua no cartão do seletor:
 é ali que ele funciona como alvo, no momento em que o jogador escolhe a fase.
+
+**D-53 · Um só padrão visual de menu, num só lugar.** Menu principal, opções e pausa desenhavam
+cada um do seu jeito: destaque amarelo num, laranja no outro; moldura de 248x215 numa tela e 380
+de largura na outra; logo em alturas diferentes; e o cursor de espada só existia no menu
+principal. Tudo passou para `scr_ui` — `ui_logo()`, `ui_painel_menu()` e `ui_item_menu()`, com
+as medidas e cores em macros. As três telas viraram a mesma tela com conteúdo diferente.
+
+**D-54 · Sem fade entre menu e opções.** Como as duas telas agora compartilham logo e moldura no
+mesmo lugar, o fade não lê como transição — lê como piscada. `ir_para_sala` ganhou um parâmetro
+para trocar de sala direto, usado só nesse par. As demais trocas seguem com os 250 ms.

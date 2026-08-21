@@ -40,7 +40,9 @@ if (input_pressed(ACAO.CONFIRMAR)) {
             break;
 
         case 1: // Opções
-            ir_para_sala(rm_opcoes);
+            // sem fade: as duas telas compartilham logo e moldura, então o corte
+            // seco lê como troca de conteúdo, e o fade leria como piscada
+            ir_para_sala(rm_opcoes, 0, false);
             break;
 
         case 2: // Créditos

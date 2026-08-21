@@ -7,7 +7,7 @@ if (room != rm_opcoes || fluxo_ocupado()) {
 if (input_pressed(ACAO.VOLTAR)) {
     save_aplicar_opcoes();
     o_audio_manager.play_sfx(snd_menu_return);
-    ir_para_sala(rm_menu);
+    ir_para_sala(rm_menu, 0, false);
     exit;
 }
 
@@ -74,7 +74,7 @@ switch (opcao_selecionada) {
             save_aplicar_opcoes();
 
             o_audio_manager.play_sfx(snd_menu_confirm);
-            ir_para_sala(rm_menu);
+            ir_para_sala(rm_menu, 0, false);
         }
         break;
 }
