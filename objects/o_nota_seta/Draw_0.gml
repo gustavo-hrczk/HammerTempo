@@ -1,3 +1,10 @@
+// Durante o MENU de pausa as notas somem: com o jogo congelado e o campo à
+// vista, dava para estudar o que vinha e decorar. Na contagem de retomada elas
+// voltam, porque aí o jogador precisa ver o que está chegando.
+if (o_controlador_geral.pausa && o_controlador_geral.retomada_timer <= 0) {
+    exit;
+}
+
 var _w = sprite_get_width(sprite_index);
 var _h = sprite_get_height(sprite_index);
 

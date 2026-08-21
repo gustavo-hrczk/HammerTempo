@@ -38,7 +38,27 @@ switch (estado_jogo) {
 // =================================================================
 // MENU DE PAUSA — desenhado por cima de tudo, com o jogo congelado atrás
 // =================================================================
-if (pausa) {
+if (pausa && retomada_timer > 0) {
+    // Retomada: o campo fica à vista, só com a contagem por cima.
+    var _rn = string(ceil(retomada_timer / room_speed));
+    var _rcx = display_get_gui_width() / 2;
+    var _rcy = (HUD_CORREDOR_TOPO + HUD_CORREDOR_BASE) / 2;
+
+    draw_set_font(f_padrao);
+    draw_set_color(c_black);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_text(_rcx, _rcy - 58, "Retomando em...");
+
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+    var _rw = string_width(_rn) * 3;
+    var _rh = string_height(_rn) * 3;
+    draw_text_transformed(floor(_rcx - (_rw / 2)), floor(_rcy + 26 - (_rh / 2)), _rn, 3, 3, 0);
+
+    ui_reset();
+}
+else if (pausa) {
     var _gw = display_get_gui_width();
     var _gh = display_get_gui_height();
 

@@ -4,6 +4,11 @@ if (instance_exists(o_controlador_geral) && o_controlador_geral.pausa) {
     exit;
 }
 
+// Ao despausar, a martelada precisa recuperar a velocidade que a pausa zerou.
+if (estado == FERREIRO_ESTADO.MARTELANDO && image_speed == 0) {
+    image_speed = velocidade_martelada;
+}
+
 // --- REAÇÃO AO ERRO: segura o frame vermelho por alguns frames ---
 if (estado == FERREIRO_ESTADO.DANO) {
     dano_timer--;

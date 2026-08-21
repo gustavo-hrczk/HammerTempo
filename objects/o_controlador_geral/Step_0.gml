@@ -3,6 +3,13 @@
 // =================================================================
 if (pausa) {
 
+    // Contagem de retomada em andamento: nada de input, só esperar.
+    if (retomada_timer > 0) {
+        retomada_timer--;
+        if (retomada_timer <= 0) { concluir_retomada(); }
+        exit;
+    }
+
     var _mv = input_eixo_v();
     if (_mv != 0) {
         var _total = array_length(pausa_opcoes);

@@ -49,6 +49,11 @@ stats_toques_invalidos = 0;
 pausa_opcao = 0;
 pausa_opcoes = ["Continuar", "Reiniciar fase", "Sair para o menu"];
 
+// Contagem de retomada: sair da pausa direto no meio da música é injusto se houver
+// nota chegando. O jogo fica congelado mais alguns segundos, agora com o campo à
+// vista, antes de voltar a valer. É o padrão dos jogos de ritmo.
+retomada_timer = 0;
+
 pausar_partida = function() {
     if (pausa) exit;
     pausa = true;
@@ -56,8 +61,15 @@ pausar_partida = function() {
     o_audio_manager.pausar_musica();
 }
 
+/// Inicia a contagem de retomada. A partida só volta a valer quando ela zera.
 retomar_partida = function() {
     if (!pausa) exit;
+    retomada_timer = 3 * room_speed;
+}
+
+/// Chamado quando a contagem de retomada termina.
+concluir_retomada = function() {
+    retomada_timer = 0;
     pausa = false;
     o_audio_manager.retomar_musica();
 }
@@ -65,7 +77,11 @@ retomar_partida = function() {
 /// Limpa o gameplay em curso. Usada tanto por reiniciar quanto por sair.
 limpar_partida = function() {
     pausa = false;
+    retomada_timer = 0;
     o_audio_manager.retomar_musica();
+
+    // O ferreiro pode estar congelado no meio de uma martelada por causa da pausa.
+    if (instance_exists(o_ferreiro)) { o_ferreiro.voltar_ao_repouso(); }
     if (instance_exists(o_spawner_ritmo)) { instance_destroy(o_spawner_ritmo); }
     instance_destroy(o_nota_seta);
     resetar_estatisticas();
@@ -73,6 +89,11 @@ limpar_partida = function() {
 
 reiniciar_partida = function() {
     limpar_partida();
+
+    // A faixa precisa PARAR, não seguir de onde estava: reiniciar a fase reinicia
+    // também a música, que o spawner recomeça do zero ao ser recriado.
+    o_audio_manager.stop_music();
+
     estado_jogo = MINIGAME.CONTAGEM;
     contagem_timer = 3 * room_speed;
 }
