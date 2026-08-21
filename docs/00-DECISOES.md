@@ -291,3 +291,36 @@ instância.
 (pausa, volumes, seletor/tutorial) e o usuário só descobriu o erro de boot ao abrir o jogo. A
 partir daqui: **uma mudança por vez, compilada e entregue para teste**, antes de começar a
 seguinte. Compilar sem erro não é o mesmo que funcionar.
+
+**D-50 · Pausa: notas ocultas e contagem de retomada.** Com o jogo congelado e o campo à vista,
+dava para estudar as notas que vinham — por isso elas somem durante o **menu** de pausa e voltam
+na **contagem de retomada**, quando o jogador precisa ver o que está chegando. Sair da pausa
+passa por 3 s de contagem antes de a partida voltar a valer, padrão dos jogos de ritmo:
+despausar direto é injusto se houver nota chegando.
+
+**D-51 · Animação parada nunca termina.** O ferreiro travava no meio da martelada ao despausar,
+e o escopo era maior que o relatado: acontecia em **qualquer** despausa. A pausa zera
+`image_speed`, e o evento de fim de animação nunca dispara com a animação parada — então nada
+devolvia o estado para IDLE. A velocidade passou a ser guardada e restaurada. Vale como regra:
+zerar `image_speed` para congelar exige restaurar explicitamente.
+
+**D-52 · Recordes de Arcade e Livre são placares separados.** A pergunta era se um recorde feito
+na fase 3 dentro do modo Arcade deveria sobrepor o recorde isolado daquela fase. Não deve, e a
+razão é técnica antes de ser de gosto: se o combo atravessar as fases no Arcade, a fase 3 começa
+com combo herdado e o bônus por acerto produz pontuação que uma partida isolada nunca alcança
+partindo do zero — o recorde do modo Livre viraria inalcançável por construção. Mesmo com o combo
+zerando entre fases, o efeito de "mão quente" permanece.
+
+Estrutura definida:
+
+| Placar | Guarda | Onde aparece |
+|---|---|---|
+| **Livre** (por fase) | 3 letras + pontuação + precisão, Top 10 por fase | Recorde resumido no cartão do seletor e lista completa na tela de Recordes |
+| **Arcade** (a run inteira) | 3 letras + total + até onde chegou + precisão média, Top 10 | Só na tela de Recordes |
+
+O Arcade grava **o total do percurso**, não pontuações de fase — então não existe recorde de fase
+no Arcade, e a sobreposição deixa de ser possível. Entrada de nome em 3 letras nos dois modos,
+por direcional, que funciona igual em teclado e em alavanca de arcade.
+
+A lista completa vai para uma tela própria no menu, mas o recorde continua no cartão do seletor:
+é ali que ele funciona como alvo, no momento em que o jogador escolhe a fase.
