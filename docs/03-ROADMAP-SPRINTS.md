@@ -150,10 +150,11 @@ input_pressed(ACAO.CONFIRMAR)   // teclado OU gamepad, consulta única
 Tela de configuração de controles com "pressione o botão para a nota de cima..." e persistência
 em disco. É o que garante compatibilidade com **qualquer** painel arcade.
 
-> **Nota sobre hardware:** muitos gabinetes usam encoders (iPac, Zero Delay) que **emulam teclado**.
-> Nesse caso o jogo já funcionaria com setas/WASD/Enter, mas o remapeamento continua necessário
-> porque o mapeamento de fábrica de cada encoder é diferente. Se o painel for XInput/DirectInput,
-> a camada de gamepad é obrigatória.
+> **Hardware confirmado:** tela de 21" e joystick arcade tradicional (alavanca + botões).
+> O levantamento completo está em `04-ARCADE.md`, e ele traz uma conclusão que muda esta frente:
+> **a alavanca não serve para as notas** — deslocamento lento demais entre lanes e diagonais
+> parasitas no gate quadrado, que virariam toques inválidos. As 4 lanes vão para 4 botões e a
+> alavanca fica só para menu.
 
 **Validação:** jogar uma fase inteira usando **apenas** o controle, incluindo navegar menus,
 pausar e digitar o nome no leaderboard.

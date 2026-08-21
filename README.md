@@ -50,6 +50,7 @@ docs/        documentação técnica e planejamento
 | [docs/01-ARQUITETURA.md](docs/01-ARQUITETURA.md) | Como o jogo funciona por dentro |
 | [docs/02-AUDITORIA.md](docs/02-AUDITORIA.md) | Achados técnicos, com severidade e reprodução |
 | [docs/03-ROADMAP-SPRINTS.md](docs/03-ROADMAP-SPRINTS.md) | Plano de trabalho por frente |
+| [docs/04-ARCADE.md](docs/04-ARCADE.md) | Preparação para o gabinete da feira |
 
 ## Save
 
