@@ -279,3 +279,15 @@ vai ser construído.
 teclas desenhadas — o pacote de arte é uma folha de teclado. O texto "Use as `<SETAS>` ou
 `<W A S D>`" virou os quatro alvos desenhados com a letra correspondente embaixo. Numa feira
 ninguém lê instrução, e o jogador reconhece na tela o ícone que acabou de ver.
+
+**D-48 · `instance_exists` não garante que o `Create` já rodou.** O boot quebrou porque
+`save_aplicar_opcoes()` roda no `Create` do `o_controlador_geral`, que vem **antes** do
+`o_audio_manager` na ordem de criação de `rm_splash`. A instância já existia, mas seus métodos
+ainda não tinham sido definidos. Sempre que uma função de script chamar método de outro objeto
+durante o boot, a checagem tem que ser pela **variável** (`variable_instance_exists`), não pela
+instância.
+
+**D-49 · Micro sprints mais curtos.** O fechamento da Sprint 3 entregou três blocos de uma vez
+(pausa, volumes, seletor/tutorial) e o usuário só descobriu o erro de boot ao abrir o jogo. A
+partir daqui: **uma mudança por vez, compilada e entregue para teste**, antes de começar a
+seguinte. Compilar sem erro não é o mesmo que funcionar.

@@ -124,8 +124,14 @@ function save_aplicar_opcoes() {
     global.ganho_musica = global.save.opcoes.volume_musica / 10;
     global.ganho_sfx = global.save.opcoes.volume_sfx / 10;
 
-    // a faixa que já está tocando acompanha a mudança na hora
-    if (instance_exists(o_audio_manager)) {
+    // A faixa que já está tocando acompanha a mudança na hora.
+    //
+    // instance_exists NÃO basta aqui: no boot esta função roda no Create do
+    // o_controlador_geral, que vem antes do o_audio_manager na ordem de criação de
+    // rm_splash. A instância já existe, mas o Create dela ainda não rodou e os
+    // métodos não existem. Por isso a checagem é pela variável, não pela instância.
+    if (instance_exists(o_audio_manager)
+        && variable_instance_exists(o_audio_manager, "aplicar_volume_musica")) {
         o_audio_manager.aplicar_volume_musica();
     }
 
