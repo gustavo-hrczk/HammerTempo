@@ -369,3 +369,15 @@ enquanto o resto da tela ficava parado. O estado (posição das camadas, tema at
 seguinte e os temporizadores) agora é gravado em `global.bg_ceu_estado` a cada frame no
 Draw e restaurado no Create. A fonte da verdade é o menu, por ser a primeira sala a criar
 o fundo — as demais continuam de onde ele parou.
+
+**D-58 · Corte seco entre o menu e o seletor de fases.** Mesmo motivo do D-54, agora que o
+céu também atravessa a troca (D-57): as duas telas compartilham o fundo no mesmo ponto, então
+o fade não lê como transição, lê como piscada. Vale nos dois sentidos — entrar e voltar são o
+mesmo par de telas, e um corte na ida com fade na volta seria pior que os dois iguais.
+
+**D-59 · O título do seletor subiu para o corpo do texto.** "Selecione a arma para forjar"
+estava em f_padrao_pequena, o mesmo corpo da dificuldade e do recorde dos cartões — competia
+com eles em vez de encabeçá-los. Passou para f_padrao (30 px), o corpo dos nomes das fases.
+A linha ficou 7 px mais alta, então o cartão inteiro desceu 7 px: só assim a caixa de destaque
+(que nasce no topo da moldura da arma) não invade o título, e o recorde ainda sobra 12 px do
+fim do pergaminho.

@@ -36,7 +36,7 @@ if (input_pressed(ACAO.CONFIRMAR)) {
             } else {
                 o_controlador_geral.estado_jogo = MINIGAME.SELECAO_FASE;
             }
-            ir_para_sala(rm_forja);
+            ir_para_sala(rm_forja, 0, false);
             break;
 
         case 1: // Opções

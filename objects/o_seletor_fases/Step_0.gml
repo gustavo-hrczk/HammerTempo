@@ -6,7 +6,7 @@ if (o_controlador_geral.estado_jogo != MINIGAME.SELECAO_FASE || fluxo_ocupado())
 // --- RETORNO AO MENU ---
 if (input_pressed(ACAO.VOLTAR)) {
     o_audio_manager.play_sfx(snd_menu_return);
-    ir_para_sala(rm_menu);
+    ir_para_sala(rm_menu, 0, false);
     exit;
 }
 

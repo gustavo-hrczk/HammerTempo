@@ -16,12 +16,14 @@ if (o_controlador_geral.estado_jogo != MINIGAME.SELECAO_FASE) {
 var _cx = display_get_gui_width() / 2;
 var _gap_coluna = 360;
 
-// o painel de pergaminho ocupa 492..720; o cartão inteiro tem de caber nesse vão
-var _y_titulo  = 506;
-var _y_icone   = 570;   // centro da moldura
-var _y_nome    = 632;
-var _y_detalhe = 663;
-var _y_recorde = 690;
+// o painel de pergaminho ocupa 492..720; o cartão inteiro tem de caber nesse vão.
+// O título subiu de f_padrao_pequena para f_padrao e a linha ficou 7 px mais alta,
+// então o cartão desceu os mesmos 7 px para não ser invadido pela caixa de destaque.
+var _y_titulo  = 509;
+var _y_icone   = 577;   // centro da moldura
+var _y_nome    = 638;
+var _y_detalhe = 668;
+var _y_recorde = 694;
 
 var _escala_moldura = 0.34;             // s_canva01 tem 250px -> 85px na tela
 var _escala_arma    = 0.26;
@@ -33,7 +35,9 @@ draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
 
 // --- título ---
-draw_set_font(f_padrao_pequena);
+// Na fonte pequena ele se perdia entre a dificuldade e o recorde dos cartões, que
+// usam o mesmo corpo. Passou para f_padrao (30 px), o corpo dos nomes das fases.
+draw_set_font(f_padrao);
 draw_set_color(_tinta);
 draw_text(_cx, _y_titulo, "Selecione a arma para forjar");
 
@@ -62,7 +66,7 @@ for (var i = 0; i < total_opcoes; i++) {
                             250 * _escala_moldura);
 
         var _caixa_topo = _y_icone - _meia_moldura - 6;
-        var _caixa_base = _y_recorde + 13;
+        var _caixa_base = _y_recorde + 14;
 
         ui_caixa_pulsante(_pos_x,
                           (_caixa_topo + _caixa_base) / 2,
