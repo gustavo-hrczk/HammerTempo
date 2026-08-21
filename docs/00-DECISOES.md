@@ -334,3 +334,16 @@ as medidas e cores em macros. As três telas viraram a mesma tela com conteúdo 
 **D-54 · Sem fade entre menu e opções.** Como as duas telas agora compartilham logo e moldura no
 mesmo lugar, o fade não lê como transição — lê como piscada. `ir_para_sala` ganhou um parâmetro
 para trocar de sala direto, usado só nesse par. As demais trocas seguem com os 250 ms.
+
+**D-55 · O cartão do seletor passa a ser medido, não estimado.** A caixa pulsante da fase
+selecionada era fixa em 300x180 centrada em y 619. O conteúdo do cartão ia de 523 (topo da
+moldura da arma) a 684 (linha do recorde), então a caixa **cortava o topo do ícone** e ainda
+sobrava um vão de 25 px abaixo do recorde — a origem dos "desalinhamentos" relatados. Agora
+ela nasce do topo da moldura e termina logo abaixo do recorde, e a largura sai do maior
+`string_width` entre nome, dificuldade e recorde, limitada à distância entre colunas.
+
+O cursor de espada seguia a mesma lógica errada: ficava a 150 px fixos à esquerda, flutuando
+longe de nomes curtos. Passou a se apoiar na largura do nome (`- string_width/2 - 25`), rente
+à primeira linha do cartão, exatamente como em `ui_item_menu` — o cartão não tem moldura
+própria, então é o texto que ancora o cursor. A tinta do texto também deixou de ser um marrom
+particular e virou `UI_COR_TEXTO`.
