@@ -347,3 +347,25 @@ longe de nomes curtos. Passou a se apoiar na largura do nome (`- string_width/2 
 à primeira linha do cartão, exatamente como em `ui_item_menu` — o cartão não tem moldura
 própria, então é o texto que ancora o cursor. A tinta do texto também deixou de ser um marrom
 particular e virou `UI_COR_TEXTO`.
+
+**D-56 · Uma só largura de caixa de destaque, e a janela volta a mostrar a resolução.**
+Menu e opções ainda destacavam de tamanhos diferentes: o menu usava `string_width + 75`,
+que muda a cada item, e as opções usavam `painel - 36` (224 px), fixo. Ao trocar de tela a
+caixa saltava de tamanho. Agora existe `UI_ITEM_LARGURA = 243`, medida no item mais largo
+do menu principal ("Começar Jogo" = 168 px em f_padrao) mais a folga de 75 que o menu já
+usava — e vale para menu, opções e pausa. O texto mais longo do jogo ("Sair para o menu",
+218 px) continua cabendo dentro dela.
+
+Os rótulos "Pequena/Média/Grande" saíram: quem escolhe tamanho de janela quer ver a
+resolução. Voltaram "640x360", "1024x576" e "1280x720". O que forçou os apelidos foi a
+margem das linhas com valor, que era tirada do painel (vão de 200 px, deixando 14 px entre
+"Janela" e o número). As margens passaram a sair da própria caixa — maior à esquerda,
+onde o cursor se encaixa — e o vão subiu para 205 px, com 18 px entre rótulo e valor.
+
+**D-57 · O céu atravessa as salas.** Cada sala tem a sua instância do gerenciador de fundo,
+e o `Create` dela zerava a rolagem do parallax e devolvia o ciclo de temas para o primeiro
+item. Era o salto visível ao ir do menu para opções ou créditos: o céu recomeçava do zero
+enquanto o resto da tela ficava parado. O estado (posição das camadas, tema atual, tema
+seguinte e os temporizadores) agora é gravado em `global.bg_ceu_estado` a cada frame no
+Draw e restaurado no Create. A fonte da verdade é o menu, por ser a primeira sala a criar
+o fundo — as demais continuam de onde ele parou.

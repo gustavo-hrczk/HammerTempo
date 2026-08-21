@@ -60,3 +60,20 @@ time_between_changes = room_speed * 20; // Muda a cada 5 segundos
 transition_duration = room_speed * 10;   // Transição dura 1 segundo
 transition_timer = time_between_changes;
 transition_progress = 0;
+
+// --- CONTINUIDADE ENTRE SALAS ---
+// Cada sala tem a sua própria instância deste objeto, então o céu recomeçava do zero
+// a cada troca de tela: a rolagem do parallax voltava para 0 e o tema voltava para o
+// primeiro do ciclo. Era o "salto" ao sair do menu para as opções ou os créditos.
+// O estado atravessa as salas por um global gravado a cada frame no Draw.
+// A fonte da verdade é o menu, que é a primeira sala a criar o fundo.
+if (variable_global_exists("bg_ceu_estado") && is_struct(global.bg_ceu_estado)) {
+    var _e = global.bg_ceu_estado;
+    layer_x_current     = _e.layer_x_current;
+    layer_x_next        = _e.layer_x_next;
+    state               = _e.state;
+    current_set_index   = _e.current_set_index;
+    next_set_index      = _e.next_set_index;
+    transition_timer    = _e.transition_timer;
+    transition_progress = _e.transition_progress;
+}

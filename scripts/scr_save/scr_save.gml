@@ -112,7 +112,7 @@ function save_gravar() {
 
 /// Tamanhos de janela oferecidos nas opções. O espaço de design continua sempre
 /// 1280x720: só a janela encolhe, e o jogo é escalado para caber nela.
-#macro JANELA_TAMANHOS [[640, 360, "Pequena"], [1024, 576, "Média"], [1280, 720, "Grande"]]
+#macro JANELA_TAMANHOS [[640, 360, "640x360"], [1024, 576, "1024x576"], [1280, 720, "1280x720"]]
 
 /// Aplica as opções salvas ao jogo (volumes, tamanho de janela e tela cheia).
 ///

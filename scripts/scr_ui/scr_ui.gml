@@ -14,6 +14,14 @@
 #macro UI_PAINEL_LARGURA 260   // largura da moldura, herdada do menu principal
 #macro UI_ITEM_GAP        45
 #macro UI_ITEM_ALTURA     40
+
+// Largura da caixa de destaque, IGUAL em todos os itens de menu, opções e pausa.
+// Antes cada tela calculava a sua: o menu usava a largura do texto + 75, e as opções
+// usavam o painel - 36 (224 px), então a caixa mudava de tamanho ao trocar de tela.
+// O valor vem do item mais largo do menu principal — "Começar Jogo" mede 168 px em
+// f_padrao — mais a mesma folga de 75. O texto mais longo de todos ("Sair para o
+// menu", 218 px) ainda cabe dentro dela.
+#macro UI_ITEM_LARGURA   243
 #macro UI_PAINEL_PADDING  40   // folga vertical acima e abaixo dos itens
 
 #macro UI_COR_TEXTO    c_black
@@ -54,7 +62,7 @@ function ui_item_menu(_cx, _y, _texto, _selecionado, _valor = "") {
         var _largura_texto = string_width(_texto);
 
         if (_selecionado) {
-            ui_caixa_pulsante(_cx, _y, _largura_texto + 75, UI_ITEM_ALTURA);
+            ui_caixa_pulsante(_cx, _y, UI_ITEM_LARGURA, UI_ITEM_ALTURA);
         }
 
         draw_set_halign(fa_center);
@@ -63,11 +71,13 @@ function ui_item_menu(_cx, _y, _texto, _selecionado, _valor = "") {
 
         _cursor_x = _cx - (_largura_texto / 2) - 25;
     } else {
-        var _esq = _cx - (UI_PAINEL_LARGURA / 2) + 30;
-        var _dir = _cx + (UI_PAINEL_LARGURA / 2) - 30;
+        // as margens saem da caixa, não do painel, para rótulo e valor respirarem
+        // dentro dela: a esquerda é maior porque é lá que o cursor se encaixa
+        var _esq = _cx - (UI_ITEM_LARGURA / 2) + 26;
+        var _dir = _cx + (UI_ITEM_LARGURA / 2) - 13;
 
         if (_selecionado) {
-            ui_caixa_pulsante(_cx, _y, UI_PAINEL_LARGURA - 36, UI_ITEM_ALTURA);
+            ui_caixa_pulsante(_cx, _y, UI_ITEM_LARGURA, UI_ITEM_ALTURA);
         }
 
         draw_set_color(_cor);

@@ -63,3 +63,15 @@ if (state == 1) {
         );
     }
 }
+
+// Guarda o quadro atual do céu para a próxima sala continuar exatamente daqui,
+// em vez de recomeçar a rolagem e o ciclo de temas (ver o Create).
+global.bg_ceu_estado = {
+    layer_x_current     : layer_x_current,
+    layer_x_next        : layer_x_next,
+    state               : state,
+    current_set_index   : current_set_index,
+    next_set_index      : next_set_index,
+    transition_timer    : transition_timer,
+    transition_progress : transition_progress
+};
