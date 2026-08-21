@@ -4,13 +4,12 @@ if (room != rm_opcoes) {
 
 // Mesma logo, mesma moldura e mesmos itens do menu principal: a troca entre as duas
 // telas não pode deslocar nem repintar nada.
-ui_logo();
-ui_painel_menu();
-
 var _cx = display_get_gui_width() / 2;
 var _cy = (display_get_gui_height() / 2) + UI_PAINEL_Y;
-
 var _total = array_length(opcoes_menu);
+
+ui_logo();
+var _altura_painel = ui_painel_menu(_total);
 var _primeiro = _cy - (((_total - 1) * UI_ITEM_GAP) / 2);
 
 for (var i = 0; i < _total; i++) {
@@ -20,7 +19,7 @@ for (var i = 0; i < _total; i++) {
     switch (i) {
         case 0: _valor = string(opcoes_musica); break;
         case 1: _valor = string(opcoes_sfx); break;
-        case 2: _valor = string(JANELA_TAMANHOS[opcoes_janela][0]) + "x" + string(JANELA_TAMANHOS[opcoes_janela][1]); break;
+        case 2: _valor = JANELA_TAMANHOS[opcoes_janela][2]; break;
         case 3: _valor = opcoes_tela_cheia ? "Sim" : "Não"; break;
     }
 
@@ -28,7 +27,7 @@ for (var i = 0; i < _total; i++) {
 }
 
 // --- AJUDA ---
-var _painel_base = (display_get_gui_height() / 2) + UI_PAINEL_Y + (UI_PAINEL_H / 2);
+var _painel_base = (display_get_gui_height() / 2) + UI_PAINEL_Y + (_altura_painel / 2);
 
 draw_set_font(f_padrao_pequena);
 draw_set_halign(fa_center);

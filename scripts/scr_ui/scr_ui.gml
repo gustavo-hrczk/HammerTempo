@@ -9,14 +9,14 @@
 // troca de tela não desloca nem repinta nada.
 // =====================================================================
 
-#macro UI_LOGO_Y      -320   // deslocamento do logo em relação ao centro da tela
-#macro UI_PAINEL_Y     140   // deslocamento do painel em relação ao centro
-#macro UI_PAINEL_W     380
-#macro UI_PAINEL_H     300
-#macro UI_ITEM_GAP      46
-#macro UI_ITEM_ALTURA   40
+#macro UI_LOGO_Y        -320   // deslocamento do logo em relação ao centro da tela
+#macro UI_PAINEL_Y       140   // deslocamento do painel em relação ao centro
+#macro UI_PAINEL_LARGURA 260   // largura da moldura, herdada do menu principal
+#macro UI_ITEM_GAP        45
+#macro UI_ITEM_ALTURA     40
+#macro UI_PAINEL_PADDING  40   // folga vertical acima e abaixo dos itens
 
-#macro UI_COR_TEXTO   c_black
+#macro UI_COR_TEXTO    c_black
 #macro UI_COR_DESTAQUE c_yellow
 
 /// Logo das telas de menu, sempre no mesmo lugar.
@@ -27,41 +27,60 @@ function ui_logo() {
                     1.2, 1.2, 0, c_white, 1);
 }
 
-/// Moldura padrão dos menus, no tamanho e na posição padrão.
-function ui_painel_menu() {
-    var _x = (display_get_gui_width() / 2) - (UI_PAINEL_W / 2);
-    var _y = (display_get_gui_height() / 2) + UI_PAINEL_Y - (UI_PAINEL_H / 2);
-    draw_sprite_stretched(s_menu_background_panel, 0, _x, _y, UI_PAINEL_W, UI_PAINEL_H);
-    return _y;
+/// Moldura do menu, dimensionada pela quantidade de itens — como o menu principal
+/// sempre fez. A largura é fixa para as telas não "respirarem" de tamanho ao trocar.
+function ui_painel_menu(_qtd_itens) {
+    var _altura = (_qtd_itens * UI_ITEM_GAP) + UI_PAINEL_PADDING;
+    var _x = (display_get_gui_width() / 2) - (UI_PAINEL_LARGURA / 2);
+    var _y = (display_get_gui_height() / 2) + UI_PAINEL_Y - (_altura / 2);
+
+    draw_sprite_stretched(s_menu_background_panel, 0, _x, _y, UI_PAINEL_LARGURA, _altura);
+    return _altura;
 }
 
-/// Item de menu no padrão da casa: caixa pulsante, cor de destaque e o cursor de
-/// espada à esquerda. `_valor` opcional desenha rótulo à esquerda e valor à direita.
+/// Item de menu no padrão da casa.
+///
+/// O cursor de espada acompanha a LARGURA DO TEXTO, como no menu principal
+/// original — é ele que faz o cursor parecer apontar para a palavra em vez de
+/// flutuar numa coluna fixa. Em linhas com valor, ele se apoia no rótulo.
 function ui_item_menu(_cx, _y, _texto, _selecionado, _valor = "") {
-    if (_selecionado) {
-        ui_caixa_pulsante(_cx, _y, UI_PAINEL_W - 44, UI_ITEM_ALTURA);
-    }
-
-    var _cor = _selecionado ? UI_COR_DESTAQUE : UI_COR_TEXTO;
-
     draw_set_font(f_padrao);
     draw_set_valign(fa_middle);
-    draw_set_color(_cor);
+
+    var _cor = _selecionado ? UI_COR_DESTAQUE : UI_COR_TEXTO;
+    var _cursor_x = 0;
 
     if (_valor == "") {
+        var _largura_texto = string_width(_texto);
+
+        if (_selecionado) {
+            ui_caixa_pulsante(_cx, _y, _largura_texto + 75, UI_ITEM_ALTURA);
+        }
+
         draw_set_halign(fa_center);
+        draw_set_color(_cor);
         draw_text(_cx, _y, _texto);
+
+        _cursor_x = _cx - (_largura_texto / 2) - 25;
     } else {
-        var _esq = _cx - (UI_PAINEL_W / 2) + 34;
-        var _dir = _cx + (UI_PAINEL_W / 2) - 34;
+        var _esq = _cx - (UI_PAINEL_LARGURA / 2) + 30;
+        var _dir = _cx + (UI_PAINEL_LARGURA / 2) - 30;
+
+        if (_selecionado) {
+            ui_caixa_pulsante(_cx, _y, UI_PAINEL_LARGURA - 36, UI_ITEM_ALTURA);
+        }
+
+        draw_set_color(_cor);
         draw_set_halign(fa_left);
         draw_text(_esq, _y, _texto);
         draw_set_halign(fa_right);
         draw_text(_dir, _y, _valor);
+
+        _cursor_x = _esq - 20;
     }
 
     if (_selecionado) {
-        draw_sprite(s_menu_seletor, 0, _cx - (UI_PAINEL_W / 2) + 14, _y);
+        draw_sprite(s_menu_seletor, 0, _cursor_x, _y);
     }
 }
 

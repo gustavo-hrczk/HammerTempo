@@ -1,12 +1,11 @@
 // Logo, moldura e itens vêm todos do padrão em scr_ui: o menu, as opções e a pausa
 // precisam ser a mesma tela com conteúdo diferente, e não três telas parecidas.
-ui_logo();
-ui_painel_menu();
-
 var _cx = display_get_gui_width() / 2;
 var _cy = (display_get_gui_height() / 2) + UI_PAINEL_Y;
-
 var _total = array_length(opcoes_menu);
+
+ui_logo();
+var _altura_painel = ui_painel_menu(_total);
 var _primeiro = _cy - (((_total - 1) * UI_ITEM_GAP) / 2);
 
 for (var i = 0; i < _total; i++) {

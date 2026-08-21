@@ -112,7 +112,7 @@ function save_gravar() {
 
 /// Tamanhos de janela oferecidos nas opções. O espaço de design continua sempre
 /// 1280x720: só a janela encolhe, e o jogo é escalado para caber nela.
-#macro JANELA_TAMANHOS [[640, 360], [1024, 576], [1280, 720]]
+#macro JANELA_TAMANHOS [[640, 360, "Pequena"], [1024, 576, "Média"], [1280, 720, "Grande"]]
 
 /// Aplica as opções salvas ao jogo (volumes, tamanho de janela e tela cheia).
 ///
@@ -156,7 +156,7 @@ function save_aplicar_opcoes() {
 function save_texto_janela() {
     var _tamanhos = JANELA_TAMANHOS;
     var _i = clamp(global.save.opcoes.janela, 0, array_length(_tamanhos) - 1);
-    return string(_tamanhos[_i][0]) + "x" + string(_tamanhos[_i][1]);
+    return _tamanhos[_i][2];
 }
 
 /// Identificador estável da fase. Não usa o índice direto de propósito: inserir uma
