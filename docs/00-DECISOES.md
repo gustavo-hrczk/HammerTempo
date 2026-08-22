@@ -524,3 +524,23 @@ tinta comum, porque não é conquista nenhuma. Ressalva medida: no cartão selec
 pulsante escurece o fundo e o cobre cai para ~3,2:1 na média do pulso — legível a 23 px, mas
 é o ponto fraco da escolha, e existe porque um fundo que oscila de alpha não permite acertar
 contraste para uma cor fixa.
+
+**D-69 · O recorde do seletor cresce para poder clarear.** O cobre do D-68 ficou escuro
+demais no cartão. Clarear, porém, piora o contraste nos DOIS fundos do seletor: o pergaminho
+é claro (L 0,673) e a caixa pulsante só escurece o que está atrás dela — não existe tom claro
+que resolva o cartão selecionado.
+
+O que abriu espaço foi o tamanho. O recorde passou de f_padrao_pequena para f_padrao, e a
+30 px o limiar aplicável cai de 4,5:1 para 3:1. Com isso o tom (176,92,32) passa a caber:
+mede 3,29:1 sobre o pergaminho, contra 4,68:1 do cobre anterior. No pior instante do pulso
+da caixa são 1,76:1, contra 2,50:1 do cobre — é o custo declarado da escolha, e a saída, se
+incomodar, é escurecer o texto no cartão selecionado, não clarear.
+
+A linha maior obrigou a redistribuir o cartão: título 507, ícone 574, nome 636, dificuldade
+663, recorde 694, com a caixa de 526,5 a 710 e 10 px até o fim do pergaminho. "Ainda não
+forjada" acompanha o tamanho, para as três linhas de baixo terem a mesma altura entre
+cartões, mas continua na tinta comum — não é conquista.
+
+**D-70 · A penalidade de pontuação por erro fica.** Estava marcada para sair por redundância
+(errar já não pontua e já zera o combo). Mantida a pedido: ela é o que faz um recorde alto
+exigir uma corrida limpa, e não só uma corrida longa.

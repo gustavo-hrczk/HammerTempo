@@ -19,11 +19,11 @@ var _gap_coluna = 360;
 // o painel de pergaminho ocupa 492..720; o cartão inteiro tem de caber nesse vão.
 // O título subiu de f_padrao_pequena para f_padrao e a linha ficou 7 px mais alta,
 // então o cartão desceu os mesmos 7 px para não ser invadido pela caixa de destaque.
-var _y_titulo  = 509;
-var _y_icone   = 577;   // centro da moldura
-var _y_nome    = 638;
-var _y_detalhe = 668;
-var _y_recorde = 694;
+var _y_titulo  = 507;
+var _y_icone   = 574;   // centro da moldura
+var _y_nome    = 636;
+var _y_detalhe = 663;
+var _y_recorde = 694;   // em f_padrao, entao precisa de mais linha embaixo
 
 var _escala_moldura = 0.34;             // s_canva01 tem 250px -> 85px na tela
 var _escala_arma    = 0.26;
@@ -57,16 +57,17 @@ for (var i = 0; i < total_opcoes; i++) {
     // largura do nome define o cursor; a mais larga das linhas define a caixa
     draw_set_font(f_padrao);
     var _larg_nome = string_width(_fase.nome);
+    var _larg_recorde = string_width(_txt_recorde);   // medido em f_padrao
 
     if (_selecionada) {
         draw_set_font(f_padrao_pequena);
         var _conteudo = max(_larg_nome + 70,                  // nome + espaço do cursor
                             string_width(_txt_detalhe),
-                            string_width(_txt_recorde),
+                            _larg_recorde,
                             250 * _escala_moldura);
 
-        var _caixa_topo = _y_icone - _meia_moldura - 6;
-        var _caixa_base = _y_recorde + 14;
+        var _caixa_topo = _y_icone - _meia_moldura - 5;
+        var _caixa_base = _y_recorde + 16;
 
         ui_caixa_pulsante(_pos_x,
                           (_caixa_topo + _caixa_base) / 2,
@@ -95,12 +96,20 @@ for (var i = 0; i < total_opcoes; i++) {
     draw_set_color(_tinta);
     draw_text(_pos_x, _y_detalhe, _txt_detalhe);
 
-    // recorde local — em cobre quando existe, para ler como conquista e não como
-    // mais uma linha de dados. 4,68:1 sobre o pergaminho; no cartão selecionado a
-    // caixa pulsante escurece o fundo e isso cai para ~3,2:1 na média do pulso.
-    // "Ainda não forjada" segue na tinta comum: não é conquista nenhuma.
+    // recorde local, na fonte cheia: e a conquista do cartao, nao mais uma linha de
+    // dados. A 30 px o limiar de contraste cai de 4,5:1 para 3:1, e foi isso que
+    // abriu espaco para o tom mais claro -- (176,92,32) mede 3,29:1 no pergaminho.
+    //
+    // O custo de clarear foi medido: o cobre anterior dava 4,68:1 aqui e 2,50:1 no
+    // pior instante do pulso da caixa; este da 3,29:1 e 1,76:1. Nao existe tom claro
+    // que resolva o cartao selecionado, porque a caixa so escurece o fundo -- ali o
+    // que ajudaria seria escurecer o texto, nao clarear.
+    //
+    // "Ainda nao forjada" segue na tinta comum: nao e conquista nenhuma.
+    draw_set_font(f_padrao);
+
     if (_recorde > 0) {
-        draw_set_color(make_colour_rgb(150, 66, 24));
+        draw_set_color(make_colour_rgb(176, 92, 32));
     }
     draw_text(_pos_x, _y_recorde, _txt_recorde);
     draw_set_color(_tinta);
