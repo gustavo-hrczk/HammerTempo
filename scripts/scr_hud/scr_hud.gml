@@ -99,6 +99,7 @@ function hud_init() {
     global.hud_combo_quebra = 0;
     global.hud_fase_timer = 0;
     global.hud_aviso_pulso = 0;
+    global.hud_aviso_ritmo = 1;   // multiplicador da velocidade do pulso de perigo
     global.hud_entrada = 0;
 }
 
@@ -144,7 +145,9 @@ function hud_update() {
     global.hud_combo_quebra = max(0, global.hud_combo_quebra - 1);
 
     global.hud_fase_timer++;
-    global.hud_aviso_pulso += 0.12;
+    // O pulso é um ACUMULADOR, então variar a taxa é contínuo — multiplicar o
+    // valor acumulado, não. É por isso que a urgência entra pela taxa.
+    global.hud_aviso_pulso += 0.12 * global.hud_aviso_ritmo;
     global.hud_ganho_timer = max(0, global.hud_ganho_timer - 1);
 
     // envelhece a fila de julgamentos, do fim para o começo por causa da remoção
@@ -267,6 +270,51 @@ function hud_vinheta_perigo(_alpha) {
     draw_set_color(c_white);
 }
 
+/// Quão perto de falhar o jogador está, em estágios de alerta.
+///
+/// ISOLADA DE PROPÓSITO. Hoje a falha vem da sequência de erros; quando o poço de
+/// vida entrar, só esta função muda e todo o desenho do alerta continua igual.
+///
+/// São no máximo 4 estágios, e nunca mais do que a vida da fase permite:
+///   vida 4 -> 3 estágios, alerta a partir do 1º erro
+///   vida 5 -> 4 estágios, alerta a partir do 1º erro
+///   vida 6 -> 4 estágios, alerta a partir do 2º erro
+/// O último estágio é sempre, nas três, "um erro para perder".
+function hud_perigo_estagio(_erros, _limite) {
+    var _total = min(_limite - 1, 4);
+    if (_total < 1) return { estagio: 0, total: 1 };
+
+    var _inicio = _limite - _total;
+    if (_erros < _inicio || _erros >= _limite) return { estagio: 0, total: _total };
+
+    return { estagio: _erros - _inicio + 1, total: _total };
+}
+
+/// Placa escura de bordas suaves, para dar fundo a um texto sem virar uma tarja.
+///
+/// O alpha é cheio num miolo e cai a zero nas quatro bordas, então a placa não tem
+/// aresta em lugar nenhum. É uma grade 3x3 de quadriláteros com cor por vértice: as
+/// nove peças encostam sem se cobrir, o que evita alpha somado nas emendas.
+function hud_placa_suave(_x1, _y1, _x2, _y2, _cor, _pico, _fade_x, _fade_y) {
+    var _xs = [_x1, _x1 + _fade_x, _x2 - _fade_x, _x2];
+    var _ys = [_y1, _y1 + _fade_y, _y2 - _fade_y, _y2];
+    var _f  = [0, 1, 1, 0];   // peso do alpha em cada linha da grade
+
+    for (var i = 0; i < 3; i++) {
+        for (var j = 0; j < 3; j++) {
+            draw_primitive_begin(pr_trianglestrip);
+            draw_vertex_colour(_xs[i],     _ys[j],     _cor, _pico * _f[i]     * _f[j]);
+            draw_vertex_colour(_xs[i],     _ys[j + 1], _cor, _pico * _f[i]     * _f[j + 1]);
+            draw_vertex_colour(_xs[i + 1], _ys[j],     _cor, _pico * _f[i + 1] * _f[j]);
+            draw_vertex_colour(_xs[i + 1], _ys[j + 1], _cor, _pico * _f[i + 1] * _f[j + 1]);
+            draw_primitive_end();
+        }
+    }
+
+    draw_set_alpha(1);
+    draw_set_color(c_white);
+}
+
 function hud_draw() {
     var _ctrl = o_controlador_geral;
     var _fase = _ctrl.fases_data[_ctrl.fase_atual];
@@ -380,6 +428,14 @@ function hud_draw() {
             ? 1
             : 1 - ((global.hud_fase_timer - _fade_inicio) / room_speed);
 
+        // O texto branco ficava em 1,41:1 sobre o céu mais claro do ciclo
+        // (s_bg_mid_clouds, luminância medida 0,697) — legível só pelo contorno.
+        // A placa de ponta a ponta derruba o fundo para 0,195 e leva o contraste a
+        // 4,3:1. O miolo cobre exatamente as duas linhas (y 22 a 88) e o alpha cai
+        // a zero em 420 px de cada lado, então ela não lê como tarja.
+        hud_placa_suave(0, -6, _gw, 116, c_black,
+                        0.72 * _alpha * _entrada, 420, 28);
+
         draw_set_alpha(_alpha * _entrada);
         draw_set_font(f_padrao);
         hud_texto(_gw / 2, 40, string_upper(_fase.nome), c_white, 1);
@@ -400,16 +456,34 @@ function hud_draw() {
     // ---------------------------------------------------------------
     // AVISO DE FORJA ESFRIANDO — só quando falta 1 erro para falhar
     // ---------------------------------------------------------------
-    var _limite = _fase.stats_limite_sequencia_errada;
-    if (_ctrl.stats_sequencia_errada >= _limite - 1 && _ctrl.stats_sequencia_errada < _limite) {
-        // o degradê tem metade da tinta de uma faixa chapada da mesma largura, então
-        // o pulso sobe de 0,22-0,44 para 0,30-0,60 e o aviso continua com o mesmo peso
-        var _pulso = 0.30 + 0.30 * ((sin(global.hud_aviso_pulso) + 1) / 2);
+    // O alerta tinha um estágio só, sempre a um erro de perder: na Espada o jogador
+    // errava cinco vezes sem sinal nenhum e falhava na sexta. Agora ele cresce em
+    // até 4 estágios (ver hud_perigo_estagio), e cresce em duas dimensões — o alpha
+    // da vinheta e a velocidade do pulso.
+    var _perigo = hud_perigo_estagio(_ctrl.stats_sequencia_errada,
+                                     _fase.stats_limite_sequencia_errada);
+
+    if (_perigo.estagio <= 0) {
+        global.hud_aviso_ritmo = 1;
+    } else {
+        var _intensidade = _perigo.estagio / _perigo.total;
+
+        // ciclo de 1,2 s no primeiro estágio a 0,87 s no último
+        global.hud_aviso_ritmo = 0.6 + (0.4 * _intensidade);
+
+        // no estágio final dá 0,30-0,60, que é exatamente o alerta de antes
+        var _base = 0.10 + (0.20 * _intensidade);
+        var _pulso = _base + _base * ((sin(global.hud_aviso_pulso) + 1) / 2);
 
         hud_vinheta_perigo(_pulso * _entrada);
 
-        draw_set_font(f_padrao);
-        hud_texto(_gw / 2, 24, "A FORJA ESTÁ ESFRIANDO!", make_colour_rgb(255, 190, 170), 1);
+        // O texto é a última chance, então fica só no estágio final — que nas três
+        // fases é exatamente "um erro para perder". Aparecendo antes, ele deixaria
+        // de significar isso.
+        if (_perigo.estagio == _perigo.total) {
+            draw_set_font(f_padrao);
+            hud_texto(_gw / 2, 24, "A FORJA ESTÁ ESFRIANDO!", make_colour_rgb(255, 190, 170), 1);
+        }
     }
 
     ui_reset();

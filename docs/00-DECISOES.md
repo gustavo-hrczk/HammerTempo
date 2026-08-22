@@ -458,3 +458,38 @@ nunca menor que o passo normal. A animação dos pés acompanha a mesma proporç
 passada volta a patinar. Na faixa atual a trava nunca chega a agir (o pior caso são 160 px,
 1,67 s de caminhada), mas ela é o que permite alargar o passeio de novo sem reabrir o
 problema.
+
+**D-65 · O alerta de perigo cresce em estágios.** Havia um estágio só, sempre a um erro de
+perder. Como a vida varia por fase, o jogador da Espada errava cinco vezes sem sinal nenhum
+e falhava na sexta — pouca responsividade justamente onde ela importa. Agora são até 4
+estágios, `min(vida - 1, 4)`:
+
+| Fase | Vida | Estágios | Alerta começa no erro |
+|---|---|---|---|
+| Adaga | 4 | 3 | 1 |
+| Lança | 5 | 4 | 1 |
+| Espada | 6 | 4 | 2 |
+
+A intensidade (`estágio / total`) move duas coisas. O alpha da vinheta, por
+`0,10 + 0,20 × intensidade` na base e na amplitude — que no estágio final dá 0,30-0,60,
+exatamente o alerta anterior. E a velocidade do pulso, de um ciclo de 1,2 s no primeiro
+estágio a 0,87 s no último. A urgência entra pela TAXA do acumulador, não multiplicando o
+valor acumulado: multiplicar o acumulado daria um salto de fase a cada mudança de estágio.
+
+O texto "A FORJA ESTÁ ESFRIANDO!" ficou só no estágio final, que nas três fases é exatamente
+"um erro para perder". Aparecendo antes, deixaria de significar isso.
+
+`hud_perigo_estagio()` está isolada de propósito: hoje lê a sequência de erros, e quando o
+poço de vida entrar, só ela muda — o desenho do alerta continua igual.
+
+**D-66 · Placa suave atrás do título da fase.** O nome da fase e a linha de dificuldade são
+texto branco no alto da tela, sobre o céu. Medindo a faixa y 8-100 dos sprites de fundo, o
+pior caso do ciclo é `s_bg_mid_clouds`, com luminância 0,697 — o branco fica em **1,41:1**,
+ou seja, legível apenas pelo contorno. Era a "timidez" relatada.
+
+Entrou uma placa preta de ponta a ponta com 0,72 de pico, que derruba o fundo para 0,195 e
+leva o contraste a 4,3:1. Ela não é uma tarja: `hud_placa_suave()` desenha uma grade 3x3 de
+quadriláteros com cor por vértice, com alpha cheio num miolo que cobre exatamente as duas
+linhas (y 22 a 88) e queda a zero nas quatro bordas — 420 px de fade de cada lado. As nove
+peças encostam sem se cobrir, então não há alpha somado nas emendas, como no D-60. A placa
+acompanha o mesmo fade de entrada e saída do texto.
