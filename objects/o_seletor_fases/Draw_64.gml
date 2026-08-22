@@ -75,10 +75,21 @@ for (var i = 0; i < total_opcoes; i++) {
                           _caixa_base - _caixa_topo);
     }
 
-    // arma dentro da moldura, do mesmo jeito que aparece na tela de resultado
-    var _arma = _fase.sprites_resultado[array_length(_fase.sprites_resultado) - 1];
-    draw_sprite_ext(_arma, 0, _pos_x, _y_icone, _escala_arma, _escala_arma, 0, c_white, 1);
-    draw_sprite_ext(s_canva01, 0, _pos_x, _y_icone, _escala_moldura, _escala_moldura, 0, c_white, 1);
+    // Arma e moldura so aparecem em fase ja forjada: sem recorde nao ha o que
+    // exibir, e mostrar a melhor arma de uma fase nunca jogada entregava o premio
+    // antes da conquista.
+    //
+    // O par arma+moldura vem sempre do MESMO indice da lista de desempenho. Antes a
+    // moldura era s_canva01 fixa, a de FALHA, enquanto a arma era a ultima da lista,
+    // a melhor — a borda errada que voce viu.
+    if (_recorde > 0) {
+        var _nivel = array_length(_fase.sprites_resultado) - 1;
+        var _arma = _fase.sprites_resultado[_nivel];
+        var _moldura = o_controlador_geral.molduras_resultado[_nivel];
+
+        draw_sprite_ext(_arma, 0, _pos_x, _y_icone, _escala_arma, _escala_arma, 0, c_white, 1);
+        draw_sprite_ext(_moldura, 0, _pos_x, _y_icone, _escala_moldura, _escala_moldura, 0, c_white, 1);
+    }
 
     // nome
     draw_set_font(f_padrao);

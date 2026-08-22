@@ -31,6 +31,28 @@ function debug_texto_musica() {
         " gain " + string_format(audio_sound_get_gain(_m), 1, 2);
 }
 
+/// Apaga os recordes gravados, mantendo as opcoes.
+///
+/// Existe porque nao ha outro jeito de voltar ao estado "ainda nao forjada" sem
+/// apagar o save inteiro e perder volume e tamanho de janela junto. Na feira serve
+/// para zerar o gabinete entre sessoes.
+///
+/// So responde com o overlay de debug ligado, e com Shift: sao dois passos
+/// deliberados, para ninguem apagar tudo esbarrando numa tecla.
+function debug_zerar_recordes() {
+    global.save.recordes = {};
+    global.save.leaderboard.livre = {};
+    global.save.leaderboard.arcade = [];
+    save_gravar();
+}
+
+/// Quantas fases tem recorde gravado. Aparece no overlay, para a limpeza ser visivel.
+function debug_total_recordes() {
+    if (!variable_global_exists("save") || !is_struct(global.save)) return 0;
+    if (!variable_struct_exists(global.save, "recordes")) return 0;
+    return array_length(variable_struct_get_names(global.save.recordes));
+}
+
 function debug_draw() {
     if (!global.debug_ativo) return;
 
@@ -57,6 +79,8 @@ function debug_draw() {
         "último acerto: " + global.debug_ultimo_julgamento +
             " (" + string_format(global.debug_ultimo_erro_ms, 1, 1) + " ms)",
         "música: " + debug_texto_musica(),
+        "recordes gravados: " + string(debug_total_recordes()) +
+            "   [SHIFT+F3 zera]",
         "input: " + global.input_dispositivo +
             (input_tem_gamepad() ? "  [gamepad slot " + string(global.input_slot) + "]" : "  [sem gamepad]")
     ];

@@ -544,3 +544,24 @@ cartões, mas continua na tinta comum — não é conquista.
 **D-70 · A penalidade de pontuação por erro fica.** Estava marcada para sair por redundância
 (errar já não pontua e já zera o combo). Mantida a pedido: ela é o que faz um recorde alto
 exigir uma corrida limpa, e não só uma corrida longa.
+
+**D-71 · Arma e moldura vêm sempre do mesmo índice.** As molduras `s_canva01..05` são níveis
+de desempenho (0 falha ... 4 perfeito), e cada arma tem a sua correspondente. O seletor
+desenhava a ÚLTIMA arma da lista — a melhor — dentro de `s_canva01`, que é a moldura de
+falha. A lista de molduras vivia só no `o_controlador_resultado`, então o seletor tinha uma
+cópia da ordem escrita à mão, e foi ela que saiu errada.
+
+A lista subiu para `o_controlador_geral.molduras_resultado` e as duas telas leem de lá. O par
+arma+moldura passa a sair sempre do mesmo índice, por construção.
+
+Fase sem recorde não desenha nem arma nem moldura. Além de ser o que faz sentido — não há o
+que exibir de uma fase nunca forjada —, mostrar a melhor arma antes de qualquer tentativa
+entregava o prêmio antes da conquista.
+
+**D-72 · SHIFT+F3 zera os recordes.** Voltar ao estado "ainda não forjada" exigia apagar
+`hammertempo_save.json` inteiro, levando junto volume, tamanho de janela e tela cheia. O
+overlay de debug ganhou a contagem de recordes gravados e o atalho que os apaga, preservando
+as opções.
+
+São dois passos deliberados — o overlay precisa estar aberto e a tecla é com Shift — porque
+no gabinete um esbarrão em F3 não pode zerar o placar da feira.

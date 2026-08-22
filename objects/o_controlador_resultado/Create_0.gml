@@ -57,19 +57,11 @@ if (!o_controlador_geral.fase_falhou) {
                                           o_controlador_geral.pontuacao);
 }
 
-// --- NOVO ARRAY PARA AS MOLDURAS ---
-// A ordem DEVE corresponder aos níveis de performance:
-// Índice 0 = Falha, 1 = Aceitável, 2 = Bom, 3 = Excelente, 4 = Perfeito
-sprites_das_molduras = [
-    s_canva01, // Moldura para Falha
-    s_canva02, // Moldura para Aceitável
-    s_canva03, // Moldura para Bom
-    s_canva04, // Moldura para Excelente
-    s_canva05  // Moldura para Perfeito
-];
+// Molduras por nivel de desempenho, vindas do controlador geral: o seletor de fases
+// usa a mesma lista, e duas copias da mesma ordem ja renderam moldura trocada.
+sprites_das_molduras = o_controlador_geral.molduras_resultado;
 
-// Variável para guardar a moldura escolhida
-sprite_da_moldura_final = sprites_das_molduras[0]; // Padrão é a primeira
+sprite_da_moldura_final = sprites_das_molduras[0]; // Padrao e a primeira
 
 
 // --- LÓGICA DE CÁLCULO DE PERFORMANCE ---

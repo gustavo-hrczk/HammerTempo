@@ -132,6 +132,12 @@ fase_atual = 0; // Guarda o ÍNDICE da fase selecionada
 
 // --- ESTRUTURA DE DADOS DAS FASES ---
 // Um array que guarda as configurações de cada fase como um objeto (struct)
+// Molduras do resultado, por nivel de desempenho: 0 falha ... 4 perfeito. Cada arma
+// tem a sua moldura correspondente, e o par arma+moldura precisa vir sempre do MESMO
+// indice. Ficava so no o_controlador_resultado, e o seletor de fases desenhava a
+// melhor arma dentro da moldura de falha por copiar o sprite errado.
+molduras_resultado = [s_canva01, s_canva02, s_canva03, s_canva04, s_canva05];
+
 fases_data = [];
 
 // Fase 1: Adaga (Fácil) - BPM: 88
