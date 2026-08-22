@@ -27,7 +27,10 @@ if (instance_exists(o_controlador_geral)) {
 
     // Fora da partida ele habita a forja: alterna pausas e caminhadas curtas.
     if (_jogo == MINIGAME.SELECAO_FASE || _jogo == MINIGAME.TUTORIAL || _jogo == MINIGAME.NENHUM) {
-        if (estado != FERREIRO_ESTADO.MARTELANDO) {
+        // A decisão só acontece com ele PARADO. Antes o contador corria também
+        // durante a caminhada e, ao zerar no meio dela, trocava o destino ou
+        // cortava o passo pela metade — o que picava o movimento.
+        if (estado != FERREIRO_ESTADO.MARTELANDO && estado != FERREIRO_ESTADO.ANDANDO) {
             indo_para_casa = false;
             ocio_timer--;
 
@@ -37,10 +40,15 @@ if (instance_exists(o_controlador_geral)) {
                     estado = FERREIRO_ESTADO.IDLE;
                     ocio_timer = irandom_range(room_speed * 1.0, room_speed * 3.5);
                 } else {
-                    // caminha até um ponto aleatório da oficina
-                    ocio_destino = random_range(passeio_min, passeio_max);
-                    estado = FERREIRO_ESTADO.ANDANDO;
-                    ocio_timer = room_speed * 6; // trava de segurança
+                    // caminha até um ponto da oficina, nunca a dois passos daqui
+                    ocio_destino = sortear_destino();
+
+                    if (ocio_destino == x) {
+                        estado = FERREIRO_ESTADO.IDLE;
+                        ocio_timer = irandom_range(room_speed * 1.0, room_speed * 2.0);
+                    } else {
+                        estado = FERREIRO_ESTADO.ANDANDO;
+                    }
                 }
             }
         }
@@ -85,9 +93,12 @@ switch (estado) {
 
     case FERREIRO_ESTADO.ANDANDO:
         sprite_index = s_ferreiro_andando;
-        image_speed = 0.6;
+        // O ciclo de 6 quadros a 0,6 fechava em 10 frames, e a 1,2 px/frame ele
+        // avançava só 12 px por ciclo completo de passada — os pés patinavam.
+        // A 0,35 o ciclo leva 17 frames e ele cobre 27 px, quase o dobro.
+        image_speed = 0.35;
 
-        var _vel = 1.2;
+        var _vel = 1.6;
         var _alvo = indo_para_casa ? home_x : ocio_destino;
         var _dir = sign(_alvo - x);
 

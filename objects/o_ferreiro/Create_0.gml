@@ -13,6 +13,29 @@ indo_para_casa = false;
 ocio_timer = 60;
 ocio_destino = x;
 
+// Distância mínima para uma caminhada valer a pena. Sem ela, o destino era sorteado
+// como POSIÇÃO dentro de uma faixa de 140 px, e na maior parte das vezes caía a
+// poucos pixels de onde ele já estava: a animação de andar começava e terminava sem
+// que ele saísse do lugar. Eram os "passinhos" estranhos.
+passeio_passo_min = 55;
+
+/// Sorteia para onde ir. Sorteia DISTÂNCIA e lado, não posição, para a caminhada
+/// nunca ser curta demais. Devolve o próprio x quando não há espaço para nenhum dos
+/// lados — nesse caso quem chamou fica parado mais um tempo.
+sortear_destino = function() {
+    var _dist = irandom_range(passeio_passo_min, 100);
+    var _lado = (random(1) < 0.5) ? -1 : 1;
+
+    var _alvo = clamp(x + (_dist * _lado), passeio_min, passeio_max);
+    if (abs(_alvo - x) >= passeio_passo_min) return _alvo;
+
+    // encostou no limite desse lado: tenta o oposto
+    _alvo = clamp(x - (_dist * _lado), passeio_min, passeio_max);
+    if (abs(_alvo - x) >= passeio_passo_min) return _alvo;
+
+    return x;
+}
+
 dano_timer = 0;
 
 // Guarda a velocidade da martelada em curso: a pausa zera image_speed, e sem isso

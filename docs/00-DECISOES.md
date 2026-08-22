@@ -397,3 +397,34 @@ mesma largura, o pulso subiu de 0,22-0,44 para 0,30-0,60 e o aviso manteve o pes
 
 As laterais também deixaram de descer até o pé da tela: morrem em `HUD_CORREDOR_TOPO`, para
 não tingir as faixas por onde as notas correm.
+
+**D-61 · O ócio do ferreiro sorteia distância, não posição.** Os "passinhos" estranhos na
+seleção de fase tinham duas causas somadas. A primeira: o destino saía de
+`random_range(passeio_min, passeio_max)`, uma POSIÇÃO dentro de uma faixa de 140 px. Como
+ele já estava dentro dessa faixa, boa parte dos sorteios caía a dois ou três pixels dos pés
+dele — a animação de andar começava e terminava sem que saísse do lugar. Agora sorteia
+distância e lado, com mínimo de 55 px, e tenta o lado oposto quando esbarra no limite; sem
+espaço para nenhum dos dois, fica parado mais um tempo em vez de dar o passo inútil.
+
+A segunda: o contador de decisão corria também durante a caminhada. Ao zerar no meio dela,
+trocava o destino ou cortava o passo pela metade. A decisão passou a acontecer só com ele
+parado, o que torna cada caminhada indivisível.
+
+Terceiro ajuste, de proporção: o ciclo de 6 quadros a `image_speed 0.6` fechava em 10
+frames, e a 1,2 px/frame ele cobria 12 px por passada completa — os pés patinavam no chão.
+Passou para 0,35 e 1,6 px/frame: 17 frames por ciclo, 27 px de avanço.
+
+**D-62 · O tutorial mostra as faixas na vertical e deixa testar.** Os quatro alvos estavam
+lado a lado, na horizontal, enquanto em `rm_forja` eles são uma coluna (y 515, 565, 615,
+665). O tutorial ensinava uma leitura que o jogo não usa. Agora são a mesma coluna, com o
+mesmo espaçamento de 50 px e na mesma ordem, e o texto passou para uma coluna à direita.
+
+As teclas também respondem no tutorial, com a resposta idêntica à da partida — quadros
+enquanto está pressionada, afundamento no toque e o som da martelada. É o mesmo código de
+feedback de `o_buttons_forja`, sem julgamento nem pontuação. Numa feira, o visitante que
+experimenta antes de começar não gasta a primeira fase descobrindo qual tecla é qual.
+
+O texto foi reescrito junto, já que a coluna mudou de largura: "quanto mais preciso o
+golpe, melhor a arma" não dizia o que fazer nem o que se ganha, e virou "martele no
+instante em que ela chega: quanto mais perto do tempo certo, mais pontos ela vale".
+"Acertos seguidos" virou "acertos consecutivos" e a quebra de linha manual saiu.
