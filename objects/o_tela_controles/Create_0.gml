@@ -4,7 +4,15 @@
 // para uma tela que só existe enquanto está aberta.
 // =================================================================
 acoes = input_acoes_configuraveis();
+
+// A ultima linha da lista nao e uma acao: e o "Restaurar padrao", que precisa estar
+// aqui porque um vinculo mal escolhido pode deixar o jogo sem como responder — e no
+// gabinete nao ha teclado para socorrer.
+LINHA_RESTAURAR = array_length(acoes);
+total_linhas = LINHA_RESTAURAR + 1;
+
 opcao_selecionada = 0;
+capturando = false;
 
 // Uma TABELA precisa de mais largura que um menu: "Confirmar / BOTÃO 1" mede 242 px
 // e o vão do padrão é de 205. O painel também sobe, porque sete linhas descem mais

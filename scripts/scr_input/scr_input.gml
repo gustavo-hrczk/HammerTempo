@@ -287,7 +287,7 @@ function input_nome_da_acao(_acao) {
     }
 
     var _teclas = global.input_teclas[_acao];
-    if (array_length(_teclas) == 0) return "?";
+    if (array_length(_teclas) == 0) return "NENHUM";
 
     for (var i = 0; i < array_length(_teclas); i++) {
         var _t = _teclas[i];
@@ -297,4 +297,98 @@ function input_nome_da_acao(_acao) {
     }
 
     return input_nome_da_tecla(_teclas[0]);
+}
+
+// =====================================================================
+// REMAPEAMENTO
+// =====================================================================
+
+/// Botões de controle que a captura reconhece.
+function input_botoes_conhecidos() {
+    return [gp_face1, gp_face2, gp_face3, gp_face4,
+            gp_shoulderl, gp_shoulderr, gp_start, gp_select,
+            gp_padu, gp_padd, gp_padl, gp_padr];
+}
+
+/// Primeiro botão do controle ativo pressionado neste frame, ou -1.
+function input_botao_pressionado() {
+    var _s = global.input_slot;
+    if (_s < 0) return -1;
+
+    var _lista = input_botoes_conhecidos();
+    for (var i = 0; i < array_length(_lista); i++) {
+        if (gamepad_button_check_pressed(_s, _lista[i])) return _lista[i];
+    }
+    return -1;
+}
+
+/// Grava a tabela inteira de vínculos no save.
+///
+/// Grava tudo, e não só a ação alterada, porque remapear costuma mexer em mais de
+/// uma: o controle escolhido é retirado de quem o usava antes. A partir da primeira
+/// alteração o mapeamento passa a ser do jogador — "Restaurar padrão" esvazia a
+/// chave e devolve o save ao estado de seguir os vínculos de fábrica.
+function input_gravar_controles() {
+    if (!variable_global_exists("save") || !is_struct(global.save)) return;
+
+    var _c = {};
+    for (var _a = 0; _a < ACAO.__COUNT; _a++) {
+        var _id = input_id_acao(_a);
+        if (_id == "") continue;
+
+        _c[$ _id] = {
+            teclas: global.input_teclas[_a],
+            botoes: global.input_botoes[_a]
+        };
+    }
+
+    global.save.controles = _c;
+    save_gravar();
+}
+
+/// Tira um controle de todas as ações menos a que vai recebê-lo. Dois comandos no
+/// mesmo botão deixam o gabinete imprevisível — e é o tipo de erro que só aparece
+/// no meio de uma partida, com fila esperando.
+function input_liberar_controle(_acao_dona, _codigo, _no_teclado) {
+    for (var _a = 0; _a < ACAO.__COUNT; _a++) {
+        if (_a == _acao_dona) continue;
+
+        var _origem = _no_teclado ? global.input_teclas[_a] : global.input_botoes[_a];
+        var _limpo = [];
+
+        for (var i = 0; i < array_length(_origem); i++) {
+            if (_origem[i] != _codigo) array_push(_limpo, _origem[i]);
+        }
+
+        if (_no_teclado) {
+            global.input_teclas[_a] = _limpo;
+        } else {
+            global.input_botoes[_a] = _limpo;
+        }
+    }
+}
+
+/// Passa a ação a responder a esta tecla, e só a ela.
+function input_definir_tecla(_acao, _tecla) {
+    input_liberar_controle(_acao, _tecla, true);
+    global.input_teclas[_acao] = [_tecla];
+    input_gravar_controles();
+}
+
+/// Passa a ação a responder a este botão de controle, e só a ele.
+function input_definir_botao(_acao, _botao) {
+    input_liberar_controle(_acao, _botao, false);
+    global.input_botoes[_acao] = [_botao];
+    input_gravar_controles();
+}
+
+/// Devolve tudo ao estado de fábrica e esvazia a chave do save, para o mapeamento
+/// voltar a acompanhar os padrões do jogo em vez de ficar congelado no disco.
+function input_restaurar_padrao() {
+    input_vinculos_de_fabrica();
+
+    if (variable_global_exists("save") && is_struct(global.save)) {
+        global.save.controles = {};
+        save_gravar();
+    }
 }

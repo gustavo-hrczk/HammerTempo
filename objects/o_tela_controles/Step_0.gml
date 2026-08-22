@@ -2,6 +2,39 @@ if (fluxo_ocupado()) {
     exit;
 }
 
+// =================================================================
+// CAPTURA
+// Enquanto espera o controle novo, esta tela lê o teclado e o gamepad CRUS, sem
+// passar por input_pressed(): a pergunta aqui é "qual botão foi apertado", não
+// "qual ação foi acionada" — e a ação que responde a ele é justamente o que está
+// sendo trocado.
+// =================================================================
+if (capturando) {
+
+    // ESC cancela, e por isso não pode ser vinculado. É a única tecla reservada.
+    if (keyboard_check_pressed(vk_escape)) {
+        capturando = false;
+        o_audio_manager.play_sfx(snd_menu_return);
+        exit;
+    }
+
+    if (keyboard_check_pressed(vk_anykey)) {
+        input_definir_tecla(acoes[opcao_selecionada], keyboard_lastkey);
+        capturando = false;
+        o_audio_manager.play_sfx(snd_menu_confirm);
+        exit;
+    }
+
+    var _botao = input_botao_pressionado();
+    if (_botao >= 0) {
+        input_definir_botao(acoes[opcao_selecionada], _botao);
+        capturando = false;
+        o_audio_manager.play_sfx(snd_menu_confirm);
+    }
+
+    exit;
+}
+
 // --- SAIR ---
 if (input_pressed(ACAO.VOLTAR)) {
     o_audio_manager.play_sfx(snd_menu_return);
@@ -18,7 +51,21 @@ if (_move != 0) {
     o_audio_manager.play_sfx(_som);
     o_controlador_geral.nav_sound_index = 1 - o_controlador_geral.nav_sound_index;
 
-    var _total = array_length(acoes);
-    if (opcao_selecionada < 0)       { opcao_selecionada = _total - 1; }
-    if (opcao_selecionada >= _total) { opcao_selecionada = 0; }
+    if (opcao_selecionada < 0)             { opcao_selecionada = total_linhas - 1; }
+    if (opcao_selecionada >= total_linhas) { opcao_selecionada = 0; }
+}
+
+// --- CONFIRMAR ---
+if (input_pressed(ACAO.CONFIRMAR)) {
+
+    if (opcao_selecionada == LINHA_RESTAURAR) {
+        input_restaurar_padrao();
+        o_audio_manager.play_sfx(snd_menu_confirm);
+    } else {
+        // Sai já: a tecla que confirmou ainda conta como pressionada neste frame e
+        // seria capturada como o vínculo novo.
+        capturando = true;
+        o_audio_manager.play_sfx(snd_menu_confirm);
+        exit;
+    }
 }

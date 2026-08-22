@@ -595,3 +595,30 @@ painel, que embaixo do logo terminariam fora da tela. Esta é uma sobreposição
 O valor de cada linha vem de `input_nome_da_acao()`, a mesma função do tutorial: ela lê o
 vínculo em vigor no dispositivo em uso, então com um encoder ligado a tela passa a mostrar
 os controles dele sem troca de código.
+
+**D-75 · Captura de vínculo, e o que ela protege.** Escolher uma linha e confirmar entra em
+modo de captura: a tela passa a ler o teclado e o gamepad **crus**, sem passar por
+`input_pressed()`. A pergunta ali é "qual botão foi apertado", não "qual ação foi acionada"
+— e a ação que responde a esse botão é justamente a que está sendo trocada.
+
+Três decisões de segurança, todas pensando no gabinete, onde não há teclado para socorrer:
+
+O controle escolhido é **retirado de qualquer outra ação** (`input_liberar_controle`). Dois
+comandos no mesmo botão deixam o jogo imprevisível, e é o tipo de erro que só aparece no
+meio de uma partida, com fila esperando. Uma ação que fica sem vínculo passa a exibir
+"NENHUM", em vez de um "?" que não diz nada.
+
+**ESC cancela a captura** e por isso é a única tecla que não pode ser vinculada. Sem uma
+saída reservada, entrar em captura sem um controle funcionando prenderia o jogador ali.
+
+**"Restaurar padrão"** fecha a lista. Ele chama `input_vinculos_de_fabrica()` e **esvazia**
+`save.controles`, o que devolve o save ao estado de seguir os padrões do jogo em vez de
+congelar uma cópia deles no disco.
+
+Ressalva do D-73 que muda aqui: a gravação passa a escrever a tabela inteira, não só a ação
+alterada, porque remapear costuma mexer em mais de uma — o controle escolhido sai de quem o
+usava. A partir da primeira alteração o mapeamento é do jogador; `controles` vazio continua
+significando "seguir a fábrica".
+
+Confirmar entra em captura e **sai do Step no mesmo frame**: a tecla que confirmou ainda
+conta como pressionada, e seria capturada como o vínculo novo.
