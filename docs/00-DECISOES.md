@@ -622,3 +622,31 @@ significando "seguir a fábrica".
 
 Confirmar entra em captura e **sai do Step no mesmo frame**: a tecla que confirmou ainda
 conta como pressionada, e seria capturada como o vínculo novo.
+
+**D-76 · Direcional de menu separado do direcional da forja.** Falha estrutural encontrada
+no teste do remapeamento: `input_eixo_h()` e `input_eixo_v()`, que navegam **todas** as
+telas, liam as próprias `LANE_*`. Remapear uma faixa da forja levava junto a navegação do
+menu, das opções, do seletor, da pausa e da própria tela de controles — seis telas. Bastava
+um vínculo infeliz para não haver mais como sair de lugar nenhum, e era a tela de controles
+que ficava inalcançável justamente quando mais precisava ser alcançada.
+
+O enum ganhou `MENU_CIMA/BAIXO/ESQ/DIR`, ligados a setas, WASD e direcional do controle.
+Eles **não** entram em `input_acoes_configuraveis()` e `input_id_acao()` devolve string vazia
+para eles, o que faz `input_aplicar_save()` e `input_gravar_controles()` os ignorarem: ficam
+sempre nos vínculos de fábrica, por construção, e não por alguém lembrar de não mexer.
+
+Duas consequências desenhadas junto:
+
+`ESC fecha a tela de controles SEMPRE`, por fora do vínculo, porque `VOLTAR` também é
+remapeável. Sem essa saída fixa, um vínculo infeliz trancaria o jogador na única tela capaz
+de desfazê-lo.
+
+Os rótulos das faixas deixaram de ser "Cima/Esquerda/Direita/Baixo" e viraram
+"Faixa 1" a "Faixa 4", na ordem de cima para baixo de `rm_forja`. Nomear a faixa pela
+direção sugeria que ali se configurava a direção do jogo inteiro — que é exatamente o que
+o bug fazia. A tela também passou a dizer, embaixo, que as setas e WASD sempre navegam os
+menus.
+
+Nota: `CONFIRMAR`, `VOLTAR` e `PAUSAR` continuam remapeáveis e continuam valendo nos menus.
+Isso não é acoplamento, é a função delas — e o gabinete precisa poder apontá-las para os
+botões físicos. A rede de segurança para elas é o ESC fixo e o "Restaurar padrão".

@@ -5,13 +5,31 @@
 
 /// Ações do jogo. __COUNT precisa ser sempre a última.
 enum ACAO {
+    // Faixas da forja. Estas SÃO remapeáveis: são o que o jogador martela.
     LANE_CIMA,
     LANE_BAIXO,
     LANE_ESQ,
     LANE_DIR,
+
     CONFIRMAR,
     VOLTAR,
     PAUSAR,
+
+    // Direcionais de MENU. Existem separados das faixas de propósito.
+    //
+    // Antes os menus navegavam pelas próprias LANE_*, então remapear uma faixa
+    // levava junto a navegação de todas as telas: trocar "Cima" da forja trocava
+    // também o "para cima" do menu, das opções e da própria tela de controles —
+    // e bastava um vínculo infeliz para não haver mais como sair de lugar nenhum.
+    //
+    // Não entram em input_acoes_configuraveis() nem são gravados no save: ficam
+    // sempre nos vínculos de fábrica, e são a garantia de que os menus continuam
+    // navegáveis independentemente do que o jogador fizer com a forja.
+    MENU_CIMA,
+    MENU_BAIXO,
+    MENU_ESQ,
+    MENU_DIR,
+
     __COUNT
 }
 
@@ -49,6 +67,13 @@ function input_vinculos_de_fabrica() {
     input_bind(ACAO.CONFIRMAR,  [vk_enter, vk_space], [gp_face1, gp_start]);
     input_bind(ACAO.VOLTAR,     [vk_escape],          [gp_face2, gp_select]);
     input_bind(ACAO.PAUSAR,     [vk_escape],          [gp_start]);
+
+    // Navegação de menu: setas E WASD, para continuar respondendo mesmo que o
+    // jogador leve as faixas da forja para outras teclas.
+    input_bind(ACAO.MENU_CIMA,  [vk_up,    ord("W")], [gp_padu]);
+    input_bind(ACAO.MENU_BAIXO, [vk_down,  ord("S")], [gp_padd]);
+    input_bind(ACAO.MENU_ESQ,   [vk_left,  ord("A")], [gp_padl]);
+    input_bind(ACAO.MENU_DIR,   [vk_right, ord("D")], [gp_padr]);
 }
 
 /// Identificador estável da ação no save. Não usa o índice do enum de propósito:
@@ -64,16 +89,21 @@ function input_id_acao(_acao) {
         case ACAO.VOLTAR:     return "voltar";
         case ACAO.PAUSAR:     return "pausar";
     }
+
+    // MENU_* cai aqui de propósito: sem identificador, input_aplicar_save() e
+    // input_gravar_controles() ignoram essas ações, e elas permanecem sempre nos
+    // vínculos de fábrica. É o que impede o remapeamento da forja de alcançar a
+    // navegação dos menus.
     return "";
 }
 
 /// Rótulo da ação na tela de controles.
 function input_rotulo_acao(_acao) {
     switch (_acao) {
-        case ACAO.LANE_CIMA:  return "Cima";
-        case ACAO.LANE_BAIXO: return "Baixo";
-        case ACAO.LANE_ESQ:   return "Esquerda";
-        case ACAO.LANE_DIR:   return "Direita";
+        case ACAO.LANE_CIMA:  return "Faixa 1";
+        case ACAO.LANE_ESQ:   return "Faixa 2";
+        case ACAO.LANE_DIR:   return "Faixa 3";
+        case ACAO.LANE_BAIXO: return "Faixa 4";
         case ACAO.CONFIRMAR:  return "Confirmar";
         case ACAO.VOLTAR:     return "Voltar";
         case ACAO.PAUSAR:     return "Pausar";
@@ -120,10 +150,10 @@ function input_aplicar_save() {
 /// Índice do eixo analógico correspondente à ação (-1 se a ação não é direcional).
 function input_eixo_indice(_acao) {
     switch (_acao) {
-        case ACAO.LANE_CIMA:  return 0;
-        case ACAO.LANE_BAIXO: return 1;
-        case ACAO.LANE_ESQ:   return 2;
-        case ACAO.LANE_DIR:   return 3;
+        case ACAO.LANE_CIMA:  case ACAO.MENU_CIMA:  return 0;
+        case ACAO.LANE_BAIXO: case ACAO.MENU_BAIXO: return 1;
+        case ACAO.LANE_ESQ:   case ACAO.MENU_ESQ:   return 2;
+        case ACAO.LANE_DIR:   case ACAO.MENU_DIR:   return 3;
         default: return -1;
     }
 }
@@ -211,12 +241,12 @@ function input_held(_acao) {
 
 /// Eixo horizontal discreto (-1, 0, 1) para navegação de menu.
 function input_eixo_h() {
-    return input_pressed(ACAO.LANE_DIR) - input_pressed(ACAO.LANE_ESQ);
+    return input_pressed(ACAO.MENU_DIR) - input_pressed(ACAO.MENU_ESQ);
 }
 
 /// Eixo vertical discreto (-1, 0, 1) para navegação de menu.
 function input_eixo_v() {
-    return input_pressed(ACAO.LANE_BAIXO) - input_pressed(ACAO.LANE_CIMA);
+    return input_pressed(ACAO.MENU_BAIXO) - input_pressed(ACAO.MENU_CIMA);
 }
 
 /// Há um controle conectado?

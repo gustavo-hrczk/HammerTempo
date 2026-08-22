@@ -36,7 +36,10 @@ if (capturando) {
 }
 
 // --- SAIR ---
-if (input_pressed(ACAO.VOLTAR)) {
+// ESC fecha SEMPRE, por fora do vínculo. VOLTAR também é remapeável, e sem esta
+// saída fixa um vínculo infeliz trancaria o jogador justamente na tela que
+// conserta vínculos infelizes.
+if (keyboard_check_pressed(vk_escape) || input_pressed(ACAO.VOLTAR)) {
     o_audio_manager.play_sfx(snd_menu_return);
     instance_destroy();
     exit;

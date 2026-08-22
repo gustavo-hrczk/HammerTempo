@@ -48,14 +48,20 @@ ui_item_menu(_cx, _primeira + ((LINHA_RESTAURAR + 1) * UI_ITEM_GAP),
              ITEM_LARGURA);
 
 // --- AJUDA ---
+var _base = _cy + (_altura_painel / 2);
+
 var _ajuda = capturando
     ? "Aperte a tecla ou o botão desejado  -  ESC cancela"
-    : "Lendo de: " + string_upper(global.input_dispositivo) + "  -  CONFIRMAR troca  -  VOLTAR fecha";
+    : "Lendo de: " + string_upper(global.input_dispositivo) + "  -  CONFIRMAR troca  -  ESC fecha";
 
 draw_set_font(f_padrao_pequena);
 draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
 draw_set_color(c_black);
-draw_text(_cx, _cy + (_altura_painel / 2) + 30, _ajuda);
+draw_text(_cx, _base + 28, _ajuda);
+
+// Dito na tela porque é a garantia que torna esta tela segura de usar: o que se
+// muda aqui vale para a forja, e a navegação dos menus não depende disso.
+draw_text(_cx, _base + 58, "As setas e WASD sempre navegam os menus");
 
 ui_reset();
