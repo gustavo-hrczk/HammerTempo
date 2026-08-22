@@ -45,8 +45,17 @@ frases_otimas = [
 frase_escolhida = "";
 
 // Recorde da fase: registrado aqui e anunciado na tela quando é superado.
-recorde_novo = save_registrar_recorde(o_controlador_geral.fase_atual,
-                                      o_controlador_geral.pontuacao);
+//
+// Fase PERDIDA não grava recorde. A pontuação até o game over continua à vista na
+// tela de resultado — ela é o placar da tentativa —, mas deixá-la virar recorde
+// premiava abandonar o trabalho: bastava somar pontos numa fase difícil e falhar de
+// propósito antes do trecho que não se acerta. Recorde é de fase concluída.
+recorde_novo = false;
+
+if (!o_controlador_geral.fase_falhou) {
+    recorde_novo = save_registrar_recorde(o_controlador_geral.fase_atual,
+                                          o_controlador_geral.pontuacao);
+}
 
 // --- NOVO ARRAY PARA AS MOLDURAS ---
 // A ordem DEVE corresponder aos níveis de performance:

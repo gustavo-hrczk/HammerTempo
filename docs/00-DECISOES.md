@@ -493,3 +493,12 @@ quadriláteros com cor por vértice, com alpha cheio num miolo que cobre exatame
 linhas (y 22 a 88) e queda a zero nas quatro bordas — 420 px de fade de cada lado. As nove
 peças encostam sem se cobrir, então não há alpha somado nas emendas, como no D-60. A placa
 acompanha o mesmo fade de entrada e saída do texto.
+
+**D-67 · Recorde é de fase concluída.** `save_registrar_recorde()` era chamado no Create da
+tela de resultado sem olhar para `fase_falhou`, e a checagem de derrota só vinha 45 linhas
+depois — então perder a fase gravava a pontuação obtida até o game over como recorde. Além
+de estar errado, premiava abandonar o trabalho: bastava somar pontos numa fase difícil e
+falhar de propósito antes do trecho que não se acerta.
+
+A pontuação da tentativa continua à vista na tela de resultado, que é onde ela faz sentido —
+o que deixou de acontecer é ela virar recorde.
