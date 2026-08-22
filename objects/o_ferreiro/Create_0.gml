@@ -3,8 +3,12 @@ estado = FERREIRO_ESTADO.IDLE;
 // Posição de trabalho, junto à bigorna. O ócio da seleção de fase sempre termina
 // aqui antes da partida começar.
 home_x = x;
-passeio_min = x - 110;
-passeio_max = x + 30;
+
+// Alcance do passeio. Era -110/+30 (140 px); foi alargado para dar variedade ao
+// ócio. A trava da contagem (ver o Step) garante a volta à bigorna a tempo mesmo
+// que esta faixa cresça de novo no futuro.
+passeio_min = x - 160;
+passeio_max = x + 55;
 indo_para_casa = false;
 
 // --- ÓCIO ORGÂNICO ---

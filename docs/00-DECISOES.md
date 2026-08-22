@@ -428,3 +428,33 @@ O texto foi reescrito junto, já que a coluna mudou de largura: "quanto mais pre
 golpe, melhor a arma" não dizia o que fazer nem o que se ganha, e virou "martele no
 instante em que ela chega: quanto mais perto do tempo certo, mais pontos ela vale".
 "Acertos seguidos" virou "acertos consecutivos" e a quebra de linha manual saiu.
+
+**D-63 · O tutorial lê o vínculo, não escreve a tecla na unha.** "W A D S" estava escrito
+direto no desenho. Como o remapeamento vai existir — e no gabinete vai —, um rótulo fixo
+passaria a mentir para o jogador na primeira remapeada. `scr_input` ganhou
+`input_nome_da_acao()`, que devolve o nome do vínculo em vigor no dispositivo em uso.
+
+Uma regra dentro dela: no teclado, prefere o vínculo que NÃO é seta direcional quando há
+outro. As lanes estão ligadas a setas e a WASD ao mesmo tempo, e o ícone do alvo já é uma
+seta — escrever "CIMA" ao lado de uma seta para cima não ensina nada, "W" ensina. Com
+controle, mostra o botão ("BOTÃO 1", "CIMA" do direcional).
+
+Como a largura do rótulo passou a variar, o bloco ícone + rótulo é medido antes de desenhar
+e centrado na coluna como uma peça só. Antes o ícone é que era centrado e o rótulo ficava
+pendurado à direita, o que puxava o conjunto para fora do eixo do título — o desalinhamento
+visível na captura.
+
+O som da martelada no teste de teclas foi removido: ali o ferreiro está atrás do
+escurecimento de 0,7 e a martelada tocava sem martelo à vista.
+
+**D-64 · Trava de preparação do ferreiro.** O passeio foi de -110/+30 (140 px) para
+-160/+55 (215 px), para o ócio ter mais variedade. Alargar a faixa cria um risco: quanto
+mais longe ele pode estar, maior a chance de a contagem de 3 s acabar com ele ainda a
+caminho da bigorna — e aí o estado RITMO o teleportava para casa, porque força `x = home_x`.
+
+Voltando para casa, a velocidade agora é a que for necessária para chegar antes da contagem
+zerar, com folga de 0,4 s para assentar em IDLE: `abs(alvo - x) / (contagem_timer - 24)`,
+nunca menor que o passo normal. A animação dos pés acompanha a mesma proporção, senão a
+passada volta a patinar. Na faixa atual a trava nunca chega a agir (o pior caso são 160 px,
+1,67 s de caminhada), mas ela é o que permite alargar o passeio de novo sem reabrir o
+problema.

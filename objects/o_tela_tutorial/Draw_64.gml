@@ -45,11 +45,32 @@ draw_text(_cx, _titulo_y, "COMO FORJAR");
 //
 // E aqui as teclas funcionam: o alvo responde ao toque igual à partida (ver o Step).
 // =================================================================
-var _coluna_x   = _box_x + 150;
-var _lane_gap   = 50;                       // idêntico ao espaçamento de rm_forja
+var _coluna_x   = _box_x + 150;   // centro da coluna
+var _lane_gap   = 50;             // idêntico ao espaçamento de rm_forja
 var _lane_topo  = _box_y + 170;
 
+// O rótulo sai do vínculo em vigor, então a sua largura varia ("W" hoje, "BOTÃO 1"
+// num gabinete). O bloco ícone + rótulo é medido antes de desenhar e centrado na
+// coluna como uma peça só — antes o ícone é que era centrado, e o rótulo pendurado
+// à direita puxava o conjunto todo para fora do eixo do título.
 draw_set_font(f_padrao_pequena);
+
+var _rotulos = [];
+var _larg_rotulo = 0;
+
+for (var i = 0; i < array_length(lane_acao); i++) {
+    _rotulos[i] = input_nome_da_acao(lane_acao[i]);
+    _larg_rotulo = max(_larg_rotulo, string_width(_rotulos[i]));
+}
+
+var _icone_w   = sprite_get_width(lane_sprite[0]);
+var _vao       = 14;
+var _bloco_esq = _coluna_x - ((_icone_w + _vao + _larg_rotulo) / 2);
+var _icone_cx  = _bloco_esq + (_icone_w / 2);
+var _rotulo_x  = _bloco_esq + _icone_w + _vao;
+
+draw_set_halign(fa_center);
+draw_set_valign(fa_middle);
 draw_set_color(c_black);
 draw_text(_coluna_x, _box_y + 130, "TESTE AS TECLAS");
 
@@ -64,15 +85,14 @@ for (var i = 0; i < array_length(lane_sprite); i++) {
     var _h = sprite_get_height(_spr);
 
     // a sprite do alvo tem origem no canto, então centraliza na mão
-    var _dx = _coluna_x - (_w / 2) + (_w * (1 - _escala)) / 2;
+    var _dx = _icone_cx - (_w / 2) + (_w * (1 - _escala)) / 2;
     var _dy = _ly - (_h / 2) + lane_afunda[i] + (_h * (1 - _escala)) / 2;
 
     draw_sprite_ext(_spr, lane_frame[i], _dx, _dy, _escala, _escala, 0, c_white, 1);
 
-    draw_set_font(f_padrao_pequena);
     draw_set_halign(fa_left);
     draw_set_color(c_black);
-    draw_text(_coluna_x + 34, _ly + lane_afunda[i], lane_letra[i]);
+    draw_text(_rotulo_x, _ly + lane_afunda[i], _rotulos[i]);
     draw_set_halign(fa_center);
 }
 

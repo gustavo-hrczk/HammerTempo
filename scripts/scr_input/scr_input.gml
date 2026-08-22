@@ -150,3 +150,78 @@ function input_eixo_v() {
 function input_tem_gamepad() {
     return (global.input_slot >= 0);
 }
+
+// =====================================================================
+// NOMES LEGÍVEIS DOS CONTROLES
+// A tela de tutorial escrevia "W A D S" na unha. Assim que o remapeamento existir
+// (e no gabinete ele vai existir), um rótulo fixo passa a mentir para o jogador.
+// Estas funções leem o vínculo de verdade, então a tela acompanha sozinha.
+// =====================================================================
+
+/// Nome de exibição de uma tecla de teclado.
+function input_nome_da_tecla(_codigo) {
+    switch (_codigo) {
+        case vk_up:      return "CIMA";
+        case vk_down:    return "BAIXO";
+        case vk_left:    return "ESQ.";
+        case vk_right:   return "DIR.";
+        case vk_space:   return "ESPAÇO";
+        case vk_enter:   return "ENTER";
+        case vk_escape:  return "ESC";
+        case vk_shift:   return "SHIFT";
+        case vk_control: return "CTRL";
+        case vk_tab:     return "TAB";
+    }
+
+    // letras e números falam por si
+    if ((_codigo >= ord("A") && _codigo <= ord("Z"))
+        || (_codigo >= ord("0") && _codigo <= ord("9"))) {
+        return chr(_codigo);
+    }
+
+    return "?";
+}
+
+/// Nome de exibição de um botão de controle.
+function input_nome_do_botao(_codigo) {
+    switch (_codigo) {
+        case gp_face1:     return "BOTÃO 1";
+        case gp_face2:     return "BOTÃO 2";
+        case gp_face3:     return "BOTÃO 3";
+        case gp_face4:     return "BOTÃO 4";
+        case gp_shoulderl: return "L1";
+        case gp_shoulderr: return "R1";
+        case gp_start:     return "START";
+        case gp_select:    return "SELECT";
+        case gp_padu:      return "CIMA";
+        case gp_padd:      return "BAIXO";
+        case gp_padl:      return "ESQ.";
+        case gp_padr:      return "DIR.";
+    }
+    return "?";
+}
+
+/// Como o jogador aciona esta ação, no dispositivo em uso.
+///
+/// No teclado, prefere o vínculo que NÃO é seta direcional quando existe outro: as
+/// setas já estão desenhadas no ícone do alvo, então repetir "CIMA" ao lado de uma
+/// seta para cima não ensina nada, enquanto "W" ensina. Se a seta for o único
+/// vínculo, ela é usada mesmo assim.
+function input_nome_da_acao(_acao) {
+    if (global.input_dispositivo == "gamepad") {
+        var _botoes = global.input_botoes[_acao];
+        if (array_length(_botoes) > 0) return input_nome_do_botao(_botoes[0]);
+    }
+
+    var _teclas = global.input_teclas[_acao];
+    if (array_length(_teclas) == 0) return "?";
+
+    for (var i = 0; i < array_length(_teclas); i++) {
+        var _t = _teclas[i];
+        if (_t != vk_up && _t != vk_down && _t != vk_left && _t != vk_right) {
+            return input_nome_da_tecla(_t);
+        }
+    }
+
+    return input_nome_da_tecla(_teclas[0]);
+}

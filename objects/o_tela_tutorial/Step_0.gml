@@ -1,15 +1,15 @@
 // =================================================================
 // TESTE DE TECLAS
 // O jogador experimenta os quatro alvos aqui antes de valer ponto. A resposta é a
-// mesma da partida — quadros enquanto a tecla está pressionada, afundamento no
-// toque e o som da martelada — para o reconhecimento ser imediato lá dentro.
+// mesma da partida — quadros enquanto a tecla está pressionada e afundamento no
+// toque — para o reconhecimento ser imediato lá dentro. Sem som: aqui o ferreiro
+// está atrás do escurecimento e a martelada tocaria sem martelo à vista.
 // =================================================================
 for (var i = 0; i < array_length(lane_acao); i++) {
 
     if (input_pressed(lane_acao[i])) {
         lane_afunda[i] = 5;
         lane_pop[i] = 1;
-        o_audio_manager.play_martelada_sequencial_sfx();
     }
 
     if (input_held(lane_acao[i])) {

@@ -100,6 +100,20 @@ switch (estado) {
 
         var _vel = 1.6;
         var _alvo = indo_para_casa ? home_x : ocio_destino;
+
+        // TRAVA DA PREPARAÇÃO: voltando para a bigorna, a velocidade é a que for
+        // preciso para chegar antes da contagem acabar, venha ele de onde vier.
+        // A folga de 0,4 s existe para ele assentar em IDLE antes da primeira nota.
+        // Sem isso, alargar o passeio bastaria para ele ainda estar a caminho
+        // quando a fase começasse — e o estado RITMO o teleportaria para casa.
+        if (indo_para_casa && instance_exists(o_controlador_geral)) {
+            var _restante = max(1, o_controlador_geral.contagem_timer - (room_speed * 0.4));
+            _vel = max(_vel, abs(_alvo - x) / _restante);
+
+            // os pés acompanham a pressa, senão a passada volta a patinar
+            image_speed = 0.35 * (_vel / 1.6);
+        }
+
         var _dir = sign(_alvo - x);
 
         x += _dir * _vel;
