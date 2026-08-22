@@ -58,6 +58,7 @@
     {"id":{"name":"o_spawner_ritmo","path":"objects/o_spawner_ritmo/o_spawner_ritmo.yy",},},
     {"id":{"name":"o_splash_controlador","path":"objects/o_splash_controlador/o_splash_controlador.yy",},},
     {"id":{"name":"o_tela_tutorial","path":"objects/o_tela_tutorial/o_tela_tutorial.yy",},},
+    {"id":{"name":"o_tela_controles","path":"objects/o_tela_controles/o_tela_controles.yy",},},
     {"id":{"name":"o_transicao","path":"objects/o_transicao/o_transicao.yy",},},
     {"id":{"name":"o_zona_erro","path":"objects/o_zona_erro/o_zona_erro.yy",},},
     {"id":{"name":"rm_creditos","path":"rooms/rm_creditos/rm_creditos.yy",},},

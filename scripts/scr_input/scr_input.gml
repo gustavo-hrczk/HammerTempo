@@ -32,8 +32,15 @@ function input_init() {
     global.input_eixo_agora = [false, false, false, false];   // cima, baixo, esq, dir
     global.input_eixo_antes = [false, false, false, false];
 
-    // As lanes ficam só no direcional (d-pad + analógico): os botões de ação
-    // são reservados para confirmar/voltar, evitando conflito no gabinete.
+    input_vinculos_de_fabrica();
+}
+
+/// Vínculos de fábrica. Separados do init porque o "Restaurar padrão" da tela de
+/// controles precisa voltar exatamente a este estado.
+///
+/// As lanes ficam só no direcional (d-pad + analógico): os botões de ação são
+/// reservados para confirmar/voltar, evitando conflito no gabinete.
+function input_vinculos_de_fabrica() {
     input_bind(ACAO.LANE_CIMA,  [vk_up,    ord("W")], [gp_padu]);
     input_bind(ACAO.LANE_BAIXO, [vk_down,  ord("S")], [gp_padd]);
     input_bind(ACAO.LANE_ESQ,   [vk_left,  ord("A")], [gp_padl]);
@@ -42,6 +49,72 @@ function input_init() {
     input_bind(ACAO.CONFIRMAR,  [vk_enter, vk_space], [gp_face1, gp_start]);
     input_bind(ACAO.VOLTAR,     [vk_escape],          [gp_face2, gp_select]);
     input_bind(ACAO.PAUSAR,     [vk_escape],          [gp_start]);
+}
+
+/// Identificador estável da ação no save. Não usa o índice do enum de propósito:
+/// inserir uma ação no meio da lista embaralharia todo mapeamento já gravado —
+/// mesmo cuidado de save_id_fase().
+function input_id_acao(_acao) {
+    switch (_acao) {
+        case ACAO.LANE_CIMA:  return "lane_cima";
+        case ACAO.LANE_BAIXO: return "lane_baixo";
+        case ACAO.LANE_ESQ:   return "lane_esq";
+        case ACAO.LANE_DIR:   return "lane_dir";
+        case ACAO.CONFIRMAR:  return "confirmar";
+        case ACAO.VOLTAR:     return "voltar";
+        case ACAO.PAUSAR:     return "pausar";
+    }
+    return "";
+}
+
+/// Rótulo da ação na tela de controles.
+function input_rotulo_acao(_acao) {
+    switch (_acao) {
+        case ACAO.LANE_CIMA:  return "Cima";
+        case ACAO.LANE_BAIXO: return "Baixo";
+        case ACAO.LANE_ESQ:   return "Esquerda";
+        case ACAO.LANE_DIR:   return "Direita";
+        case ACAO.CONFIRMAR:  return "Confirmar";
+        case ACAO.VOLTAR:     return "Voltar";
+        case ACAO.PAUSAR:     return "Pausar";
+    }
+    return "?";
+}
+
+/// Ordem em que as ações aparecem na tela de controles: as quatro faixas na mesma
+/// sequência de cima para baixo em que estão em rm_forja, depois os comandos.
+function input_acoes_configuraveis() {
+    return [ACAO.LANE_CIMA, ACAO.LANE_ESQ, ACAO.LANE_DIR, ACAO.LANE_BAIXO,
+            ACAO.CONFIRMAR, ACAO.VOLTAR, ACAO.PAUSAR];
+}
+
+/// Aplica sobre os vínculos de fábrica o que estiver gravado no save.
+///
+/// Precisa rodar DEPOIS de save_carregar(): no boot, input_init() vem antes, então
+/// esta função é o segundo passo. O save guarda só o que foi remapeado — o que não
+/// estiver lá continua de fábrica, e assim mudar um padrão no futuro alcança quem
+/// nunca mexeu nos controles.
+function input_aplicar_save() {
+    if (!variable_global_exists("save") || !is_struct(global.save)) return;
+    if (!variable_struct_exists(global.save, "controles")) return;
+
+    var _c = global.save.controles;
+    if (!is_struct(_c)) return;
+
+    for (var _a = 0; _a < ACAO.__COUNT; _a++) {
+        var _id = input_id_acao(_a);
+        if (_id == "" || !variable_struct_exists(_c, _id)) continue;
+
+        var _v = _c[$ _id];
+        if (!is_struct(_v)) continue;
+
+        if (variable_struct_exists(_v, "teclas") && is_array(_v.teclas)) {
+            global.input_teclas[_a] = _v.teclas;
+        }
+        if (variable_struct_exists(_v, "botoes") && is_array(_v.botoes)) {
+            global.input_botoes[_a] = _v.botoes;
+        }
+    }
 }
 
 /// Índice do eixo analógico correspondente à ação (-1 se a ação não é direcional).

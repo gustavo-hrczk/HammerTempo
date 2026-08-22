@@ -2,6 +2,12 @@ if (room != rm_opcoes || fluxo_ocupado()) {
     exit;
 }
 
+// Com a tela de controles aberta, ela é quem responde ao input: sem isso o VOLTAR
+// que a fecha também sairia das opções, e o direcional moveria as duas listas.
+if (instance_exists(o_tela_controles)) {
+    exit;
+}
+
 // --- SAIR SEM APLICAR ---
 // Desfaz o que estava sendo experimentado, voltando ao que está salvo.
 if (input_pressed(ACAO.VOLTAR)) {
@@ -64,7 +70,14 @@ switch (opcao_selecionada) {
         }
         break;
 
-    case 4: // Aplicar
+    case 4: // Controles
+        if (input_pressed(ACAO.CONFIRMAR)) {
+            o_audio_manager.play_sfx(snd_menu_confirm);
+            instance_create_depth(0, 0, -9000, o_tela_controles);
+        }
+        break;
+
+    case 5: // Aplicar
         if (input_pressed(ACAO.CONFIRMAR)) {
             save_set_opcao("volume_musica", opcoes_musica);
             save_set_opcao("volume_sfx", opcoes_sfx);

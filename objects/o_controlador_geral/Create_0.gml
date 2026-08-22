@@ -25,6 +25,10 @@ hud_init();
 save_carregar();
 save_aplicar_opcoes();
 
+// Os vínculos remapeados só podem ser aplicados depois do save existir — input_init()
+// roda antes dele e deixa apenas os de fábrica no lugar.
+input_aplicar_save();
+
 // Array com os dois sons que irão se alternar na navegação de menu
 nav_sounds[0] = snd_menu01;
 nav_sounds[1] = snd_menu02;

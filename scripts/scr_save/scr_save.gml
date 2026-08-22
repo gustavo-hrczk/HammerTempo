@@ -17,6 +17,7 @@ function save_padrao() {
             offset_ms: 0       // calibração de latência (Sprint 5)
         },
         recordes: {},          // id da fase -> melhor pontuação
+        controles: {},         // id da ação -> {teclas, botoes}; vazio = tudo de fábrica
         leaderboard: {
             arcade: [],
             livre: {}
@@ -53,6 +54,10 @@ function save_normalizar(_dados) {
 
     if (!variable_struct_exists(_dados, "recordes") || !is_struct(_dados.recordes)) {
         _dados.recordes = {};
+    }
+
+    if (!variable_struct_exists(_dados, "controles") || !is_struct(_dados.controles)) {
+        _dados.controles = {};
     }
 
     if (!variable_struct_exists(_dados, "leaderboard") || !is_struct(_dados.leaderboard)) {

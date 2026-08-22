@@ -2,6 +2,12 @@ if (room != rm_opcoes) {
     exit;
 }
 
+// A tela de controles ocupa o mesmo lugar do painel, com outra largura: desenhar as
+// duas empilharia moldura sobre moldura.
+if (instance_exists(o_tela_controles)) {
+    exit;
+}
+
 // Mesma logo, mesma moldura e mesmos itens do menu principal: a troca entre as duas
 // telas não pode deslocar nem repintar nada.
 var _cx = display_get_gui_width() / 2;
@@ -21,6 +27,7 @@ for (var i = 0; i < _total; i++) {
         case 1: _valor = string(opcoes_sfx); break;
         case 2: _valor = JANELA_TAMANHOS[opcoes_janela][2]; break;
         case 3: _valor = opcoes_tela_cheia ? "Sim" : "Não"; break;
+        case 4: _valor = ""; break;   // Controles abre uma tela própria
     }
 
     ui_item_menu(_cx, _pos_y, opcoes_menu[i], i == opcao_selecionada, _valor);

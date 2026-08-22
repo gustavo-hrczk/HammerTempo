@@ -1,7 +1,7 @@
 // Este objeto deixou de ser persistente: ele pertence a rm_opcoes e antes acumulava
 // uma cópia a cada visita (auditoria CV-01). Os valores vêm do save, e o que o
 // jogador mexe aqui é aplicado na hora, para ele ouvir e ver o efeito.
-opcoes_menu = ["Música", "Efeitos", "Janela", "Tela Cheia", "Aplicar!"];
+opcoes_menu = ["Música", "Efeitos", "Janela", "Tela Cheia", "Controles", "Aplicar!"];
 opcao_selecionada = 0;
 
 opcoes_musica = save_opcao("volume_musica");

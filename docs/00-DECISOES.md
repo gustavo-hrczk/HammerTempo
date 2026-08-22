@@ -565,3 +565,33 @@ as opções.
 
 São dois passos deliberados — o overlay precisa estar aberto e a tecla é com Shift — porque
 no gabinete um esbarrão em F3 não pode zerar o placar da feira.
+
+**D-73 · Vínculos de controle passam a morar no save.** `input_init()` tinha os vínculos
+escritos no código e nada era persistido — do jeito que estava, o dia do gabinete seria
+gastar a única janela de acesso construindo a funcionalidade na frente do hardware, sem
+margem se o encoder se comportar de forma inesperada. A tela em si não precisa do gabinete.
+
+O save ganhou `controles`, que guarda **só o que foi remapeado**: o que não estiver lá
+continua de fábrica, e assim mudar um padrão no futuro alcança quem nunca mexeu nos
+controles. As chaves são identificadores estáveis (`lane_cima`, `confirmar`, …) e não o
+índice do enum — inserir uma ação no meio da lista embaralharia todo mapeamento gravado,
+mesmo cuidado de `save_id_fase()`.
+
+`input_aplicar_save()` roda depois de `save_carregar()` no boot, porque `input_init()` vem
+antes dele e deixa apenas os vínculos de fábrica no lugar. Estes saíram para
+`input_vinculos_de_fabrica()`, que o "Restaurar padrão" vai reutilizar.
+
+**D-74 · A tela de controles é uma tabela, não um menu.** Uma linha como "Confirmar /
+BOTÃO 1" mede 242 px e não cabe no vão de 205 do padrão de menu. `ui_painel_menu()` e
+`ui_item_menu()` ganharam largura e deslocamento vertical como parâmetros, com o padrão
+atual como valor default — as outras telas não mudaram uma linha. Aqui o painel usa 360 px.
+
+Sem logo, e por medida: a tinta dele desce até y=400 na tela, e o painel das opções só não
+a corta porque começa em 367 e cobre o resto. As sete linhas mais o título formam 400 px de
+painel, que embaixo do logo terminariam fora da tela. Esta é uma sobreposição, como
+`o_tela_tutorial`, então o título vai dentro do painel, com a mesma faixa escura do
+"COMO FORJAR".
+
+O valor de cada linha vem de `input_nome_da_acao()`, a mesma função do tutorial: ela lê o
+vínculo em vigor no dispositivo em uso, então com um encoder ligado a tela passa a mostrar
+os controles dele sem troca de código.

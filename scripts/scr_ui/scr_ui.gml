@@ -37,12 +37,16 @@ function ui_logo() {
 
 /// Moldura do menu, dimensionada pela quantidade de itens — como o menu principal
 /// sempre fez. A largura é fixa para as telas não "respirarem" de tamanho ao trocar.
-function ui_painel_menu(_qtd_itens) {
+/// A largura e o deslocamento vertical são parâmetros porque a tela de controles é
+/// uma TABELA, não um menu: uma linha como "Confirmar / BOTÃO 1" mede 242 px e não
+/// cabe no vão de 205 do padrão. Todo o resto — sprite, logo, cursor, cores — segue
+/// idêntico, então as telas continuam sendo a mesma tela com conteúdo diferente.
+function ui_painel_menu(_qtd_itens, _largura = UI_PAINEL_LARGURA, _offset_y = UI_PAINEL_Y) {
     var _altura = (_qtd_itens * UI_ITEM_GAP) + UI_PAINEL_PADDING;
-    var _x = (display_get_gui_width() / 2) - (UI_PAINEL_LARGURA / 2);
-    var _y = (display_get_gui_height() / 2) + UI_PAINEL_Y - (_altura / 2);
+    var _x = (display_get_gui_width() / 2) - (_largura / 2);
+    var _y = (display_get_gui_height() / 2) + _offset_y - (_altura / 2);
 
-    draw_sprite_stretched(s_menu_background_panel, 0, _x, _y, UI_PAINEL_LARGURA, _altura);
+    draw_sprite_stretched(s_menu_background_panel, 0, _x, _y, _largura, _altura);
     return _altura;
 }
 
@@ -51,7 +55,7 @@ function ui_painel_menu(_qtd_itens) {
 /// O cursor de espada acompanha a LARGURA DO TEXTO, como no menu principal
 /// original — é ele que faz o cursor parecer apontar para a palavra em vez de
 /// flutuar numa coluna fixa. Em linhas com valor, ele se apoia no rótulo.
-function ui_item_menu(_cx, _y, _texto, _selecionado, _valor = "") {
+function ui_item_menu(_cx, _y, _texto, _selecionado, _valor = "", _largura = UI_ITEM_LARGURA) {
     draw_set_font(f_padrao);
     draw_set_valign(fa_middle);
 
@@ -62,7 +66,7 @@ function ui_item_menu(_cx, _y, _texto, _selecionado, _valor = "") {
         var _largura_texto = string_width(_texto);
 
         if (_selecionado) {
-            ui_caixa_pulsante(_cx, _y, UI_ITEM_LARGURA, UI_ITEM_ALTURA);
+            ui_caixa_pulsante(_cx, _y, _largura, UI_ITEM_ALTURA);
         }
 
         draw_set_halign(fa_center);
@@ -73,11 +77,11 @@ function ui_item_menu(_cx, _y, _texto, _selecionado, _valor = "") {
     } else {
         // as margens saem da caixa, não do painel, para rótulo e valor respirarem
         // dentro dela: a esquerda é maior porque é lá que o cursor se encaixa
-        var _esq = _cx - (UI_ITEM_LARGURA / 2) + 26;
-        var _dir = _cx + (UI_ITEM_LARGURA / 2) - 13;
+        var _esq = _cx - (_largura / 2) + 26;
+        var _dir = _cx + (_largura / 2) - 13;
 
         if (_selecionado) {
-            ui_caixa_pulsante(_cx, _y, UI_ITEM_LARGURA, UI_ITEM_ALTURA);
+            ui_caixa_pulsante(_cx, _y, _largura, UI_ITEM_ALTURA);
         }
 
         draw_set_color(_cor);
