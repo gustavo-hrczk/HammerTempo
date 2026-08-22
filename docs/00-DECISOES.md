@@ -502,3 +502,25 @@ falhar de propósito antes do trecho que não se acerta.
 
 A pontuação da tentativa continua à vista na tela de resultado, que é onde ela faz sentido —
 o que deixou de acontecer é ela virar recorde.
+
+**D-68 · Pontuação e recorde ganham cor própria.** A pontuação era preta, do mesmo tamanho
+e da mesma cor da grade de estatísticas logo acima — o número que o jogador mais quer ler
+se perdia no meio dos outros seis. Passou para o cobre (150,66,24) da rampa do combo, o que
+mantém a paleta da partida e a do resultado sendo a mesma. Mede 4,68:1 sobre o pergaminho
+(229,214,161).
+
+"NOVO RECORDE!" estava em (178,58,22), que dá 4,12:1 — abaixo do limiar e quase indistinto
+do cobre ao lado. Foi para o carmim (158,22,40), 5,57:1, que também é o extremo da rampa do
+combo. Ele deixou de ficar num deslocamento fixo de +190 px, que encostava no número com 6
+dígitos, e passou a se ancorar na largura real da pontuação.
+
+A onda percorre o texto letra a letra, amplitude de 4 px e ciclo de 1 s, com defasagem de
+0,55 rad por caractere. O deslocamento é **arredondado**: Kobold 7 é fonte de pixel e
+posição fracionária suja o traço — foi exatamente o que estragou o contador dinâmico da
+contagem regressiva (D-33).
+
+No seletor, o recorde também passou ao cobre quando existe. "Ainda não forjada" continua na
+tinta comum, porque não é conquista nenhuma. Ressalva medida: no cartão selecionado a caixa
+pulsante escurece o fundo e o cobre cai para ~3,2:1 na média do pulso — legível a 23 px, mas
+é o ponto fraco da escolha, e existe porque um fundo que oscila de alpha não permite acertar
+contraste para uma cor fixa.

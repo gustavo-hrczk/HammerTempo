@@ -95,8 +95,15 @@ for (var i = 0; i < total_opcoes; i++) {
     draw_set_color(_tinta);
     draw_text(_pos_x, _y_detalhe, _txt_detalhe);
 
-    // recorde local
+    // recorde local — em cobre quando existe, para ler como conquista e não como
+    // mais uma linha de dados. 4,68:1 sobre o pergaminho; no cartão selecionado a
+    // caixa pulsante escurece o fundo e isso cai para ~3,2:1 na média do pulso.
+    // "Ainda não forjada" segue na tinta comum: não é conquista nenhuma.
+    if (_recorde > 0) {
+        draw_set_color(make_colour_rgb(150, 66, 24));
+    }
     draw_text(_pos_x, _y_recorde, _txt_recorde);
+    draw_set_color(_tinta);
 }
 
 ui_reset();

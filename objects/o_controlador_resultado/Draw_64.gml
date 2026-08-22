@@ -39,15 +39,44 @@ draw_text(_cx,      _linha2, "Total: " + string(o_controlador_geral.stats_total_
 draw_text(_col_dir, _linha2, "Precisão: " + string(round(_precisao)) + "%");
 
 // --- PONTUAÇÃO EM DESTAQUE ---
+// Era preta, igual à grade de estatísticas acima, e sumia no meio delas. O cobre
+// vem da rampa do combo, então a paleta da partida e a do resultado são a mesma;
+// mede 4,68:1 sobre o pergaminho (229,214,161).
+var _texto_pontos = "Pontuação: " + string(o_controlador_geral.pontuacao);
+
 draw_set_font(f_padrao);
-draw_text(_cx, 594, "Pontuação: " + string(o_controlador_geral.pontuacao));
+draw_set_color(make_colour_rgb(150, 66, 24));
+draw_text(_cx, 594, _texto_pontos);
+draw_set_color(c_black);
 
 // --- RECORDE NOVO ---
+// Ancorado na largura real da pontuação, não num deslocamento fixo: com 6 dígitos o
+// antigo +190 encostava no número.
+//
+// A onda percorre o texto letra a letra. O deslocamento é ARREDONDADO porque Kobold 7
+// é fonte de pixel: posição fracionária suja o traço, que foi o problema do contador
+// dinâmico da contagem regressiva.
 if (recorde_novo) {
     draw_set_font(f_padrao_pequena);
-    draw_set_color(make_colour_rgb(178, 58, 22));
-    draw_text(_cx + 190, 594, "NOVO RECORDE!");
+    draw_set_halign(fa_left);
+
+    var _rec = "NOVO RECORDE!";
+    var _rx = _cx + (string_width(_texto_pontos) / 2) + 30;
+
+    // carmim, 5,57:1 — o vermelho anterior (178,58,22) ficava em 4,12:1 e quase
+    // se confundia com o cobre da pontuação ao lado
+    draw_set_color(make_colour_rgb(158, 22, 40));
+
+    for (var i = 1; i <= string_length(_rec); i++) {
+        var _ch = string_char_at(_rec, i);
+        var _onda = round(sin((current_time * 0.006) - (i * 0.55)) * 4);
+
+        draw_text(floor(_rx), 594 + _onda, _ch);
+        _rx += string_width(_ch);
+    }
+
     draw_set_color(c_black);
+    draw_set_halign(fa_center);
 }
 
 // --- FRASE DE FEEDBACK (escolhida no evento Create) ---
