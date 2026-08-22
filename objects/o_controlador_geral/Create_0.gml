@@ -51,7 +51,13 @@ stats_toques_invalidos = 0;
 // A variável `pausa` existia desde a jam e era checada em seis lugares, mas nunca
 // era ativada (auditoria CV-07). Agora ela tem um menu.
 pausa_opcao = 0;
-pausa_opcoes = ["Continuar", "Reiniciar fase", "Sair para o menu"];
+// "Sair para o menu" media 218 px numa caixa de 243, e o cursor de espada precisa de
+// 34,5 px de cada lado do texto: ele era empurrado para fora da moldura. "Reiniciar
+// fase" (184) estourava por 10 px pelo mesmo motivo, sem ter sido notado.
+//
+// O rótulo antigo também mentia: abandonar_partida() leva ao SELETOR DE FASES, não
+// ao menu principal.
+pausa_opcoes = ["Continuar", "Reiniciar", "Sair"];
 
 // Contagem de retomada: sair da pausa direto no meio da música é injusto se houver
 // nota chegando. O jogo fica congelado mais alguns segundos, agora com o campo à

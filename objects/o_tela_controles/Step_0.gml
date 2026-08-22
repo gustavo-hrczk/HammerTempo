@@ -19,6 +19,15 @@ if (capturando) {
     }
 
     if (keyboard_check_pressed(vk_anykey)) {
+
+        // Setas e ESC são recusadas: as setas já acionam as faixas em caráter fixo,
+        // e vinculá-las a outra ação faria uma tecla disparar duas faixas ao mesmo
+        // tempo. Recusa e continua esperando, em vez de cancelar.
+        if (input_tecla_reservada(keyboard_lastkey)) {
+            o_audio_manager.play_sfx(snd_menu_return);
+            exit;
+        }
+
         input_definir_tecla(acoes[opcao_selecionada], keyboard_lastkey);
         capturando = false;
         o_audio_manager.play_sfx(snd_menu_confirm);

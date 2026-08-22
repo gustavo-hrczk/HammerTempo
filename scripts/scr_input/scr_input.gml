@@ -47,10 +47,39 @@ function input_init() {
     global.input_dispositivo = "teclado"; // último dispositivo usado (para os ícones da UI)
     global.input_teclas = array_create(ACAO.__COUNT, []);
     global.input_botoes = array_create(ACAO.__COUNT, []);
+    global.input_teclas_fixas = array_create(ACAO.__COUNT, []);
     global.input_eixo_agora = [false, false, false, false];   // cima, baixo, esq, dir
     global.input_eixo_antes = [false, false, false, false];
 
     input_vinculos_de_fabrica();
+    input_vinculos_fixos();
+}
+
+/// Vínculos que valem SEMPRE, somados ao que o jogador configurar e imunes ao
+/// remapeamento.
+///
+/// As setas acionam as faixas da forja em caráter absoluto. Elas são o controle que
+/// combina com o desenho da tela — quatro faixas empilhadas, com um ícone de seta em
+/// cada uma —, e nenhum remapeamento deve tirar do teclado a forma de jogar que a
+/// própria tela ensina. Quem configurar botões de arcade ganha os botões; as setas
+/// continuam ali.
+function input_vinculos_fixos() {
+    global.input_teclas_fixas[ACAO.LANE_CIMA]  = [vk_up];
+    global.input_teclas_fixas[ACAO.LANE_BAIXO] = [vk_down];
+    global.input_teclas_fixas[ACAO.LANE_ESQ]   = [vk_left];
+    global.input_teclas_fixas[ACAO.LANE_DIR]   = [vk_right];
+}
+
+/// Teclas que a captura recusa.
+///
+/// As setas já acionam as faixas em caráter fixo e navegam os menus; ESC é a saída
+/// de emergência da tela de controles. Vincular qualquer uma delas a outra ação
+/// criaria um comando que dispara duas coisas ao mesmo tempo, sem nada na tela
+/// explicando por quê.
+function input_tecla_reservada(_tecla) {
+    return (_tecla == vk_up || _tecla == vk_down
+         || _tecla == vk_left || _tecla == vk_right
+         || _tecla == vk_escape);
 }
 
 /// Vínculos de fábrica. Separados do init porque o "Restaurar padrão" da tela de
@@ -200,6 +229,14 @@ function input_pressed(_acao) {
         }
     }
 
+    var _fixas = global.input_teclas_fixas[_acao];
+    for (var i = 0; i < array_length(_fixas); i++) {
+        if (keyboard_check_pressed(_fixas[i])) {
+            global.input_dispositivo = "teclado";
+            return true;
+        }
+    }
+
     var _s = global.input_slot;
     if (_s >= 0) {
         var _botoes = global.input_botoes[_acao];
@@ -224,6 +261,11 @@ function input_held(_acao) {
     var _teclas = global.input_teclas[_acao];
     for (var i = 0; i < array_length(_teclas); i++) {
         if (keyboard_check(_teclas[i])) return true;
+    }
+
+    var _fixas = global.input_teclas_fixas[_acao];
+    for (var i = 0; i < array_length(_fixas); i++) {
+        if (keyboard_check(_fixas[i])) return true;
     }
 
     var _s = global.input_slot;
@@ -317,7 +359,14 @@ function input_nome_da_acao(_acao) {
     }
 
     var _teclas = global.input_teclas[_acao];
-    if (array_length(_teclas) == 0) return "NENHUM";
+
+    // Sem vínculo configurável, mas com um fixo, a ação continua funcionando —
+    // exibir "NENHUM" ali seria mentira.
+    if (array_length(_teclas) == 0) {
+        var _fixas = global.input_teclas_fixas[_acao];
+        if (array_length(_fixas) > 0) return input_nome_da_tecla(_fixas[0]);
+        return "NENHUM";
+    }
 
     for (var i = 0; i < array_length(_teclas); i++) {
         var _t = _teclas[i];

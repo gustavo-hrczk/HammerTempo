@@ -650,3 +650,39 @@ menus.
 Nota: `CONFIRMAR`, `VOLTAR` e `PAUSAR` continuam remapeáveis e continuam valendo nos menus.
 Isso não é acoplamento, é a função delas — e o gabinete precisa poder apontá-las para os
 botões físicos. A rede de segurança para elas é o ESC fixo e o "Restaurar padrão".
+
+**D-77 · As setas acionam as faixas em caráter absoluto.** Remapear as faixas para 1-2-3-4
+tirou do teclado a forma de jogar que a própria tela ensina: quatro faixas empilhadas, cada
+uma com um ícone de seta. `global.input_teclas_fixas` é uma camada somada ao vínculo
+configurável e imune ao remapeamento — quem configurar botões de arcade ganha os botões, e
+as setas continuam ali.
+
+Isso reserva as quatro setas: a captura passa a recusá-las, junto com ESC. Vinculá-las a
+outra faixa faria uma tecla disparar duas ao mesmo tempo, sem nada na tela explicando por
+quê. `input_nome_da_acao()` também passou a cair no vínculo fixo quando o configurável está
+vazio — exibir "NENHUM" numa ação que ainda responde às setas seria mentira.
+
+**D-78 · Rótulos da pausa encurtados, e o antigo mentia.** O cursor de espada precisa de
+34,5 px de cada lado do texto, dentro de uma caixa de 243. Medindo: "Sair para o menu" (218)
+punha a espada 22 px FORA da moldura, e "Reiniciar fase" (184) a punha 5 px fora — este
+segundo caso não tinha sido notado. Viraram "Continuar" (21 px de folga), "Reiniciar" (26) e
+"Sair" (59,5).
+
+O rótulo antigo também era factualmente errado: `abandonar_partida()` leva ao SELETOR DE
+FASES, não ao menu principal.
+
+**D-79 · Layout vertical (estilo Guitar Hero) — possibilidade resguardada, não agendada.**
+Registrado a pedido, para não se perder: testar as quatro faixas lado a lado na VERTICAL,
+com as notas caindo, em vez de empilhadas com as notas correndo na horizontal.
+
+A motivação é de portabilidade. Um gabinete tem uma fileira DEITADA de quatro botões, e o
+jogo apresenta quatro faixas EMPILHADAS — o desencontro espacial entre o que a mão faz e o
+que o olho lê é a origem do "feeling estranho" relatado ao mapear 1-2-3-4. Um campo vertical
+com faixas lado a lado casa diretamente com a fileira de botões, que é como os jogos de
+ritmo de arcade se apresentam.
+
+**Não é para ser feito agora.** Mexeria no corredor de notas (`HUD_CORREDOR_TOPO/BASE`), no
+movimento das notas, na zona de acerto (`RITMO_LINHA_X`), no enquadramento do ferreiro e da
+bigorna, no bloco do HUD e na cascata de julgamentos — praticamente toda a decisão visual
+tomada da D-20 em diante. Só entra depois que todos os pontos do plano original estiverem
+fechados, e como experimento paralelo, nunca substituindo o que já funciona.
