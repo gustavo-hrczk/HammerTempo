@@ -91,3 +91,38 @@ function ritmo_nota_perdida(_nota) {
 #macro COR_BOM_GANHO       make_colour_rgb(96, 140, 60)
 
 #macro COR_ERRO            make_colour_rgb(235, 95, 75)
+
+// =====================================================================
+// IMPACTO NA BIGORNA
+// =====================================================================
+
+/// Sprite do impacto na cor da faixa. Os tipos vem do Instance Creation Code dos
+/// alvos em rm_forja: 0 baixo, 1 cima, 2 direita, 3 esquerda.
+function ritmo_sprite_impacto(_tipo) {
+    switch (_tipo) {
+        case 0: return s_impacto_baixo;   // amarelo
+        case 1: return s_impacto_cima;    // vermelho
+        case 2: return s_impacto_dir;     // azul
+        case 3: return s_impacto_esq;     // verde
+    }
+    return s_impacto_cima;
+}
+
+/// Dispara o impacto e o tremor da bigorna.
+///
+/// `_forca` e a amplitude do tremor em pixels, pela qualidade do acerto. Fica num
+/// lugar so para os tres julgamentos nao repetirem a mesma sequencia de chamadas —
+/// foi assim que a moldura errada nasceu no seletor (D-71).
+function ritmo_impacto_bigorna(_tipo, _forca) {
+    if (!instance_exists(o_bigorna)) exit;
+
+    // ponto onde o martelo encontra a bigorna: ela mede 120x70 com origem no canto
+    var _px = o_bigorna.x + 45;
+    var _py = o_bigorna.y + 5;
+
+    var _e = instance_create_layer(_px, _py, "Gameplay", o_impacto_bigorna);
+    _e.sprite_index = ritmo_sprite_impacto(_tipo);
+    _e.image_index = 0;
+
+    o_bigorna.tremor = _forca;
+}

@@ -833,3 +833,28 @@ dentro de `scr_hud` ficaram onde estão, com suas medições de contraste ao lad
 o `git status` a cada compilação pela IDE e provocaram a falha de `PackageZip` do Igor. Os
 arquivos continuam no disco; só deixaram de ser rastreados. `cache/` entrou no `.gitignore`
 junto.
+
+**D-88 · Impacto na bigorna, na cor da faixa.** As folhas vieram como tiras verticais de
+48x336, lidas **de baixo para cima**. A inversão foi feita na importação, não em tempo de
+execução: o jogo nunca precisa saber que a folha era invertida, e a ordem foi conferida pela
+densidade de tinta por quadro — `[21, 331, 256, 187, 104, 36, 0]`, que é faísca, clarão e
+dissipação. Ao contrário seria um começo vazio com um pontinho no fim.
+
+As quatro cores foram mapeadas às faixas por amostragem do próprio pixel, não pelo número do
+arquivo: vermelho→cima, azul→direita, verde→esquerda, amarelo→baixo.
+
+Os sprites foram gerados direto no formato do GameMaker — um PNG por quadro mais a cópia em
+`layers/`, com o `.yy` listando os quadros na ordem e a origem no centro (24,24). Cada um foi
+validado depois: quadros batendo com keyframes, e keyframes batendo com os arquivos em disco.
+
+A **força do tremor** vem do julgamento: 3 px no perfeito, 2 no ótimo, 1 no bom, com queda de
+0,55 px por frame — um tremor de 3 px dura seis frames. O deslocamento é inteiro, pela mesma
+regra de pixel art das fontes (D-33), e o eixo vertical **só desce**: a bigorna é golpeada de
+cima, então afundar lê como impacto e subir leria como salto.
+
+`ritmo_impacto_bigorna()` reúne sprite, posição e tremor num lugar só. Os três julgamentos
+chamam a mesma função com forças diferentes, em vez de repetirem a sequência — foi repetição
+desse tipo que produziu a moldura errada do seletor (D-71).
+
+O objeto tem trava de vida de um segundo além do evento de fim de animação: animação parada
+nunca dispara o fim, e um efeito que não se destrói vira vazamento no meio da partida.
