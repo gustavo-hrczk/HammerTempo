@@ -79,15 +79,6 @@ if (recorde_novo) {
     draw_set_halign(fa_center);
 }
 
-// --- POSIÇÃO NO PLACAR ---
-// À esquerda da pontuação, que ocupa no máximo 226 px a partir do centro (x 527).
-if (placar_posicao_obtida > 0) {
-    draw_set_font(f_padrao_pequena);
-    draw_set_color(make_colour_rgb(150, 66, 24));
-    draw_text(_col_esq, 594, placar_nome + " em " + string(placar_posicao_obtida) + "o");
-    draw_set_color(c_black);
-}
-
 // --- FRASE DE FEEDBACK (escolhida no evento Create) ---
 draw_set_font(f_padrao_pequena);
 draw_set_color(c_gray);

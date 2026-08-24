@@ -19,15 +19,20 @@ draw_set_color(UI_COR_DESTAQUE);
 draw_text(_cx, _topo + 82, _rotulo);
 
 // =================================================================
-// TABELA
-// Colunas medidas: "10." cabe em 24 px, "999999" em 60, "100%" em 43. As posições
-// abaixo deixam 80 px entre o nome e a pontuação, que é a folga que impede um nome
-// de três letras de encostar num número de seis dígitos.
+// TABELA — grade de vãos iguais
+//
+// As colunas eram posicionadas a olho e "Pontos" terminava a 14 px de "Precisão".
+// Agora a grade sai da MEDIDA de cada coluna, e a folga que sobra é dividida em
+// partes iguais: 328 px úteis menos 232 de conteúdo dão 96 px, ou 32 px por vão.
+//
+// Cada coluna é medida pelo maior entre o cabeçalho e o dado. "Precisão" (86) é mais
+// larga que "100%" (43), e "Pontos" (68) é mais larga que "999999" (60) — dimensionar
+// pelo dado deixaria os cabeçalhos se tocando.
 // =================================================================
-var _col_pos      = _cx - 130;   // fim da posição (à direita)
-var _col_nome     = _cx - 110;   // início do nome (à esquerda)
-var _col_pontos   = _cx +  60;   // fim da pontuação (à direita)
-var _col_precisao = _cx + 160;   // fim da precisão (à direita)
+var _col_pos      = _cx - 140;   // fim da posição       (24 px, à direita)
+var _col_nome     = _cx - 108;   // início do nome       (54 px, à esquerda)
+var _col_pontos   = _cx +  46;   // fim da pontuação     (68 px, à direita)
+var _col_precisao = _cx + 164;   // fim da precisão      (86 px, à direita)
 
 var _y_cabecalho = _topo + 120;
 var _y_primeira  = _topo + 152;

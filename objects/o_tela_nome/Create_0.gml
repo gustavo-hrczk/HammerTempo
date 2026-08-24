@@ -31,15 +31,10 @@ confirmar = function() {
         _nome += placar_letra(letras[i]);
     }
 
-    var _pos = placar_registrar(o_controlador_geral.fase_atual,
-                                _nome,
-                                o_controlador_geral.pontuacao,
-                                precisao);
-
-    if (instance_exists(o_controlador_resultado)) {
-        o_controlador_resultado.placar_posicao_obtida = _pos;
-        o_controlador_resultado.placar_nome = _nome;
-    }
+    placar_registrar(o_controlador_geral.fase_atual,
+                     _nome,
+                     o_controlador_geral.pontuacao,
+                     precisao);
 
     instance_destroy();
 }

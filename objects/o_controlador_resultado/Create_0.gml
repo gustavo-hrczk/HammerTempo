@@ -58,10 +58,10 @@ if (!o_controlador_geral.fase_falhou) {
 }
 
 // --- PLACAR ---
-// Preenchidos pela tela de iniciais, se ela aparecer.
-placar_posicao_obtida = 0;
-placar_nome = "";
-
+// A tela de resultado não anuncia a colocação: ela já mostra pontuação, precisão e a
+// contagem por julgamento, e "AAA em 2o" ali era mais um número disputando o mesmo
+// olhar. A colocação se lê na tela de Recordes, que existe para isso.
+//
 // A entrada de iniciais so aparece quando a pontuacao entra no top 10 — perguntar o
 // nome de quem nao entrou seria pedir digitacao para nada, e numa feira cada segundo
 // de fila conta.

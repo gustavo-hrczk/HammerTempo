@@ -766,3 +766,19 @@ Como o gatilho exato não foi reproduzido em leitura de código, o overlay de de
 linha `saindo:` com asset, estado e ganho da faixa em crossfade, mais os marcadores
 `[entrando]` e `[saindo]` na linha da música. Se o defeito reaparecer, ele agora é visível
 em vez de dedutível.
+
+**D-84 · A tabela de recordes passou a ter grade.** As quatro colunas eram posicionadas a
+olho, e "Pontos" terminava a 14 px de "Precisão". Agora a grade sai da **medida** de cada
+coluna: 328 px úteis (painel de 380 menos 26 de margem de cada lado) menos 232 px de
+conteúdo deixam 96 px de folga, divididos em três vãos iguais de 32 px.
+
+Cada coluna é dimensionada pelo maior entre cabeçalho e dado, e é isso que resolve o
+aperto: "Precisão" mede 86 px contra 43 de "100%", e "Pontos" mede 68 contra 60 de
+"999999". Dimensionar pelo dado — que era o instinto — deixaria justamente os cabeçalhos se
+tocando.
+
+**D-85 · A tela de resultado não anuncia a colocação.** "AAA em 2o" ficava ao lado da
+pontuação, numa tela que já mostra pontuação, precisão, três contagens de julgamento e a
+frase de retorno. Era mais um número disputando o mesmo olhar, no momento em que o jogador
+quer ler quanto fez. A colocação se lê na tela de Recordes, que existe para isso. O estado
+que só servia a essa linha saiu junto, em vez de ficar como campo morto.
