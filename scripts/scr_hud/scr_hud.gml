@@ -201,9 +201,9 @@ function hud_registrar_julgamento(_texto, _cor, _sobe = true) {
 /// paradas escuras o bastante (contraste medido entre 4,6:1 e 5,6:1).
 function hud_cor_combo(_combo) {
     var _terra   = make_colour_rgb(122, 84, 52);   // 4,60:1  - metal ainda frio
-    var _cobre   = make_colour_rgb(150, 66, 24);   // 4,68:1
+    var _cobre   = UI_COR_COBRE;   // 4,68:1
     var _brasa   = make_colour_rgb(168, 40, 16);   // 4,86:1
-    var _carmim  = make_colour_rgb(158, 22, 40);   // 5,57:1  - núcleo incandescente
+    var _carmim  = UI_COR_CARMIM;   // 5,57:1  - núcleo incandescente
 
     // No topo da rampa não há mais para onde esquentar, então a cor passa a
     // pulsar de leve — o jogador percebe que chegou ao máximo. O pico do pulso
@@ -380,7 +380,7 @@ function hud_draw() {
         hud_texto_painel(_combo_x + random_range(-_tremor, _tremor),
                          _combo_y + random_range(-_tremor, _tremor),
                          "Combo x" + string(global.hud_combo_exibido),
-                         make_colour_rgb(120, 105, 95), f_padrao, fa_center);
+                         UI_COR_APAGADA, f_padrao, fa_center);
         draw_set_alpha(_entrada);
     }
 

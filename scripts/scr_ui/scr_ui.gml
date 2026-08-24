@@ -24,8 +24,17 @@
 #macro UI_ITEM_LARGURA   243
 #macro UI_PAINEL_PADDING  40   // folga vertical acima e abaixo dos itens
 
+// Paleta da forja, medida sobre o pergaminho rgb(229,214,161). Estava repetida em
+// literais espalhados por sete arquivos — o cobre sozinho aparecia cinco vezes —, o
+// que é o mesmo problema que a D-53 resolveu nos menus: o padrão visual precisa
+// morar num lugar só, senão ajustar um tom vira caça ao número.
 #macro UI_COR_TEXTO    c_black
 #macro UI_COR_DESTAQUE c_yellow
+
+#macro UI_COR_COBRE        make_colour_rgb(150, 66, 24)   // 4,68:1 no pergaminho
+#macro UI_COR_COBRE_CLARO  make_colour_rgb(176, 92, 32)   // 3,29:1 — só em texto de 30 px
+#macro UI_COR_CARMIM       make_colour_rgb(158, 22, 40)   // 5,57:1
+#macro UI_COR_APAGADA      make_colour_rgb(120, 105, 95)  // texto secundário
 
 /// Logo das telas de menu, sempre no mesmo lugar.
 function ui_logo() {

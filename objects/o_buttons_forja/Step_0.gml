@@ -68,15 +68,15 @@ switch (_julgamento) {
         o_controlador_geral.stats_sequencia++;
         o_controlador_geral.stats_acertos_perfeitos++;
 
-        _nota.estourar(make_colour_rgb(255, 226, 140));
+        _nota.estourar(COR_PERFEITO_NOTA);
         pop = 1;
         brilho = 1;
-        brilho_cor = make_colour_rgb(255, 214, 90);
+        brilho_cor = COR_PERFEITO;
         o_ferreiro.iniciar_martelada_perfeita();
         o_audio_manager.play_martelada_sequencial_sfx();
 
-        hud_registrar_julgamento("PERFEITO!", make_colour_rgb(255, 214, 90), true);
-        hud_registrar_ganho(_ganho, make_colour_rgb(214, 150, 20));
+        hud_registrar_julgamento("PERFEITO!", COR_PERFEITO, true);
+        hud_registrar_ganho(_ganho, COR_PERFEITO_GANHO);
 
         debug_registrar_julgamento("PERFEITO", _erro_ms);
         break;
@@ -87,15 +87,15 @@ switch (_julgamento) {
         o_controlador_geral.stats_sequencia++;
         o_controlador_geral.stats_acertos_otimos++;
 
-        _nota.estourar(make_colour_rgb(250, 195, 120));
+        _nota.estourar(COR_OTIMO_NOTA);
         pop = 0.8;
         brilho = 0.75;
-        brilho_cor = make_colour_rgb(245, 160, 60);
+        brilho_cor = COR_OTIMO;
         o_ferreiro.iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
 
-        hud_registrar_julgamento("ÓTIMO!", make_colour_rgb(245, 160, 60), true);
-        hud_registrar_ganho(_ganho_otimo, make_colour_rgb(190, 110, 20));
+        hud_registrar_julgamento("ÓTIMO!", COR_OTIMO, true);
+        hud_registrar_ganho(_ganho_otimo, COR_OTIMO_GANHO);
 
         debug_registrar_julgamento("ÓTIMO", _erro_ms);
         break;
@@ -106,15 +106,15 @@ switch (_julgamento) {
         o_controlador_geral.stats_sequencia++;
         o_controlador_geral.stats_acertos_bons++;
 
-        _nota.estourar(make_colour_rgb(205, 235, 190));
+        _nota.estourar(COR_BOM_NOTA);
         pop = 0.55;
         brilho = 0.5;
-        brilho_cor = make_colour_rgb(180, 225, 150);
+        brilho_cor = COR_BOM;
         o_ferreiro.iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
 
-        hud_registrar_julgamento("BOM!", make_colour_rgb(180, 225, 150), true);
-        hud_registrar_ganho(_ganho_bom, make_colour_rgb(96, 140, 60));
+        hud_registrar_julgamento("BOM!", COR_BOM, true);
+        hud_registrar_ganho(_ganho_bom, COR_BOM_GANHO);
 
         debug_registrar_julgamento("BOM", _erro_ms);
         break;

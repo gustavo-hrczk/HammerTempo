@@ -800,3 +800,36 @@ contra 180 px do antigo "Recorde: 36573". A caixa do cartão não precisou cresc
 mas nada mais os exibe. Os dois sistemas só divergem quando o placar está cheio e a melhor
 marca do jogador não entra no top 10 — nesse caso o cartão mostra o campeão, que continua
 sendo a informação certa. Aposentar o `recordes` é uma limpeza pendente, não uma urgência.
+
+**D-87 · Revisão de saúde antes da publicação.** Seis correções, todas achadas varrendo o
+código em vez de esperar o defeito aparecer.
+
+**"NOVO RECORDE!" passou a significar primeiro lugar no placar.** Ele vinha de um sistema
+separado de recorde pessoal, e os dois discordavam num caso que a feira produz depressa:
+placar cheio de pontuações altas, jogador supera a própria melhor marca mas não entra no
+top 10 — aparecia "NOVO RECORDE!", não pedia iniciais e o placar não mudava. O sistema de
+recorde pessoal foi aposentado inteiro (`save_recorde`, `save_registrar_recorde` e a chave
+`recordes`): com o cartão do seletor já mostrando o campeão (D-86), manter duas noções de
+"recorde" só produzia divergência. Numa feira cada visitante joga uma vez, então recorde
+pessoal era conceito sem dono.
+
+**`save_texto_janela()` estava morta e sua lógica reescrita pior.** A tela de opções fazia
+`JANELA_TAMANHOS[opcoes_janela][2]` na mão, **sem o `clamp` que a função tem**. A função
+passou a aceitar o índice em edição e voltou a ser usada.
+
+**`placar_livre()` era um getter que escrevia.** Criava a chave da fase como efeito colateral
+de ser lido, e é chamado de dentro do Draw — três vezes por frame no seletor. Virou leitura
+pura; a criação foi para `placar_livre_para_escrita()`, que só o caminho de gravação usa.
+
+**A paleta foi centralizada.** Os literais de cor estavam espalhados por sete arquivos — o
+cobre sozinho aparecia cinco vezes. Viraram macros em `scr_ui` (paleta da UI) e `scr_ritmo`
+(as três cores de cada julgamento: estouro da nota, brilho do alvo e número de pontos). É o
+mesmo princípio da D-53: ajustar um tom não pode ser caça ao número. As cores de uso único
+dentro de `scr_hud` ficaram onde estão, com suas medições de contraste ao lado.
+
+**`_altura_painel`** removido do Draw do menu, onde era declarado e ignorado.
+
+**`output/` saiu do versionamento** — 5,9 MB de artefato de build em 8 arquivos, que sujavam
+o `git status` a cada compilação pela IDE e provocaram a falha de `PackageZip` do Igor. Os
+arquivos continuam no disco; só deixaram de ser rastreados. `cache/` entrou no `.gitignore`
+junto.

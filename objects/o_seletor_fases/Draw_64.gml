@@ -129,7 +129,7 @@ for (var i = 0; i < total_opcoes; i++) {
         var _txt_pontos = string(_campeao.pontos);
         var _esq_linha = _pos_x - (_larg_recorde / 2);
 
-        draw_set_color(make_colour_rgb(176, 92, 32));
+        draw_set_color(UI_COR_COBRE_CLARO);
         placar_desenhar_nome(_esq_linha, _y_recorde, _campeao.nome, _NOME_SLOT);
 
         draw_set_halign(fa_left);

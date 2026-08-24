@@ -45,7 +45,7 @@ draw_text(_col_dir, _linha2, "Precisão: " + string(round(_precisao)) + "%");
 var _texto_pontos = "Pontuação: " + string(o_controlador_geral.pontuacao);
 
 draw_set_font(f_padrao);
-draw_set_color(make_colour_rgb(150, 66, 24));
+draw_set_color(UI_COR_COBRE);
 draw_text(_cx, 594, _texto_pontos);
 draw_set_color(c_black);
 
@@ -65,7 +65,7 @@ if (recorde_novo) {
 
     // carmim, 5,57:1 — o vermelho anterior (178,58,22) ficava em 4,12:1 e quase
     // se confundia com o cobre da pontuação ao lado
-    draw_set_color(make_colour_rgb(158, 22, 40));
+    draw_set_color(UI_COR_CARMIM);
 
     for (var i = 1; i <= string_length(_rec); i++) {
         var _ch = string_char_at(_rec, i);

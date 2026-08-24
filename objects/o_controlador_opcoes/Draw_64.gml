@@ -25,7 +25,10 @@ for (var i = 0; i < _total; i++) {
     switch (i) {
         case 0: _valor = string(opcoes_musica); break;
         case 1: _valor = string(opcoes_sfx); break;
-        case 2: _valor = JANELA_TAMANHOS[opcoes_janela][2]; break;
+        // save_texto_janela() em vez do acesso direto: ela traz o clamp, e o
+        // indice vem do save, que pode ficar fora da faixa se a lista de tamanhos
+        // encolher um dia
+        case 2: _valor = save_texto_janela(opcoes_janela); break;
         case 3: _valor = opcoes_tela_cheia ? "Sim" : "Não"; break;
         case 4: _valor = ""; break;   // Controles abre uma tela própria
     }

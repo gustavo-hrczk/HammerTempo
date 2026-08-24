@@ -35,11 +35,11 @@ for (var i = 0; i < PLACAR_NOME_TAMANHO; i++) {
 
     if (_ativa) {
         // o traço embaixo marca onde o direcional age
-        draw_set_color(make_colour_rgb(150, 66, 24));
+        draw_set_color(UI_COR_COBRE);
         draw_rectangle(_lx - 26, _letra_y + 50, _lx + 26, _letra_y + 55, false);
     }
 
-    draw_set_color(_ativa ? make_colour_rgb(150, 66, 24) : c_black);
+    draw_set_color(_ativa ? UI_COR_COBRE : c_black);
     draw_text_transformed(_lx, floor(_letra_y), placar_letra(letras[i]),
                           _escala, _escala, 0);
 }

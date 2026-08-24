@@ -16,7 +16,6 @@ function save_padrao() {
             janela: 1,         // índice em JANELA_TAMANHOS (padrão 1024x576)
             offset_ms: 0       // calibração de latência (Sprint 5)
         },
-        recordes: {},          // id da fase -> melhor pontuação
         controles: {},         // id da ação -> {teclas, botoes}; vazio = tudo de fábrica
         leaderboard: {
             arcade: [],
@@ -50,10 +49,6 @@ function save_normalizar(_dados) {
                 _dados.opcoes[$ _k] = _padrao.opcoes[$ _k];
             }
         }
-    }
-
-    if (!variable_struct_exists(_dados, "recordes") || !is_struct(_dados.recordes)) {
-        _dados.recordes = {};
     }
 
     if (!variable_struct_exists(_dados, "controles") || !is_struct(_dados.controles)) {
@@ -158,10 +153,14 @@ function save_aplicar_opcoes() {
 }
 
 /// Rótulo do tamanho de janela, para a tela de opções.
-function save_texto_janela() {
+///
+/// Aceita um índice para a tela poder mostrar o valor que está sendo EXPERIMENTADO,
+/// antes de "Aplicar!" gravar. Sem argumento, devolve o rótulo do que está salvo.
+function save_texto_janela(_indice = undefined) {
     var _tamanhos = JANELA_TAMANHOS;
-    var _i = clamp(global.save.opcoes.janela, 0, array_length(_tamanhos) - 1);
-    return _tamanhos[_i][2];
+    var _i = is_undefined(_indice) ? global.save.opcoes.janela : _indice;
+
+    return _tamanhos[clamp(_i, 0, array_length(_tamanhos) - 1)][2];
 }
 
 /// Identificador estável da fase. Não usa o índice direto de propósito: inserir uma
@@ -169,22 +168,6 @@ function save_texto_janela() {
 function save_id_fase(_indice) {
     var _n = _indice + 1;
     return (_n < 10) ? ("fase_0" + string(_n)) : ("fase_" + string(_n));
-}
-
-/// Melhor pontuação registrada na fase. Zero se nunca foi jogada.
-function save_recorde(_indice) {
-    var _id = save_id_fase(_indice);
-    if (!variable_struct_exists(global.save.recordes, _id)) return 0;
-    return global.save.recordes[$ _id];
-}
-
-/// Grava a pontuação se ela superar o recorde. Devolve true quando é recorde novo.
-function save_registrar_recorde(_indice, _pontos) {
-    if (_pontos <= save_recorde(_indice)) return false;
-
-    global.save.recordes[$ save_id_fase(_indice)] = _pontos;
-    save_gravar();
-    return true;
 }
 
 /// Atalho de leitura de uma opção.

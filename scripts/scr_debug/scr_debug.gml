@@ -59,7 +59,6 @@ function debug_texto_crossfade() {
 /// So responde com o overlay de debug ligado, e com Shift: sao dois passos
 /// deliberados, para ninguem apagar tudo esbarrando numa tecla.
 function debug_zerar_recordes() {
-    global.save.recordes = {};
     placar_limpar();
     save_gravar();
 }
@@ -67,8 +66,16 @@ function debug_zerar_recordes() {
 /// Quantas fases tem recorde gravado. Aparece no overlay, para a limpeza ser visivel.
 function debug_total_recordes() {
     if (!variable_global_exists("save") || !is_struct(global.save)) return 0;
-    if (!variable_struct_exists(global.save, "recordes")) return 0;
-    return array_length(variable_struct_get_names(global.save.recordes));
+    if (!variable_struct_exists(global.save, "leaderboard")) return 0;
+
+    var _livre = global.save.leaderboard.livre;
+    var _fases = variable_struct_get_names(_livre);
+    var _total = 0;
+
+    for (var i = 0; i < array_length(_fases); i++) {
+        _total += array_length(_livre[$ _fases[i]]);
+    }
+    return _total;
 }
 
 function debug_draw() {

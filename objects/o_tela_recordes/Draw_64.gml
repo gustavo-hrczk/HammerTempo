@@ -58,7 +58,7 @@ var _lista = placar_livre(fase_exibida);
 
 if (array_length(_lista) == 0) {
     draw_set_halign(fa_center);
-    draw_set_color(make_colour_rgb(120, 105, 95));
+    draw_set_color(UI_COR_APAGADA);
     draw_text(_cx, _y_primeira + 100, "Nenhum recorde ainda");
 } else {
     for (var i = 0; i < array_length(_lista); i++) {
@@ -68,7 +68,7 @@ if (array_length(_lista) == 0) {
 
         // O primeiro lugar em cobre, o resto na tinta comum: a tabela inteira
         // colorida não destacaria ninguém.
-        draw_set_color((i == 0) ? make_colour_rgb(150, 66, 24) : c_black);
+        draw_set_color((i == 0) ? UI_COR_COBRE : c_black);
 
         draw_set_halign(fa_right);
         draw_text(_col_pos, _y, string(i + 1) + ".");

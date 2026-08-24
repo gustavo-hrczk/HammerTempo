@@ -44,18 +44,15 @@ frases_otimas = [
 // Variável para guardar a frase escolhida para esta rodada
 frase_escolhida = "";
 
-// Recorde da fase: registrado aqui e anunciado na tela quando é superado.
+// "NOVO RECORDE" significa PRIMEIRO LUGAR no placar, e nada mais.
 //
-// Fase PERDIDA não grava recorde. A pontuação até o game over continua à vista na
-// tela de resultado — ela é o placar da tentativa —, mas deixá-la virar recorde
-// premiava abandonar o trabalho: bastava somar pontos numa fase difícil e falhar de
-// propósito antes do trecho que não se acerta. Recorde é de fase concluída.
+// Antes vinha de um sistema separado de recorde pessoal, que comparava com a melhor
+// marca do proprio jogador. Os dois discordavam num caso que a feira produz depressa:
+// placar cheio de pontuacoes altas, jogador supera a si mesmo mas nao entra no top 10
+// — aparecia "NOVO RECORDE!", nao pedia iniciais e o placar nao mudava.
+//
+// Preenchido pela tela de iniciais, que e quem sabe a colocacao obtida.
 recorde_novo = false;
-
-if (!o_controlador_geral.fase_falhou) {
-    recorde_novo = save_registrar_recorde(o_controlador_geral.fase_atual,
-                                          o_controlador_geral.pontuacao);
-}
 
 // --- PLACAR ---
 // A tela de resultado não anuncia a colocação: ela já mostra pontuação, precisão e a

@@ -11,7 +11,7 @@ var _cy = (display_get_gui_height() / 2) + UI_PAINEL_Y;
 var _total = array_length(opcoes_menu);
 
 ui_logo();
-var _altura_painel = ui_painel_menu(_total);
+ui_painel_menu(_total);
 var _primeiro = _cy - (((_total - 1) * UI_ITEM_GAP) / 2);
 
 for (var i = 0; i < _total; i++) {

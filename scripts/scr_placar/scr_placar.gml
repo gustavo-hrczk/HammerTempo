@@ -13,16 +13,33 @@
 #macro PLACAR_LETRAS "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #macro PLACAR_NOME_TAMANHO 3
 
-/// Lista de uma fase, do maior para o menor. Devolve array vazio se ninguém jogou.
+/// Lista de uma fase, do maior para o menor. Array vazio se ninguém jogou.
+///
+/// LEITURA PURA: não cria nada. A versão anterior criava a chave da fase como efeito
+/// colateral de ser lida, e é chamada de dentro do Draw — três vezes por frame no
+/// seletor. Uma função de leitura não pode alterar o save só porque alguém olhou
+/// para uma tela.
 function placar_livre(_indice) {
-    var _id = save_id_fase(_indice);
+    if (!is_struct(global.save.leaderboard.livre)) return [];
 
-    if (!variable_struct_exists(global.save.leaderboard, "livre")
-        || !is_struct(global.save.leaderboard.livre)) {
+    var _id = save_id_fase(_indice);
+    var _livre = global.save.leaderboard.livre;
+
+    if (!variable_struct_exists(_livre, _id) || !is_array(_livre[$ _id])) return [];
+
+    return _livre[$ _id];
+}
+
+/// Lista de uma fase pronta para receber entrada, criando-a se ainda não existir.
+/// Só o caminho de gravação usa isto.
+function placar_livre_para_escrita(_indice) {
+    if (!is_struct(global.save.leaderboard.livre)) {
         global.save.leaderboard.livre = {};
     }
 
+    var _id = save_id_fase(_indice);
     var _livre = global.save.leaderboard.livre;
+
     if (!variable_struct_exists(_livre, _id) || !is_array(_livre[$ _id])) {
         _livre[$ _id] = [];
     }
@@ -54,7 +71,7 @@ function placar_registrar(_indice, _nome, _pontos, _precisao) {
     var _pos = placar_posicao(_indice, _pontos);
     if (_pos == 0) return 0;
 
-    var _lista = placar_livre(_indice);
+    var _lista = placar_livre_para_escrita(_indice);
 
     array_insert(_lista, _pos - 1, {
         nome: string_copy(string_upper(_nome), 1, PLACAR_NOME_TAMANHO),

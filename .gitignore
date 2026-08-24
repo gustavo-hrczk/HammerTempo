@@ -32,3 +32,10 @@ HammerTempo-main.zip
 
 # Save local do jogo
 *.json.bak
+
+# Artefatos de build. Estavam versionados (5,9 MB) e sujavam o status a cada
+# compilacao pela IDE; os arquivos continuam no disco, so deixam de ser rastreados.
+output/
+
+# Cache local do GameMaker
+cache/

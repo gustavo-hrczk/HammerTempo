@@ -70,3 +70,24 @@ function ritmo_julgar(_nota) {
 function ritmo_nota_perdida(_nota) {
     return (ritmo_erro_frames(_nota) < -RITMO_JANELA_BOM);
 }
+
+// =====================================================================
+// CORES DO JULGAMENTO
+// Cada julgamento tem três tons: o estouro da nota, o brilho do alvo e o número de
+// pontos que sobe. Estavam soltos em o_buttons_forja, e mexer num julgamento exigia
+// achar as três ocorrências certas no meio do switch.
+// =====================================================================
+
+#macro COR_PERFEITO_NOTA   make_colour_rgb(255, 226, 140)
+#macro COR_PERFEITO        make_colour_rgb(255, 214, 90)
+#macro COR_PERFEITO_GANHO  make_colour_rgb(214, 150, 20)
+
+#macro COR_OTIMO_NOTA      make_colour_rgb(250, 195, 120)
+#macro COR_OTIMO           make_colour_rgb(245, 160, 60)
+#macro COR_OTIMO_GANHO     make_colour_rgb(190, 110, 20)
+
+#macro COR_BOM_NOTA        make_colour_rgb(205, 235, 190)
+#macro COR_BOM             make_colour_rgb(180, 225, 150)
+#macro COR_BOM_GANHO       make_colour_rgb(96, 140, 60)
+
+#macro COR_ERRO            make_colour_rgb(235, 95, 75)
