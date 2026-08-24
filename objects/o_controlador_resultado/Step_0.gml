@@ -1,3 +1,9 @@
+// Com a entrada de iniciais aberta, ela e quem responde: sem isso o CONFIRMAR que
+// avanca uma letra tambem sairia da tela de resultado.
+if (instance_exists(o_tela_nome)) {
+    exit;
+}
+
 // Espera o jogador confirmar para voltar à seleção de fases
 if (input_pressed(ACAO.CONFIRMAR)) {
     o_audio_manager.play_sfx(snd_menu_confirm);

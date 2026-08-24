@@ -689,3 +689,32 @@ movimento das notas, na zona de acerto (`RITMO_LINHA_X`), no enquadramento do fe
 bigorna, no bloco do HUD e na cascata de julgamentos — praticamente toda a decisão visual
 tomada da D-20 em diante. Só entra depois que todos os pontos do plano original estiverem
 fechados, e como experimento paralelo, nunca substituindo o que já funciona.
+
+**D-80 · Placar Livre: armazenamento e entrada de iniciais.** Primeiro passo da Sprint 4.
+`scr_placar` guarda um top 10 por fase em `leaderboard.livre`, com nome, pontuação e
+precisão. A frente Arcade continua como estrutura vazia até o modo existir — gravar o total
+de um percurso que ninguém pode jogar ainda não teria o que armazenar.
+
+Decisões dentro do placar:
+
+**Empate não ultrapassa.** Uma pontuação igual entra depois da que já estava. Numa feira a
+fila inteira joga a mesma fase e empates acontecem; quem chegou primeiro fica na frente.
+
+**A entrada de iniciais só aparece se a pontuação entrar no top 10.** Perguntar o nome de
+quem não entrou é pedir digitação para nada, e cada segundo de fila conta. Fase perdida não
+entra, pelo mesmo motivo do D-67: placar é de trabalho concluído.
+
+**Espera de 25 segundos que GRAVA, não descarta.** Se o jogador saiu do gabinete no meio da
+digitação, o placar grava o que estiver na tela e a máquina volta a ficar livre. Descartar
+seria pior: a pontuação já foi conquistada, e perdê-la por distração é um resultado pior do
+que gravar "AAA".
+
+**Confirmar avança de letra e só grava na última**, que é o comportamento de gabinete e
+evita gravar sem querer no primeiro toque.
+
+Três letras por direcional foi escolha da D-52 por funcionar igual em teclado e em alavanca
+— não por nostalgia. As letras são desenhadas em escala **inteira** 3 (30 px viram 90), pela
+regra de fonte de pixel da D-33.
+
+O SHIFT+F3 que zera recordes passou a limpar o placar junto: deixar o placar cheio com os
+recordes zerados daria duas verdades diferentes na mesma tela.

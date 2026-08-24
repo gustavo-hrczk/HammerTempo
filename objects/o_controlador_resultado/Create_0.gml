@@ -57,6 +57,22 @@ if (!o_controlador_geral.fase_falhou) {
                                           o_controlador_geral.pontuacao);
 }
 
+// --- PLACAR ---
+// Preenchidos pela tela de iniciais, se ela aparecer.
+placar_posicao_obtida = 0;
+placar_nome = "";
+
+// A entrada de iniciais so aparece quando a pontuacao entra no top 10 — perguntar o
+// nome de quem nao entrou seria pedir digitacao para nada, e numa feira cada segundo
+// de fila conta.
+//
+// Fase perdida nao entra, pelo mesmo motivo do recorde (D-67): placar e de trabalho
+// concluido.
+if (!o_controlador_geral.fase_falhou
+    && placar_posicao(o_controlador_geral.fase_atual, o_controlador_geral.pontuacao) > 0) {
+    instance_create_depth(0, 0, -9000, o_tela_nome);
+}
+
 // Molduras por nivel de desempenho, vindas do controlador geral: o seletor de fases
 // usa a mesma lista, e duas copias da mesma ordem ja renderam moldura trocada.
 sprites_das_molduras = o_controlador_geral.molduras_resultado;

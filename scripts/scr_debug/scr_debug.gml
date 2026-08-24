@@ -41,8 +41,7 @@ function debug_texto_musica() {
 /// deliberados, para ninguem apagar tudo esbarrando numa tecla.
 function debug_zerar_recordes() {
     global.save.recordes = {};
-    global.save.leaderboard.livre = {};
-    global.save.leaderboard.arcade = [];
+    placar_limpar();
     save_gravar();
 }
 
