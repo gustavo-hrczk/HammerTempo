@@ -681,6 +681,9 @@ que o olho lê é a origem do "feeling estranho" relatado ao mapear 1-2-3-4. Um 
 com faixas lado a lado casa diretamente com a fileira de botões, que é como os jogos de
 ritmo de arcade se apresentam.
 
+O estudo completo — geometria proposta, a conta que decide o feel, o que se reaproveita e o
+que muda — está em `05-LAYOUT-VERTICAL.md`.
+
 **Não é para ser feito agora.** Mexeria no corredor de notas (`HUD_CORREDOR_TOPO/BASE`), no
 movimento das notas, na zona de acerto (`RITMO_LINHA_X`), no enquadramento do ferreiro e da
 bigorna, no bloco do HUD e na cascata de julgamentos — praticamente toda a decisão visual
