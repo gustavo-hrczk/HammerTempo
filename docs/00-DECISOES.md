@@ -1225,3 +1225,25 @@ idêntico por 45 s.
 Os novos medem 9,82x e 9,90x contra 8,55x. A densidade caiu de 2,51 para ~1,67 notas por
 segundo, e essa troca é real: mais notas significam mais notas em posições fracas, então
 aderência e densidade se opõem.
+
+**D-110 · Respiro inicial por fase, e notas que nascem no meio do caminho.** O respiro padrão
+é o tempo de viagem mais um segundo — o mínimo para a nota nascer na borda direita e
+atravessar a tela inteira. Na Maça isso dava 5,4 s de tela vazia com a música já correndo,
+porque a faixa entra tocando.
+
+`primeira_nota_seg` permite à fase pedir menos. Na Maça são 2,0 s, o que põe a primeira nota
+na 3ª batida da faixa, aos 2.368 ms.
+
+Respiro menor que a viagem funciona **por causa da D-94**: a posição da nota é derivada do
+relógio, não integrada. Uma nota criada com o relógio já adiantado nasce na posição correta
+do meio do caminho, em vez de na borda — a de 2.368 ms aparece em x=809 e ainda tem 2,4 s de
+percurso, tempo de reação suficiente. Lê como entrar numa música já em andamento, que é
+exatamente o que é.
+
+**D-111 · Densidade e aderência se opõem, e a troca é declarada.** Os padrões da Maça
+passaram para 2,22 e 2,00 notas por segundo, contra 1,69 dos anteriores. A aderência caiu de
+9,82x para 9,15x e 9,34x.
+
+Isso não é regressão, é o formato da troca: mais notas significam necessariamente mais notas
+em posição fraca. 2,22 notas/s é exatamente a densidade da Lança, e os dois padrões continuam
+somando 5 e 6 tempos — seguem girando contra o compasso de 4.

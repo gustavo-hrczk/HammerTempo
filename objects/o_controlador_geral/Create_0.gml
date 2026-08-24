@@ -262,6 +262,12 @@ fases_data[4] = {
     beat_tempo_bpm: 100.01,
     primeira_batida_ms: 568.9,
 
+    // Esta faixa ja entra tocando, e esperar os 5,3 s do respiro padrao deixava a
+    // tela vazia com a musica correndo. Com 2 s, a primeira nota cai na 3a batida da
+    // faixa. Como e menos que o tempo de viagem (4,34 s), as primeiras notas nascem
+    // ja no meio do caminho — o que funciona porque a posicao vem do relogio (D-94).
+    primeira_nota_seg: 2.0,
+
     // OS PADROES NAO FECHAM NO COMPASSO, e isso e o ponto.
     //
     // O primeiro que escrevi somava 4 tempos: travado no compasso, repetindo
@@ -276,9 +282,15 @@ fases_data[4] = {
     // Escolhidos por busca automatica sobre o espaco de padroes, maximizando
     // aderencia: 9,82x e 9,90x contra 8,55x do anterior. Referencias medidas —
     // Adaga 12,86x, Lanca 11,19x, Espada 8,54x.
+    // Os dois somam 6 e 5 tempos: continuam girando contra o compasso de 4, mas com
+    // densidade de 2,22 e 2,00 notas por segundo, contra 1,69 dos anteriores. A
+    // aderencia cai de 9,82x para 9,15x e 9,34x — e a troca declarada: mais notas
+    // significam mais notas em posicao fraca, entao densidade e aderencia se opoem.
+    //
+    // 2,22 notas/s e exatamente a densidade da Lanca.
     ritmo_patterns: [
-        [0.5, 0.5, 1, 1, 2, 1],
-        [1, 2, 1, 1, 0.5, 0.5, 1]
+        [0.5, 0.5, 1, 1, 1, 0.5, 0.5, 1],
+        [1, 1, 1, 1, 0.5, 0.5]
     ]
 };
 

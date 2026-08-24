@@ -40,10 +40,22 @@ meu_pattern_atual = _patterns[irandom(array_length(_patterns) - 1)];
 pattern_index = 0;
 
 // A primeira nota chega numa BATIDA DE VERDADE da faixa, e nao 1000 ms fixos depois
-// como antes. O respiro inicial e o mesmo de sempre: tempo de viagem mais um segundo,
-// arredondado para cima ate a proxima batida.
+// como antes.
+//
+// Por padrao ela espera o tempo de viagem mais um segundo, que e o minimo para a
+// nota nascer na borda direita e atravessar a tela inteira. Mas faixa que ja comeca
+// tocando nao combina com 5 segundos de tela vazia, entao a fase pode pedir um
+// respiro menor com primeira_nota_seg.
+//
+// Respiro menor que a viagem funciona porque a posicao da nota e DERIVADA do relogio
+// (D-94): uma nota criada com o relogio ja adiantado nasce no meio do caminho, na
+// posicao certa, em vez de na borda. Le como entrar numa musica ja em andamento.
 var _fase_batida = _dados_fase.primeira_batida_ms / 1000;
-var _minimo = viagem_seg + 1;
+
+var _minimo = variable_struct_exists(_dados_fase, "primeira_nota_seg")
+    ? _dados_fase.primeira_nota_seg
+    : viagem_seg + 1;
+
 var _batidas = ceil((_minimo - _fase_batida) / beat_seg);
 
 proximo_t = _fase_batida + (_batidas * beat_seg);
