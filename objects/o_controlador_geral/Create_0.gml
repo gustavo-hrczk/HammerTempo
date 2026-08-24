@@ -213,14 +213,28 @@ fases_data[3] = {
     musica_fase: snd_fase_04,
     sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
     duracao_segundos: 60,
-    velocidade_notas: 6,
+    velocidade_notas: 5,
     tipos_seta_permitidos: 4,
     stats_limite_sequencia_errada: 6,
     beat_tempo_bpm: 115,
     primeira_batida_ms: 220.6,
+
+    // PADRAO EM COLCHEIAS, e isso foi medido, nao escolhido por gosto.
+    //
+    // O perfil de acento desta faixa no trecho jogado e |# + + # + # + # |: energia
+    // em TODA colcheia, com contraste tempo/contratempo de 0,77 — ou seja, pulso
+    // continuo, sem tempo forte. As fases 1 e 2 medem 1,25 e 1,18, que e musica com
+    // hierarquia, e por isso os padroes delas em seminima funcionam.
+    //
+    // O padrao anterior era de seminimas contra uma musica de colcheias: ela fazia
+    // "ta-ta-ta-ta-ta-ta-ta-ta" e o mapa fazia "ta - ta-ta - ta - ta". Era
+    // literalmente tocar outra coisa.
+    //
+    // As seminimas do fim de cada padrao sao respiro: colcheia direto por 60 s nao
+    // deixa o jogador tirar a mao.
     ritmo_patterns: [
-        [1, 0.5, 0.5, 1, 1],
-        [1, 1, 0.5, 0.5, 0.5, 0.5]
+        [0.5, 0.5, 0.5, 0.5, 1, 1],
+        [0.5, 0.5, 1, 0.5, 0.5, 1]
     ]
 };
 

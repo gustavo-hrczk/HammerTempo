@@ -1104,3 +1104,36 @@ ferramenta.
 entrega **87% do número na primeira metade do tempo** — daí a sensação de contagem apressada
 seguida de arrasto. Trocada por smoothstep, que é simétrica: 50% do número em 50% do tempo,
 com partida e chegada macias. A duração subiu de 1,10 s para 2,20 s.
+
+**D-103 · O mapa por bandas de frequência foi revertido.** A execução falhou por premissa,
+não por técnica: os mapas saíam alinhados e com a densidade certa, mas o jogo tem **um só som
+de martelo**. A faixa da nota não representa instrumento nenhum — é só qual botão apertar.
+Separar por canais criou complexidade sem função, e o arranjo saiu pior que os padrões
+escritos à mão.
+
+O que precisa acompanhar a música é o **tempo**, não a distribuição das faixas. Disso os
+`ritmo_patterns` já davam conta nas fases 1 a 3.
+
+**D-104 · O padrão do Machado estava no compasso errado, e isso se mede.** Somando a energia
+de ataque por posição no compasso, no trecho efetivamente jogado:
+
+| Fase | Perfil (16 semicolcheias) | Contraste tempo/contratempo |
+|---|---|---|
+| Adaga | `#  .# + #  .# + ` | 1,25 |
+| Lança | `# ..# + + ..# . ` | 1,18 |
+| Espada | `+   #     .     ` | 0,10 |
+| Machado | `# + + # + # + # ` | **0,77** |
+
+Contraste perto de 1 significa **pulso contínuo, sem tempo forte**. A faixa do Machado tem
+energia em toda colcheia, e o padrão que escrevi era de semínimas: a música fazia
+"tá-tá-tá-tá-tá-tá-tá-tá" e o mapa fazia "tá — tá-tá — tá — tá". Era literalmente tocar outra
+coisa, que foi exatamente a descrição da queixa.
+
+Os padrões passaram para colcheias, com semínimas no fim de cada um como respiro — colcheia
+direto por 60 s não deixa o jogador tirar a mão. A velocidade caiu de 6 para 5, igualando a
+Espada, porque o padrão mais denso já carrega a dificuldade.
+
+Ressalva honesta do método: a Espada mede contraste 0,10 — música quase vazia no trecho
+jogado — e mesmo assim o padrão dela funciona. Ou seja, a medição diz **quando a música
+acentua**, mas não decide sozinha o mapa: onde a faixa é aberta, é o mapa que fornece o ritmo.
+Ela orienta a escolha do padrão; não a substitui.
