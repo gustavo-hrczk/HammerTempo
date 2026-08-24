@@ -101,10 +101,10 @@ o_controlador_geral.pontuacao = pontuacao_final;
 // =================================================================
 #macro RESULTADO_T_ESTATISTICAS 0.35
 #macro RESULTADO_T_CONTAGEM     0.90
-#macro RESULTADO_DUR_CONTAGEM   1.10
-#macro RESULTADO_T_BONUS_1      2.10
-#macro RESULTADO_T_BONUS_2      2.55
-#macro RESULTADO_T_PROMPT       3.00
+#macro RESULTADO_DUR_CONTAGEM   2.20
+#macro RESULTADO_T_BONUS_1      3.35
+#macro RESULTADO_T_BONUS_2      3.85
+#macro RESULTADO_T_PROMPT       4.35
 
 tempo = 0;
 revelacao_pronta = false;

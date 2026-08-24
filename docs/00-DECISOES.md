@@ -1068,3 +1068,39 @@ mão recebe ruído.
 
 É exatamente o que o passo 3 do `06-RITMO-AUTOTRACK.md` resolve, tirando a faixa da banda de
 frequência do onset em vez de sorteá-la.
+
+**D-101 · O mapa passa a sair da percussão da faixa.** A queixa foi precisa: "parece que
+estamos tocando algo e ouvindo outra coisa desconexa". A causa é que **nada no gerador olhava
+para a música** — o ritmo vinha de um padrão curto em laço e a faixa de `irandom()`. A
+martelada tem de ser percussão DA faixa, e para isso as notas precisam sair dos ataques dela.
+
+`tools/gerar_mapa.py` faz a análise offline: envelope de onset por banda, quantização à
+semicolcheia contra a grade medida, e poda por perfil de dificuldade. `tools/emitir_gml.py`
+converte em `scripts/scr_mapas/scr_mapas.gml`.
+
+**Quatro bandas, uma por faixa, com grave embaixo e agudo em cima.** A primeira versão usava
+três bandas e deixava uma faixa vazia, com 54% das notas empilhadas numa só. Com quatro, o
+mapeamento vira leitura e não só distribuição: a faixa de cima está em y=515 e a de baixo em
+y=665, então altura de frequência vira altura de tela — o bumbo desce, o chimbal sobe. A
+pista espelha a música.
+
+**Dificuldade é seleção sobre o mesmo material**, não ritmo diferente: muda a distância
+mínima entre notas e o teto de densidade, tirando sempre os picos mais fracos primeiro. Os
+alvos saíram da densidade dos mapas atuais, que já foram jogados e aprovados.
+
+| Fase | Sorteado hoje | Gerado da música | Repetição de faixa |
+|---|---|---|---|
+| Adaga | 60 notas, 1,50/s | 51 notas, 1,27/s | 64% |
+| Lança | 89 notas, 2,22/s | 76 notas, 1,90/s | 44% |
+| Espada | 137 notas, 2,28/s | 120 notas, 2,00/s | 27% |
+| Machado | 150 notas, 2,50/s | 137 notas, 2,28/s | 24% |
+
+O mapa vira **código**, não arquivo de dados: fica versionado, aparece em diff e não depende
+de leitura de arquivo em tempo de execução — uma coisa a menos para dar errado no gabinete.
+O gerador por padrão rítmico continua como reserva, para faixa nova que ainda não passou pela
+ferramenta.
+
+**D-102 · A contagem da pontuação era apressada por causa da curva.** A desaceleração cúbica
+entrega **87% do número na primeira metade do tempo** — daí a sensação de contagem apressada
+seguida de arrasto. Trocada por smoothstep, que é simétrica: 50% do número em 50% do tempo,
+com partida e chegada macias. A duração subiu de 1,10 s para 2,20 s.

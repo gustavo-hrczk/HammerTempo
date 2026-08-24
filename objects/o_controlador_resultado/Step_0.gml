@@ -9,11 +9,15 @@ if (instance_exists(o_tela_nome)) {
 if (!revelacao_pronta) {
     tempo += 1 / room_speed;
 
-    // A contagem sobe com desaceleracao: rapida no comeco, assentando no fim. Uma
-    // contagem linear parece uma barra de carregamento; esta parece um placar.
+    // A contagem parte devagar, ganha corpo no meio e assenta no fim.
+    //
+    // A curva anterior era desaceleracao cubica, que entrega 87% do numero na
+    // primeira METADE do tempo — dai a sensacao de contagem apressada seguida de
+    // arrasto. Esta e simetrica (smoothstep): 50% do numero em 50% do tempo, com
+    // partida e chegada macias. Le como um placar girando, nao como carregamento.
     if (tempo >= RESULTADO_T_CONTAGEM) {
         var _prog = min(1, (tempo - RESULTADO_T_CONTAGEM) / RESULTADO_DUR_CONTAGEM);
-        var _suave = 1 - power(1 - _prog, 3);
+        var _suave = _prog * _prog * (3 - 2 * _prog);
         pontuacao_exibida = round(pontuacao_base * _suave);
     }
 

@@ -26,3 +26,24 @@ preciso ffmpeg nem converter as faixas para WAV antes.
 ```
 tools/.venv/Scripts/python.exe tools/analisar_faixa.py sounds/snd_fase_01/snd_fase_01.mp3
 ```
+
+## Gerar mapas a partir da música
+
+```
+tools/.venv/Scripts/python.exe tools/gerar_mapa.py machado sounds/snd_fase_04/snd_fase_04.mp3 --dur 60 --faixas 4 --perfil mestre
+tools/.venv/Scripts/python.exe tools/emitir_gml.py
+```
+
+O primeiro comando analisa e grava `tools/mapa_<fase>.json`; o segundo converte todos
+os mapas em `scripts/scr_mapas/scr_mapas.gml`, que o jogo lê.
+
+**Perfis de dificuldade** — a música é a mesma, muda quanto dela vira nota:
+
+| perfil | distância mínima | teto por 4 s |
+|---|---|---|
+| `facil` | 350 ms | 7 |
+| `medio` | 260 ms | 9 |
+| `dificil` | 200 ms | 10 |
+| `mestre` | 170 ms | 11 |
+
+A ordem dos índices em `emitir_gml.py` (`FASES`) tem de bater com `fases_data`.

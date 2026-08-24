@@ -48,6 +48,46 @@ var _batidas = ceil((_minimo - _fase_batida) / beat_seg);
 
 proximo_t = _fase_batida + (_batidas * beat_seg);
 
+// =================================================================
+// MAPA DA MUSICA
+// Quando a fase tem mapa gerado, ele MANDA: instante e faixa saem da percussao da
+// propria faixa, e o gerador por padrao ritmico nem entra em cena.
+//
+// O padrao continua existindo como reserva. Uma faixa nova que ainda nao passou pela
+// ferramenta joga, so que com o arranjo sorteado de antes.
+//
+// O mapa comeca no primeiro instante que deixa espaco para a viagem da nota: as
+// notas anteriores a isso teriam de nascer antes de a musica comecar.
+// =================================================================
+mapa = mapa_da_fase(o_controlador_geral.fase_atual);
+mapa_index = 0;
+usa_mapa = (array_length(mapa) > 0);
+
+if (usa_mapa) {
+    while (mapa_index < array_length(mapa) && mapa[mapa_index][0] < viagem_seg) {
+        mapa_index++;
+    }
+}
+
+/// Cria uma nota de um tipo especifico que deve encostar na zona no instante _t.
+criar_nota_tipo = function(_t, _tipo) {
+    var _pos_y;
+
+    switch (_tipo) {
+        case 0: _pos_y = 665; break;
+        case 1: _pos_y = 515; break;
+        case 2: _pos_y = 615; break;
+        case 3: _pos_y = 565; break;
+    }
+
+    var _n = instance_create_layer(x, _pos_y, "Gameplay", o_nota_seta);
+    _n.tipo_seta = _tipo;
+    _n.velocidade = velocidade_das_notas;
+    _n.t_alvo = _t;
+
+    o_controlador_geral.stats_total_notas++;
+}
+
 /// Cria uma nota que deve encostar na zona de acerto no instante _t.
 criar_nota = function(_t) {
     var _tipo = irandom(tipos_permitidos - 1);
