@@ -242,6 +242,38 @@ fases_data[3] = {
     ]
 };
 
+// Fase 5: Maca (Medio - BPM: 100)
+// Faixa: Saltarello II, danca italiana do seculo XIII (dominio publico).
+// Medido em tools/analisar_faixa.py: 100,01 BPM, primeira batida 568,9 ms,
+// confianca 10,3x.
+//
+// SEM ARTE DE ARMA AINDA. sprites_resultado vazio e tratado: o seletor e a tela de
+// resultado desenham a moldura com um "?" dentro, em vez de quebrar ou deixar buraco.
+fases_data[4] = {
+    nome: "Forjar Maca",
+    dificuldade: "Medio",
+    musica_fase: snd_fase_05,
+    ganho_musica: 0.550,   // nivelamento medido (ver o_audio_manager)
+    sprites_resultado: [],
+    duracao_segundos: 45,
+    velocidade_notas: 5,
+    tipos_seta_permitidos: 3,
+    stats_limite_sequencia_errada: 5,
+    beat_tempo_bpm: 100.01,
+    primeira_batida_ms: 568.9,
+
+    // COLCHEIA, COLCHEIA, SEMINIMA — a celula caracteristica do saltarello, e nao
+    // uma escolha de gosto. O perfil de acento medido e |+ . #   + . #  .|: as
+    // posicoes 0, 2 e 4 de cada meio compasso, que sao exatamente esses valores.
+    //
+    // Contraste tempo/contratempo de 1,33, o mais alto das cinco faixas: a musica
+    // tem hierarquia clara, entao o padrao pode ser regular sem soar mecanico.
+    ritmo_patterns: [
+        [0.5, 0.5, 1, 0.5, 0.5, 1],
+        [0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5]
+    ]
+};
+
 // Fase 4: Machado (Extremo) e Modo Infinito entram na Sprint 7, junto com o
 // novo pipeline de mapeamento rítmico. Os assets (snd_fase_04, s_machado01..05)
 // já existem no projeto.

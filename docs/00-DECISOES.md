@@ -1176,3 +1176,22 @@ Espada e o Machado — ela se enquadra em **Médio**.
 machado) estão todos em uso, e a tela de resultado precisa de cinco sprites de qualidade por
 arma. A faixa está importada, nivelada e creditada, pronta para virar fase assim que houver
 arte.
+
+**D-107 · Fase 5 (Maça) sem arte, e o vazio tratado como pendência.** A faixa Saltarello II
+virou fase antes de existir a arte da arma. `sprites_resultado` vazio é **tratado**, não
+tolerado por acidente: o seletor e a tela de resultado desenham a moldura com um "?" dentro.
+
+Some seria pior. Um cartão com buraco lê como defeito; a moldura com "?" lê como pendência —
+e é literalmente verdade, porque a arma ainda não foi forjada pelo artista.
+
+A arma sugerida é a **maça**. Os quatro conjuntos existentes são lâminas e ponta (adaga,
+lança, espada, machado), então uma arma contundente é a que falta no conjunto, e a silhueta
+se distingue das outras quatro à distância — que é o que importa num cartão de seletor visto
+de relance.
+
+O padrão é `[0.5, 0.5, 1]` repetido: colcheia, colcheia, semínima, a célula característica do
+saltarello. Não é escolha de gosto — o perfil de acento medido é `|+ . #   + . #  .|`, as
+posições 0, 2 e 4 de cada meio compasso, que são exatamente esses valores. Com contraste
+1,33, a música tem hierarquia clara o bastante para o padrão ser regular sem soar mecânico.
+
+Com cinco fases, o seletor pagina em 3 + 2.

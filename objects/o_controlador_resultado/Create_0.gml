@@ -160,8 +160,12 @@ if (o_controlador_geral.fase_falhou) {
 var _dados_fase = o_controlador_geral.fases_data[_fase_jogada];
 
 // --- ESCOLHE A FRASE E A ARMA FINAL ---
-sprite_da_arma_final = _dados_fase.sprites_resultado[_resultado_index];
-sprite_da_moldura_final = sprites_das_molduras[_resultado_index];
+// Fase sem arte de arma ainda mostra a moldura, com um "?" dentro (ver o Draw).
+// -1 e o sinal de "sem arma", e nao um sprite invalido passado adiante.
+tem_arte = (array_length(_dados_fase.sprites_resultado) > 0);
+
+sprite_da_arma_final = tem_arte ? _dados_fase.sprites_resultado[_resultado_index] : -1;
+sprite_da_moldura_final = sprites_das_molduras[tem_arte ? _resultado_index : 0];
 
 // A lógica para escolher a frase pode ser baseada no mesmo índice
 if (_resultado_index <= 1) { // Falha ou Aceitável

@@ -101,13 +101,27 @@ for (var i = _primeiro; i <= _ultimo; i++) {
     // O par arma+moldura vem sempre do MESMO indice da lista de desempenho. Antes a
     // moldura era s_canva01 fixa, a de FALHA, enquanto a arma era a ultima da lista,
     // a melhor — a borda errada que voce viu.
-    if (_tem_campeao) {
-        var _nivel = array_length(_fase.sprites_resultado) - 1;
-        var _arma = _fase.sprites_resultado[_nivel];
-        var _moldura = o_controlador_geral.molduras_resultado[_nivel];
+    // Fase sem arte de arma ainda desenha a moldura, com um "?" dentro. Some seria
+    // pior: o cartao ficaria com um buraco e pareceria defeito, nao pendencia.
+    var _tem_arte = array_length(_fase.sprites_resultado) > 0;
 
-        draw_sprite_ext(_arma, 0, _pos_x, _y_icone, _escala_arma, _escala_arma, 0, c_white, 1);
+    if (_tem_campeao || !_tem_arte) {
+        var _nivel = max(0, array_length(_fase.sprites_resultado) - 1);
+        var _moldura = o_controlador_geral.molduras_resultado[_tem_arte ? _nivel : 0];
+
+        if (_tem_arte && _tem_campeao) {
+            draw_sprite_ext(_fase.sprites_resultado[_nivel], 0, _pos_x, _y_icone,
+                            _escala_arma, _escala_arma, 0, c_white, 1);
+        }
+
         draw_sprite_ext(_moldura, 0, _pos_x, _y_icone, _escala_moldura, _escala_moldura, 0, c_white, 1);
+
+        if (!_tem_arte) {
+            draw_set_font(f_padrao);
+            draw_set_color(UI_COR_COBRE);
+            draw_text(_pos_x, _y_icone, "?");
+            draw_set_color(_tinta);
+        }
     }
 
     // nome

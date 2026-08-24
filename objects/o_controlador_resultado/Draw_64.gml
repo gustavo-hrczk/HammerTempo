@@ -137,7 +137,18 @@ var _pos_y_arma_e_moldura = _panel_top_y - 45; // Por exemplo, 200 pixels acima 
 // As sprites fixas de arma têm 250x250.
 // Vamos desenhá-las em sua escala original (1,1) para caberem bem na moldura.
 // Se você quiser que a arma seja menor dentro da moldura, ajuste a escala.
-draw_sprite_ext(sprite_da_arma_final, 0, _center_x, _pos_y_arma_e_moldura, 0.8, 0.8, 0, c_white, 1);
+if (tem_arte) {
+    draw_sprite_ext(sprite_da_arma_final, 0, _center_x, _pos_y_arma_e_moldura, 0.8, 0.8, 0, c_white, 1);
+} else {
+    // Sem arte ainda: a moldura sozinha com um "?" le como pendencia, e nao como
+    // um buraco na tela.
+    draw_set_font(f_padrao);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_set_color(UI_COR_COBRE);
+    draw_text_transformed(_center_x, _pos_y_arma_e_moldura, "?", 3, 3, 0);
+    draw_set_color(c_black);
+}
 
 // 2. Desenha a moldura por cima da arma
 // A moldura tem 300x300. Usaremos escala 1,1 se ela já tiver o tamanho que você quer.
