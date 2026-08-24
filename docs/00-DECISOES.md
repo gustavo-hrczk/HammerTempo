@@ -979,3 +979,27 @@ agora é seguro: sob o agendamento absoluto não existe mais o truncamento que o
 `o_audio_manager` passou a guardar a INSTÂNCIA da faixa além do asset, porque
 `audio_sound_get_track_position()` só responde a instância. O `Alarm_0` do spawner, que
 gerava as notas, foi removido — não sobrou nada dele.
+
+**D-95 · O pico de andamento é afiado, e força bruta não compara entre faixas.** Duas
+lições que custaram uma conclusão errada cada, agora embutidas em `tools/analisar_faixa.py`.
+
+**Busca de andamento em duas etapas.** Analisando `snd_fase_04`, testei 115,60 BPM (derivado
+de um candidato de autocorrelação) e obtive força 0,042 — concluí que a faixa não tinha
+batida utilizável. Estava errado: em **115,00** exatos a força é **0,235**. Ao longo de 379
+batidas, um erro de 0,6 BPM perde a fase por completo, então uma varredura grosseira não
+encontra o pico, ela passa ao lado dele. A busca agora é grossa (0,25 BPM) e depois fina
+(0,01 BPM) em torno da região encontrada.
+
+**Confiança é razão, não valor absoluto.** A força bruta depende de quão denso é o envelope
+daquela faixa, então 0,183 numa não significa o mesmo que 0,183 noutra. O que compara é a
+razão contra a média do envelope — quanto a grade de batidas pontua acima do que uma grade
+aleatória pontuaria na mesma faixa. As quatro faixas do projeto medem de 7,7x a 13,7x, e o
+portão ficou em 4x.
+
+Com a busca fina, os valores das três fases foram refinados: Adaga +12,3 ms, Lança −7,9 ms,
+Espada −3,3 ms. Todos dentro dos 11,6 ms de resolução do envelope e da janela de ±33 ms do
+perfeito — é refino de medição, não correção de defeito.
+
+`snd_fase_04` mede 115,00 BPM, primeira batida em 220,6 ms, confiança 7,7x. Está registrada
+no projeto e não é usada por nenhuma fase; o conjunto de armas `s_machado01..05` também está
+completo e ocioso.

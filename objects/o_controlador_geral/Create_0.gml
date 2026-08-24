@@ -160,8 +160,8 @@ fases_data[0] = {
     velocidade_notas: 4,
     tipos_seta_permitidos: 2,
     stats_limite_sequencia_errada: 4,
-    beat_tempo_bpm: 89.95,        // MEDIDO no audio (era 88, anotado a mao)
-    primeira_batida_ms: 277.9,   // deslocamento da 1a batida da faixa
+    beat_tempo_bpm: 89.99,
+    primeira_batida_ms: 290.2,
     ritmo_patterns: [
         [1, 1, 1, 1],
         [1, 0.5, 0.5, 2],
@@ -179,8 +179,8 @@ fases_data[1] = {
     velocidade_notas: 5,
     tipos_seta_permitidos: 3,
     stats_limite_sequencia_errada: 5,
-    beat_tempo_bpm: 100,        // MEDIDO no audio (era 100, anotado a mao)
-    primeira_batida_ms: 0,   // deslocamento da 1a batida da faixa
+    beat_tempo_bpm: 100,
+    primeira_batida_ms: 592.1,
     ritmo_patterns: [
         [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 3]
     ]
@@ -196,8 +196,8 @@ fases_data[2] = {
     velocidade_notas: 5,
     tipos_seta_permitidos: 4,
     stats_limite_sequencia_errada: 6,
-    beat_tempo_bpm: 110,        // MEDIDO no audio (era 108, anotado a mao)
-    primeira_batida_ms: 386.4,   // deslocamento da 1a batida da faixa
+    beat_tempo_bpm: 110,
+    primeira_batida_ms: 383.1,
     ritmo_patterns: [
         [1, 1, 0.5, 0.5, 1]
     ]

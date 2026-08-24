@@ -1,14 +1,25 @@
-"""Andamento e fase de uma faixa, por pente de batidas sobre o envelope de onset.
+"""Andamento, fase da primeira batida e confianca de uma faixa.
 
-Diferente da autocorrelacao, o pente testa uma grade de batidas de verdade e
-devolve TAMBEM o deslocamento da primeira batida — que e o que alinha o mapa a
-musica. Sem a fase, acertar o BPM ainda deixa tudo torto.
+Duas licoes aprendidas medindo as faixas do jogo, ambas custaram uma conclusao errada:
+
+1. O pico de andamento e AFIADO. Em snd_fase_04, 115,00 BPM pontua 0,235 e 115,60
+   pontua 0,042 — porque ao longo de 379 batidas um erro de 0,6 BPM perde a fase por
+   completo. Uma busca grosseira nao acha o pico: ela passa ao lado dele. Por isso a
+   varredura e em duas etapas, grossa e depois fina.
+
+2. Forca bruta NAO compara entre faixas, porque depende de quao denso e o envelope.
+   O que compara e a razao contra a media do envelope: quanto a grade de batidas
+   pontua acima do que uma grade aleatoria pontuaria naquela mesma faixa.
 """
 import sys, numpy as np, soundfile as sf
 
 HOP, JAN = 512, 1024
 
+# Calibrado nas quatro faixas do projeto, que medem de 6,6x a 9,5x.
+RAZAO_MINIMA = 4.0
+
 def envelope(caminho):
+    """Fluxo espectral: soma das subidas de energia por banda, quadro a quadro."""
     x, sr = sf.read(caminho, dtype="float32", always_2d=True)
     x = x.mean(axis=1)
     jan_h = np.hanning(JAN)
@@ -20,36 +31,42 @@ def envelope(caminho):
     fl = np.maximum(fl - np.median(fl), 0)
     return fl / (fl.max() or 1), sr / HOP, len(x) / sr
 
-def pente(env, taxa, bpm_lo=70, bpm_hi=130, passo=0.05):
-    """Para cada BPM e cada fase, soma o envelope nas posicoes de batida.
-    A combinacao que mais soma e a grade que a musica realmente usa."""
-    melhor = (0, 0, -1)
-    for bpm in np.arange(bpm_lo, bpm_hi, passo):
-        per = 60.0 * taxa / bpm
-        if per < 2: continue
-        n = int((len(env) - 1) / per)
-        if n < 8: continue
-        base = (np.arange(n) * per)
-        for fase in np.arange(0, per, max(1.0, per / 24)):
-            idx = (base + fase).astype(int)
-            idx = idx[idx < len(env)]
-            s = env[idx].sum() / len(idx)
-            if s > melhor[2]:
-                melhor = (bpm, fase / taxa, s)
+def pontuar(env, taxa, bpm):
+    """Melhor alinhamento de uma grade neste andamento: devolve forca e fase.
+    A fase varre quadro a quadro, que e a resolucao do envelope (11,6 ms)."""
+    per = 60.0 * taxa / bpm
+    n = int((len(env) - 1) / per)
+    if n < 8: return (-1, 0)
+
+    base = np.arange(n) * per
+    melhor = (-1, 0)
+    for fase in np.arange(0, per, 1.0):
+        idx = (base + fase).astype(int)
+        idx = idx[idx < len(env)]
+        s = env[idx].sum() / len(idx)
+        if s > melhor[0]: melhor = (s, fase / taxa)
     return melhor
 
-ANOTADO = {"snd_fase_01": 88, "snd_fase_02": 100, "snd_fase_03": 108}
+def procurar(env, taxa, lo=60, hi=200):
+    """Duas etapas: acha a regiao com passo de 0,25 BPM e refina com 0,01."""
+    grosso = max(((pontuar(env, taxa, b)[0], b) for b in np.arange(lo, hi, 0.25)))
+    bpm0 = grosso[1]
+    fino = max(((pontuar(env, taxa, b)[0], b)
+                for b in np.arange(bpm0 - 0.5, bpm0 + 0.5, 0.01)))
+    forca, fase = pontuar(env, taxa, fino[1])
+    return fino[1], fase, forca
+
 for caminho in sys.argv[1:]:
-    nome = caminho.replace("\\","/").split("/")[-1].rsplit(".",1)[0]
+    nome = caminho.replace("\\", "/").split("/")[-1].rsplit(".", 1)[0]
     env, taxa, dur = envelope(caminho)
-    bpm, fase, forca = pente(env, taxa)
-    ant = ANOTADO.get(nome)
+    bpm, fase, forca = procurar(env, taxa)
+    razao = forca / env.mean()
+
+    if   razao >= 6: veredito = "PERCUSSAO CLARA"
+    elif razao >= RAZAO_MINIMA: veredito = "utilizavel"
+    else: veredito = "SEM BATIDA CONFIAVEL - nao serve para mapa automatico"
+
     print(f"\n{nome}  ({dur:.1f} s)")
-    print(f"   BPM medido   {bpm:7.2f}   | primeira batida em {fase*1000:6.1f} ms | forca {forca:.3f}")
-    if ant:
-        erro = (bpm - ant) / ant
-        # de quanto o mapa do jogo se afasta da musica ao longo da fase
-        jogada = 40 if nome != "snd_fase_03" else 60
-        print(f"   BPM anotado  {ant:7.2f}   | erro {erro*100:+.2f}%")
-        print(f"   -> em {jogada}s de fase, o mapa desliza {abs(erro)*jogada*1000:.0f} ms da musica"
-              f"  ({abs(erro)*jogada/(60/bpm):.2f} batidas)")
+    print(f"   beat_tempo_bpm:     {bpm:.2f}")
+    print(f"   primeira_batida_ms: {fase*1000:.1f}")
+    print(f"   confianca: {razao:.1f}x acima do piso  ->  {veredito}")
