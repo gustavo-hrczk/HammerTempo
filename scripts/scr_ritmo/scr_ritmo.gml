@@ -94,7 +94,20 @@ function ritmo_nota_perdida(_nota) {
 
 // =====================================================================
 // IMPACTO NA BIGORNA
+//
+// Os tres numeros de ajuste do efeito ficam aqui em cima, juntos, para nao ter de
+// cacar no meio da funcao.
 // =====================================================================
+
+/// Escala do efeito. INTEIRA, sempre: a arte e pixel art e escala fracionaria
+/// borra o traco — mesma regra das fontes (D-33). O sprite tem 48x48, entao 2
+/// resulta em 96x96 sobre uma bigorna de 120x70.
+#macro IMPACTO_ESCALA 2
+
+/// Deslocamento do centro do efeito em relacao ao canto da bigorna, que mede 120x70
+/// com origem no canto superior esquerdo. E o ponto onde o martelo a encontra.
+#macro IMPACTO_DX 45
+#macro IMPACTO_DY 5
 
 /// Sprite do impacto na cor da faixa. Os tipos vem do Instance Creation Code dos
 /// alvos em rm_forja: 0 baixo, 1 cima, 2 direita, 3 esquerda.
@@ -116,13 +129,14 @@ function ritmo_sprite_impacto(_tipo) {
 function ritmo_impacto_bigorna(_tipo, _forca) {
     if (!instance_exists(o_bigorna)) exit;
 
-    // ponto onde o martelo encontra a bigorna: ela mede 120x70 com origem no canto
-    var _px = o_bigorna.x + 45;
-    var _py = o_bigorna.y + 5;
+    var _e = instance_create_layer(o_bigorna.x + IMPACTO_DX,
+                                   o_bigorna.y + IMPACTO_DY,
+                                   "Gameplay", o_impacto_bigorna);
 
-    var _e = instance_create_layer(_px, _py, "Gameplay", o_impacto_bigorna);
     _e.sprite_index = ritmo_sprite_impacto(_tipo);
     _e.image_index = 0;
+    _e.image_xscale = IMPACTO_ESCALA;
+    _e.image_yscale = IMPACTO_ESCALA;
 
     o_bigorna.tremor = _forca;
 }
