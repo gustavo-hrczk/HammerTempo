@@ -137,6 +137,11 @@ credit_text = "CREDITOS \n"+
 "Compositor: Desconhecido.\n" +
 "Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
 
+"Fase 5: Saltarello II - Medieval Tunes Vol.1 (12 of 12)\n" +
+"Compositor: Desconhecido (dança italiana, século XIII). Domínio público.\n" +
+"Arranjos e gravação: The Recorder Maniac \n" +
+"Fonte: https://cuidado-arte-vicia.sellfy.store/p/saltarello-ii-13th-century-medieval-dance-soprano-or-other-instrument/ \n\n" +
+
 "\n_____________________________________________________ \n" +
 "6. RECOMENDAÇÃO \n" +
 "É altamente recomendável que o desenvolvedor mantenha uma cópia do arquivo original da licença e dos termos de uso do asset em seu sistema de gerenciamento de arquivos.";

@@ -27,9 +27,21 @@ play_sfx = function(som_asset, _ganho = 1) {
     audio_play_sound(som_asset, 1, false);
 }
 
-/// Volume alvo da música, já com a opção do jogador aplicada.
+// =================================================================
+// NIVELAMENTO ENTRE FAIXAS
+// As faixas foram gravadas por fontes diferentes e chegam em volumes diferentes:
+// medindo o RMS, elas variam de -15,4 a -10,6 dBFS — quase 5 dB entre a mais fraca
+// e a mais forte, o que e uma diferenca gritante ao trocar de fase.
+//
+// A correcao e por GANHO, nao por reencodar o audio: reencodar perde qualidade,
+// nao volta atras, e some do diff. Assim o numero fica visivel e ajustavel.
+//
+// Cada faixa traz o seu ganho em fases_data; o tema do menu usa 1.
+ganho_faixa = 1;
+
+/// Volume alvo da música, com a opção do jogador e o nivelamento da faixa.
 alvo_musica = function() {
-    return global.ganho_musica;
+    return global.ganho_musica * ganho_faixa;
 }
 
 /// Atualiza na hora a faixa que já está tocando, para o ajuste no menu de opções
@@ -62,10 +74,15 @@ play_music = function(musica_asset) {
 
 /// Troca de música com crossfade: a atual sai enquanto a nova entra.
 /// É o que evita o corte seco do tema quando a fase começa (auditoria CV-03).
-play_music_crossfade = function(musica_asset, duracao_segundos = 0.5) {
+play_music_crossfade = function(musica_asset, duracao_segundos = 0.5, _ganho_faixa = 1) {
     if (musica_atual == musica_asset && audio_is_playing(musica_asset) && !is_fading_out) {
         return;
     }
+
+    // O nivelamento entra ANTES de qualquer conta de ganho: saindo_speed e
+    // entrando_speed sao derivados de alvo_musica(), e precisam do valor da faixa
+    // que esta entrando, nao da que saiu.
+    ganho_faixa = _ganho_faixa;
 
     var _frames = max(1, duracao_segundos * room_speed);
 

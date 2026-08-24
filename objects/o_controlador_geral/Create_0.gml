@@ -155,6 +155,7 @@ fases_data[0] = {
     nome: "Forjar Adaga",
     dificuldade: "Fácil",
     musica_fase: snd_fase_01,
+    ganho_musica: 0.951,   // nivelamento medido (ver o_audio_manager)
     sprites_resultado: [s_adaga01, s_adaga02, s_adaga03, s_adaga04, s_adaga05],
     duracao_segundos: 40,
     velocidade_notas: 4,
@@ -174,6 +175,7 @@ fases_data[1] = {
     nome: "Forjar Lança",
     dificuldade: "Médio",
     musica_fase: snd_fase_02,
+    ganho_musica: 0.703,   // nivelamento medido (ver o_audio_manager)
     sprites_resultado: [s_lanca01, s_lanca02, s_lanca03, s_lanca04, s_lanca05],
     duracao_segundos: 40,
     velocidade_notas: 5,
@@ -191,6 +193,7 @@ fases_data[2] = {
     nome: "Forjar Espada",
     dificuldade: "Difícil",
     musica_fase: snd_fase_03,
+    ganho_musica: 0.917,   // nivelamento medido (ver o_audio_manager)
     sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
     duracao_segundos: 60,
     velocidade_notas: 5,
@@ -211,6 +214,7 @@ fases_data[3] = {
     nome: "Forjar Machado",
     dificuldade: "Mestre",
     musica_fase: snd_fase_04,
+    ganho_musica: 0.869,   // nivelamento medido (ver o_audio_manager)
     sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
     duracao_segundos: 60,
     velocidade_notas: 5,

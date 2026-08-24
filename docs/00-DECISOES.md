@@ -1137,3 +1137,42 @@ Ressalva honesta do método: a Espada mede contraste 0,10 — música quase vazi
 jogado — e mesmo assim o padrão dela funciona. Ou seja, a medição diz **quando a música
 acentua**, mas não decide sozinha o mapa: onde a faixa é aberta, é o mapa que fornece o ritmo.
 Ela orienta a escolha do padrão; não a substitui.
+
+**D-105 · Nivelamento de volume por faixa, medido.** As faixas vêm de fontes diferentes e
+chegam em volumes diferentes. RMS medido: tema do menu −15,82 dBFS, Adaga −15,38, Espada
+−15,07, Machado −14,60, Lança −12,76 e Saltarello **−10,63** — mais de 5 dB entre a mais
+baixa e a mais alta, o que é uma diferença gritante ao trocar de tela.
+
+A correção é por **ganho, não reencodando o áudio**: reencodar perde qualidade, não volta
+atrás e some do diff. Assim o número fica visível, ajustável e versionado.
+
+O tema do menu é a referência por ser o mais baixo, o que faz todos os ganhos ficarem ≤ 1 e
+elimina qualquer risco de clipping: Adaga 0,951 · Lança 0,703 · Espada 0,917 · Machado 0,869 ·
+Saltarello 0,550.
+
+`alvo_musica()` passou a multiplicar o ganho do jogador pelo da faixa, e
+`play_music_crossfade()` recebe o valor da faixa que ENTRA — os cálculos de `saindo_speed` e
+`entrando_speed` derivam dele, então trocar antes da conta é obrigatório.
+
+Qualidade: todas as faixas são 44100 Hz estéreo. A taxa varia de 169 a 320 kbps, e o
+Saltarello entra em 171 kbps — na mesma faixa das fases 1 e 2. Não há sub-amostragem nem
+mono no conjunto.
+
+**D-106 · Saltarello II: análise e onde ela se encaixa.** Medido: **100,01 BPM**, primeira
+batida em **568,9 ms**, confiança **10,3x**.
+
+O perfil de acento é `|+ . #   + . #  .|`, com contraste tempo/contratempo de **1,33** — o
+mais alto das cinco faixas. Contraste alto significa hierarquia clara, e por isso ela é a
+mais fácil de antecipar apesar do andamento.
+
+A figura que se repete são as posições 0, 2 e 4 de cada meio compasso: colcheia, colcheia,
+semínima. É a célula rítmica característica do saltarello, e o padrão que a acompanha é
+`[0.5, 0.5, 1]` — 2,5 notas por segundo a 100 BPM.
+
+Pelo conjunto — mesmo andamento da Lança, maior previsibilidade de todas, densidade entre a
+Espada e o Machado — ela se enquadra em **Médio**.
+
+**A fase não foi criada**: os quatro conjuntos de arma do projeto (adaga, lança, espada,
+machado) estão todos em uso, e a tela de resultado precisa de cinco sprites de qualidade por
+arma. A faixa está importada, nivelada e creditada, pronta para virar fase assim que houver
+arte.

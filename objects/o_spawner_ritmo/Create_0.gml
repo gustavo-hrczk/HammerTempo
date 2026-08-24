@@ -20,7 +20,7 @@ intervalo_max = 100;
 // A música começa exatamente aqui, junto com o agendamento da primeira nota: é
 // esse instante que define o alinhamento entre a faixa e as notas. O crossfade
 // suaviza a saída do tema sem mexer na posição da faixa.
-o_audio_manager.play_music_crossfade(_dados_fase.musica_fase, 0.4);
+o_audio_manager.play_music_crossfade(_dados_fase.musica_fase, 0.4, _dados_fase.ganho_musica);
 
 // --- RITMO ---
 // A grade de notas e ABSOLUTA: cada nota tem um instante em segundos da faixa, e o

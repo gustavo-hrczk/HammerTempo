@@ -82,6 +82,7 @@
     {"id":{"name":"snd_fase_02","path":"sounds/snd_fase_02/snd_fase_02.yy",},},
     {"id":{"name":"snd_fase_03","path":"sounds/snd_fase_03/snd_fase_03.yy",},},
     {"id":{"name":"snd_fase_04","path":"sounds/snd_fase_04/snd_fase_04.yy",},},
+    {"id":{"name":"snd_fase_05","path":"sounds/snd_fase_05/snd_fase_05.yy",},},
     {"id":{"name":"snd_martelada_01","path":"sounds/snd_martelada_01/snd_martelada_01.yy",},},
     {"id":{"name":"snd_martelada_02","path":"sounds/snd_martelada_02/snd_martelada_02.yy",},},
     {"id":{"name":"snd_martelada_03","path":"sounds/snd_martelada_03/snd_martelada_03.yy",},},
