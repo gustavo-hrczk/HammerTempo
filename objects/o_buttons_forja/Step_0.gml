@@ -72,7 +72,7 @@ switch (_julgamento) {
         pop = 1;
         brilho = 1;
         brilho_cor = COR_PERFEITO;
-        ritmo_impacto_bigorna(meu_tipo, 3);   // tremor mais forte no perfeito
+        ritmo_impacto_bigorna(meu_tipo, 3, IMPACTO_ATRASO_PERFEITO);
         o_ferreiro.iniciar_martelada_perfeita();
         o_audio_manager.play_martelada_sequencial_sfx();
 
@@ -92,7 +92,7 @@ switch (_julgamento) {
         pop = 0.8;
         brilho = 0.75;
         brilho_cor = COR_OTIMO;
-        ritmo_impacto_bigorna(meu_tipo, 2);   // otimo
+        ritmo_impacto_bigorna(meu_tipo, 2, IMPACTO_ATRASO_NORMAL);
         o_ferreiro.iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
 
@@ -112,7 +112,7 @@ switch (_julgamento) {
         pop = 0.55;
         brilho = 0.5;
         brilho_cor = COR_BOM;
-        ritmo_impacto_bigorna(meu_tipo, 1);   // bom: tremor apenas perceptivel
+        ritmo_impacto_bigorna(meu_tipo, 1, IMPACTO_ATRASO_NORMAL);
         o_ferreiro.iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
 

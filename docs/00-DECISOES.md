@@ -886,3 +886,29 @@ marca da zona de acerto e a zona morta à esquerda. Não são código morto, mas
 
 `o_hitbox_bom` tem `visible: false`, então seu Draw nunca roda: é uma instância que não faz
 nada na sala, e o sprite `o_zona_bom` não é desenhado por ninguém.
+
+**D-91 · Sincronia entre alvo, ferreiro e impacto — e o golpe que nunca acontecia.** Medindo
+`s_ferreiro_martelada` contra a pose de repouso, quadro a quadro: o quadro 0 é idêntico ao
+repouso, 1 a 3 levantam o martelo (nada muda abaixo de y=169 no quadro 3) e o **quadro 4 é o
+contato** — é onde a massa alterada desce até y=214, dentro da faixa da bigorna.
+
+Daí sai o defeito de verdade. Cada acerto fazia `image_index = 0`, e chegar ao quadro 4
+levava **266 ms** na martelada normal e **333 ms** na perfeita. Duas colcheias a 108 BPM
+distam **278 ms**. Em trecho rápido o ferreiro reiniciava a preparação a cada nota e **nunca
+chegava a golpear** — o martelo subia eternamente. Não era só falta de sincronia: o golpe não
+existia.
+
+A martelada passou a começar no quadro 3, o alto do movimento. O contato vem um quadro
+depois — 67 ms normal, 83 ms perfeito — e a animação inteira passa a caber entre duas notas
+rápidas.
+
+O impacto e o tremor deixaram de disparar no toque e passam a **esperar o contato**: o objeto
+nasce invisível e parado, conta os frames e só então acende e sacode a bigorna. Os dois saem
+juntos porque os dois **são** o contato.
+
+O alvo pressionado **não** espera. Resposta de input tem de ser imediata, senão o jogo parece
+atrasado — a sincronia que importa é entre o que representa o golpe, não entre o golpe e a
+mão do jogador.
+
+A faísca antiga saiu do acerto perfeito. Ela disparava no instante da tecla e desfaria
+exatamente a sincronia que este bloco veio trazer.

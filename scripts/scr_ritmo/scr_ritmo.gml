@@ -102,12 +102,20 @@ function ritmo_nota_perdida(_nota) {
 /// Escala do efeito. INTEIRA, sempre: a arte e pixel art e escala fracionaria
 /// borra o traco — mesma regra das fontes (D-33). O sprite tem 48x48, entao 2
 /// resulta em 96x96 sobre uma bigorna de 120x70.
-#macro IMPACTO_ESCALA 2
+#macro IMPACTO_ESCALA 4
 
 /// Deslocamento do centro do efeito em relacao ao canto da bigorna, que mede 120x70
 /// com origem no canto superior esquerdo. E o ponto onde o martelo a encontra.
-#macro IMPACTO_DX 45
-#macro IMPACTO_DY 5
+#macro IMPACTO_DX 55
+#macro IMPACTO_DY 0
+
+/// Frames de espera ate o martelo encostar na bigorna.
+///
+/// A martelada comeca no quadro 3 e o contato e o quadro 4 (ver o_ferreiro), ou seja
+/// UM quadro de animacao depois. A 60 fps de jogo isso da 4 frames na martelada
+/// normal (15 fps de sprite) e 5 na perfeita (12 fps, porque image_speed e 0,8).
+#macro IMPACTO_ATRASO_NORMAL   4
+#macro IMPACTO_ATRASO_PERFEITO 5
 
 /// Sprite do impacto na cor da faixa. Os tipos vem do Instance Creation Code dos
 /// alvos em rm_forja: 0 baixo, 1 cima, 2 direita, 3 esquerda.
@@ -121,12 +129,16 @@ function ritmo_sprite_impacto(_tipo) {
     return s_impacto_cima;
 }
 
-/// Dispara o impacto e o tremor da bigorna.
+/// Agenda o impacto e o tremor da bigorna para o instante do CONTATO do martelo.
 ///
-/// `_forca` e a amplitude do tremor em pixels, pela qualidade do acerto. Fica num
-/// lugar so para os tres julgamentos nao repetirem a mesma sequencia de chamadas —
-/// foi assim que a moldura errada nasceu no seletor (D-71).
-function ritmo_impacto_bigorna(_tipo, _forca) {
+/// `_forca` e a amplitude do tremor em pixels e `_atraso` os frames ate o contato,
+/// ambos pela qualidade do acerto. Ficam num lugar so para os tres julgamentos nao
+/// repetirem a mesma sequencia de chamadas — foi assim que a moldura errada nasceu
+/// no seletor (D-71).
+///
+/// O alvo pressionado NAO espera: resposta de input tem de ser imediata, senao o
+/// jogo parece atrasado. Quem espera e o que representa o golpe.
+function ritmo_impacto_bigorna(_tipo, _forca, _atraso) {
     if (!instance_exists(o_bigorna)) exit;
 
     var _e = instance_create_layer(o_bigorna.x + IMPACTO_DX,
@@ -134,9 +146,9 @@ function ritmo_impacto_bigorna(_tipo, _forca) {
                                    "Gameplay", o_impacto_bigorna);
 
     _e.sprite_index = ritmo_sprite_impacto(_tipo);
-    _e.image_index = 0;
     _e.image_xscale = IMPACTO_ESCALA;
     _e.image_yscale = IMPACTO_ESCALA;
-
-    o_bigorna.tremor = _forca;
+    _e.atraso = _atraso;
+    _e.forca = _forca;
 }
+

@@ -61,11 +61,24 @@ aplicar_dano = function() {
     dano_timer = room_speed * 0.18;
 }
 
+// A martelada COMECA no alto do movimento, nao no repouso.
+//
+// s_ferreiro_martelada tem 6 quadros: 0 e a pose de repouso, 1 a 3 levantam o
+// martelo e 4 e o contato com a bigorna. Comecando do zero, chegar ao contato levava
+// 266 ms na martelada normal e 333 ms na perfeita — mas duas colcheias a 108 BPM
+// distam 278 ms, e cada acerto reinicia a animacao. Em trecho rapido o ferreiro
+// reiniciava a preparacao a cada nota e NUNCA chegava a golpear.
+//
+// Partindo do quadro 3, o contato vem um quadro depois: 67 ms normal, 83 ms perfeito.
+// A animacao inteira passa a caber entre duas notas rapidas.
+#macro MARTELADA_QUADRO_INICIAL 3
+#macro MARTELADA_QUADRO_CONTATO 4
+
 // Função para iniciar a martelada NORMAL
 iniciar_martelada_normal = function() {
     estado = FERREIRO_ESTADO.MARTELANDO;
     sprite_index = s_ferreiro_martelada;
-    image_index = 0;
+    image_index = MARTELADA_QUADRO_INICIAL;
     image_speed = 1;
     velocidade_martelada = 1;
     image_xscale = 1;
@@ -76,16 +89,15 @@ iniciar_martelada_normal = function() {
 iniciar_martelada_perfeita = function() {
     estado = FERREIRO_ESTADO.MARTELANDO;
     sprite_index = s_ferreiro_martelada;
-    image_index = 0;
+    image_index = MARTELADA_QUADRO_INICIAL;
     image_speed = 0.8;
     velocidade_martelada = 0.8;
     image_xscale = 1;
     x = home_x;
 
-    // faísca no acerto perfeito, como era antes dos efeitos de impacto
-    if (instance_exists(o_bigorna)) {
-        instance_create_layer(o_bigorna.x + 40, o_bigorna.y - 10, "Gameplay", o_faisca);
-    }
+    // A faísca antiga saiu daqui. Ela disparava no instante da tecla, enquanto o
+    // impacto novo e o tremor acompanham o contato do martelo — manter as duas
+    // desfaria justamente a sincronia que o impacto veio trazer.
 }
 
 /// Devolve o ferreiro ao repouso. Usada ao reiniciar a fase pelo menu de pausa,
