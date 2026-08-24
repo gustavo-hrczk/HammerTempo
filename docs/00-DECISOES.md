@@ -782,3 +782,21 @@ pontuação, numa tela que já mostra pontuação, precisão, três contagens de
 frase de retorno. Era mais um número disputando o mesmo olhar, no momento em que o jogador
 quer ler quanto fez. A colocação se lê na tela de Recordes, que existe para isso. O estado
 que só servia a essa linha saiu junto, em vez de ficar como campo morto.
+
+**D-86 · O cartão do seletor mostra o campeão, não o recorde pessoal.** A pergunta que o
+jogador faz ao escolher a fase é "quem eu preciso bater", e a resposta é o primeiro do
+placar — não a melhor pontuação que ele mesmo já fez. O cartão passou a ler `placar_livre()`
+e mostra nome e pontuação do campeão; a arma e a moldura também passaram a depender de haver
+alguém no placar, não de haver recorde pessoal.
+
+O nome usa espaçamento fixo de 23 px por letra, pelo mesmo motivo da tabela (D-82): sem
+isso, três cartões lado a lado com iniciais de larguras diferentes ficariam desalinhados
+entre si.
+
+Medido: a linha do campeão ocupa 163 px no pior caso (nome de 69 + vão de 16 + seis dígitos),
+contra 180 px do antigo "Recorde: 36573". A caixa do cartão não precisou crescer.
+
+**Consequência a decidir:** `save_recorde()` e `save_registrar_recorde()` continuam gravando,
+mas nada mais os exibe. Os dois sistemas só divergem quando o placar está cheio e a melhor
+marca do jogador não entra no top 10 — nesse caso o cartão mostra o campeão, que continua
+sendo a informação certa. Aposentar o `recordes` é uma limpeza pendente, não uma urgência.

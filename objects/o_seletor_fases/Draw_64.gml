@@ -50,14 +50,26 @@ for (var i = 0; i < total_opcoes; i++) {
     var _fase = opcoes_fase[i];
     var _selecionada = (i == opcao_selecionada);
 
-    var _recorde = save_recorde(i);
     var _txt_detalhe = _fase.dificuldade + "  -  " + string(_fase.beat_tempo_bpm) + " BPM";
-    var _txt_recorde = (_recorde > 0) ? ("Recorde: " + string(_recorde)) : "Ainda não forjada";
+
+    // O cartao mostra o CAMPEAO da fase, nao o recorde pessoal: aqui a pergunta do
+    // jogador e "quem eu preciso bater", e a resposta e o primeiro do placar.
+    var _lista = placar_livre(i);
+    var _tem_campeao = (array_length(_lista) > 0);
+    var _campeao = _tem_campeao ? _lista[0] : undefined;
+
+    // Nome com espacamento fixo (23 px por letra em f_padrao), pelo mesmo motivo da
+    // tabela de recordes: tres letras de larguras diferentes desalinhariam os
+    // cartoes entre si.
+    var _NOME_SLOT = 23;
+    var _NOME_VAO  = 16;
 
     // largura do nome define o cursor; a mais larga das linhas define a caixa
     draw_set_font(f_padrao);
     var _larg_nome = string_width(_fase.nome);
-    var _larg_recorde = string_width(_txt_recorde);   // medido em f_padrao
+    var _larg_recorde = _tem_campeao
+        ? ((PLACAR_NOME_TAMANHO * _NOME_SLOT) + _NOME_VAO + string_width(string(_campeao.pontos)))
+        : string_width("Ainda não forjada");
 
     if (_selecionada) {
         draw_set_font(f_padrao_pequena);
@@ -82,7 +94,7 @@ for (var i = 0; i < total_opcoes; i++) {
     // O par arma+moldura vem sempre do MESMO indice da lista de desempenho. Antes a
     // moldura era s_canva01 fixa, a de FALHA, enquanto a arma era a ultima da lista,
     // a melhor — a borda errada que voce viu.
-    if (_recorde > 0) {
+    if (_tem_campeao) {
         var _nivel = array_length(_fase.sprites_resultado) - 1;
         var _arma = _fase.sprites_resultado[_nivel];
         var _moldura = o_controlador_geral.molduras_resultado[_nivel];
@@ -107,22 +119,27 @@ for (var i = 0; i < total_opcoes; i++) {
     draw_set_color(_tinta);
     draw_text(_pos_x, _y_detalhe, _txt_detalhe);
 
-    // recorde local, na fonte cheia: e a conquista do cartao, nao mais uma linha de
-    // dados. A 30 px o limiar de contraste cai de 4,5:1 para 3:1, e foi isso que
-    // abriu espaco para o tom mais claro -- (176,92,32) mede 3,29:1 no pergaminho.
-    //
-    // O custo de clarear foi medido: o cobre anterior dava 4,68:1 aqui e 2,50:1 no
-    // pior instante do pulso da caixa; este da 3,29:1 e 1,76:1. Nao existe tom claro
-    // que resolva o cartao selecionado, porque a caixa so escurece o fundo -- ali o
-    // que ajudaria seria escurecer o texto, nao clarear.
-    //
-    // "Ainda nao forjada" segue na tinta comum: nao e conquista nenhuma.
+    // campeao da fase, na fonte cheia: e a conquista do cartao, nao mais uma linha
+    // de dados. A 30 px o limiar de contraste cai de 4,5:1 para 3:1, o que permite
+    // o tom (176,92,32) com 3,29:1 sobre o pergaminho.
     draw_set_font(f_padrao);
 
-    if (_recorde > 0) {
+    if (_tem_campeao) {
+        var _bloco_nome = PLACAR_NOME_TAMANHO * _NOME_SLOT;
+        var _txt_pontos = string(_campeao.pontos);
+        var _esq_linha = _pos_x - (_larg_recorde / 2);
+
         draw_set_color(make_colour_rgb(176, 92, 32));
+        placar_desenhar_nome(_esq_linha, _y_recorde, _campeao.nome, _NOME_SLOT);
+
+        draw_set_halign(fa_left);
+        draw_text(floor(_esq_linha + _bloco_nome + _NOME_VAO), _y_recorde, _txt_pontos);
+        draw_set_halign(fa_center);
+    } else {
+        // sem ninguem no placar nao ha conquista: tinta comum
+        draw_text(_pos_x, _y_recorde, "Ainda não forjada");
     }
-    draw_text(_pos_x, _y_recorde, _txt_recorde);
+
     draw_set_color(_tinta);
 }
 
