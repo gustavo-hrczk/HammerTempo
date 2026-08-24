@@ -1195,3 +1195,33 @@ posições 0, 2 e 4 de cada meio compasso, que são exatamente esses valores. Co
 1,33, a música tem hierarquia clara o bastante para o padrão ser regular sem soar mecânico.
 
 Com cinco fases, o seletor pagina em 3 + 2.
+
+**D-108 · Aderência: um número para "o mapa cai no som".** Três hipóteses para o "quase boa,
+fora do lugar" da Maça foram testadas e **as três foram rejeitadas pela medição**:
+
+*A melodia estaria roubando a grade* — não: grave, médio e agudo concordam na batida em todas
+as cinco faixas, dentro de 11,6 ms, que é a resolução do envelope. **Isso rejeita a separação
+de canais como caminho**, pelo menos para encontrar a grade.
+
+*O tempo forte estaria no lugar errado* — não: Lança e Espada também têm o tempo 2 mais forte
+que o 1, e as duas funcionam.
+
+*A dança seria de metro composto* — não: o Saltarello mede 7,00x em divisão binária contra
+3,63x em ternária.
+
+O que resolveu foi medir o **objetivo direto** em vez de procurar proxies: a energia de
+ataque nos instantes exatos onde o padrão coloca nota, dividida pelo piso da faixa. Medido
+nas fases existentes — Adaga 12,86x, Lança 11,19x, Espada 8,54x — e a Maça marcava 8,55x.
+
+**D-109 · Padrão que não fecha no compasso gera variação sozinho.** Buscando automaticamente
+sobre o espaço de padrões, maximizando aderência, os melhores para o Saltarello somam **6 e 7
+tempos**, não 4. E o deslocamento inicial não muda a pontuação deles — justamente porque não
+fecham no compasso de 4 e giram contra ele: cada repetição cai numa posição métrica diferente.
+
+É a propriedade do padrão da Lança, `[0.5 x8, 3]` = 7 tempos, que é a segunda melhor
+aderência do jogo. O padrão que eu tinha escrito somava 4: travado no compasso, repetindo
+idêntico por 45 s.
+
+Os novos medem 9,82x e 9,90x contra 8,55x. A densidade caiu de 2,51 para ~1,67 notas por
+segundo, e essa troca é real: mais notas significam mais notas em posições fracas, então
+aderência e densidade se opõem.

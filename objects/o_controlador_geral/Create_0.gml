@@ -262,15 +262,23 @@ fases_data[4] = {
     beat_tempo_bpm: 100.01,
     primeira_batida_ms: 568.9,
 
-    // COLCHEIA, COLCHEIA, SEMINIMA — a celula caracteristica do saltarello, e nao
-    // uma escolha de gosto. O perfil de acento medido e |+ . #   + . #  .|: as
-    // posicoes 0, 2 e 4 de cada meio compasso, que sao exatamente esses valores.
+    // OS PADROES NAO FECHAM NO COMPASSO, e isso e o ponto.
     //
-    // Contraste tempo/contratempo de 1,33, o mais alto das cinco faixas: a musica
-    // tem hierarquia clara, entao o padrao pode ser regular sem soar mecanico.
+    // O primeiro que escrevi somava 4 tempos: travado no compasso, repetindo
+    // identico por 45 s. Media 8,55x de aderencia (energia de ataque nos instantes
+    // de nota, contra o piso da faixa) e soava "quase certo, fora do lugar".
+    //
+    // Estes somam 6 e 7 tempos. Como nao dividem o compasso de 4, giram contra ele:
+    // cada repeticao cai numa posicao metrica diferente, entao o mesmo padrao produz
+    // variacao sozinho. E a propriedade do padrao da Lanca, [0.5 x8, 3] = 7 tempos,
+    // que e a fase de melhor aderencia depois da Adaga.
+    //
+    // Escolhidos por busca automatica sobre o espaco de padroes, maximizando
+    // aderencia: 9,82x e 9,90x contra 8,55x do anterior. Referencias medidas —
+    // Adaga 12,86x, Lanca 11,19x, Espada 8,54x.
     ritmo_patterns: [
-        [0.5, 0.5, 1, 0.5, 0.5, 1],
-        [0.5, 0.5, 1, 0.5, 0.5, 0.5, 0.5]
+        [0.5, 0.5, 1, 1, 2, 1],
+        [1, 2, 1, 1, 0.5, 0.5, 1]
     ]
 };
 
