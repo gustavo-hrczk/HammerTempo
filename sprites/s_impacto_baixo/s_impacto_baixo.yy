@@ -3,7 +3,7 @@
   "%Name":"s_impacto_baixo",
   "bboxMode":0,
   "bbox_bottom":35,
-  "bbox_left":1,
+  "bbox_left":0,
   "bbox_right":45,
   "bbox_top":0,
   "collisionKind":1,
