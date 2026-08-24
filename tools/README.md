@@ -27,23 +27,15 @@ preciso ffmpeg nem converter as faixas para WAV antes.
 tools/.venv/Scripts/python.exe tools/analisar_faixa.py sounds/snd_fase_01/snd_fase_01.mp3
 ```
 
-## Gerar mapas a partir da música
+## Mapas gerados a partir da música — tentado e descartado
 
-```
-tools/.venv/Scripts/python.exe tools/gerar_mapa.py machado sounds/snd_fase_04/snd_fase_04.mp3 --dur 60 --faixas 4 --perfil mestre
-tools/.venv/Scripts/python.exe tools/emitir_gml.py
-```
+Houve uma ferramenta que montava o mapa a partir dos ataques da faixa, com a **faixa
+da nota vindo da banda de frequência** (grave embaixo, agudo em cima). Foi removida.
 
-O primeiro comando analisa e grava `tools/mapa_<fase>.json`; o segundo converte todos
-os mapas em `scripts/scr_mapas/scr_mapas.gml`, que o jogo lê.
+O erro não foi técnico — os mapas saíam alinhados e com a densidade certa. Foi de
+premissa: o jogo tem **um único som de martelo**, então a faixa da nota não representa
+instrumento nenhum, é só qual botão apertar. Separar por canais criou complexidade
+sem função, e o arranjo ficou pior que os padrões escritos à mão.
 
-**Perfis de dificuldade** — a música é a mesma, muda quanto dela vira nota:
-
-| perfil | distância mínima | teto por 4 s |
-|---|---|---|
-| `facil` | 350 ms | 7 |
-| `medio` | 260 ms | 9 |
-| `dificil` | 200 ms | 10 |
-| `mestre` | 170 ms | 11 |
-
-A ordem dos índices em `emitir_gml.py` (`FASES`) tem de bater com `fases_data`.
+O que precisa acompanhar a música é o **tempo**, não a distribuição das faixas — e
+disso os `ritmo_patterns` já davam conta. Ver D-103.

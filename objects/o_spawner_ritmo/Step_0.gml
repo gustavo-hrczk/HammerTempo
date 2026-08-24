@@ -15,22 +15,11 @@ if (esta_finalizando) {
 var _agora = ritmo_relogio();
 
 if (_agora >= 0) {
-    if (usa_mapa) {
-        // Mapa gerado da percussao da faixa: instante e faixa ja vem prontos.
-        var _total = array_length(mapa);
+    while (proximo_t - viagem_seg <= _agora) {
+        criar_nota(proximo_t);
 
-        while (mapa_index < _total && mapa[mapa_index][0] - viagem_seg <= _agora) {
-            criar_nota_tipo(mapa[mapa_index][0], mapa[mapa_index][1]);
-            mapa_index++;
-        }
-    } else {
-        // Reserva: padrao ritmico em laco, com a faixa sorteada.
-        while (proximo_t - viagem_seg <= _agora) {
-            criar_nota(proximo_t);
-
-            proximo_t += meu_pattern_atual[pattern_index] * beat_seg;
-            pattern_index = (pattern_index + 1) mod array_length(meu_pattern_atual);
-        }
+        proximo_t += meu_pattern_atual[pattern_index] * beat_seg;
+        pattern_index = (pattern_index + 1) mod array_length(meu_pattern_atual);
     }
 }
 
