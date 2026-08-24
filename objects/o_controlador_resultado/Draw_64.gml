@@ -30,23 +30,47 @@ draw_set_color(c_black);
 // são a informação que o jogador mais quer ler nesta tela.
 draw_set_font(f_padrao);
 
-draw_text(_col_esq, _linha1, "Perfeitas: " + string(_perfeitas));
-draw_text(_cx,      _linha1, "Ótimas: " + string(_otimas));
-draw_text(_col_dir, _linha1, "Boas: " + string(_boas));
+if (tempo >= RESULTADO_T_ESTATISTICAS) {
+    draw_text(_col_esq, _linha1, "Perfeitas: " + string(_perfeitas));
+    draw_text(_cx,      _linha1, "Ótimas: " + string(_otimas));
+    draw_text(_col_dir, _linha1, "Boas: " + string(_boas));
 
-draw_text(_col_esq, _linha2, "Erros: " + string(_erros));
-draw_text(_cx,      _linha2, "Total: " + string(o_controlador_geral.stats_total_notas));
-draw_text(_col_dir, _linha2, "Precisão: " + string(round(_precisao)) + "%");
+    draw_text(_col_esq, _linha2, "Erros: " + string(_erros));
+    draw_text(_cx,      _linha2, "Total: " + string(o_controlador_geral.stats_total_notas));
+    draw_text(_col_dir, _linha2, "Precisão: " + string(round(_precisao)) + "%");
+}
 
 // --- PONTUAÇÃO EM DESTAQUE ---
 // Era preta, igual à grade de estatísticas acima, e sumia no meio delas. O cobre
 // vem da rampa do combo, então a paleta da partida e a do resultado são a mesma;
 // mede 4,68:1 sobre o pergaminho (229,214,161).
-var _texto_pontos = "Pontuação: " + string(o_controlador_geral.pontuacao);
+//
+// O número SOBE até o total em vez de aparecer pronto: contar dá peso ao resultado,
+// e é o único momento da tela em que o jogador olha um número mudar.
+var _texto_pontos = "Pontuação: " + string(pontuacao_exibida);
 
 draw_set_font(f_padrao);
 draw_set_color(UI_COR_COBRE);
-draw_text(_cx, 594, _texto_pontos);
+
+if (tempo >= RESULTADO_T_CONTAGEM) {
+    draw_text(_cx, 594, _texto_pontos);
+}
+
+// --- BÔNUS ---
+// Entram como LINHA PRÓPRIA e só depois somam no total. Ver "SEM ERRO +1200" e ver o
+// número subir por causa dele recompensa mais do que um total maior já pronto.
+draw_set_font(f_padrao_pequena);
+
+if (bonus_sem_erro > 0 && tempo >= RESULTADO_T_BONUS_1) {
+    draw_set_color(UI_COR_CARMIM);
+    draw_text(_col_esq, 594, "SEM ERRO  +" + string(bonus_sem_erro));
+}
+
+if (bonus_impecavel > 0 && tempo >= RESULTADO_T_BONUS_2) {
+    draw_set_color(UI_COR_CARMIM);
+    draw_text(_col_dir, 594, "IMPECÁVEL  +" + string(bonus_impecavel));
+}
+
 draw_set_color(c_black);
 
 // --- RECORDE NOVO ---
@@ -56,7 +80,7 @@ draw_set_color(c_black);
 // A onda percorre o texto letra a letra. O deslocamento é ARREDONDADO porque Kobold 7
 // é fonte de pixel: posição fracionária suja o traço, que foi o problema do contador
 // dinâmico da contagem regressiva.
-if (recorde_novo) {
+if (recorde_novo && revelacao_pronta) {
     draw_set_font(f_padrao_pequena);
     draw_set_halign(fa_left);
 
@@ -80,15 +104,22 @@ if (recorde_novo) {
 }
 
 // --- FRASE DE FEEDBACK (escolhida no evento Create) ---
-draw_set_font(f_padrao_pequena);
-draw_set_color(c_gray);
-draw_text(_cx, 628, frase_escolhida);
+// Junto com o prompt: ela é o fecho da leitura, não parte dos dados.
+if (revelacao_pronta) {
+    draw_set_font(f_padrao_pequena);
+    draw_set_color(c_gray);
+    draw_text(_cx, 628, frase_escolhida);
+}
 draw_set_color(c_black);
 
 // --- PROMPT PARA CONTINUAR ---
 // A GUI agora tem 720 px de altura (antes herdava os 768 do splash), então o prompt
 // desceu para dentro da tela — auditoria UI-01.
-ui_prompt(_cx, 676, ui_texto_confirmar() + " para continuar", 65);
+// Só aparece quando a revelação termina. Antes disso CONFIRMAR corta a animação —
+// quem tem pressa não espera, mas nada na tela convida a apressar.
+if (revelacao_pronta) {
+    ui_prompt(_cx, 676, ui_texto_confirmar() + " para continuar", 65);
+}
 
 // =================================================================
 // --- DESENHA A ARMA FORJADA E SUA MOLDURA (NOVA SEÇÃO) ---

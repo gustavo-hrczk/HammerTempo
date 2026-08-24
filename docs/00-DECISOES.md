@@ -1025,3 +1025,46 @@ tem como acontecer.
 Setas nas bordas do pergaminho (x 60 e 1220, fora dos 134..1146 que os cartões ocupam), com
 pulso suave, só quando há mais de uma página. Pontos indicadores embaixo foram a primeira
 ideia e não cabem: a linha do recorde vai até y 711 e o painel acaba em 720.
+
+**D-98 · A tela de resultado revela em etapas, e as iniciais vêm depois.** A entrada de
+iniciais nascia no `Create` da tela de resultado e cobria tudo **antes de o jogador ver a
+própria pontuação** — pedia o nome de um resultado que ele ainda não conhecia. Agora ela
+espera a revelação terminar e o jogador confirmar.
+
+Isso também corrigiu uma ordem errada de cálculo: a bonificação é somada **antes** de o
+placar avaliar a pontuação. Se as iniciais fossem pedidas primeiro, o placar julgaria um
+número que a tela ainda ia aumentar na frente do jogador.
+
+Linha do tempo, em segundos: 0,00 painel e arma · 0,35 grade de estatísticas · 0,90 a
+pontuação começa a contar · 2,00 a contagem assenta · 2,10 SEM ERRO soma · 2,55 IMPECÁVEL
+soma · 3,00 recorde, frase e prompt.
+
+A contagem sobe com desaceleração cúbica: rápida no começo, assentando no fim. Linear parece
+barra de carregamento; desacelerada parece placar.
+
+**CONFIRMAR corta a animação** e mostra tudo — o primeiro toque termina a revelação, o
+segundo sai da tela. Numa feira com fila, esperar animação é imposto; mas nada na tela
+convida a apressar, porque o prompt só aparece no fim.
+
+**D-99 · Bonificação por consistência e por precisão.** Duas faixas, medindo coisas
+diferentes: **sem erro** (nenhuma nota perdida) vale +10%, e **impecável** (todas perfeitas)
+vale +15% adicionais. Proporcionais e não fixas, porque uma fase de 150 notas vale mais que
+uma de 60 e um bônus fixo premiaria desproporcionalmente a fase curta.
+
+Os bônus entram como **linha própria** antes de somarem no total. Ver "SEM ERRO +12675" e ver
+o número subir por causa dele recompensa mais do que um total maior já pronto — é a mesma
+razão pela qual a pontuação conta em vez de aparecer.
+
+Fase perdida não bonifica, pelo mesmo critério do recorde (D-67).
+
+**D-100 · O arranjo estranho da fase 4 é o sorteio, não a música.** `snd_fase_04` mede 7,7x
+de confiança — a faixa está boa. O problema é `irandom(tipos_permitidos - 1)`: sorteio
+uniforme não produz padrão.
+
+Medido sobre sequências geradas: com 2 faixas (Adaga) a repetição de linha é de 59% e o
+sorteio produz corridas naturalmente, o que soa musical. Com 4 faixas (Machado) a repetição
+cai para 19% — sem corrida, sem simetria, sem repetição deliberada. O ouvido espera frase e a
+mão recebe ruído.
+
+É exatamente o que o passo 3 do `06-RITMO-AUTOTRACK.md` resolve, tirando a faixa da banda de
+frequência do onset em vez de sorteá-la.

@@ -54,20 +54,68 @@ frase_escolhida = "";
 // Preenchido pela tela de iniciais, que e quem sabe a colocacao obtida.
 recorde_novo = false;
 
-// --- PLACAR ---
-// A tela de resultado não anuncia a colocação: ela já mostra pontuação, precisão e a
-// contagem por julgamento, e "AAA em 2o" ali era mais um número disputando o mesmo
-// olhar. A colocação se lê na tela de Recordes, que existe para isso.
+// =================================================================
+// BONIFICACAO
+// Calculada ANTES de qualquer coisa olhar a pontuacao, senao o placar julgaria um
+// numero que a tela ainda vai aumentar na frente do jogador.
 //
-// A entrada de iniciais so aparece quando a pontuacao entra no top 10 — perguntar o
-// nome de quem nao entrou seria pedir digitacao para nada, e numa feira cada segundo
-// de fila conta.
+// Duas faixas, e elas medem coisas diferentes:
+//   sem erro   — nenhuma nota perdida. E consistencia, e o que a maioria alcanca.
+//   impecavel  — TODAS perfeitas. E precisao, e quase ninguem alcanca.
 //
-// Fase perdida nao entra, pelo mesmo motivo do recorde (D-67): placar e de trabalho
-// concluido.
-if (!o_controlador_geral.fase_falhou
-    && placar_posicao(o_controlador_geral.fase_atual, o_controlador_geral.pontuacao) > 0) {
-    instance_create_depth(0, 0, -9000, o_tela_nome);
+// Proporcionais, nao fixas: uma fase de 137 notas vale mais que uma de 60, e um
+// bonus fixo premiaria desproporcionalmente a fase curta.
+// =================================================================
+var _p = o_controlador_geral.stats_acertos_perfeitos;
+var _o = o_controlador_geral.stats_acertos_otimos;
+var _b = o_controlador_geral.stats_acertos_bons;
+var _e = o_controlador_geral.stats_erros;
+var _julgadas = _p + _o + _b + _e;
+
+pontuacao_base = o_controlador_geral.pontuacao;
+
+bonus_sem_erro = 0;
+bonus_impecavel = 0;
+
+// Fase perdida nao bonifica: bonus e de trabalho concluido, como o recorde (D-67).
+if (!o_controlador_geral.fase_falhou && _julgadas > 0) {
+    if (_e == 0) {
+        bonus_sem_erro = floor(pontuacao_base * 0.10);
+    }
+    if (_e == 0 && _o == 0 && _b == 0) {
+        bonus_impecavel = floor(pontuacao_base * 0.15);
+    }
+}
+
+pontuacao_final = pontuacao_base + bonus_sem_erro + bonus_impecavel;
+o_controlador_geral.pontuacao = pontuacao_final;
+
+// =================================================================
+// REVELACAO
+// A tela conta a pontuacao em vez de exibi-la pronta, e revela uma coisa por vez.
+// O momento de maior peso — o total com os bonus somados — fica por ultimo.
+//
+// A entrada de iniciais NAO nasce aqui. Ela vinha no Create e cobria a tela inteira
+// antes de o jogador ver o proprio resultado. Agora espera a revelacao terminar e o
+// jogador confirmar (ver o Step).
+// =================================================================
+#macro RESULTADO_T_ESTATISTICAS 0.35
+#macro RESULTADO_T_CONTAGEM     0.90
+#macro RESULTADO_DUR_CONTAGEM   1.10
+#macro RESULTADO_T_BONUS_1      2.10
+#macro RESULTADO_T_BONUS_2      2.55
+#macro RESULTADO_T_PROMPT       3.00
+
+tempo = 0;
+revelacao_pronta = false;
+pediu_iniciais = false;
+pontuacao_exibida = 0;
+
+/// Corta a animacao e mostra tudo. Numa feira com fila, esperar animacao e imposto.
+concluir_revelacao = function() {
+    tempo = RESULTADO_T_PROMPT;
+    pontuacao_exibida = pontuacao_final;
+    revelacao_pronta = true;
 }
 
 // Molduras por nivel de desempenho, vindas do controlador geral: o seletor de fases
