@@ -1,5 +1,10 @@
 velocidade = 5;
 tipo_seta = 0;
+
+// Instante, em segundos da faixa, em que esta nota deve encostar na zona de acerto.
+// -1 significa "sem relogio": a nota volta a andar quadro a quadro, que e o que
+// acontece se a faixa nao estiver tocando.
+t_alvo = -1;
 image_speed = 0;
 escala = 1;
 

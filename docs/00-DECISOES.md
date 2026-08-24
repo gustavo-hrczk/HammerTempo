@@ -940,3 +940,42 @@ como depende do tempo de viagem, mexer na velocidade das notas muda o desalinham
 A correção de melhor relação risco/ganho é a primeira da lista e não envolve auto-track:
 trocar o relógio de frames por `audio_sound_get_track_position()` e o agendamento relativo
 por instantes absolutos vindos de um mapa em dados.
+
+**D-94 · Relógio de áudio no lugar do contador de frames.** Passo 1 do plano do
+`06-RITMO-AUTOTRACK.md`, e a correção de melhor relação risco/ganho: muda a sincronização
+sem tocar em como o mapa é composto.
+
+Três mudanças que se sustentam mutuamente:
+
+**A grade passou a ser absoluta.** Cada nota tem um instante em segundos DA FAIXA, e o
+spawner compara esse instante com `audio_sound_get_track_position()`. Antes cada nota era
+agendada a partir da anterior, por alarme em frames — erro acumulado por construção. O laço
+de geração cria todas as notas vencidas no mesmo quadro, então um frame demorado não perde
+nota.
+
+**A posição da nota é derivada, não integrada.** `x = LINHA + (t_alvo − agora) × v × fps`,
+recalculado a cada quadro contra o áudio, em vez de `x -= velocidade` somando erro. O detalhe
+bonito: `ritmo_erro_frames()` já calculava `(x − LINHA) / velocidade`, que com essa fórmula
+vira exatamente o erro de tempo contra a música — **o julgamento ficou preciso sem mudar uma
+linha**.
+
+**A primeira nota cai numa batida de verdade**, e não 1000 ms fixos após o início da faixa. É
+a primeira batida cujo instante deixa espaço para o tempo de viagem mais um segundo de
+respiro. Como as demais somam múltiplos da batida a partir dela, a grade inteira fica
+alinhada.
+
+Medido antes e depois, desvio de cada nota em relação à subdivisão mais próxima da faixa:
+
+| Fase | Antes | Depois |
+|---|---|---|
+| Adaga | 144 ms (além da janela de "bom") | **0,000 ms** em 60 notas |
+| Lança | 60 ms adiantado | **0,000 ms** em 89 notas |
+| Espada | 45 ms | **0,000 ms** em 137 notas |
+
+Os BPM anotados foram trocados pelos medidos (Adaga 88 → 89,95; Espada 108 → 110), o que
+agora é seguro: sob o agendamento absoluto não existe mais o truncamento que os cancelava
+(D-93). `primeira_batida_ms` entrou em `fases_data` como dado da faixa.
+
+`o_audio_manager` passou a guardar a INSTÂNCIA da faixa além do asset, porque
+`audio_sound_get_track_position()` só responde a instância. O `Alarm_0` do spawner, que
+gerava as notas, foi removido — não sobrou nada dele.

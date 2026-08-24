@@ -5,7 +5,17 @@ if (o_controlador_geral.pausa) {
 switch (modo) {
 
     case 0: // viva
-        x -= velocidade;
+        // POSICAO DERIVADA DO RELOGIO DA FAIXA, nao integrada quadro a quadro.
+        // Integrar acumula erro de truncamento e de frame perdido; derivar nao
+        // acumula nada, porque cada quadro recalcula do zero contra o audio.
+        var _agora = ritmo_relogio();
+
+        if (t_alvo >= 0 && _agora >= 0) {
+            x = ritmo_x_da_nota(t_alvo, _agora, velocidade);
+        } else {
+            x -= velocidade;   // sem faixa tocando, segue no modo antigo
+        }
+
         image_index = tipo_seta;
 
         // A nota é dada como perdida assim que passa da janela de acerto — o mesmo

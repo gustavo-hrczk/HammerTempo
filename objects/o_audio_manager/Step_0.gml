@@ -35,6 +35,7 @@ if (is_fading_out && musica_atual != -1) {
         audio_stop_sound(musica_atual);
         audio_sound_gain(musica_atual, alvo_musica(), 0);
         musica_atual = -1;
+        musica_instancia = -1;
         is_fading_out = false;
     }
 }

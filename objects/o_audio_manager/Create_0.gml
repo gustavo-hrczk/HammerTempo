@@ -5,6 +5,11 @@ if (instance_number(object_index) > 1) {
 }
 
 musica_atual = -1;
+
+// ID da INSTANCIA em reproducao, nao do asset. audio_sound_get_track_position() so
+// responde a instancia, e e dela que sai o relogio de ritmo (ver ritmo_relogio).
+musica_instancia = -1;
+
 is_fading_out = false;
 fade_speed = 0;
 
@@ -48,7 +53,7 @@ play_music = function(musica_asset) {
     if (audio_is_playing(musica_asset)) { audio_stop_sound(musica_asset); }
 
     audio_sound_gain(musica_asset, alvo_musica(), 0);
-    audio_play_sound(musica_asset, 1, true);
+    musica_instancia = audio_play_sound(musica_asset, 1, true);
 
     musica_atual = musica_asset;
     is_fading_out = false;
@@ -86,7 +91,7 @@ play_music_crossfade = function(musica_asset, duracao_segundos = 0.5) {
     if (audio_is_playing(musica_asset)) { audio_stop_sound(musica_asset); }
 
     audio_sound_gain(musica_asset, 0, 0);
-    audio_play_sound(musica_asset, 1, true);
+    musica_instancia = audio_play_sound(musica_asset, 1, true);
 
     musica_atual = musica_asset;
     entrando = true;
@@ -113,6 +118,7 @@ stop_music = function() {
         audio_stop_sound(musica_atual);
         audio_sound_gain(musica_atual, alvo_musica(), 0); // deixa o asset pronto para a próxima vez
         musica_atual = -1;
+        musica_instancia = -1;
     }
 
     // Parar a música tem de parar TUDO. Sem isto, uma faixa em crossfade sobrevivia

@@ -182,3 +182,35 @@ function ritmo_impacto_bigorna(_tipo, _julgamento, _forca, _atraso) {
     _e.forca = _forca;
 }
 
+
+// =====================================================================
+// RELOGIO DE RITMO
+//
+// A posicao da propria faixa e a unica referencia que nao deriva: e o audio se
+// contando. O contador de frames deriva por truncamento e por frame perdido, e o
+// agendamento relativo (cada nota a partir da anterior) soma o erro por construcao.
+// Ver 06-RITMO-AUTOTRACK.md.
+// =====================================================================
+
+/// Posicao da faixa da fase, em segundos, ou -1 se nao ha faixa tocando.
+///
+/// Le a INSTANCIA, nao o asset: audio_sound_get_track_position() so responde a
+/// instancia devolvida por audio_play_sound.
+function ritmo_relogio() {
+    if (!instance_exists(o_audio_manager)) return -1;
+
+    var _i = o_audio_manager.musica_instancia;
+    if (_i == -1 || !audio_is_playing(_i)) return -1;
+
+    return audio_sound_get_track_position(_i);
+}
+
+/// Onde a nota deve estar AGORA, dado o instante em que ela precisa chegar a zona.
+///
+/// Posicao derivada do relogio em vez de integrada quadro a quadro. Como
+/// ritmo_erro_frames() calcula (x - LINHA) / velocidade, esta formula faz o erro de
+/// julgamento virar exatamente o erro de tempo contra a musica — o julgamento nao
+/// precisou mudar uma linha para ficar preciso.
+function ritmo_x_da_nota(_t_alvo, _agora, _velocidade) {
+    return RITMO_LINHA_X + (_t_alvo - _agora) * _velocidade * game_get_speed(gamespeed_fps);
+}
