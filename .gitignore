@@ -39,3 +39,6 @@ output/
 
 # Cache local do GameMaker
 cache/
+
+# Ambiente isolado das ferramentas de analise (recriavel com tools/README)
+tools/.venv/

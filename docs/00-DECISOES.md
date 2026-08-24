@@ -912,3 +912,31 @@ mão do jogador.
 
 A faísca antiga saiu do acerto perfeito. Ela disparava no instante da tecla e desfaria
 exatamente a sincronia que este bloco veio trazer.
+
+**D-92 · Escopo pronto para as variações de impacto.** Os oito efeitos separados de Bom e
+Perfeito chegam amanhã. `ritmo_sprite_impacto()` passou a receber **faixa e julgamento**, e
+os conjuntos moram numa tabela `[qualidade][faixa]` num lugar só. Hoje as três qualidades
+apontam para o mesmo conjunto base; amanhã é trocar uma linha por qualidade.
+
+A busca cai no conjunto de Perfeito quando a qualidade ainda não tem o seu, então os sprites
+podem entrar **um conjunto de cada vez** sem quebrar nada no meio do caminho. Nem o
+julgamento nem o desenho sabem quantos conjuntos existem.
+
+**D-93 · Diagnóstico do algoritmo de ritmo.** Estudo completo em `06-RITMO-AUTOTRACK.md`,
+medido nas faixas reais com ferramenta própria (`tools/`).
+
+O achado que muda o rumo: **a deriva quase não existe, e é por acidente.** Dois dos três BPM
+anotados estão errados (Adaga 88 contra 89,95 medidos; Espada 108 contra 110), mas o alarme
+do GameMaker trunca a fração da batida, e o truncamento encurta o intervalo quase exatamente
+na proporção em que o BPM errado o alonga. Na Adaga, +2,22% de erro no BPM contra −2,22% de
+truncamento dá −0,06%. **Corrigir só o BPM anotado pioraria o jogo**, porque removeria metade
+de um par que se cancela.
+
+O defeito real é um **deslocamento constante** da grade, `(1000 ms fixos + viagem da nota)
+mod batida`, que ninguém escolheu: 144 ms na Adaga, 540 ms na Lança, 45 ms na Espada. Na
+Adaga isso está **além da janela de "bom"** — quem toca no tempo da música erra a nota. E
+como depende do tempo de viagem, mexer na velocidade das notas muda o desalinhamento junto.
+
+A correção de melhor relação risco/ganho é a primeira da lista e não envolve auto-track:
+trocar o relógio de frames por `audio_sound_get_track_position()` e o agendamento relativo
+por instantes absolutos vindos de um mapa em dados.

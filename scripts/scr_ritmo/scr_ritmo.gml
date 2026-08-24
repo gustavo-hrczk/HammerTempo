@@ -117,17 +117,47 @@ function ritmo_nota_perdida(_nota) {
 #macro IMPACTO_ATRASO_NORMAL   4
 #macro IMPACTO_ATRASO_PERFEITO 5
 
-/// Sprite do impacto na cor da faixa. Os tipos vem do Instance Creation Code dos
-/// alvos em rm_forja: 0 baixo, 1 cima, 2 direita, 3 esquerda.
-function ritmo_sprite_impacto(_tipo) {
-    switch (_tipo) {
-        case 0: return s_impacto_baixo;   // amarelo
-        case 1: return s_impacto_cima;    // vermelho
-        case 2: return s_impacto_dir;     // azul
-        case 3: return s_impacto_esq;     // verde
+/// Sprite do impacto, por FAIXA e por QUALIDADE do acerto.
+///
+/// Hoje existe um conjunto so, usado nos tres julgamentos. Amanha entram os conjuntos
+/// separados de Bom e Perfeito, e a tabela abaixo e o unico lugar que muda: nem o
+/// julgamento nem o desenho sabem quantos conjuntos existem.
+///
+/// A tabela e [qualidade][faixa]. As faixas vem do Instance Creation Code dos alvos em
+/// rm_forja: 0 baixo, 1 cima, 2 direita, 3 esquerda. Trocar uma linha por sprites
+/// novos e tudo o que sera preciso.
+function ritmo_tabela_impacto() {
+    static _tabela = undefined;
+
+    if (is_undefined(_tabela)) {
+        // conjunto base, o unico que existe por enquanto
+        var _base = [s_impacto_baixo, s_impacto_cima, s_impacto_dir, s_impacto_esq];
+
+        _tabela = {};
+        _tabela[$ string(JULGAMENTO.BOM)]      = _base;   // <- trocar quando chegarem
+        _tabela[$ string(JULGAMENTO.OTIMO)]    = _base;
+        _tabela[$ string(JULGAMENTO.PERFEITO)] = _base;
     }
-    return s_impacto_cima;
+
+    return _tabela;
 }
+
+/// Sprite do impacto para uma faixa e um julgamento.
+///
+/// Cai no conjunto base se a qualidade ainda nao tiver conjunto proprio, entao os
+/// sprites novos podem entrar um de cada vez sem quebrar nada no meio do caminho.
+function ritmo_sprite_impacto(_tipo, _julgamento = JULGAMENTO.PERFEITO) {
+    var _tabela = ritmo_tabela_impacto();
+    var _chave = string(_julgamento);
+
+    var _conjunto = variable_struct_exists(_tabela, _chave)
+        ? _tabela[$ _chave]
+        : _tabela[$ string(JULGAMENTO.PERFEITO)];
+
+    if (_tipo < 0 || _tipo >= array_length(_conjunto)) return _conjunto[0];
+    return _conjunto[_tipo];
+}
+
 
 /// Agenda o impacto e o tremor da bigorna para o instante do CONTATO do martelo.
 ///
@@ -138,14 +168,14 @@ function ritmo_sprite_impacto(_tipo) {
 ///
 /// O alvo pressionado NAO espera: resposta de input tem de ser imediata, senao o
 /// jogo parece atrasado. Quem espera e o que representa o golpe.
-function ritmo_impacto_bigorna(_tipo, _forca, _atraso) {
+function ritmo_impacto_bigorna(_tipo, _julgamento, _forca, _atraso) {
     if (!instance_exists(o_bigorna)) exit;
 
     var _e = instance_create_layer(o_bigorna.x + IMPACTO_DX,
                                    o_bigorna.y + IMPACTO_DY,
                                    "Gameplay", o_impacto_bigorna);
 
-    _e.sprite_index = ritmo_sprite_impacto(_tipo);
+    _e.sprite_index = ritmo_sprite_impacto(_tipo, _julgamento);
     _e.image_xscale = IMPACTO_ESCALA;
     _e.image_yscale = IMPACTO_ESCALA;
     _e.atraso = _atraso;
