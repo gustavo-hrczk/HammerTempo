@@ -858,3 +858,31 @@ desse tipo que produziu a moldura errada do seletor (D-71).
 
 O objeto tem trava de vida de um segundo além do evento de fim de animação: animação parada
 nunca dispara o fim, e um efeito que não se destrói vira vazamento no meio da partida.
+
+**D-89 · `image_speed` multiplica, não define.** O impacto na bigorna não aparecia. Os quatro
+sprites foram gerados a partir do gabarito de `s_alvo_cima`, que declara `playbackSpeed: 0` —
+e declara de propósito, porque `o_buttons_forja` avança aqueles quadros na mão. Como
+`image_speed` no GameMaker **multiplica** a velocidade do próprio sprite, `0,6 x 0 = 0`: a
+animação ficava parada no primeiro quadro, que tem 21 px de tinta num campo de 48x48. O
+efeito estava lá, invisível, até a trava de vida o destruir um segundo depois.
+
+Os sprites passaram a declarar 30 quadros por segundo, como `s_notas_setas`, e o objeto usa
+`image_speed = 1` — 7 quadros em 0,23 s. **Copiar um gabarito traz junto as decisões dele**,
+e a decisão de `s_alvo_cima` era o oposto da que este efeito precisa.
+
+A trava de vida provou o seu valor: sem ela o efeito parado nunca dispararia o evento de fim
+de animação e cada acerto deixaria um objeto vivo para sempre.
+
+**D-90 · Auditoria da montagem de rm_forja.** Feita junto, a pedido. A ordem das camadas está
+correta e não era a causa: Gameplay (depth 0) na frente, bigorna (100), cenário e pergaminho
+(200), parallax (300) — o efeito desenha por cima de tudo.
+
+Dois achados sem relação com o defeito:
+
+`o_hitbox_perfeito`, `o_hitbox_bom` e `o_zona_erro` são restos do julgamento por sobreposição
+de máscaras (auditoria GP-01), que virou julgamento por tempo. Nenhum código os referencia
+mais — os três só fazem `draw_self()` durante o RITMO, ou seja, hoje são **decoração**: a
+marca da zona de acerto e a zona morta à esquerda. Não são código morto, mas os nomes mentem.
+
+`o_hitbox_bom` tem `visible: false`, então seu Draw nunca roda: é uma instância que não faz
+nada na sala, e o sprite `o_zona_bom` não é desenhado por ninguém.
