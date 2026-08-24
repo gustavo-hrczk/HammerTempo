@@ -98,6 +98,17 @@ function ui_item_menu(_cx, _y, _texto, _selecionado, _valor = "", _largura = UI_
     }
 }
 
+/// Moldura de altura livre, para telas que são TABELA e não lista de itens — a de
+/// recordes tem dez linhas de 32 px, que nenhuma contagem de itens de menu descreve.
+/// Devolve o Y do topo, que é de onde a tabela se organiza.
+function ui_painel_livre(_largura, _altura, _offset_y = 0) {
+    var _x = (display_get_gui_width() / 2) - (_largura / 2);
+    var _y = (display_get_gui_height() / 2) + _offset_y - (_altura / 2);
+
+    draw_sprite_stretched(s_menu_background_panel, 0, _x, _y, _largura, _altura);
+    return _y;
+}
+
 /// Alpha oscilante usado nos destaques de menu.
 function ui_pulse_alpha(_min = 0.15, _max = 0.5, _velocidade = 0.004) {
     var _seno = (sin(current_time * _velocidade) + 1) / 2;

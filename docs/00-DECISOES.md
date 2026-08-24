@@ -718,3 +718,22 @@ regra de fonte de pixel da D-33.
 
 O SHIFT+F3 que zera recordes passou a limpar o placar junto: deixar o placar cheio com os
 recordes zerados daria duas verdades diferentes na mesma tela.
+
+**D-81 · Tela de Recordes.** Segundo passo da Sprint 4, e o que a D-52 já previa: a lista
+completa vai para uma tela própria no menu, enquanto o resumo continua no cartão do seletor,
+que é onde ele funciona como alvo — no momento em que o jogador escolhe a fase.
+
+É sobreposição, como as telas de controles e de iniciais, e pelo mesmo motivo medido: a
+tabela tem 480 px de altura e a tinta do logo desce até y=400. Título dentro do painel.
+
+`ui_painel_livre()` entrou no `scr_ui` porque `ui_painel_menu()` calcula altura por
+contagem de itens, e dez linhas de 32 px não são uma lista de itens de menu. Mesma moldura,
+mesma família visual, altura declarada.
+
+Colunas medidas: "10." ocupa 24 px, "999999" ocupa 60, "100%" ocupa 43. As posições deixam
+80 px entre o nome e a pontuação — é a folga que impede um nome de três letras de encostar
+num número de seis dígitos.
+
+Duas escolhas de leitura: **só o primeiro lugar em cobre**, porque a tabela inteira colorida
+não destacaria ninguém; e as **setas laterais só aparecem quando há para onde ir**, para não
+prometerem navegação que não existe se um dia houver uma fase só.

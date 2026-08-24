@@ -1,3 +1,9 @@
+// A tabela de recordes ocupa o mesmo lugar do painel, com outra altura: desenhar as
+// duas empilharia moldura sobre moldura.
+if (instance_exists(o_tela_recordes)) {
+    exit;
+}
+
 // Logo, moldura e itens vêm todos do padrão em scr_ui: o menu, as opções e a pausa
 // precisam ser a mesma tela com conteúdo diferente, e não três telas parecidas.
 var _cx = display_get_gui_width() / 2;

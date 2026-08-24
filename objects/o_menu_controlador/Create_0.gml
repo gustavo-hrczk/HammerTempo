@@ -4,5 +4,5 @@
 // volume cheio no escuro soava abrupto.
 o_audio_manager.play_music_crossfade(snd_tema, 1.2);
 
-opcoes_menu = ["Começar Jogo", "Opções", "Créditos", "Sair do Jogo"];
+opcoes_menu = ["Começar Jogo", "Recordes", "Opções", "Créditos", "Sair do Jogo"];
 opcao_selecionada = 0;

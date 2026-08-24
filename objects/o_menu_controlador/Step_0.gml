@@ -3,6 +3,11 @@ if (fluxo_ocupado()) {
     exit;
 }
 
+// Com a tabela de recordes aberta, ela é quem responde ao input.
+if (instance_exists(o_tela_recordes)) {
+    exit;
+}
+
 // --- CONTROLE DE NAVEGAÇÃO ---
 var _move = input_eixo_v();
 
@@ -39,17 +44,23 @@ if (input_pressed(ACAO.CONFIRMAR)) {
             ir_para_sala(rm_forja, 0, false);
             break;
 
-        case 1: // Opções
+        case 1: // Recordes
+            // Sobreposição, como as telas de controles e de tutorial: a tabela tem
+            // altura própria e não caberia sob o logo do menu.
+            instance_create_depth(0, 0, -9000, o_tela_recordes);
+            break;
+
+        case 2: // Opções
             // sem fade: as duas telas compartilham logo e moldura, então o corte
             // seco lê como troca de conteúdo, e o fade leria como piscada
             ir_para_sala(rm_opcoes, 0, false);
             break;
 
-        case 2: // Créditos
+        case 3: // Créditos
             ir_para_sala(rm_creditos);
             break;
 
-        case 3: // Sair do Jogo
+        case 4: // Sair do Jogo
             game_end();
             break;
     }
