@@ -1003,3 +1003,25 @@ perfeito — é refino de medição, não correção de defeito.
 `snd_fase_04` mede 115,00 BPM, primeira batida em 220,6 ms, confiança 7,7x. Está registrada
 no projeto e não é usada por nenhuma fase; o conjunto de armas `s_machado01..05` também está
 completo e ocioso.
+
+**D-96 · Fase 4, montada pelo processo de medição.** "Forjar Machado" é a primeira fase cujo
+andamento não foi anotado a ouvido: 115,00 BPM e primeira batida em 220,6 ms saíram de
+`tools/analisar_faixa.py`, com confiança de 7,7x acima do piso. A faixa (`snd_fase_04`) e o
+conjunto de armas (`s_machado01..05`) já estavam no projeto, sem uso.
+
+Dificuldade "Mestre", acima de Difícil, com velocidade 6 — que dá 3,28 s de leitura visível
+contra 3,94 s da Espada. A colcheia a 115 BPM mede 261 ms, e a martelada agora leva 200 ms
+(D-91), então o ferreiro consegue golpear entre duas notas rápidas.
+
+**D-97 · O seletor pagina de três em três.** Cabem três cartões de 360 px em 1280. Com a
+quarta fase, o quarto cartão nascia em x=1360 — fora da tela. Em vez de espremer, a lista
+pagina.
+
+A página é **derivada da seleção**, não guardada como estado próprio: `opcao_selecionada div
+POR_PAGINA`. Assim o direcional vira a página sozinho ao cruzar a borda, sem tecla nova para
+aprender, e não existe estado inconsistente possível — um cursor fora da página visível não
+tem como acontecer.
+
+Setas nas bordas do pergaminho (x 60 e 1220, fora dos 134..1146 que os cartões ocupam), com
+pulso suave, só quando há mais de uma página. Pontos indicadores embaixo foram a primeira
+ideia e não cabem: a linha do recorde vai até y 711 e o painel acaba em 720.

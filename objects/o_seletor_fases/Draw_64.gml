@@ -41,12 +41,19 @@ draw_set_font(f_padrao);
 draw_set_color(_tinta);
 draw_text(_cx, _y_titulo, "Selecione a arma para forjar");
 
-// --- cartões ---
-var _inicio_x = _cx - (((min(3, total_opcoes) - 1) * _gap_coluna) / 2);
+// --- cartões da página atual ---
+// A página vem da seleção, não de um estado próprio: assim o direcional vira a
+// página sozinho ao cruzar a borda, e não existe um "cursor fora da página" possível.
+var _pagina = opcao_selecionada div POR_PAGINA;
+var _primeiro = _pagina * POR_PAGINA;
+var _ultimo = min(_primeiro + POR_PAGINA, total_opcoes) - 1;
+var _nesta = _ultimo - _primeiro + 1;
 
-for (var i = 0; i < total_opcoes; i++) {
+var _inicio_x = _cx - (((_nesta - 1) * _gap_coluna) / 2);
 
-    var _pos_x = _inicio_x + (i * _gap_coluna);
+for (var i = _primeiro; i <= _ultimo; i++) {
+
+    var _pos_x = _inicio_x + ((i - _primeiro) * _gap_coluna);
     var _fase = opcoes_fase[i];
     var _selecionada = (i == opcao_selecionada);
 
@@ -141,6 +148,28 @@ for (var i = 0; i < total_opcoes; i++) {
     }
 
     draw_set_color(_tinta);
+}
+
+// --- SETAS DE PÁGINA ---
+// Nas bordas do pergaminho, fora da largura dos cartões (que ocupam 134..1146).
+// Pontos embaixo foi a primeira ideia e não cabe: a linha do recorde vai até 711 e o
+// painel acaba em 720. Só aparecem com mais de uma página, e a navegação dá a volta,
+// então as duas sempre valem.
+if (total_paginas > 1) {
+    var _y_seta = 600;
+    var _pulso = 0.55 + 0.45 * ((sin(current_time * 0.004) + 1) / 2);
+
+    draw_set_font(f_padrao);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_set_color(UI_COR_COBRE);
+    draw_set_alpha(_pulso);
+
+    // escala inteira e posição inteira, pela regra da fonte de pixel (D-33)
+    draw_text_transformed(60,   _y_seta, "<", 2, 2, 0);
+    draw_text_transformed(1220, _y_seta, ">", 2, 2, 0);
+
+    draw_set_alpha(1);
 }
 
 ui_reset();

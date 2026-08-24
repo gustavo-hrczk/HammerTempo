@@ -203,6 +203,27 @@ fases_data[2] = {
     ]
 };
 
+// Fase 4: Machado (Mestre - BPM: 115)
+// Primeira fase montada com o processo de medicao: BPM e primeira batida vieram de
+// tools/analisar_faixa.py, com confianca de 7,7x acima do piso de ruido. A faixa e o
+// conjunto de armas ja estavam no projeto, sem uso.
+fases_data[3] = {
+    nome: "Forjar Machado",
+    dificuldade: "Mestre",
+    musica_fase: snd_fase_04,
+    sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
+    duracao_segundos: 60,
+    velocidade_notas: 6,
+    tipos_seta_permitidos: 4,
+    stats_limite_sequencia_errada: 6,
+    beat_tempo_bpm: 115,
+    primeira_batida_ms: 220.6,
+    ritmo_patterns: [
+        [1, 0.5, 0.5, 1, 1],
+        [1, 1, 0.5, 0.5, 0.5, 0.5]
+    ]
+};
+
 // Fase 4: Machado (Extremo) e Modo Infinito entram na Sprint 7, junto com o
 // novo pipeline de mapeamento rítmico. Os assets (snd_fase_04, s_machado01..05)
 // já existem no projeto.
