@@ -737,3 +737,32 @@ num número de seis dígitos.
 Duas escolhas de leitura: **só o primeiro lugar em cobre**, porque a tabela inteira colorida
 não destacaria ninguém; e as **setas laterais só aparecem quando há para onde ir**, para não
 prometerem navegação que não existe se um dia houver uma fase só.
+
+**D-82 · Nome do placar com espaçamento fixo.** As maiúsculas de `f_padrao_pequena` variam
+de 8 px ("I") a 15 px ("M"): um "WWW" mede 42 px e um "III" mede 24 — **18 px de diferença**.
+Desenhado como string única, cada nome ficava com uma largura diferente e as três colunas de
+letras dançavam de uma linha para outra. Placar é tabela, e tabela pede coluna.
+
+`placar_desenhar_nome()` centra cada letra num slot de 18 px, com posição inteira pela regra
+de fonte de pixel (D-33). O nome passa a ocupar sempre 54 px, quaisquer que sejam as letras.
+
+**D-83 · Faixa de crossfade órfã.** Três estados inconsistentes no `o_audio_manager`, todos
+com o mesmo efeito: uma faixa continuar tocando **em laço** sem ninguém para pará-la, por
+baixo da próxima.
+
+`play_music_crossfade()` sobrescrevia `musica_saindo` sem parar a faixa anterior. Duas trocas
+de tela em sequência rápida — que é exatamente o que acontece ao sair de uma fase — deixavam
+a primeira faixa tocando para sempre no ganho em que estivesse. Agora a anterior é parada
+antes de a nova assumir o lugar.
+
+`stop_music()` zerava `musica_atual` e ignorava `musica_saindo`, então uma faixa em crossfade
+sobrevivia ao "pare tudo".
+
+`pausar_musica()` / `retomar_musica()` só congelavam `musica_atual`. A faixa em crossfade
+seguia correndo durante a pausa, e o jogador voltava de uma pausa longa com a transição já
+terminada.
+
+Como o gatilho exato não foi reproduzido em leitura de código, o overlay de debug ganhou a
+linha `saindo:` com asset, estado e ganho da faixa em crossfade, mais os marcadores
+`[entrando]` e `[saindo]` na linha da música. Se o defeito reaparecer, ele agora é visível
+em vez de dedutível.

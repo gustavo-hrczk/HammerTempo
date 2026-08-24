@@ -68,8 +68,9 @@ if (array_length(_lista) == 0) {
         draw_set_halign(fa_right);
         draw_text(_col_pos, _y, string(i + 1) + ".");
 
-        draw_set_halign(fa_left);
-        draw_text(_col_nome, _y, _e.nome);
+        // espaçamento fixo por letra, senão as três colunas do nome dançam de uma
+        // linha para outra (ver placar_desenhar_nome)
+        placar_desenhar_nome(_col_nome, _y, _e.nome);
 
         draw_set_halign(fa_right);
         draw_text(_col_pontos, _y, string(_e.pontos));

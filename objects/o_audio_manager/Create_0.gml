@@ -64,12 +64,25 @@ play_music_crossfade = function(musica_asset, duracao_segundos = 0.5) {
 
     var _frames = max(1, duracao_segundos * room_speed);
 
+    // Uma faixa que JÁ estava saindo não pode ser simplesmente esquecida. Antes o
+    // campo era sobrescrito e a faixa anterior ficava tocando em laço para sempre,
+    // no ganho em que estivesse, sem ninguém para pará-la.
+    if (musica_saindo != -1) {
+        audio_stop_sound(musica_saindo);
+        audio_sound_gain(musica_saindo, alvo_musica(), 0);
+        musica_saindo = -1;
+    }
+
     // a faixa atual passa a sair de cena
     if (musica_atual != -1 && audio_is_playing(musica_atual) && musica_atual != musica_asset) {
         musica_saindo = musica_atual;
         saindo_speed = audio_sound_get_gain(musica_saindo) / _frames;
     }
 
+    // A faixa que ENTRA nunca pode ser a que está saindo: o Step reduziria o ganho
+    // da instância recém-criada e a pararia no meio, que é a música "quebrando" ao
+    // trocar de tela. Como musica_saindo já foi zerado acima, sobra só garantir que
+    // não existe instância antiga do mesmo asset.
     if (audio_is_playing(musica_asset)) { audio_stop_sound(musica_asset); }
 
     audio_sound_gain(musica_asset, 0, 0);
@@ -82,12 +95,17 @@ play_music_crossfade = function(musica_asset, duracao_segundos = 0.5) {
 }
 
 /// Congela e descongela a faixa atual, para a pausa da partida.
+/// A pausa congela também a faixa em crossfade: deixá-la correndo fazia o jogador
+/// voltar de uma pausa longa com a transição já terminada, e às vezes com a faixa
+/// anterior tendo tocado sozinha o tempo todo.
 pausar_musica = function() {
-    if (musica_atual != -1) { audio_pause_sound(musica_atual); }
+    if (musica_atual != -1)  { audio_pause_sound(musica_atual); }
+    if (musica_saindo != -1) { audio_pause_sound(musica_saindo); }
 }
 
 retomar_musica = function() {
-    if (musica_atual != -1) { audio_resume_sound(musica_atual); }
+    if (musica_atual != -1)  { audio_resume_sound(musica_atual); }
+    if (musica_saindo != -1) { audio_resume_sound(musica_saindo); }
 }
 
 stop_music = function() {
@@ -96,6 +114,15 @@ stop_music = function() {
         audio_sound_gain(musica_atual, alvo_musica(), 0); // deixa o asset pronto para a próxima vez
         musica_atual = -1;
     }
+
+    // Parar a música tem de parar TUDO. Sem isto, uma faixa em crossfade sobrevivia
+    // ao stop e continuava em laço por baixo da próxima.
+    if (musica_saindo != -1) {
+        audio_stop_sound(musica_saindo);
+        audio_sound_gain(musica_saindo, alvo_musica(), 0);
+        musica_saindo = -1;
+    }
+
     is_fading_out = false;
     entrando = false;
 }

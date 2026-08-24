@@ -84,3 +84,26 @@ function placar_limpar() {
 function placar_letra(_indice_letra) {
     return string_char_at(PLACAR_LETRAS, _indice_letra + 1);
 }
+
+/// Desenha um nome com espaçamento FIXO por letra.
+///
+/// Em f_padrao_pequena as maiúsculas variam de 8 px ("I") a 15 px ("M"): um "WWW"
+/// mede 18 px a mais que um "III". Desenhado como string única, cada nome fica com
+/// uma largura diferente e as três colunas de letras não se alinham de uma linha
+/// para outra — o placar é uma tabela, e tabela pede coluna.
+///
+/// Aqui cada letra é centrada num slot de largura fixa. O nome passa a ocupar sempre
+/// o mesmo espaço, independentemente das letras.
+///
+/// `_x` é a borda ESQUERDA do bloco do nome.
+function placar_desenhar_nome(_x, _y, _nome, _slot = 18) {
+    var _halign = draw_get_halign();
+    draw_set_halign(fa_center);
+
+    for (var i = 1; i <= string_length(_nome); i++) {
+        // posição inteira: Kobold 7 é fonte de pixel (D-33)
+        draw_text(floor(_x + ((i - 0.5) * _slot)), _y, string_char_at(_nome, i));
+    }
+
+    draw_set_halign(_halign);
+}

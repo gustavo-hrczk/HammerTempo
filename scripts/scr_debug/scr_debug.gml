@@ -26,9 +26,28 @@ function debug_texto_musica() {
     var _m = o_audio_manager.musica_atual;
     if (_m == -1) return "nenhuma";
 
-    return audio_get_name(_m) +
+    var _txt = audio_get_name(_m) +
         (audio_is_playing(_m) ? " tocando" : " PARADA") +
         " gain " + string_format(audio_sound_get_gain(_m), 1, 2);
+
+    if (o_audio_manager.entrando)     _txt += " [entrando]";
+    if (o_audio_manager.is_fading_out) _txt += " [saindo]";
+
+    return _txt;
+}
+
+/// Estado da faixa em crossfade. Foi criada para caçar a quebra de laço do tema: uma
+/// faixa esquecida aqui continua tocando por baixo da próxima, e não havia como ver
+/// isso acontecendo.
+function debug_texto_crossfade() {
+    if (!instance_exists(o_audio_manager)) return "-";
+
+    var _s = o_audio_manager.musica_saindo;
+    if (_s == -1) return "nenhuma";
+
+    return audio_get_name(_s) +
+        (audio_is_playing(_s) ? " tocando" : " PARADA") +
+        " gain " + string_format(audio_sound_get_gain(_s), 1, 2);
 }
 
 /// Apaga os recordes gravados, mantendo as opcoes.
@@ -78,6 +97,7 @@ function debug_draw() {
         "último acerto: " + global.debug_ultimo_julgamento +
             " (" + string_format(global.debug_ultimo_erro_ms, 1, 1) + " ms)",
         "música: " + debug_texto_musica(),
+        "saindo: " + debug_texto_crossfade(),
         "recordes gravados: " + string(debug_total_recordes()) +
             "   [SHIFT+F3 zera]",
         "input: " + global.input_dispositivo +
