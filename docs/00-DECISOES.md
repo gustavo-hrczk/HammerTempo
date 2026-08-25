@@ -1444,3 +1444,49 @@ média sobe de 2,96 para 3,64 linhas distintas.
 O salto extremo subiu de 0% para 6%, e essa troca é declarada: cobrir a pista inteira exige
 atravessá-la. Continua bem abaixo dos 15% do sorteio uniforme, e a maior parte da travessia
 acontece por escada, um degrau por vez.
+
+**D-123 · A métrica de aderência estava matando a personalidade.** A observação foi: as fases
+soam coesas mas sem identidade, e a Espada é a que tem mais personalidade. Medindo o que as
+distingue:
+
+| Fase | Valores distintos | Variedade | Fecha no compasso? |
+|---|---|---|---|
+| Espada | 2 | 0,245 | **sim** |
+| Lança | 2 | 0,786 | não |
+| Machado / Alabarda | **1** | **0,000** | não |
+
+A Espada tem **forma** — longa-longa-curta-curta-longa — e fecha no compasso, então repete
+idêntica e vira um gancho reconhecível. Machado e Alabarda eram semínima corrida: variedade
+zero, um metrônomo.
+
+Isso corrige a D-109 pela metade. Padrão que não fecha no compasso evita o passo mecânico,
+mas **rotação disfarça a ausência de forma, não cria identidade**.
+
+E a causa raiz é a métrica. Testado na Alabarda: semínima corrida mede **12,75x** de
+aderência, e qualquer motivo com forma cai para 9,4-10,4x. **A métrica premia dobrar o tambor
+e penaliza contracanto** — maximizá-la produzia metrônomos por construção.
+
+A Espada, a de mais personalidade, mede 8,54x. Ou seja: aderência é **piso**, não objetivo.
+Acima de ~8,5x o mapa está dentro da música; daí para cima quem escolhe é a forma.
+
+**D-124 · Uma identidade por fase, sem sorteio.** O sorteio entre padrões fazia a mesma fase
+soar diferente a cada partida — o oposto de identidade, porque o jogador nunca chegava a
+reconhecer a frase como sendo daquela música. Cada fase passou a ter **um** motivo fixo.
+
+| Fase | Motivo | Caráter | Aderência |
+|---|---|---|---|
+| Adaga | `[1, .5, .5, 1, .5, .5]` | galope | 11,88x |
+| Lança | `[.5 x8, 3]` | rajada e silêncio | 11,19x |
+| Maça | `[.5, .5, 1, .5, .5, 1, 1]` | célula do saltarello | 8,68x |
+| Machado | `[1, 1, .5, .5, 1, 1, 1]` | marcha com tropeço | 9,73x |
+| Espada | `[1, 1, .5, .5, 1]` | **a referência**, intocada | 8,54x |
+| Alabarda | `[1, 1, .5, .5, 1, 2]` | forma com respiro | 10,68x |
+
+A Adaga sobe de 1,50 para 2,23 notas/s — era a queixa de ter ficado agradável e sem
+personalidade ao perder notas. A Alabarda mantém densidade (2,97 contra 2,94) e folga na
+pista (96 px), mas com variedade 0,500, o dobro da Espada.
+
+O movimento também ganhou caráter: `figuras` traz pesos de [escada, varredura, alternar,
+repetir] por fase. A Adaga pende para alternar, porque duas faixas não têm o que atravessar;
+o Machado marcha em escada; a Alabarda varre a pista de ponta a ponta, que é o que dá escala
+ao nível Mestre. Quem não declara herda o perfil da Espada.

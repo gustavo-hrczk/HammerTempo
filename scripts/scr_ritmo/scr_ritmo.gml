@@ -244,21 +244,35 @@ function ritmo_linhas_permitidas(_tipos) {
 
 enum FIGURA { REPETIR, ESCADA, ALTERNAR, VARREDURA }
 
-/// Sorteia a proxima figura e quantas notas ela dura.
+/// Sorteia a proxima figura, com pesos da FASE.
 ///
-/// Os pesos foram ajustados por medicao. Na primeira versao, REPETIR e ALTERNAR
-/// somavam 58% e as duas ficam presas em uma ou duas linhas — o resultado eram 74%
-/// das notas nas duas linhas do meio, com os extremos em 14% e 11%.
+/// Os pesos sao [escada, varredura, alternar, repetir], em porcentagem. Eles dao
+/// caracter de MOVIMENTO a cada fase: uma anda em escada, outra varre a pista de
+/// ponta a ponta, outra alterna. Sem isso as seis fases se moviam igual, e a
+/// identidade ficava so no ritmo.
 ///
-/// Agora as figuras que ATRAVESSAM a pista (escada e varredura) somam 58%, e a
-/// distribuicao fica em 24/28/26/21%.
-function ritmo_sortear_figura() {
+/// Escada e varredura ATRAVESSAM a pista; alternar e repetir ficam em uma regiao.
+/// Uma fase de 2 faixas nao tem o que atravessar, entao pende para alternar.
+function ritmo_sortear_figura(_pesos) {
     var _r = irandom(99);
+    var _acc = _pesos[0];
 
-    if (_r < 34) return { tipo: FIGURA.ESCADA,    notas: irandom_range(4, 7) };
-    if (_r < 58) return { tipo: FIGURA.VARREDURA, notas: 0 };   // duracao vem do numero de faixas
-    if (_r < 82) return { tipo: FIGURA.ALTERNAR,  notas: irandom_range(4, 6) };
+    if (_r < _acc) return { tipo: FIGURA.ESCADA, notas: irandom_range(4, 7) };
+
+    _acc += _pesos[1];
+    if (_r < _acc) return { tipo: FIGURA.VARREDURA, notas: 0 };
+
+    _acc += _pesos[2];
+    if (_r < _acc) return { tipo: FIGURA.ALTERNAR, notas: irandom_range(4, 6) };
 
     return { tipo: FIGURA.REPETIR, notas: irandom_range(2, 3) };
 }
+
+/// Pesos de figura de uma fase, com o perfil da Espada como padrao — ela e a
+/// referencia de personalidade do jogo.
+function ritmo_pesos_figura(_fase) {
+    if (variable_struct_exists(_fase, "figuras")) return _fase.figuras;
+    return [34, 24, 24, 18];
+}
+
 

@@ -184,11 +184,17 @@ fases_data[0] = {
     stats_limite_sequencia_errada: 4,
     beat_tempo_bpm: 89.99,
     primeira_batida_ms: 290.2,
+    // GALOPE. Longa-curta-curta, repetido. A fase tinha [1,1,1,1] — variedade zero, um
+    // metronomo lento. Densidade sobe de 1,50 para 2,23 notas/s, que era a queixa de
+    // ter ficado agradavel e sem personalidade. Aderencia 11,88x.
+    //
+    // Duas faixas nao tem o que atravessar, entao o movimento pende para ALTERNAR.
     ritmo_patterns: [
-        [1, 1, 1, 1],
-        [1, 0.5, 0.5, 2],
-        [1, 1, 0.5, 0.5, 0.5, 0.5]
-    ]
+        [1, 0.5, 0.5, 1, 0.5, 0.5]
+    ],
+
+    // pesos de figura: [escada, varredura, alternar, repetir]
+    figuras: [10, 10, 60, 20]
 };
 
 // Aprendiz - 3 faixas
@@ -205,9 +211,16 @@ fases_data[1] = {
     stats_limite_sequencia_errada: 5,
     beat_tempo_bpm: 100,
     primeira_batida_ms: 592.1,
+    // RAJADA E SILENCIO. Oito colcheias seguidas e tres tempos de nada: variedade 0,786,
+    // a maior do jogo. Ja tinha identidade e fica como esta.
+    //
+    // O movimento acompanha: varre a pista na rajada e segura na pausa.
     ritmo_patterns: [
         [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 3]
-    ]
+    ],
+
+    // pesos de figura: [escada, varredura, alternar, repetir]
+    figuras: [20, 30, 20, 30]
 };
 
 // Adepto - 3 faixas, mas 45 s de exigencia continua | Saltarello II
@@ -226,10 +239,17 @@ fases_data[2] = {
     beat_tempo_bpm: 99.99,
     primeira_batida_ms: 348.3,
     primeira_nota_seg: 8.0,
+    // CELULA DO SALTARELLO. Colcheia-colcheia-seminima, que e a figura caracteristica da
+    // danca, com uma seminima de sobra que impede o padrao de fechar no compasso.
+    // Aderencia 8,68x, acima do piso da Espada.
+    //
+    // Movimento em ESCADA, que combina com o balanco da danca.
     ritmo_patterns: [
-        [1, 1, 1, 0.5, 0.5, 1, 0.5, 0.5],
-        [1, 1, 1, 1, 0.5, 0.5]
-    ]
+        [0.5, 0.5, 1, 0.5, 0.5, 1, 1]
+    ],
+
+    // pesos de figura: [escada, varredura, alternar, repetir]
+    figuras: [45, 15, 25, 15]
 };
 
 // Veterano - 4 faixas | Il Trotto
@@ -248,10 +268,17 @@ fases_data[3] = {
     stats_limite_sequencia_errada: 6,
     beat_tempo_bpm: 130.01,
     primeira_batida_ms: 0,
+    // MARCHA COM TROPECO. A faixa e semininma pura, e o martelo entrava dobrando o
+    // tambor — variedade zero. Agora ele insere um par de colcheias no meio da marcha:
+    // contracanto, nao copia. Aderencia 9,73x.
+    //
+    // Movimento em ESCADA, o mais marcial dos quatro.
     ritmo_patterns: [
-        [1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 2, 1, 1, 1]
-    ]
+        [1, 1, 0.5, 0.5, 1, 1, 1]
+    ],
+
+    // pesos de figura: [escada, varredura, alternar, repetir]
+    figuras: [50, 15, 20, 15]
 };
 
 // Especialista - 4 faixas, a maior densidade do jogo
@@ -268,9 +295,16 @@ fases_data[4] = {
     stats_limite_sequencia_errada: 6,
     beat_tempo_bpm: 110,
     primeira_batida_ms: 383.1,
+    // A REFERENCIA. Este e o motivo que voce apontou como o de maior personalidade, e
+    // ele fecha no compasso de proposito: repetido identico a cada 4 tempos, vira um
+    // gancho reconhecivel. Fica intocado, e os pesos de figura dele sao o padrao das
+    // fases que nao declaram os seus.
     ritmo_patterns: [
         [1, 1, 0.5, 0.5, 1]
-    ]
+    ],
+
+    // pesos de figura: [escada, varredura, alternar, repetir]
+    figuras: [34, 24, 24, 18]
 };
 
 // Mestre - 4 faixas, a maior densidade e a maior velocidade do jogo
@@ -312,10 +346,19 @@ fases_data[5] = {
     stats_limite_sequencia_errada: 6,
     beat_tempo_bpm: 175.02,
     primeira_batida_ms: 0,
+    // FORMA COM RESPIRO. Semininma corrida dava 12,75x de aderencia e variedade ZERO — a
+    // metrica premiava dobrar o tambor, e foi ela que empurrou esta fase para o
+    // metronomo. Este motivo mantem a densidade (2,97 contra 2,94 n/s) e a folga na
+    // pista (96 px), com variedade 0,500 — o dobro da Espada. Aderencia 10,68x.
+    //
+    // Movimento em VARREDURA: a 175 BPM a pista atravessada de ponta a ponta e o que
+    // da escala ao nivel Mestre.
     ritmo_patterns: [
-        [1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 2, 1, 1, 1, 1]
-    ]
+        [1, 1, 0.5, 0.5, 1, 2]
+    ],
+
+    // pesos de figura: [escada, varredura, alternar, repetir]
+    figuras: [20, 45, 20, 15]
 };
 
 // Fase 4: Machado (Extremo) e Modo Infinito entram na Sprint 7, junto com o

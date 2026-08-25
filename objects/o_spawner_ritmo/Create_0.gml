@@ -35,8 +35,10 @@ beat_seg = 60 / _bpm;
 viagem_seg = (x - RITMO_LINHA_X) / velocidade_das_notas / room_speed;
 
 // Escolhe aleatoriamente um dos padroes de ritmo definidos para a fase
-var _patterns = _dados_fase.ritmo_patterns;
-meu_pattern_atual = _patterns[irandom(array_length(_patterns) - 1)];
+// UM motivo por fase, sem sorteio. O sorteio entre padroes fazia a mesma fase soar
+// diferente a cada partida, o que e o oposto de identidade: o jogador nunca chegava
+// a reconhecer a frase como sendo daquela musica.
+meu_pattern_atual = _dados_fase.ritmo_patterns[0];
 pattern_index = 0;
 
 // A primeira nota chega numa BATIDA DE VERDADE da faixa, e nao 1000 ms fixos depois
@@ -67,10 +69,11 @@ proximo_t = _fase_batida + (_batidas * beat_seg);
 // desce, alterna —, que e como uma linha de percussao se move.
 // =================================================================
 linhas = ritmo_linhas_permitidas(tipos_permitidos);
+pesos_figura = ritmo_pesos_figura(_dados_fase);
 linha_pos = irandom(array_length(linhas) - 1);
 linha_dir = choose(-1, 1);
 
-figura = ritmo_sortear_figura();
+figura = ritmo_sortear_figura(pesos_figura);
 figura_resta = figura.notas;
 
 // Historico curto das linhas usadas. E ele que faz cada figura NOVA comecar onde a
@@ -104,7 +107,7 @@ proxima_faixa = function() {
     var _n = array_length(linhas);
 
     if (figura_resta <= 0) {
-        figura = ritmo_sortear_figura();
+        figura = ritmo_sortear_figura(pesos_figura);
 
         // TODA figura nova comeca na linha mais livre, nao onde a anterior parou.
         // Esta e a mudanca que tirou a sequencia do miolo: antes so o SALTO
