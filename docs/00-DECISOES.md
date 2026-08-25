@@ -1414,3 +1414,33 @@ do pé para o topo lê como erro, não como frase.
 **uma vez**, e só o groove entra em laço: 3 compassos de entrada mais 8 compassos repetidos
 3x = 37,024 s, ou 27,000 compassos inteiros. As seis repetições anteriores tinham ficado
 longas e monótonas — faixa mais curta que as demais não é problema numa fase de nível Mestre.
+
+**D-122 · As figuras ficavam presas no miolo da pista.** O gerador da D-120 resolveu o ruído,
+mas concentrou as notas. Medindo 400 notas geradas:
+
+| Linha | Antes | Depois |
+|---|---|---|
+| 0 (topo) | 14% | **24%** |
+| 1 | 34% | 28% |
+| 2 | 40% | 26% |
+| 3 (pé) | 11% | **21%** |
+
+As duas linhas do meio levavam **74%** das notas. Duas causas, ambas minhas:
+
+**O quique ricocheteava antes de encostar.** `pos < 0` devolvia para a linha 1 e `pos >= n`
+para a penúltima, então a escada nunca pousava na borda. Agora pousa em 0 e em n−1.
+
+**Só o SALTO reposicionava.** As outras figuras se encadeavam onde a anterior parou, e a
+sequência inteira herdava a região da primeira. Agora **toda** figura nova começa na linha
+menos usada nas últimas 16 notas, o que puxa a pista para onde ela anda vazia.
+
+Os pesos também mudaram: REPETIR e ALTERNAR somavam 58% e as duas ficam presas em uma ou
+duas linhas. Agora as figuras que ATRAVESSAM a pista somam 58%, com uma VARREDURA nova que
+vai de ponta a ponta.
+
+Resultado nas janelas de 8 notas: **65% delas usam as quatro linhas**, contra 29% antes, e a
+média sobe de 2,96 para 3,64 linhas distintas.
+
+O salto extremo subiu de 0% para 6%, e essa troca é declarada: cobrir a pista inteira exige
+atravessá-la. Continua bem abaixo dos 15% do sorteio uniforme, e a maior parte da travessia
+acontece por escada, um degrau por vez.

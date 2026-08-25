@@ -73,45 +73,88 @@ linha_dir = choose(-1, 1);
 figura = ritmo_sortear_figura();
 figura_resta = figura.notas;
 
+// Historico curto das linhas usadas. E ele que faz cada figura NOVA comecar onde a
+// pista anda vazia: sem isso as figuras se encadeavam onde a anterior parou, e a
+// sequencia inteira ficava presa no miolo.
+historico = [];
+
+/// Linha menos usada nas ultimas notas. Empate sai no sorteio.
+linha_mais_livre = function() {
+    var _n = array_length(linhas);
+    var _uso = array_create(_n, 0);
+
+    for (var i = 0; i < array_length(historico); i++) {
+        _uso[historico[i]]++;
+    }
+
+    var _melhor = 0;
+    var _menor = _uso[0];
+
+    for (var i = 1; i < _n; i++) {
+        if (_uso[i] < _menor || (_uso[i] == _menor && irandom(1) == 0)) {
+            _menor = _uso[i];
+            _melhor = i;
+        }
+    }
+    return _melhor;
+}
+
 /// Proximo tipo de seta, seguindo a figura em curso.
 proxima_faixa = function() {
     var _n = array_length(linhas);
 
     if (figura_resta <= 0) {
         figura = ritmo_sortear_figura();
-        figura_resta = figura.notas;
 
-        // figura nova comeca de um lugar novo, senao ela apenas continua a anterior
-        if (figura.tipo == FIGURA.SALTO) {
-            linha_pos = irandom(_n - 1);
+        // TODA figura nova comeca na linha mais livre, nao onde a anterior parou.
+        // Esta e a mudanca que tirou a sequencia do miolo: antes so o SALTO
+        // reposicionava, e a pista se concentrava em duas linhas.
+        linha_pos = linha_mais_livre();
+
+        if (figura.tipo == FIGURA.VARREDURA) {
+            // atravessa a pista inteira, partindo em direcao ao lado mais distante
+            linha_dir = (linha_pos < _n / 2) ? 1 : -1;
+            figura_resta = _n - 1;
+        } else {
+            linha_dir = choose(-1, 1);
+            figura_resta = figura.notas;
         }
-        linha_dir = choose(-1, 1);
     }
 
     figura_resta--;
 
     switch (figura.tipo) {
         case FIGURA.ESCADA:
+        case FIGURA.VARREDURA:
             // anda uma linha por vez e QUICA na borda, em vez de dar a volta:
-            // saltar do pe da pista para o topo lê como erro, nao como frase
+            // saltar do pe da pista para o topo lê como erro, nao como frase.
+            //
+            // O quique pousa NA borda (0 ou _n-1). A versao anterior devolvia para
+            // 1 e _n-2, ou seja, ricocheteava antes de encostar — e era por isso que
+            // as linhas extremas ficavam com 14% e 11% das notas.
             linha_pos += linha_dir;
-            if (linha_pos < 0)   { linha_pos = min(1, _n - 1); linha_dir =  1; }
-            if (linha_pos >= _n) { linha_pos = max(0, _n - 2); linha_dir = -1; }
+            if (linha_pos < 0)   { linha_pos = 0;      linha_dir =  1; }
+            if (linha_pos >= _n) { linha_pos = _n - 1; linha_dir = -1; }
             break;
 
         case FIGURA.ALTERNAR:
-            linha_pos = clamp(linha_pos + linha_dir, 0, _n - 1);
-            linha_dir = -linha_dir;
-            break;
+            // passo de 1 ou 2: alternancia sempre adjacente soa mecanica
+            var _passo = choose(1, 1, 2);
+            var _nova = linha_pos + (linha_dir * _passo);
 
-        case FIGURA.SALTO:
-            linha_pos = irandom(_n - 1);
+            if (_nova >= 0 && _nova < _n) linha_pos = _nova;
+            linha_dir = -linha_dir;
             break;
 
         // REPETIR fica onde esta
     }
 
-    return linhas[clamp(linha_pos, 0, _n - 1)];
+    linha_pos = clamp(linha_pos, 0, _n - 1);
+
+    array_push(historico, linha_pos);
+    if (array_length(historico) > 16) array_delete(historico, 0, 1);
+
+    return linhas[linha_pos];
 }
 
 /// Cria uma nota que deve encostar na zona de acerto no instante _t.

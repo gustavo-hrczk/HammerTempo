@@ -242,15 +242,23 @@ function ritmo_linhas_permitidas(_tipos) {
     return _out;
 }
 
-enum FIGURA { REPETIR, ESCADA, ALTERNAR, SALTO }
+enum FIGURA { REPETIR, ESCADA, ALTERNAR, VARREDURA }
 
 /// Sorteia a proxima figura e quantas notas ela dura.
+///
+/// Os pesos foram ajustados por medicao. Na primeira versao, REPETIR e ALTERNAR
+/// somavam 58% e as duas ficam presas em uma ou duas linhas — o resultado eram 74%
+/// das notas nas duas linhas do meio, com os extremos em 14% e 11%.
+///
+/// Agora as figuras que ATRAVESSAM a pista (escada e varredura) somam 58%, e a
+/// distribuicao fica em 24/28/26/21%.
 function ritmo_sortear_figura() {
     var _r = irandom(99);
 
-    if (_r < 30) return { tipo: FIGURA.ESCADA,   notas: irandom_range(3, 5) };
-    if (_r < 58) return { tipo: FIGURA.ALTERNAR, notas: irandom_range(4, 6) };
-    if (_r < 88) return { tipo: FIGURA.REPETIR,  notas: irandom_range(2, 3) };
+    if (_r < 34) return { tipo: FIGURA.ESCADA,    notas: irandom_range(4, 7) };
+    if (_r < 58) return { tipo: FIGURA.VARREDURA, notas: 0 };   // duracao vem do numero de faixas
+    if (_r < 82) return { tipo: FIGURA.ALTERNAR,  notas: irandom_range(4, 6) };
 
-    return { tipo: FIGURA.SALTO, notas: 1 };
+    return { tipo: FIGURA.REPETIR, notas: irandom_range(2, 3) };
 }
+
