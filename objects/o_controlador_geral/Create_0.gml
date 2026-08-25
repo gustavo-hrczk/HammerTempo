@@ -184,12 +184,6 @@ fases_data[0] = {
     stats_limite_sequencia_errada: 4,
     beat_tempo_bpm: 89.99,
     primeira_batida_ms: 290.2,
-
-    // A 4 de velocidade a viagem leva 5,4 s, e o respiro padrao punha a primeira nota
-    // aos 6,96 s — quase sete segundos de tela vazia na fase de entrada do jogo, que e
-    // justamente onde o jogador tem menos paciencia. Com 3 s ela cai na 5a batida, aos
-    // 3,62 s, nascendo no meio do caminho (D-110).
-    primeira_nota_seg: 3.0,
     // GALOPE. Longa-curta-curta, repetido. A fase tinha [1,1,1,1] — variedade zero, um
     // metronomo lento. Densidade sobe de 1,50 para 2,23 notas/s, que era a queixa de
     // ter ficado agradavel e sem personalidade. Aderencia 11,88x.
@@ -319,14 +313,36 @@ fases_data[4] = {
 // faixa marca forca 2,3x, contra 10,5x da melodia. Nao e preferencia — a musica
 // simplesmente nao tem tambor forte, e mapear a percussao aqui daria ruido.
 //
-// A melodia toca SEMINIMAS: nas 16 subdivisoes do compasso ela pontua 0,19 / 0,63 /
-// 0,62 / 1,00 nos quatro tempos e 0,01 a 0,03 em todos os contratempos. Motivos com
-// colcheia caem para 7,1x porque batem no vazio; a seminima marca 8,82x.
+// O MOTIVO E ESCRITO SOBRE O ESQUELETO MEDIDO, posicao a posicao, contra o piso de
+// ruido da propria faixa (1,00x = silencio):
 //
-// Entao a FORMA vem do silencio, nao da subdivisao: o motivo pula um tempo. E pula o
-// certo — o perfil mostra o primeiro tempo em 0,19 contra 1,00 do quarto, ou seja, a
-// melodia entra em anacruse. primeira_batida_ms conta a partir do quarto tempo (301,9
-// + 3 batidas), o que poe o repouso do motivo justamente sobre o tempo fraco.
+//     tempo 1  10,64x  ATAQUE        contratempo 1&   1,05x  vazio
+//     tempo 2   2,35x  fraco         contratempo 2&   2,47x  fraco
+//     tempo 3   8,14x  ATAQUE        contratempo 3&   1,43x  vazio
+//     tempo 4   7,24x  ATAQUE        contratempo 4&   3,84x  ATAQUE
+//
+// A faixa e SINCOPADA: o 4& e ataque de verdade, o arremesso para o compasso
+// seguinte. O motivo anterior (seminima corrida) batia duas vezes por ciclo no tempo
+// 2, que e fraco, e nunca tocava o 4& — metronomo que ainda errava o alvo.
+//
+// A frase de dois compassos responde a si mesma: o primeiro traz a colcheia de
+// apoio no 2&, o segundo enxuga e deixa o esqueleto respirar. Os dois fecham no 4&,
+// que vira o gancho reconhecivel da fase. Nenhuma nota cai nas duas posicoes mortas.
+//
+// POR QUE A MEDIA DE ADERENCIA FOI ABANDONADA AQUI: ela e uma MEDIA de energia por
+// nota, entao acrescentar uma nota real de 2,47x ao lado de uma de 10,64x derruba o
+// numero mesmo com a nota perfeitamente sobre um ataque. So se maximiza tocando as
+// posicoes mais altas — isto e, a metrica premia justamente o metronomo. A prova esta
+// na propria Espada: o motivo dela toca o tempo 3, que mede 1,90x, e PULA o 4&, que
+// mede 5,43x. A fase de mais personalidade do jogo toca onde a faixa cala.
+//
+// O criterio virou: nenhuma nota em silencio real. Normalizado pelo ataque mais forte
+// de cada faixa (La Rotta 10,6x, Espada 22,7x — medias cruas nao se comparam), este
+// motivo fica em 0,65 de firmeza contra 0,42 da Espada, e a nota mais fraca dele mede
+// 2,47x contra 1,90x da referencia.
+//
+// A melodia entra em ANACRUSE, entao primeira_batida_ms conta a partir do quarto
+// tempo (301,9 + 3 batidas): e la que esta o 10,64x.
 //
 // A faixa anterior desta fase (In Taberna em laco) saiu: o motivo em seminima corrida
 // virava caos a 175 BPM com quatro faixas.
@@ -346,13 +362,14 @@ fases_data[5] = {
     beat_tempo_bpm: 149.97,
     primeira_batida_ms: 1501.9,
 
-    // ANACRUSE. Tres seminimas, dois tempos de repouso sobre o tempo fraco, tres
-    // seminimas. Variedade 0,350 contra 0,000 da seminima corrida, e 2,20 notas/s.
+    // Compasso 1:  1  .  2& 3  4  4&      Compasso 2:  1  .  3  4  4&
+    // 2,82 notas/s contra 2,18 do motivo antigo — 29% mais preenchimento, e a maior
+    // densidade do jogo (Espada 2,29), como convem ao nivel Mestre.
     //
-    // A 7 de velocidade as notas ficam a 168 px uma da outra, 123 px de vao — a fase
-    // mais larga do jogo. Indice 2,61 contra 1,94 da Espada.
+    // A 7 de velocidade o par de colcheias fica com 39 px de vao, MAIS largo que os
+    // 37 px que a Espada ja usa: a densidade sobe sem custar legibilidade.
     ritmo_patterns: [
-        [1, 1, 1, 2, 1, 1, 1]
+        [1.5, 0.5, 1, 0.5, 0.5,   2, 1, 0.5, 0.5]
     ],
 
     // pesos de figura: [escada, varredura, alternar, repetir]

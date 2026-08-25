@@ -1520,3 +1520,52 @@ Espada.
 a primeira nota aos 6,96 s — quase sete segundos de tela vazia na fase de entrada do jogo,
 que é justamente onde o jogador tem menos paciência. Com `primeira_nota_seg` em 3 s ela cai
 na 5ª batida, aos 3,62 s, nascendo no meio do caminho (D-110).
+
+## D-127 — A media de aderencia foi aposentada como criterio
+
+**Contexto.** A sexta fase saiu como metronomo duas rodadas seguidas. As duas vezes a
+media de aderencia (energia de onset nos instantes das notas / media do envelope)
+apontou para o motivo mais esparso.
+
+**O defeito.** A metrica e uma MEDIA por nota. Acrescentar uma nota real de forca 2,47x
+ao lado de uma de 10,64x derruba o numero mesmo com a nota perfeitamente sobre um
+ataque da faixa. Ela so pode ser maximizada tocando as posicoes mais altas — ou seja,
+**a metrica premia estruturalmente o metronomo**.
+
+**A prova.** Medida posicao a posicao, a Espada — a fase que o usuario apontou como a
+de maior personalidade — toca o tempo 3, que mede 1,90x, e PULA o 4&, que mede 5,43x.
+A fase de referencia toca onde a faixa cala e cala onde a faixa toca. Nenhuma media
+poderia ter recomendado isso.
+
+**O criterio novo.** Nenhuma nota em silencio real (piso ~1,8x acima do ruido), mais
+variedade de frase. Para comparar faixas, normalizar pelo ataque mais forte de cada
+uma: La Rotta chega a 10,6x e a Espada a 22,7x, entao as medias cruas nunca foram
+comparaveis entre si — o que invalida retroativamente o "piso de 8,5x" que eu vinha
+usando como se fosse universal.
+
+## D-128 — Sexta fase escrita sobre o esqueleto medido
+
+Perfil de La Rotta por posicao do compasso, contra o piso de ruido da propria faixa:
+
+    tempo 1  10,64x  ATAQUE      contratempo 1&   1,05x  vazio
+    tempo 2   2,35x  fraco       contratempo 2&   2,47x  fraco
+    tempo 3   8,14x  ATAQUE      contratempo 3&   1,43x  vazio
+    tempo 4   7,24x  ATAQUE      contratempo 4&   3,84x  ATAQUE
+
+A faixa e SINCOPADA. O motivo antigo `[1,1,1,2,1,1,1]` batia duas vezes por ciclo no
+tempo 2, que e fraco, e nunca tocava o 4&.
+
+Motivo novo: `[1.5, 0.5, 1, 0.5, 0.5,  2, 1, 0.5, 0.5]` — frase e resposta em dois
+compassos, ambos fechando no 4&. 2,82 notas/s contra 2,18 (a maior densidade do jogo,
+contra 2,29 da Espada), vao de 39 px contra os 37 px que a Espada ja usa.
+
+**Correcao de uma medicao anterior (D-126).** Eu havia registrado que os contratempos
+mediam 0,01 a 0,03 "todos". Aquilo valia so para a banda de melodia isolada; no
+espectro cheio o 2& e o 4& sao ataques. A subdivisao em tres foi testada e descartada
+(0,01 a 0,05 nos tercos): a faixa nao anda em seis, apesar de ser uma rotta.
+
+## D-129 — O respiro da Adaga foi revertido
+
+`primeira_nota_seg: 3.0` encurtava a entrada de 6,96 s para 3,62 s, mas prejudicava o
+passo: a 4 de velocidade a viagem leva 5,4 s, entao a primeira nota nascia no meio da
+tela em vez da borda. A fase de entrada volta a abrir com a viagem inteira.
