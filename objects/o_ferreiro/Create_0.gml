@@ -1,3 +1,6 @@
+// De quem e este ferreiro. 0 e o jogador 1, que e o unico fora do Versus.
+dono = 0;
+
 estado = FERREIRO_ESTADO.IDLE;
 
 // Posição de trabalho, junto à bigorna. O ócio da seleção de fase sempre termina

@@ -176,20 +176,25 @@ if (_resultado_index <= 1) { // Falha ou Aceitável
 // =================================================================
 // --- COMANDA A ANIMAÇÃO DO FERREIRO (NOVA SEÇÃO) ---
 // =================================================================
-if (instance_exists(o_ferreiro)) {
+// Esta tela e do MODO DE UM JOGADOR — o Versus tem a sua. Ainda assim o ferreiro e
+// nomeado pelo dono em vez de pelo objeto: com duas instancias em cena, `o_ferreiro.x`
+// devolve uma qualquer, e um caminho que "nunca acontece" e exatamente o que volta.
+var _ferreiro = ferreiro_de(0);
+
+if (_ferreiro != noone) {
     
     // Se a performance foi "Falha" ou "Aceitável"...
     if (_resultado_index <= 1) {
         // ...manda o ferreiro tocar a animação de falha. No game over ela já
         // começou durante o respiro, então não pode ser reiniciada aqui.
-        if (o_ferreiro.estado != FERREIRO_ESTADO.FALHA
-            && o_ferreiro.estado != FERREIRO_ESTADO.FALHOU_ESTATICO) {
-            o_ferreiro.iniciar_animacao_falha();
+        if (_ferreiro.estado != FERREIRO_ESTADO.FALHA
+            && _ferreiro.estado != FERREIRO_ESTADO.FALHOU_ESTATICO) {
+            with (_ferreiro) iniciar_animacao_falha();
         }
     }
     // Se a performance foi "Bom" ou melhor...
     else {
         // ...manda o ferreiro comemorar.
-        o_ferreiro.iniciar_comemoracao();
+        with (_ferreiro) iniciar_comemoracao();
     }
 }

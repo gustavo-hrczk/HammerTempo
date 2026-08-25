@@ -1,3 +1,7 @@
+// De quem e esta nota. No Versus os dois recebem o mesmo padrao, mas cada nota
+// pertence a uma pista so — e o erro dela penaliza um jogador so.
+dono = 0;
+
 velocidade = 5;
 tipo_seta = 0;
 
@@ -38,8 +42,9 @@ registrar_erro = function() {
     jogador().stats_sequencia_errada++;
     jogador().stats_sequencia = 0;
 
-    if (instance_exists(o_ferreiro)) {
-        o_ferreiro.aplicar_dano();
+    var _f = ferreiro_de(dono);
+    if (_f != noone) {
+        with (_f) aplicar_dano();
     }
 
     hud_registrar_julgamento("ERRO", COR_ERRO, false);

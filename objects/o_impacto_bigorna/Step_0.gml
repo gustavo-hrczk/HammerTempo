@@ -12,8 +12,9 @@ if (atraso > 0) {
         image_speed = 1;   // sprite declara 30 fps: 7 quadros em 0,23 s
 
         // o tremor sai junto com o clarao, porque os dois SAO o contato
-        if (instance_exists(o_bigorna)) {
-            o_bigorna.tremor = forca;
+        var _b = bigorna_de(dono);
+        if (_b != noone) {
+            _b.tremor = forca;
         }
     }
 }

@@ -156,7 +156,7 @@ switch (estado_jogo) {
 
             // A derrota já acontece aqui, durante o respiro: o ferreiro reage e a
             // música sai em fade, em vez de a fase ser cortada em seco.
-            if (instance_exists(o_ferreiro)) { o_ferreiro.iniciar_animacao_falha(); }
+            with (o_ferreiro) iniciar_animacao_falha();
             o_audio_manager.fade_out_music(1.4);
         }
 

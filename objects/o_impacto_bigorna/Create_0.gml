@@ -1,3 +1,6 @@
+// De quem e este impacto. Decide em qual bigorna ele treme.
+dono = 0;
+
 // =================================================================
 // IMPACTO NA BIGORNA
 // Toca uma vez, na cor da faixa acertada, e se destroi no fim da animacao.

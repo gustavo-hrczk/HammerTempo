@@ -228,7 +228,7 @@ limpar_partida = function() {
     o_audio_manager.retomar_musica();
 
     // O ferreiro pode estar congelado no meio de uma martelada por causa da pausa.
-    if (instance_exists(o_ferreiro)) { o_ferreiro.voltar_ao_repouso(); }
+    with (o_ferreiro) voltar_ao_repouso();
     if (instance_exists(o_spawner_ritmo)) { instance_destroy(o_spawner_ritmo); }
     instance_destroy(o_nota_seta);
     resetar_estatisticas();

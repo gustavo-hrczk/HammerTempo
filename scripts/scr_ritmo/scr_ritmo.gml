@@ -179,12 +179,15 @@ function ritmo_sprite_impacto(_tipo, _julgamento = JULGAMENTO.PERFEITO) {
 ///
 /// O alvo pressionado NAO espera: resposta de input tem de ser imediata, senao o
 /// jogo parece atrasado. Quem espera e o que representa o golpe.
-function ritmo_impacto_bigorna(_tipo, _julgamento, _forca, _atraso) {
-    if (!instance_exists(o_bigorna)) exit;
+function ritmo_impacto_bigorna(_tipo, _julgamento, _forca, _atraso, _dono = 0) {
+    var _b = bigorna_de(_dono);
+    if (_b == noone) exit;
 
-    var _e = instance_create_layer(o_bigorna.x + IMPACTO_DX,
-                                   o_bigorna.y + IMPACTO_DY,
+    var _e = instance_create_layer(_b.x + IMPACTO_DX,
+                                   _b.y + IMPACTO_DY,
                                    "Gameplay", o_impacto_bigorna);
+
+    _e.dono = _dono;
 
     _e.sprite_index = ritmo_sprite_impacto(_tipo, _julgamento);
     _e.image_xscale = IMPACTO_ESCALA;

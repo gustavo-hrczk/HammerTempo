@@ -76,8 +76,8 @@ switch (_julgamento) {
         brilho_cor = COR_PERFEITO;
         eco = 1;
         eco_cor = COR_PERFEITO;
-        ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.PERFEITO, 3, IMPACTO_ATRASO_PERFEITO);
-        o_ferreiro.iniciar_martelada_perfeita();
+        ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.PERFEITO, 3, IMPACTO_ATRASO_PERFEITO, dono);
+        with (ferreiro_de(dono)) iniciar_martelada_perfeita();
         o_audio_manager.play_martelada_sequencial_sfx();
 
         hud_registrar_julgamento("PERFEITO!", COR_PERFEITO, true);
@@ -98,8 +98,8 @@ switch (_julgamento) {
         brilho_cor = COR_OTIMO;
         eco = 0.55;
         eco_cor = COR_OTIMO;
-        ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.OTIMO, 2, IMPACTO_ATRASO_NORMAL);
-        o_ferreiro.iniciar_martelada_normal();
+        ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.OTIMO, 2, IMPACTO_ATRASO_NORMAL, dono);
+        with (ferreiro_de(dono)) iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
 
         hud_registrar_julgamento("ÓTIMO!", COR_OTIMO, true);
@@ -118,8 +118,8 @@ switch (_julgamento) {
         pop = 0.28;
         brilho = 0.45;
         brilho_cor = COR_BOM;
-        ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.BOM, 1, IMPACTO_ATRASO_NORMAL);
-        o_ferreiro.iniciar_martelada_normal();
+        ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.BOM, 1, IMPACTO_ATRASO_NORMAL, dono);
+        with (ferreiro_de(dono)) iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
 
         hud_registrar_julgamento("BOM!", COR_BOM, true);

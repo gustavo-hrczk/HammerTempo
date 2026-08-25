@@ -1,3 +1,6 @@
+// De quem e este alvo. Decide qual jogador ele julga e qual entrada ele escuta.
+dono = 0;
+
 // A ação que esta instância escuta e o tipo de seta que ela julga são definidos
 // pelo Instance Creation Code de cada alvo, em rm_forja.
 minha_acao = ACAO.LANE_CIMA;

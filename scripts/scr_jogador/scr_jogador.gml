@@ -70,3 +70,30 @@ function EstadoJogador() constructor {
 function jogador(_n = 0) {
     return o_controlador_geral.jogadores[_n];
 }
+
+// =====================================================================
+// QUEM PERTENCE A QUEM
+//
+// Ferreiro, bigorna e alvos deixaram de ser instancia unica. Todo objeto de gameplay
+// carrega um `dono` — 0 para o jogador 1, 1 para o 2 — e os efeitos de um nunca
+// alcancam o outro.
+//
+// Fora do Versus so existe o dono 0, e as funcoes abaixo devolvem a unica instancia
+// que existe. E por isso que o codigo de um jogador nao precisou aprender nada novo.
+// =====================================================================
+
+/// O ferreiro de um jogador, ou noone.
+function ferreiro_de(_dono = 0) {
+    with (o_ferreiro) {
+        if (dono == _dono) return id;
+    }
+    return noone;
+}
+
+/// A bigorna de um jogador, ou noone.
+function bigorna_de(_dono = 0) {
+    with (o_bigorna) {
+        if (dono == _dono) return id;
+    }
+    return noone;
+}
