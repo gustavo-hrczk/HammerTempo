@@ -43,7 +43,7 @@ if (!input_pressed(minha_acao)) {
 
 afundamento = 5;
 
-var _nota = ritmo_nota_alcancavel(meu_tipo);
+var _nota = ritmo_nota_alcancavel(meu_tipo, dono);
 
 if (_nota == noone) {
     // Toque sem nota alcançável: custa pontos e quebra o combo, mas não encerra

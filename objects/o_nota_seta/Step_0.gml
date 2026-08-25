@@ -11,9 +11,10 @@ switch (modo) {
         var _agora = ritmo_relogio();
 
         if (t_alvo >= 0 && _agora >= 0) {
-            x = ritmo_x_da_nota(t_alvo, _agora, velocidade);
+            x = ritmo_x_da_nota(t_alvo, _agora, velocidade, dono);
         } else {
-            x -= velocidade;   // sem faixa tocando, segue no modo antigo
+            // sem faixa tocando, segue no modo antigo — mas no sentido do dono
+            x += ritmo_sentido(dono) * velocidade;
         }
 
         image_index = tipo_seta;
@@ -35,7 +36,7 @@ switch (modo) {
         break;
 
     case 2: // perdida
-        x -= velocidade;
+        x += ritmo_sentido(dono) * velocidade;
         image_alpha -= 0.05;
 
         if (image_alpha <= 0) {
@@ -44,7 +45,7 @@ switch (modo) {
         break;
 
     case 3: // saindo de cena no game over
-        x -= velocidade;
+        x += ritmo_sentido(dono) * velocidade;
         image_alpha -= 0.07;
 
         if (image_alpha <= 0) {

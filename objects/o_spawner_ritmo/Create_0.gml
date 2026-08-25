@@ -32,7 +32,9 @@ var _bpm = _dados_fase.beat_tempo_bpm;
 beat_seg = 60 / _bpm;
 
 // tempo que a nota leva do nascimento ate a zona de acerto
-viagem_seg = (x - RITMO_LINHA_X) / velocidade_das_notas / room_speed;
+// A viagem e a mesma para os dois jogadores: as pistas sao simetricas, entao a
+// distancia entre o ponto de nascimento e a linha de acerto e identica dos dois lados.
+viagem_seg = abs(x - RITMO_LINHA_X) / velocidade_das_notas / room_speed;
 
 // Escolhe aleatoriamente um dos padroes de ritmo definidos para a fase
 // UM motivo por fase, sem sorteio. O sorteio entre padroes fazia a mesma fase soar

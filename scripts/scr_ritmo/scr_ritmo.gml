@@ -11,6 +11,25 @@
 /// Posição X da linha de acerto (mesma X das instâncias de o_buttons_forja em rm_forja).
 #macro RITMO_LINHA_X 98
 
+/// Largura do espaço de design. As duas pistas do Versus são simétricas em relação
+/// ao centro dela.
+#macro RITMO_LARGURA 1280
+
+/// Onde fica a zona de acerto de um jogador.
+///
+/// O jogador 1 acerta à esquerda e as notas dele vêm da direita; o jogador 2 é o
+/// espelho — ele fica à direita da tela e do teclado, então a atenção dele mora no
+/// canto direito, e é de lá que as notas precisam chegar.
+function ritmo_linha_x(_dono = 0) {
+    return (_dono == 0) ? RITMO_LINHA_X : (RITMO_LARGURA - RITMO_LINHA_X);
+}
+
+/// Sentido de viagem das notas de um jogador: -1 anda para a esquerda, +1 para a
+/// direita.
+function ritmo_sentido(_dono = 0) {
+    return (_dono == 0) ? -1 : 1;
+}
+
 /// Janelas de julgamento, em frames a 60 fps.
 /// Três faixas: o "perfeito" antigo (+-50 ms) saía com frequência alta demais para
 /// quem já pegou o ritmo, então virou o intervalo do "ótimo" e o perfeito apertou.
@@ -28,9 +47,14 @@ enum JULGAMENTO {
 
 /// Erro de tempo de uma nota, em frames.
 /// Positivo = adiantado (a nota ainda não chegou), negativo = atrasado.
+/// O SINAL depende do dono, e não da posição: para o jogador 1 a nota que ainda não
+/// chegou está à direita da linha, para o jogador 2 está à esquerda. Sem isto o
+/// julgamento do jogador 2 sairia invertido — adiantado lido como atrasado.
 function ritmo_erro_frames(_nota) {
     if (_nota.velocidade <= 0) return 0;
-    return (_nota.x - RITMO_LINHA_X) / _nota.velocidade;
+
+    var _d = (_nota.x - ritmo_linha_x(_nota.dono)) / _nota.velocidade;
+    return _d * -ritmo_sentido(_nota.dono);
 }
 
 /// Converte frames em milissegundos, respeitando o game speed configurado.
@@ -40,14 +64,16 @@ function ritmo_frames_ms(_frames) {
 
 /// Nota viva do tipo pedido cujo erro de tempo é o menor.
 /// Retorna noone se não houver nenhuma dentro da janela de acerto.
-function ritmo_nota_alcancavel(_tipo) {
+/// _dono limita a busca à pista daquele jogador: no Versus os dois recebem o mesmo
+/// padrão ao mesmo tempo, e sem este filtro um jogador acertaria a nota do outro.
+function ritmo_nota_alcancavel(_tipo, _dono = 0) {
     var _melhor = noone;
     var _menor_erro = RITMO_JANELA_BOM + 1;
 
     with (o_nota_seta) {
-        if (modo != 0 || tipo_seta != _tipo) continue;
+        if (modo != 0 || tipo_seta != _tipo || dono != _dono) continue;
 
-        var _erro = abs((x - RITMO_LINHA_X) / velocidade);
+        var _erro = abs(ritmo_erro_frames(id));
         if (_erro <= RITMO_JANELA_BOM && _erro < _menor_erro) {
             _menor_erro = _erro;
             _melhor = id;
@@ -225,8 +251,9 @@ function ritmo_relogio() {
 /// ritmo_erro_frames() calcula (x - LINHA) / velocidade, esta formula faz o erro de
 /// julgamento virar exatamente o erro de tempo contra a musica — o julgamento nao
 /// precisou mudar uma linha para ficar preciso.
-function ritmo_x_da_nota(_t_alvo, _agora, _velocidade) {
-    return RITMO_LINHA_X + (_t_alvo - _agora) * _velocidade * game_get_speed(gamespeed_fps);
+function ritmo_x_da_nota(_t_alvo, _agora, _velocidade, _dono = 0) {
+    var _avanco = (_t_alvo - _agora) * _velocidade * game_get_speed(gamespeed_fps);
+    return ritmo_linha_x(_dono) - (ritmo_sentido(_dono) * _avanco);
 }
 
 // =====================================================================
