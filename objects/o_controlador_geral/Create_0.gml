@@ -152,25 +152,34 @@ fases_data = [];
 
 // ORDENADAS POR DIFICULDADE, com um nivel para cada fase.
 //
-// Os dois primeiros niveis sao definidos pelo NUMERO DE FAIXAS, que e o degrau que o
-// jogador sente primeiro: Novato tem 2, Aprendiz tem 3. Dai em diante a ordem sai do
-// indice medido (densidade x faixas / tempo de leitura, ajustado pela tolerancia):
+// A ordem sai do indice medido — densidade x faixas / tempo de leitura:
 //
-//   Adaga 0,89 | Maca 1,61 | Lanca 1,63 | Machado 1,73 | Espada 1,94
+//   Adaga 1,37 | Lanca 1,69 | Florete 1,74 | Maca 1,78 | Machado 2,59 | Espada 3,35
 //
-// Ressalva honesta: Maca e Lanca diferem em 1,2%, dentro do ruido da medicao. A
-// ordem entre as duas e julgamento, nao medida — Lanca vem antes por ter 40 s contra
-// os 45 s da Maca, ou seja, menos tempo de exigencia continua.
+// Ressalva honesta: Lanca, Florete e Maca ficam em 5% umas das outras. A ordem entre
+// as tres e medida, mas por margem estreita — se o teste contrariar, e a percepcao que
+// manda, nao a tabela.
 //
-// A Espada e a mais dificil apesar de ser 20 BPM mais lenta que o Machado: tem mais
-// notas por segundo com o mesmo tempo de leitura. Andamento alto nao e dificuldade
-// quando o padrao e todo em seminima.
+// COMO OS MOTIVOS SAO ESCRITOS (D-130 e D-131). Cada posicao do compasso e medida
+// contra o piso de ruido da PROPRIA faixa, amostrando o maximo numa vizinhanca de
+// +-40 ms. Duas regras saem dai:
 //
-// "Mestre" fica vago de proposito, para a sexta faixa.
+//   1. nenhuma nota cai em silencio real;
+//   2. cada fase pula de proposito UMA posicao viva.
 //
-// O campo `id` e o identificador do placar e NAO acompanha a ordem (D-115).
+// A regra 2 e o que separa ritmo de metronomo, e ela foi lida na propria Espada: o
+// motivo dela toca o tempo 3, que mede 0,81 (abaixo do piso), e pula o 4&, que mede
+// 1,74. A fase de maior personalidade do jogo toca onde a faixa cala. Dobrar o tambor
+// com exatidao produz metronomo, por mais alinhado que esteja.
+//
+// O indice do asset de audio acompanha a ordem: snd_fase_01 e a primeira fase, 06 a
+// ultima. O campo `id` e o identificador do PLACAR e nao acompanha nada (D-115).
 
-// Novato - 2 faixas
+// Novato - 3 faixas | Istampitta Ghaetta
+// A Adaga deixou de ser a fase de duas teclas. O motivo dela ja usava os SEIS ataques
+// que a faixa tem — as duas colcheias livres medem 0,68 e 0,61, silencio real — e
+// semicolcheia nao cabe a 4 de velocidade: daria 8 px de vao entre sprites de 45 px.
+// Entao a fase cresce pela LARGURA da pista, e nao pela densidade. Indice 0,91 -> 1,37.
 fases_data[0] = {
     id: "adaga",
     nome: "Forjar Adaga",
@@ -180,21 +189,21 @@ fases_data[0] = {
     sprites_resultado: [s_adaga01, s_adaga02, s_adaga03, s_adaga04, s_adaga05],
     duracao_segundos: 40,
     velocidade_notas: 4,
-    tipos_seta_permitidos: 2,
+    tipos_seta_permitidos: 3,
     stats_limite_sequencia_errada: 4,
     beat_tempo_bpm: 89.99,
     primeira_batida_ms: 290.2,
-    // GALOPE. Longa-curta-curta, repetido. A fase tinha [1,1,1,1] — variedade zero, um
-    // metronomo lento. Densidade sobe de 1,50 para 2,23 notas/s, que era a queixa de
-    // ter ficado agradavel e sem personalidade. Aderencia 11,88x.
-    //
-    // Duas faixas nao tem o que atravessar, entao o movimento pende para ALTERNAR.
+
+    // GALOPE. Longa-curta-curta. Toca 1, 2, 2&, 3, 4, 4& — que sao exatamente as seis
+    // posicoes vivas da faixa: 4,72 / 3,75 / 2,99 / 4,67 / 3,92 / 2,89.
     ritmo_patterns: [
         [1, 0.5, 0.5, 1, 0.5, 0.5]
     ],
 
     // pesos de figura: [escada, varredura, alternar, repetir]
-    figuras: [10, 10, 60, 20]
+    // Com a terceira faixa a pista passou a ter o que atravessar, entao o peso saiu do
+    // ALTERNAR (60, que era a unica coisa possivel com duas) e foi para a ESCADA.
+    figuras: [30, 20, 30, 20]
 };
 
 // Aprendiz - 3 faixas
@@ -213,8 +222,6 @@ fases_data[1] = {
     primeira_batida_ms: 592.1,
     // RAJADA E SILENCIO. Oito colcheias seguidas e tres tempos de nada: variedade 0,786,
     // a maior do jogo. Ja tinha identidade e fica como esta.
-    //
-    // O movimento acompanha: varre a pista na rajada e segura na pausa.
     ritmo_patterns: [
         [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 3]
     ],
@@ -223,13 +230,53 @@ fases_data[1] = {
     figuras: [20, 30, 20, 30]
 };
 
-// Adepto - 3 faixas, mas 45 s de exigencia continua | Saltarello II
+// Adepto - 3 faixas | Ductia
+//
+// FASE EM SEIS. E a unica faixa do projeto que anda em compasso composto, e por pouco
+// ela nao entrou errada: subdividida em DOIS os contratempos medem 0,08, que e silencio
+// puro, e a faixa parecia so aceitar seminima. Subdividida em TRES eles medem 1,28, e o
+// ultimo terco de cada tempo e ataque de verdade: 3,62 / 2,04 / 1,87 / 1,35. O balanco
+// 6/8 estava la o tempo todo; a grade e que estava errada.
+//
+// primeira_batida_ms conta a partir do TERCEIRO tempo (392,4 + 2 batidas): e la que
+// esta o ataque mais forte do compasso, 5,41.
+//
+// Duas frases que se respondem, cada uma com um buraco diferente sobre posicao viva —
+// a frase 1 pula o tempo 2, a frase 2 pula o terco do tempo 3. Os tercos usam 0,6667 e
+// 0,3333, que somam 4,0000 exatos por compasso: nao ha acumulo de erro na grade.
+//
 // Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
 fases_data[2] = {
+    id: "florete",
+    nome: "Forjar Florete",
+    dificuldade: "Adepto",
+    musica_fase: snd_fase_03,
+    ganho_musica: 0.975,
+    sprites_resultado: [],
+    duracao_segundos: 50,
+    velocidade_notas: 5,
+    tipos_seta_permitidos: 3,
+    stats_limite_sequencia_errada: 5,
+    beat_tempo_bpm: 90,
+    primeira_batida_ms: 1725.7,
+
+    // frase 1:  1  1a  .  2a  3  3a  4  .      frase 2:  1  1a  2  2a  3  .  4  .
+    ritmo_patterns: [
+        [0.6667, 1, 0.3333, 0.6667, 0.3333, 1,   0.6667, 0.3333, 0.6667, 0.3333, 1, 1]
+    ],
+
+    // pesos de figura: [escada, varredura, alternar, repetir]
+    // ESCADA pesada: o passo do 6/8 sobe e desce, e a pista acompanha.
+    figuras: [40, 20, 25, 15]
+};
+
+// Veterano - 3 faixas, mas 45 s de exigencia continua | Saltarello II
+// Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
+fases_data[3] = {
     id: "maca",
     nome: "Forjar Maca",
-    dificuldade: "Adepto",
-    musica_fase: snd_fase_05,
+    dificuldade: "Veterano",
+    musica_fase: snd_fase_04,
     ganho_musica: 0.544,
     sprites_resultado: [],
     duracao_segundos: 45,
@@ -239,11 +286,8 @@ fases_data[2] = {
     beat_tempo_bpm: 99.99,
     primeira_batida_ms: 348.3,
     primeira_nota_seg: 8.0,
-    // CELULA DO SALTARELLO. Colcheia-colcheia-seminima, que e a figura caracteristica da
+    // CELULA DO SALTARELLO. Colcheia-colcheia-seminima, a figura caracteristica da
     // danca, com uma seminima de sobra que impede o padrao de fechar no compasso.
-    // Aderencia 8,68x, acima do piso da Espada.
-    //
-    // Movimento em ESCADA, que combina com o balanco da danca.
     ritmo_patterns: [
         [0.5, 0.5, 1, 0.5, 0.5, 1, 1]
     ],
@@ -252,14 +296,14 @@ fases_data[2] = {
     figuras: [45, 15, 25, 15]
 };
 
-// Veterano - 4 faixas | Il Trotto
+// Especialista - 4 faixas | Il Trotto
 // Contraste tempo/contratempo de 24,16, o melhor material do projeto: so ha ataque
 // nos tempos, entao o padrao e todo em seminima (D-112).
-fases_data[3] = {
+fases_data[4] = {
     id: "machado",
     nome: "Forjar Machado",
-    dificuldade: "Veterano",
-    musica_fase: snd_fase_04,
+    dificuldade: "Especialista",
+    musica_fase: snd_fase_05,
     ganho_musica: 1.0,
     sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
     duracao_segundos: 60,
@@ -268,11 +312,9 @@ fases_data[3] = {
     stats_limite_sequencia_errada: 6,
     beat_tempo_bpm: 130.01,
     primeira_batida_ms: 0,
-    // MARCHA COM TROPECO. A faixa e semininma pura, e o martelo entrava dobrando o
+    // MARCHA COM TROPECO. A faixa e seminima pura, e o martelo entrava dobrando o
     // tambor — variedade zero. Agora ele insere um par de colcheias no meio da marcha:
-    // contracanto, nao copia. Aderencia 9,73x.
-    //
-    // Movimento em ESCADA, o mais marcial dos quatro.
+    // contracanto, nao copia.
     ritmo_patterns: [
         [1, 1, 0.5, 0.5, 1, 1, 1]
     ],
@@ -281,104 +323,48 @@ fases_data[3] = {
     figuras: [50, 15, 20, 15]
 };
 
-// Especialista - 4 faixas, a maior densidade do jogo
-fases_data[4] = {
+// Mestre - 4 faixas | In Taberna Quando Sumus, 120 BPM
+//
+// A MESMA MELODIA DA ESPADA, ACELERADA. Fecha o jogo com a musica que o jogador ja
+// domina, 10 BPM mais rapida e com a pista inteira aberta.
+//
+// Substituiu La Rotta, que NAO era problema de sincronia: medida contra os ataques
+// reais, a grade dela ficava a -2,5 ms com dispersao de 75,9 ms, mais travada que a da
+// propria Espada (+83,7 ms). O defeito era outro — flauta solo sem tambor nao produz
+// pulso que o jogador consiga ANTECIPAR, e antecipar e o que o jogo pede. In Taberna
+// tem razao percussao/melodia 3,87 contra 0,22 de La Rotta, e 93% das batidas com
+// ataque real a menos de 40 ms.
+//
+// Perfil: 3,04 / 1,84 / 2,33 / 1,17 / 2,81 / 1,51 / 2,61 / 0,83. Vivas sao os quatro
+// tempos mais os contratempos de 1 e de 3; o 4& e morto e nunca e tocado.
+//
+// A frase 2 pula o tempo 2, que mede 2,33 e esta bem vivo — e o buraco de proposito.
+//
+// A 6 de velocidade a colcheia fica com 45 px de vao, MAIS largo que os 37 px que a
+// Espada usava a 110 BPM: a fase fica mais dificil sem ficar menos legivel.
+fases_data[5] = {
     id: "espada",
     nome: "Forjar Espada",
-    dificuldade: "Especialista",
-    musica_fase: snd_fase_03,
-    ganho_musica: 0.917,
-    sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
-    duracao_segundos: 60,
-    velocidade_notas: 5,
-    tipos_seta_permitidos: 4,
-    stats_limite_sequencia_errada: 6,
-    beat_tempo_bpm: 110,
-    primeira_batida_ms: 383.1,
-    // A REFERENCIA. Este e o motivo que voce apontou como o de maior personalidade, e
-    // ele fecha no compasso de proposito: repetido identico a cada 4 tempos, vira um
-    // gancho reconhecivel. Fica intocado, e os pesos de figura dele sao o padrao das
-    // fases que nao declaram os seus.
-    ritmo_patterns: [
-        [1, 1, 0.5, 0.5, 1]
-    ],
-
-    // pesos de figura: [escada, varredura, alternar, repetir]
-    figuras: [34, 24, 24, 18]
-};
-
-// Mestre - 4 faixas | La Rotta
-//
-// FASE QUE SEGUE A MELODIA, e nao a percussao. Medido: a banda de percussao desta
-// faixa marca forca 2,3x, contra 10,5x da melodia. Nao e preferencia — a musica
-// simplesmente nao tem tambor forte, e mapear a percussao aqui daria ruido.
-//
-// O MOTIVO E ESCRITO SOBRE O ESQUELETO MEDIDO, posicao a posicao, contra o piso de
-// ruido da propria faixa (1,00x = silencio):
-//
-//     tempo 1  10,64x  ATAQUE        contratempo 1&   1,05x  vazio
-//     tempo 2   2,35x  fraco         contratempo 2&   2,47x  fraco
-//     tempo 3   8,14x  ATAQUE        contratempo 3&   1,43x  vazio
-//     tempo 4   7,24x  ATAQUE        contratempo 4&   3,84x  ATAQUE
-//
-// A faixa e SINCOPADA: o 4& e ataque de verdade, o arremesso para o compasso
-// seguinte. O motivo anterior (seminima corrida) batia duas vezes por ciclo no tempo
-// 2, que e fraco, e nunca tocava o 4& — metronomo que ainda errava o alvo.
-//
-// A frase de dois compassos responde a si mesma: o primeiro traz a colcheia de
-// apoio no 2&, o segundo enxuga e deixa o esqueleto respirar. Os dois fecham no 4&,
-// que vira o gancho reconhecivel da fase. Nenhuma nota cai nas duas posicoes mortas.
-//
-// POR QUE A MEDIA DE ADERENCIA FOI ABANDONADA AQUI: ela e uma MEDIA de energia por
-// nota, entao acrescentar uma nota real de 2,47x ao lado de uma de 10,64x derruba o
-// numero mesmo com a nota perfeitamente sobre um ataque. So se maximiza tocando as
-// posicoes mais altas — isto e, a metrica premia justamente o metronomo. A prova esta
-// na propria Espada: o motivo dela toca o tempo 3, que mede 1,90x, e PULA o 4&, que
-// mede 5,43x. A fase de mais personalidade do jogo toca onde a faixa cala.
-//
-// O criterio virou: nenhuma nota em silencio real. Normalizado pelo ataque mais forte
-// de cada faixa (La Rotta 10,6x, Espada 22,7x — medias cruas nao se comparam), este
-// motivo fica em 0,65 de firmeza contra 0,42 da Espada, e a nota mais fraca dele mede
-// 2,47x contra 1,90x da referencia.
-//
-// A melodia entra em ANACRUSE, entao primeira_batida_ms conta a partir do quarto
-// tempo (301,9 + 3 batidas): e la que esta o 10,64x.
-//
-// A faixa anterior desta fase (In Taberna em laco) saiu: o motivo em seminima corrida
-// virava caos a 175 BPM com quatro faixas.
-//
-// Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
-fases_data[5] = {
-    id: "alabarda",
-    nome: "Forjar Alabarda",
     dificuldade: "Mestre",
     musica_fase: snd_fase_06,
-    ganho_musica: 0.654,
-    sprites_resultado: [],
-    duracao_segundos: 50,
-    velocidade_notas: 7,
+    ganho_musica: 0.830,
+    sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
+    duracao_segundos: 60,
+    velocidade_notas: 6,
     tipos_seta_permitidos: 4,
     stats_limite_sequencia_errada: 6,
-    beat_tempo_bpm: 149.97,
-    primeira_batida_ms: 1501.9,
+    beat_tempo_bpm: 120,
+    primeira_batida_ms: 355.3,
 
-    // Compasso 1:  1  .  2& 3  4  4&      Compasso 2:  1  .  3  4  4&
-    // 2,82 notas/s contra 2,18 do motivo antigo — 29% mais preenchimento, e a maior
-    // densidade do jogo (Espada 2,29), como convem ao nivel Mestre.
-    //
-    // A 7 de velocidade o par de colcheias fica com 39 px de vao, MAIS largo que os
-    // 37 px que a Espada ja usa: a densidade sobe sem custar legibilidade.
+    // frase 1:  1  1&  2  .  3  3&  4  .      frase 2:  1  1&  .  .  3  3&  4  .
     ritmo_patterns: [
-        [1.5, 0.5, 1, 0.5, 0.5,   2, 1, 0.5, 0.5]
+        [0.5, 0.5, 1, 0.5, 0.5, 1,   0.5, 1.5, 0.5, 0.5, 1]
     ],
 
     // pesos de figura: [escada, varredura, alternar, repetir]
-    figuras: [20, 45, 20, 15]
+    // o perfil da Espada, que e o padrao das fases que nao declaram o seu
+    figuras: [34, 24, 24, 18]
 };
-
-// Fase 4: Machado (Extremo) e Modo Infinito entram na Sprint 7, junto com o
-// novo pipeline de mapeamento rítmico. Os assets (snd_fase_04, s_machado01..05)
-// já existem no projeto.
 
 contagem_timer = 150; // Começa inativo
 show_debug_message("Controlador Geral criado e configurado com sucesso!");

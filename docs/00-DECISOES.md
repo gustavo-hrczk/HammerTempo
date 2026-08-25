@@ -1569,3 +1569,94 @@ espectro cheio o 2& e o 4& sao ataques. A subdivisao em tres foi testada e desca
 `primeira_nota_seg: 3.0` encurtava a entrada de 6,96 s para 3,62 s, mas prejudicava o
 passo: a 4 de velocidade a viagem leva 5,4 s, entao a primeira nota nascia no meio da
 tela em vez da borda. A fase de entrada volta a abrir com a viagem inteira.
+
+## D-130 — A medicao de forca por posicao estava medindo a minha janela de FFT
+
+A mesma batida de In Taberna, mesmo BPM e mesma fase, medida com quatro janelas:
+
+| Janela | 512 | 1024 | 2048 | 4096 |
+|---|---|---|---|---|
+| Forca | 0,08x | 0,45x | **10,15x** | 1,47x |
+
+Uma medida que varia 100x conforme um parametro meu nao estava medindo a musica.
+
+**Causa.** Eu amostrava o fluxo espectral em UM quadro, no instante exato da batida. Os
+quadros ficam a 11,6 ms um do outro; um pico estreito de ataque cai entre dois quadros e
+desaparece. Janela maior borra o pico e faz ele aparecer — dai a dependencia.
+
+**Correcao.** Amostrar o MAXIMO numa vizinhanca de +-40 ms, que por acaso e a propria
+janela de acerto do jogo. Implementado em `tools/perfil_compasso.py`.
+
+**Verificacao independente, imune ao problema:** contar quantas batidas da grade tem um
+ataque real proximo. In Taberna: 93% a menos de 40 ms.
+
+Isto invalida os numeros absolutos de D-128 e das analises anteriores de posicao. As
+CONCLUSOES sobrevivem — a Espada realmente toca posicao muda e pula posicao viva —, mas
+os valores citados la nao devem ser reaproveitados.
+
+## D-131 — O criterio de qualidade e a distribuicao, nao o minimo
+
+O minimo de forca sobre as ~100 notas de uma partida nao serve: uma unica nota que calhe
+num compasso quieto zera a estatistica. Aplicado as fases JA VALIDADAS pelo usuario, o
+criterio do minimo reprovava todas as seis — o que prova que era o criterio que estava
+errado.
+
+O que vale e a fracao de notas mudas ao longo da partida. As tres fases validadas
+(Lanca 21,3%, Maca 14,3%, Machado 19,0%) definem a banda aceitavel: **14% a 21%**.
+Toda faixa tem compassos quietos, e isso e normal.
+
+Ferramenta: `tools/verificar_motivos.py`.
+
+## D-132 — Sexta fase: In Taberna 120, e La Rotta nao era problema de sincronia
+
+Antes de trocar a faixa eu suspeitei do BPM de La Rotta, porque o valor tinha vindo de um
+comb filter que travou na oitava errada e eu havia desempatado pelo nome do arquivo. A
+medicao **derrubou a hipotese**:
+
+| | Desvio da grade | Dispersao |
+|---|---|---|
+| Espada (controle, funcionava) | +83,7 ms | 387,6 ms |
+| La Rotta | **-2,5 ms** | **75,9 ms** |
+
+A grade estava mais travada que a da fase que funcionava. O defeito era outro: **flauta
+solo sem tambor nao produz pulso que o jogador consiga ANTECIPAR**, e antecipar e o que
+o jogo pede. Razao percussao/melodia de La Rotta: 0,22. Nenhum motivo consertaria isso.
+
+In Taberna 120 tem razao 3,87, 93% das batidas com ataque a menos de 40 ms, e a menor
+taxa de notas mudas do jogo (9,7%, contra 14-21% das demais).
+
+## D-133 — Ductia anda em SEIS, e por pouco entrou errada
+
+Subdividida em dois, os contratempos da Ductia medem 0,08 — silencio puro — e a faixa
+parecia so aceitar seminima, o que a tornaria a fase mais leve do jogo. Subdividida em
+TRES eles medem 1,28, e o ultimo terco de cada tempo e ataque de verdade (3,62 / 2,04 /
+1,87 / 1,35). Ela esta em compasso composto.
+
+E o mesmo teste que salvou La Rotta de um erro simetrico: la a subdivisao em tres deu
+falso (0,01 a 0,05 nos tercos), apesar de rotta ser familia que costuma andar em seis.
+**Testar a grade em dois E em tres virou passo obrigatorio para faixa nova.**
+
+Os tercos usam 0,6667 e 0,3333, que somam 4,0000 exatos por compasso: sem acumulo de erro.
+
+## D-134 — Elenco reordenado com a sexta faixa, e o indice do audio passou a seguir a ordem
+
+| # | Fase | Nivel | Faixa | Asset | Indice | Mudas |
+|---|---|---|---|---|---|---|
+| 1 | Adaga | Novato | Istampitta Ghaetta | snd_fase_01 | 1,37 | 25,6% |
+| 2 | Lanca | Aprendiz | Des Oge Mais Quer | snd_fase_02 | 1,69 | 21,3% |
+| 3 | Florete | Adepto | Ductia | snd_fase_03 | 1,74 | 18,4% |
+| 4 | Maca | Veterano | Saltarello II | snd_fase_04 | 1,78 | 14,3% |
+| 5 | Machado | Especialista | Il Trotto | snd_fase_05 | 2,59 | 19,0% |
+| 6 | Espada | Mestre | In Taberna 120 | snd_fase_06 | 3,35 | 9,7% |
+
+Sairam: a faixa de 110 BPM da Espada e La Rotta. Saiu tambem a Alabarda, que nunca teve
+arte; entrou o Florete, que tambem ainda nao tem (tratado com "?" por D-107).
+
+A Adaga passou de 2 para 3 faixas. Ela nao podia receber mais NOTAS: o motivo ja usava os
+seis ataques da faixa (as duas colcheias livres medem 0,68 e 0,61) e semicolcheia daria
+8 px de vao entre sprites de 45 px. Entao ela cresceu pela largura da pista.
+
+Lanca, Florete e Maca ficam em 5% umas das outras — ordem medida, mas por margem estreita.
+
+Os recordes nao foram migrados: o usuario autorizou zera-los. O id "espada" continua o
+mesmo apesar de a fase ter mudado de musica e de nivel.

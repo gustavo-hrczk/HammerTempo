@@ -39,3 +39,23 @@ sem função, e o arranjo ficou pior que os padrões escritos à mão.
 
 O que precisa acompanhar a música é o **tempo**, não a distribuição das faixas — e
 disso os `ritmo_patterns` já davam conta. Ver D-103.
+
+## perfil_compasso.py
+
+Forca de cada posicao do compasso, contra o piso de ruido da propria faixa.
+
+Amostra o **maximo** numa vizinhanca de +-40 ms, e nao um unico quadro. Amostragem
+pontual variava 100x conforme a janela de FFT, porque um pico estreito de ataque cai
+entre dois quadros e some (D-130).
+
+Sempre rodar com `sub=2` **e** `sub=3`: faixa em compasso composto mostra contratempo
+zerado na subdivisao em dois e so revela o balanco na subdivisao em tres (D-133).
+
+## verificar_motivos.py
+
+Confere os motivos de todas as fases contra as respectivas faixas e imprime densidade,
+fracao de notas mudas, quartis, vao entre sprites e indice de dificuldade.
+
+O criterio e a **fracao de notas mudas**, nao o minimo: uma nota que calhe num compasso
+quieto zera o minimo, e por esse criterio ate as fases validadas reprovam. Banda
+aceitavel medida nas fases validadas: 14% a 21% (D-131).

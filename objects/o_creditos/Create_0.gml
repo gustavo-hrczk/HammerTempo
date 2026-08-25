@@ -125,30 +125,31 @@ credit_text = "CREDITOS \n"+
 
 "5. MÚSICAS E ARRANJOS \n" +
 "Todas as melodias das FASES são de domínio público (Séculos X-XIV). \n\n" +
+
 "Fase 1 Adaga: Istampitta Ghaetta.\n" +
 "Compositor: Desconhecido.\n" +
 "Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
 
-"Fase 2 Lança: Des Oge Mais Quer' Eu Trobar Medieval Tunes Vol.1 (6 of 12) (Trecho)\n" +
+"Fase 2 Lança: Des Oge Mais Quer' Eu Trobar - Medieval Tunes Vol.1 (6 of 12) (Trecho)\n" +
 "Compositor: Desconhecido.\n" +
 "Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
 
-"Fase 3 Espada: Des Oge Mais Quer' Eu Trobar Medieval Tunes Vol.1 (6 of 12) (Trecho)\n" +
-"Compositor: Desconhecido.\n" +
-"Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
+"Fase 3 Florete: Ductia (C) - Medieval Tunes Vol.1 (8 of 12)\n" +
+"Compositor: Desconhecido (dança medieval). Domínio público.\n" +
+"Arranjos e gravação: Medieval Tunes Vol. 1 \n\n" +
 
-"Alabarda (Mestre): La Rotta - Medieval Tunes Vol.1 (11 of 12)\n" +
-"Compositor: Desconhecido (danca italiana medieval). Dominio publico.\n" +
-"Arranjos e gravacao: The Recorder Maniac \n\n" +
-
-"Fase 4 Machado: Il Trotto - Medieval Tunes Vol.1 (10 of 12)\n" +
-"Compositor: Desconhecido (danca italiana medieval). Dominio publico.\n" +
-"Arranjos e gravacao: The Recorder Maniac \n\n" +
-
-"Fase 5 Maça: Saltarello II - Medieval Tunes Vol.1 (12 of 12)\n" +
+"Fase 4 Maça: Saltarello II - Medieval Tunes Vol.1 (12 of 12)\n" +
 "Compositor: Desconhecido (dança italiana, século XIII). Domínio público.\n" +
 "Arranjos e gravação: The Recorder Maniac \n" +
 "Fonte: https://cuidado-arte-vicia.sellfy.store/p/saltarello-ii-13th-century-medieval-dance-soprano-or-other-instrument/ \n\n" +
+
+"Fase 5 Machado: Il Trotto - Medieval Tunes Vol.1 (10 of 12)\n" +
+"Compositor: Desconhecido (dança italiana medieval). Domínio público.\n" +
+"Arranjos e gravação: The Recorder Maniac \n\n" +
+
+"Fase 6 Espada: In Taberna Quando Sumus - Medieval Tunes Vol.1 (1 of 12)\n" +
+"Compositor: Desconhecido (Carmina Burana, século XIII). Domínio público.\n" +
+"Arranjos e gravação: Medieval Tunes Vol. 1 \n\n" +
 
 "\n_____________________________________________________ \n" +
 "6. RECOMENDAÇÃO \n" +
