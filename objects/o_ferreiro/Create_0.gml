@@ -1,3 +1,7 @@
+// Esta instancia foi criada PELO Versus? So essas sao destruidas no desmonte — as
+// da sala sobrevivem, com o dono trocado.
+criado_pelo_versus = false;
+
 // De quem e este ferreiro. 0 e o jogador 1, que e o unico fora do Versus.
 dono = 0;
 

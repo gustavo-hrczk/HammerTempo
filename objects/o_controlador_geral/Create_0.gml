@@ -66,6 +66,11 @@ modo_jogo = MODO.LIVRE;
 /// joga com a propria arte e o proprio placar, no layout de um jogador que ja esta
 /// validado. Zerado ao entrar no Versus, onde os dois jogam.
 solo_dono = 0;
+
+// A cena do Versus esta montada agora? Bandeira global porque quem monta e quem
+// desmonta sao funcoes de script, e nao o controlador.
+global.versus_montado = false;
+global.versus_x_original = [-1, -1];
 arcade_indice = 0;    // qual etapa do percurso, contando de zero
 arcade_pontos = 0;    // total acumulado ate aqui
 

@@ -1,3 +1,6 @@
+// Ver o_ferreiro: so o que o Versus criou e destruido no desmonte.
+criado_pelo_versus = false;
+
 // De quem e este alvo. Decide qual jogador ele julga e qual entrada ele escuta.
 dono = 0;
 

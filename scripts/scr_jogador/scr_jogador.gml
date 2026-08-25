@@ -167,8 +167,13 @@ function cena_sincronizar() {
         return;
     }
 
-    // fora do Versus, o par do jogador 2 nao existe e a cena e de quem esta jogando
-    if (bigorna_de(1) != noone) versus_desmontar_cena();
+    // O desmonte e decidido por uma BANDEIRA, e nao por "existe alguem com dono 1".
+    //
+    // Perguntar pelo dono era um defeito grave: no solo do jogador 2 a cena INTEIRA
+    // adota dono 1, entao a checagem dava verdadeiro e o desmonte apagava o ferreiro, a
+    // bigorna, os alvos e o corredor — o jogo ficava sem cena e sem resposta a tecla
+    // nenhuma, em todos os modos.
+    if (global.versus_montado) versus_desmontar_cena();
 
     solo_adotar_dono(o_controlador_geral.solo_dono);
 }
@@ -196,8 +201,11 @@ function versus_montar_cena() {
     _f1.x = VERSUS_BIGORNA_P1 + VERSUS_VAO_FERREIRO;
     _f1.home_x = _f1.x;
 
+    global.versus_montado = true;
+
     var _b2 = instance_create_layer(VERSUS_BIGORNA_P2, _y_bigorna, "Gameplay", o_bigorna);
     _b2.dono = 1;
+    _b2.criado_pelo_versus = true;
 
     // MESMA PROFUNDIDADE DO JOGADOR 1. Sem isto o par do jogador 2 nascia atras da
     // construcao da forja, que ocupa o meio da tela ate perto de x=1030 — o ferreiro 2
@@ -209,6 +217,7 @@ function versus_montar_cena() {
     var _f2 = instance_create_layer(VERSUS_BIGORNA_P2 - VERSUS_VAO_FERREIRO,
                                     _y_ferreiro, "Gameplay", o_ferreiro);
     _f2.dono = 1;
+    _f2.criado_pelo_versus = true;
     _f2.home_x = _f2.x;
     _f2.depth = _f1.depth;
 
@@ -227,6 +236,7 @@ function versus_montar_cena() {
     for (var _t = 0; _t < 4; _t++) {
         var _a = instance_create_layer(_linha2, ritmo_lane_y(_t, 1), "Gameplay", o_buttons_forja);
         _a.dono = 1;
+        _a.criado_pelo_versus = true;
         _a.meu_tipo = _t;
         _a.sprite_index = ritmo_sprite_alvo(_t);
         _a.image_alpha = 0;
@@ -234,6 +244,7 @@ function versus_montar_cena() {
 
     var _fundo2 = instance_create_layer(0, RITMO_CORREDOR_P2, "Gameplay", o_fundo_ui);
     _fundo2.dono = 1;
+    _fundo2.criado_pelo_versus = true;
     // SEM espelho vertical: a origem do sprite fica no topo, entao yscale -1 desenhava
     // a faixa inteira para cima, fora da tela — era por isso que o corredor do jogador
     // 2 aparecia sem fundo, so com as notas soltas no ceu.
@@ -256,16 +267,20 @@ function versus_revelar_cena() {
 
 /// Desfaz a montagem, devolvendo a cena de um jogador.
 function versus_desmontar_cena() {
+    global.versus_montado = false;
+
     if (variable_global_exists("versus_x_original")) {
         var _o = global.versus_x_original;
 
-        with (o_bigorna)  { if (dono == 0) x = _o[0]; }
-        with (o_ferreiro) { if (dono == 0) { x = _o[1]; home_x = _o[1]; } }
+        with (o_bigorna)  { if (!criado_pelo_versus) x = _o[0]; }
+        with (o_ferreiro) { if (!criado_pelo_versus) { x = _o[1]; home_x = _o[1]; } }
     }
 
-    with (o_bigorna)       { if (dono == 1) instance_destroy(); }
-    with (o_ferreiro)      { if (dono == 1) instance_destroy(); }
-    with (o_buttons_forja) { if (dono == 1) instance_destroy(); }
-    with (o_fundo_ui)      { if (dono == 1) instance_destroy(); }
+    // SO o que o Versus criou. Destruir por `dono == 1` apagava a cena do jogador 2
+    // jogando sozinho, que usa as instancias da SALA com o dono trocado.
+    with (o_bigorna)       { if (criado_pelo_versus) instance_destroy(); }
+    with (o_ferreiro)      { if (criado_pelo_versus) instance_destroy(); }
+    with (o_buttons_forja) { if (criado_pelo_versus) instance_destroy(); }
+    with (o_fundo_ui)      { if (criado_pelo_versus) instance_destroy(); }
     with (o_nota_seta)     { if (dono == 1) instance_destroy(); }
 }
