@@ -200,19 +200,48 @@ function input_acao_do_jogador2(_acao) {
          || _acao == ACAO.PAUSAR2);
 }
 
-/// Índice do jogador para efeito de LEITURA DE CONTROLE.
+/// Qual dos dois dispositivos esta ação lê: 0, 1, ou -1 para nenhum.
 ///
-/// Fora do Versus há uma pessoa só na frente do gabinete, e ela usa o primeiro
-/// controle — inclusive quando quem joga é o jogador 2. Só dentro do Versus os dois
-/// dispositivos passam a ter dono.
-function input_jogador_do_dispositivo(_acao) {
-    if (!versus_ativo()) return 0;
-    return input_acao_do_jogador2(_acao) ? 1 : 0;
+/// O JOGADOR 2 USA O SEGUNDO CONTROLE SEMPRE QUE ELE EXISTIR, e não só dentro da
+/// partida. A regra anterior amarrava isso ao Versus, e com ela o segundo controle não
+/// navegava menu nenhum: os dois já estão na frente do gabinete quando escolhem o modo,
+/// e quem chegou com o controle da direita não conseguia nem mover o cursor.
+///
+/// Com um controle só, a resposta depende do contexto. Fora do Versus há uma pessoa só
+/// ali, e o controle é de quem estiver jogando — inclusive se for o jogador 2. Dentro
+/// do Versus o único controle é do jogador 1, e o 2 fica sem: cair no mesmo slot traria
+/// de volta exatamente a interferência que a separação existe para evitar.
+function input_dispositivo_da_acao(_acao) {
+    if (!input_acao_do_jogador2(_acao)) return 0;
+    if (global.input_slots[1] >= 0)     return 1;
+
+    return versus_ativo() ? -1 : 0;
 }
 
 /// O dispositivo que esta ação lê, ou -1 se não houver controle para ela.
 function input_slot_da_acao(_acao) {
-    return global.input_slots[input_jogador_do_dispositivo(_acao)];
+    var _d = input_dispositivo_da_acao(_acao);
+    return (_d < 0) ? -1 : global.input_slots[_d];
+}
+
+/// As faixas equivalentes a uma direção de menu, dos DOIS jogadores.
+///
+/// A navegação vive em MENU_*, que nunca é remapeável de propósito: setas e WASD
+/// respondem sempre, mesmo que o jogador leve as faixas da forja para outras teclas. É
+/// uma boa rede — e deixava o jogador 2 de fora inteiro. Ele remapeava os botões do
+/// gabinete, ia para o menu e nada respondia, porque o que ele configurou foi LANE2_*,
+/// e o menu só perguntava por MENU_*.
+///
+/// A saída é somar, não substituir: a rede de fábrica continua valendo, e o que cada
+/// jogador vinculou às próprias faixas passa a mover o cursor também.
+function input_lanes_do_menu(_acao) {
+    switch (_acao) {
+        case ACAO.MENU_CIMA:  return [ACAO.LANE_CIMA,  ACAO.LANE2_CIMA];
+        case ACAO.MENU_BAIXO: return [ACAO.LANE_BAIXO, ACAO.LANE2_BAIXO];
+        case ACAO.MENU_ESQ:   return [ACAO.LANE_ESQ,   ACAO.LANE2_ESQ];
+        case ACAO.MENU_DIR:   return [ACAO.LANE_DIR,   ACAO.LANE2_DIR];
+    }
+    return [];
 }
 
 /// No Versus, uma tecla que pertence ao OUTRO jogador não pode acionar esta faixa.
@@ -455,6 +484,13 @@ function input_pressed(_acao) {
     var _p2 = input_comando_p2(_acao);
     if (_p2 >= 0 && input_pressed(_p2)) return true;
 
+    // O cursor tambem anda pelo que cada jogador vinculou as proprias faixas — ver
+    // input_lanes_do_menu.
+    var _lanes = input_lanes_do_menu(_acao);
+    for (var i = 0; i < array_length(_lanes); i++) {
+        if (input_pressed(_lanes[i])) return true;
+    }
+
     if (input_comando_suspenso(_acao)) return false;
 
     var _teclas = global.input_teclas[_acao];
@@ -491,7 +527,7 @@ function input_pressed(_acao) {
         }
         var _eixo = input_eixo_indice(_acao);
         if (_eixo >= 0) {
-            _eixo += input_jogador_do_dispositivo(_acao) * 4;
+            _eixo += input_dispositivo_da_acao(_acao) * 4;
 
             if (global.input_eixo_agora[_eixo] && !global.input_eixo_antes[_eixo]) {
                 global.input_dispositivo = "gamepad";
@@ -510,6 +546,13 @@ function input_held(_acao) {
     // partida que tambem e dele.
     var _p2 = input_comando_p2(_acao);
     if (_p2 >= 0 && input_held(_p2)) return true;
+
+    // O cursor tambem anda pelo que cada jogador vinculou as proprias faixas — ver
+    // input_lanes_do_menu.
+    var _lanes = input_lanes_do_menu(_acao);
+    for (var i = 0; i < array_length(_lanes); i++) {
+        if (input_held(_lanes[i])) return true;
+    }
 
     if (input_comando_suspenso(_acao)) return false;
 
@@ -536,7 +579,7 @@ function input_held(_acao) {
             if (gamepad_button_check(_s, _botoes[i])) return true;
         }
         var _eixo = input_eixo_indice(_acao);
-        if (_eixo >= 0 && global.input_eixo_agora[_eixo + (input_jogador_do_dispositivo(_acao) * 4)]) {
+        if (_eixo >= 0 && global.input_eixo_agora[_eixo + (input_dispositivo_da_acao(_acao) * 4)]) {
             return true;
         }
     }
