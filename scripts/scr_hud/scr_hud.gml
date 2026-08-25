@@ -90,9 +90,11 @@ function hud_barra(_x, _y, _largura, _altura, _fracao, _cor_a, _cor_b, _alpha = 
 /// Prepara as variáveis de animação do HUD. Chamado pelo controlador geral.
 function hud_init() {
     global.hud_pontos_exibidos = 0;
-    global.hud_ganho_valor = 0;
-    global.hud_ganho_timer = 0;
-    global.hud_ganho_cor = c_white;
+    // UM POR JOGADOR. No Versus os dois marcam ao mesmo tempo, e um valor unico
+    // fazia o "+120" do jogador 2 substituir o do jogador 1 no meio da subida.
+    global.hud_ganho_valor = [0, 0];
+    global.hud_ganho_timer = [0, 0];
+    global.hud_ganho_cor = [c_white, c_white];
     global.hud_julgamentos = [];
     global.hud_combo_anterior = 0;
     global.hud_combo_exibido = 0;
@@ -108,8 +110,8 @@ function hud_resetar() {
     // No Arcade o contador NAO volta a zero entre as fases: ele retoma do total ja
     // acumulado. Zerar aqui faria o numero despencar e subir de novo a cada arma.
     global.hud_pontos_exibidos = hud_pontos_base();
-    global.hud_ganho_valor = 0;
-    global.hud_ganho_timer = 0;
+    global.hud_ganho_valor = [0, 0];
+    global.hud_ganho_timer = [0, 0];
     global.hud_julgamentos = [];
     global.hud_combo_anterior = 0;
     global.hud_combo_exibido = 0;
@@ -160,7 +162,8 @@ function hud_update() {
     // O pulso é um ACUMULADOR, então variar a taxa é contínuo — multiplicar o
     // valor acumulado, não. É por isso que a urgência entra pela taxa.
     global.hud_aviso_pulso += 0.12 * global.hud_aviso_ritmo;
-    global.hud_ganho_timer = max(0, global.hud_ganho_timer - 1);
+    global.hud_ganho_timer[0] = max(0, global.hud_ganho_timer[0] - 1);
+    global.hud_ganho_timer[1] = max(0, global.hud_ganho_timer[1] - 1);
 
     // envelhece a fila de julgamentos, do fim para o começo por causa da remoção
     for (var i = array_length(global.hud_julgamentos) - 1; i >= 0; i--) {
@@ -175,10 +178,31 @@ function hud_update() {
 /// Registra um ganho de pontos, que sobe a partir do próprio número da pontuação.
 /// Precisa ser desenhado pelo HUD (e não por um objeto): o painel está no Draw GUI,
 /// então qualquer coisa em espaço de room apareceria atrás dele.
-function hud_registrar_ganho(_valor, _cor = c_white) {
-    global.hud_ganho_valor = _valor;
-    global.hud_ganho_cor = _cor;
-    global.hud_ganho_timer = room_speed * 0.7;
+function hud_registrar_ganho(_valor, _cor = c_white, _dono = 0) {
+    global.hud_ganho_valor[_dono] = _valor;
+    global.hud_ganho_cor[_dono] = _cor;
+    global.hud_ganho_timer[_dono] = room_speed * 0.7;
+}
+
+/// Desenha o "+N" subindo a partir de um ponto, se houver ganho vivo deste jogador.
+///
+/// Extraido do painel do solo para o Versus poder usar o MESMO indicador. Era o que
+/// faltava para a disputa: o placar do Versus mostrava o total mudando, mas nao dizia
+/// quanto valeu a marretada — que e justamente a informacao que um jogador usa para
+/// entender por que esta perdendo.
+function hud_desenhar_ganho(_dono, _x, _y, _alpha = 1, _halign = fa_right) {
+    if (global.hud_ganho_timer[_dono] <= 0) return;
+
+    var _dur = room_speed * 0.7;
+    var _prog = 1 - (global.hud_ganho_timer[_dono] / _dur);
+
+    // sobe 22 px e some acelerando: o mesmo tempo e a mesma curva do painel do solo,
+    // para os dois modos terem a mesma leitura
+    draw_set_alpha((1 - (_prog * _prog)) * _alpha);
+    hud_texto_painel(_x, _y - (_prog * 22),
+                     "+" + string(global.hud_ganho_valor[_dono]),
+                     global.hud_ganho_cor[_dono], f_padrao, _halign);
+    draw_set_alpha(_alpha);
 }
 
 /// Julgamento do acerto. Fica no HUD (e não num objeto solto) porque o painel é
@@ -375,16 +399,7 @@ function hud_draw() {
     hud_texto_painel(_dir, _bloco_y + 32, string(round(global.hud_pontos_exibidos)), _tinta, f_padrao, fa_right);
 
     // ganho de pontos subindo a partir do próprio número
-    if (global.hud_ganho_timer > 0) {
-        var _dur = room_speed * 0.7;
-        var _prog = 1 - (global.hud_ganho_timer / _dur);
-
-        draw_set_alpha((1 - (_prog * _prog)) * _entrada);
-        hud_texto_painel(_dir, _bloco_y + 14 - (_prog * 22),
-                         "+" + string(global.hud_ganho_valor),
-                         global.hud_ganho_cor, f_padrao, fa_right);
-        draw_set_alpha(_entrada);
-    }
+    hud_desenhar_ganho(solo_jogador(), _dir, _bloco_y + 14, _entrada);
 
     var _acertos = jogador().acertos();
     var _julgadas = jogador().julgadas();
@@ -688,6 +703,12 @@ function hud_painel_jogador(_dono, _alpha) {
 
     hud_texto_painel(_esq, _y + 60, "Pontos", _tinta, f_padrao_pequena, fa_left);
     hud_texto_painel(_dir, _y + 60, string(_j.pontuacao), _tinta, f_padrao, fa_right);
+
+    // O MESMO "+N" do solo, subindo a partir do proprio numero. Num Versus a diferenca
+    // de pontos e a unica coisa que os dois olham, e sem o incremento nao da para saber
+    // se a marretada valeu 50 ou 300 — a leitura fica so no total, que muda rapido
+    // demais para ser acompanhado.
+    hud_desenhar_ganho(_dono, _dir, _y + 42, _alpha);
 
     var _seq = _j.stats_sequencia;
     if (_seq >= HUD_COMBO_MINIMO) {

@@ -86,7 +86,7 @@ switch (_julgamento) {
         o_audio_manager.play_martelada_de(dono);
 
         hud_registrar_julgamento("PERFEITO!", COR_PERFEITO, true);
-        hud_registrar_ganho(_ganho, COR_PERFEITO_GANHO);
+        hud_registrar_ganho(_ganho, COR_PERFEITO_GANHO, dono);
 
         debug_registrar_julgamento("PERFEITO", _erro_ms);
         break;
@@ -108,7 +108,7 @@ switch (_julgamento) {
         o_audio_manager.play_martelada_de(dono);
 
         hud_registrar_julgamento("ÓTIMO!", COR_OTIMO, true);
-        hud_registrar_ganho(_ganho_otimo, COR_OTIMO_GANHO);
+        hud_registrar_ganho(_ganho_otimo, COR_OTIMO_GANHO, dono);
 
         debug_registrar_julgamento("ÓTIMO", _erro_ms);
         break;
@@ -128,7 +128,7 @@ switch (_julgamento) {
         o_audio_manager.play_martelada_de(dono);
 
         hud_registrar_julgamento("BOM!", COR_BOM, true);
-        hud_registrar_ganho(_ganho_bom, COR_BOM_GANHO);
+        hud_registrar_ganho(_ganho_bom, COR_BOM_GANHO, dono);
 
         debug_registrar_julgamento("BOM", _erro_ms);
         break;
