@@ -62,6 +62,13 @@ modo_jogo = MODO.LIVRE;
 arcade_indice = 0;    // qual etapa do percurso, contando de zero
 arcade_pontos = 0;    // total acumulado ate aqui
 
+/// Uma entrada por fase JA CONCLUIDA do percurso: { icone, nivel, pontos }.
+///
+/// E o que a tela final desenha como fileira de armas. So as fases jogadas entram —
+/// um percurso encerrado na terceira arma mostra tres, e nao seis com tres vazias:
+/// a fileira e o registro do que foi forjado, nao um mapa do que faltou.
+arcade_forjadas = [];
+
 /// A primeira fase do percurso nao pode dar game over (ARCADE_PRIMEIRA_IMUNE).
 arcade_fase_imune = function() {
     return (modo_jogo == MODO.ARCADE && ARCADE_PRIMEIRA_IMUNE && arcade_indice == 0);
@@ -91,6 +98,21 @@ fase_bonus = function(_base) {
     return _r;
 }
 
+/// Guarda a arma que a fase corrente rendeu, para a fileira da tela final.
+///
+/// O nivel sai de icone_nivel, a mesma regra que a tela de resultado usa para desenhar
+/// a arma: numa fase perdida ele da 0, que e a arma QUEBRADA — o quadro 0 de cada arma
+/// existe so para isso.
+arcade_registrar_forjada = function(_pontos_da_fase) {
+    var _acertos = stats_acertos_perfeitos + stats_acertos_otimos + stats_acertos_bons;
+
+    array_push(arcade_forjadas, {
+        icone:  fases_data[fase_atual].icone,
+        nivel:  icone_nivel(stats_total_notas, _acertos, fase_falhou),
+        pontos: _pontos_da_fase
+    });
+}
+
 /// Fecha a fase corrente do percurso e emenda a proxima, se houver.
 /// Devolve true quando emendou; false quando o percurso acabou aqui.
 ///
@@ -110,7 +132,10 @@ arcade_avancar = function() {
     }
 
     var _b = fase_bonus(pontuacao);
-    arcade_pontos += pontuacao + _b.sem_erro + _b.impecavel;
+    var _total_fase = pontuacao + _b.sem_erro + _b.impecavel;
+
+    arcade_registrar_forjada(_total_fase);
+    arcade_pontos += _total_fase;
 
     arcade_indice++;
     resetar_estatisticas();
@@ -132,6 +157,7 @@ arcade_avancar = function() {
 arcade_iniciar_percurso = function() {
     arcade_indice = 0;
     arcade_pontos = 0;
+    arcade_forjadas = [];
 
     resetar_estatisticas();
     fase_atual = 0;

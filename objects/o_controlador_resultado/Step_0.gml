@@ -15,15 +15,32 @@ if (!revelacao_pronta) {
     // primeira METADE do tempo — dai a sensacao de contagem apressada seguida de
     // arrasto. Esta e simetrica (smoothstep): 50% do numero em 50% do tempo, com
     // partida e chegada macias. Le como um placar girando, nao como carregamento.
-    if (tempo >= RESULTADO_T_CONTAGEM) {
-        var _prog = min(1, (tempo - RESULTADO_T_CONTAGEM) / RESULTADO_DUR_CONTAGEM);
-        var _suave = _prog * _prog * (3 - 2 * _prog);
-        pontuacao_exibida = round(pontuacao_base * _suave);
-    }
+    var _n_fileira = array_length(fileira);
 
-    // os bonus entram somados ao total, um de cada vez
-    if (tempo >= RESULTADO_T_BONUS_1) pontuacao_exibida = pontuacao_base + bonus_sem_erro;
-    if (tempo >= RESULTADO_T_BONUS_2) pontuacao_exibida = pontuacao_final;
+    if (_n_fileira > 0) {
+        // ARCADE: o contador segue a FILEIRA. Cada arma que se monta soma a propria
+        // pontuacao ao numero, entao o jogador ve de onde veio cada pedaco do total.
+        // Uma contagem continua correndo por cima da fileira seriam duas animacoes
+        // dizendo a mesma coisa em ritmos diferentes.
+        var _soma = 0;
+        for (var i = 0; i < _n_fileira; i++) {
+            if (tempo >= RESULTADO_T_CONTAGEM + (i * RESULTADO_GAP_FILEIRA)) {
+                _soma += fileira[i].pontos;
+            }
+        }
+        pontuacao_exibida = _soma;
+
+    } else {
+        if (tempo >= RESULTADO_T_CONTAGEM) {
+            var _prog = min(1, (tempo - RESULTADO_T_CONTAGEM) / RESULTADO_DUR_CONTAGEM);
+            var _suave = _prog * _prog * (3 - 2 * _prog);
+            pontuacao_exibida = round(pontuacao_base * _suave);
+        }
+
+        // os bonus entram somados ao total, um de cada vez
+        if (tempo >= RESULTADO_T_BONUS_1) pontuacao_exibida = pontuacao_base + bonus_sem_erro;
+        if (tempo >= RESULTADO_T_BONUS_2) pontuacao_exibida = pontuacao_final;
+    }
 
     if (tempo >= RESULTADO_T_PROMPT) {
         revelacao_pronta = true;

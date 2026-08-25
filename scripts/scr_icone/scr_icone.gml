@@ -30,14 +30,45 @@ function icone_nivel(_total_notas, _acertos, _falhou) {
     if (_falhou) {
         return 0;
     }
-
     var _pct = (_total_notas > 0) ? ((_acertos / _total_notas) * 100) : 0;
+    return icone_nivel_por_precisao(_pct);
+}
 
+/// Mesma escala, a partir de uma precisão já calculada.
+///
+/// Existe para o placar: entradas gravadas antes de o nível passar a ser guardado só
+/// têm a precisão, e é dela que o nível é reconstruído. Note que a precisão do placar
+/// é medida sobre as notas JULGADAS e o nível da fase sobre o TOTAL de notas — quando
+/// sobram notas em voo no fim da fase os dois divergem um pouco, e é por isso que as
+/// entradas novas guardam o nível em vez de recalculá-lo.
+function icone_nivel_por_precisao(_pct) {
     if (_pct < 40)  return 0;   // falha
     if (_pct < 70)  return 1;   // aceitável
     if (_pct < 95)  return 2;   // bom
     if (_pct < 100) return 3;   // excelente
     return 4;                   // perfeito
+}
+
+/// Maior nível já alcançado numa fase, lido do placar dela.
+///
+/// O cartão mostra o MAIOR nível atingido, e não o do primeiro colocado: pontuação e
+/// precisão não andam juntas — dá para somar mais pontos numa partida longa e menos
+/// precisa. O que o cartão anuncia é a melhor forja, não o maior número.
+function icone_nivel_do_placar(_indice_fase) {
+    var _lista = placar_livre(_indice_fase);
+    var _melhor = 0;
+
+    for (var i = 0; i < array_length(_lista); i++) {
+        var _e = _lista[i];
+
+        // entradas antigas não têm o nível gravado
+        var _n = variable_struct_exists(_e, "nivel")
+            ? _e.nivel
+            : icone_nivel_por_precisao(_e.precisao);
+
+        _melhor = max(_melhor, _n);
+    }
+    return _melhor;
 }
 
 /// Desenha o ícone montado, centrado em (_x, _y).

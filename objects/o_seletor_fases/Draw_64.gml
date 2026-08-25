@@ -104,9 +104,12 @@ for (var i = _primeiro; i <= _ultimo; i++) {
     //
     // Miniatura em escala 3: 26 px viram 78 px, inteira (D-33). A arte antiga vinha
     // em 0,34 e 0,26, escalas fracionarias que sujavam a grade de pixels.
-    var _tem_campeao_arte = _tem_campeao;
-    icone_desenhar(_tem_campeao_arte ? _fase.icone : -1,
-                   _tem_campeao_arte ? 4 : 0,
+    // O nivel exibido e o MAIOR ja atingido na fase, e nao um nivel fixo: agora que o
+    // fundo e a moldura tambem mudam com o desempenho, o cartao vira o registro da
+    // melhor forja. Antes ele mostrava sempre a arma perfeita, o que anunciava uma
+    // conquista que podia nunca ter acontecido.
+    icone_desenhar(_tem_campeao ? _fase.icone : -1,
+                   _tem_campeao ? icone_nivel_do_placar(i) : 0,
                    _pos_x, _y_icone, 3);
 
     // nome

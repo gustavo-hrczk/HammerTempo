@@ -84,6 +84,18 @@ arcade_acumulado = (o_controlador_geral.modo_jogo == MODO.ARCADE)
 pontuacao_final = arcade_acumulado + pontuacao_base + bonus_sem_erro + bonus_impecavel;
 o_controlador_geral.pontuacao = pontuacao_final;
 
+// A ULTIMA fase do percurso entra na fileira aqui, e nao no encadeamento: e esta tela
+// que calcula o bonus dela. Com isso arcade_forjadas passa a ter todas as fases
+// jogadas, e a soma das entradas fecha exatamente com pontuacao_final.
+if (o_controlador_geral.modo_jogo == MODO.ARCADE) {
+    o_controlador_geral.arcade_registrar_forjada(
+        pontuacao_base + bonus_sem_erro + bonus_impecavel);
+}
+
+fileira = (o_controlador_geral.modo_jogo == MODO.ARCADE)
+    ? o_controlador_geral.arcade_forjadas
+    : [];
+
 // =================================================================
 // REVELACAO
 // A tela conta a pontuacao em vez de exibi-la pronta, e revela uma coisa por vez.
@@ -99,6 +111,19 @@ o_controlador_geral.pontuacao = pontuacao_final;
 #macro RESULTADO_T_BONUS_1      3.35
 #macro RESULTADO_T_BONUS_2      3.85
 #macro RESULTADO_T_PROMPT       4.35
+
+/// Ritmo da fileira de armas do Arcade.
+///
+/// Cada arma se monta a partir de RESULTADO_T_CONTAGEM, uma a cada GAP, e o contador
+/// salta para o acumulado daquela arma quando ela pousa — o numero e a fileira contam
+/// a MESMA historia, em vez de duas animacoes correndo lado a lado.
+///
+/// Com seis armas a fileira fecha em 0,90 + 5 x 0,45 = 3,15 s, antes do prompt.
+#macro RESULTADO_GAP_FILEIRA 0.45
+
+/// Escala da fileira. 3 leva os 26 px do icone a 78: seis delas com 20 px de vao dao
+/// 568 px, folgados nos 1280 da tela. A arma sozinha do Modo Livre usa 6.
+#macro RESULTADO_ESCALA_FILEIRA 3
 
 tempo = 0;
 revelacao_pronta = false;

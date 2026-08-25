@@ -67,7 +67,7 @@ function placar_posicao(_indice, _pontos) {
 }
 
 /// Insere e grava. Devolve a posição obtida, ou 0 se não entrou.
-function placar_registrar(_indice, _nome, _pontos, _precisao) {
+function placar_registrar(_indice, _nome, _pontos, _precisao, _nivel = 0) {
     var _pos = placar_posicao(_indice, _pontos);
     if (_pos == 0) return 0;
 
@@ -76,7 +76,11 @@ function placar_registrar(_indice, _nome, _pontos, _precisao) {
     array_insert(_lista, _pos - 1, {
         nome: string_copy(string_upper(_nome), 1, PLACAR_NOME_TAMANHO),
         pontos: _pontos,
-        precisao: round(_precisao)
+        precisao: round(_precisao),
+
+        // O nivel da arma forjada. Guardado em vez de reconstruido da precisao porque
+        // as duas medidas tem denominadores diferentes — ver icone_nivel_por_precisao.
+        nivel: _nivel
     });
 
     // a lista não cresce: o décimo primeiro cai fora

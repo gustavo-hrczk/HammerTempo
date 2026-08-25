@@ -61,12 +61,17 @@ if (tempo >= RESULTADO_T_CONTAGEM) {
 // número subir por causa dele recompensa mais do que um total maior já pronto.
 draw_set_font(f_padrao_pequena);
 
-if (bonus_sem_erro > 0 && tempo >= RESULTADO_T_BONUS_1) {
+// No Arcade as duas linhas somem: elas descrevem so a ULTIMA fase, e ao lado de um
+// total de seis fases isso mente sobre de onde vieram os pontos. Quem detalha o
+// percurso ali e a fileira.
+var _mostra_bonus = (array_length(fileira) == 0);
+
+if (_mostra_bonus && bonus_sem_erro > 0 && tempo >= RESULTADO_T_BONUS_1) {
     draw_set_color(UI_COR_CARMIM);
     draw_text(_col_esq, 594, "SEM ERRO  +" + string(bonus_sem_erro));
 }
 
-if (bonus_impecavel > 0 && tempo >= RESULTADO_T_BONUS_2) {
+if (_mostra_bonus && bonus_impecavel > 0 && tempo >= RESULTADO_T_BONUS_2) {
     draw_set_color(UI_COR_CARMIM);
     draw_text(_col_dir, 594, "IMPECÁVEL  +" + string(bonus_impecavel));
 }
@@ -128,6 +133,34 @@ if (revelacao_pronta) {
 // 26 px do icone a 156 px na tela — inteira, pela regra do pixel art (D-33). A arte
 // antiga era de 250x250 e vinha em escala 0,8, o que sujava a grade de pixels.
 // =================================================================
-icone_desenhar(arma_forjada, nivel_forjado, _cx, 190, 6);
+var _n_fileira = array_length(fileira);
+
+if (_n_fileira > 0) {
+    // ARCADE: as armas do percurso, lado a lado, montando uma a uma da esquerda para
+    // a direita. So as fases JOGADAS aparecem — a fileira registra o que foi forjado,
+    // e nao o que faltava forjar.
+    //
+    // A fase perdida entra com nivel 0, que e a arma QUEBRADA. O quadro 0 de cada arma
+    // existe so para isso.
+    var _lado = icone_tamanho(RESULTADO_ESCALA_FILEIRA);
+    var _passo = _lado + 20;
+    var _inicio = _cx - (((_n_fileira - 1) * _passo) / 2);
+
+    for (var i = 0; i < _n_fileira; i++) {
+        var _t = RESULTADO_T_CONTAGEM + (i * RESULTADO_GAP_FILEIRA);
+        if (tempo < _t) continue;
+
+        // cada arma entra em degrade curto, para a fileira ler como sequencia e nao
+        // como seis coisas piscando
+        var _a = min(1, (tempo - _t) / 0.22);
+
+        icone_desenhar(fileira[i].icone, fileira[i].nivel,
+                       _inicio + (i * _passo), 190,
+                       RESULTADO_ESCALA_FILEIRA, _a);
+    }
+
+} else {
+    icone_desenhar(arma_forjada, nivel_forjado, _cx, 190, 6);
+}
 
 ui_reset();
