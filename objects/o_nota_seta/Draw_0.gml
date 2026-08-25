@@ -1,7 +1,13 @@
-// Durante o MENU de pausa as notas somem: com o jogo congelado e o campo à
-// vista, dava para estudar o que vinha e decorar. Na contagem de retomada elas
-// voltam, porque aí o jogador precisa ver o que está chegando.
-if (o_controlador_geral.pausa && o_controlador_geral.retomada_timer <= 0) {
+// As notas somem durante TODA a pausa, incluindo a contagem de retomada.
+//
+// Elas voltavam na retomada com a ideia de o jogador reencontrar o que vinha, e isso
+// era um furo: bastava pausar, estudar o padrão que estava chegando com o jogo
+// congelado e retomar decorado. A contagem de retomada e o menu de pausa sao o mesmo
+// momento do ponto de vista da vantagem — o jogo esta parado nos dois.
+//
+// De quebra resolve uma colisao de leitura: o numero da retomada e desenhado no meio
+// do corredor, em cima de onde as notas estariam.
+if (o_controlador_geral.pausa) {
     exit;
 }
 

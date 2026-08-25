@@ -37,12 +37,20 @@
 #macro UI_COR_APAGADA      make_colour_rgb(120, 105, 95)  // texto secundário
 #macro UI_COR_PERGAMINHO   make_colour_rgb(229, 214, 161)  // a cor do painel, luminância 0,673
 
-/// Opacidade da placa preta atrás de texto solto sobre o cenário.
+/// Placa escura atrás de texto solto sobre o cenário. Os três valores andam JUNTOS:
+/// é o mesmo tratamento no título da fase e em qualquer texto flutuante, para as duas
+/// faixas lerem como a mesma coisa.
 ///
-/// 0,80 é o valor que torna o contraste MEDIDO em vez de sorteado: ela derruba o pior
-/// fundo possível (branco puro) para luminância 0,033, e o creme do pergaminho fica em
-/// 8,7:1 em cima dela — acima do mínimo AAA de 7:1. Sobre céu escuro passa de 12:1.
-#macro UI_PLACA_ALPHA 0.80
+/// 0,62 é o ponto em que a placa deixa de pesar sem deixar de medir. Ela derruba o
+/// pior fundo possível — branco puro — para luminância 0,119, e o texto BRANCO fica em
+/// 6,2:1 em cima dela, acima do mínimo AA de 4,5:1. Sobre céu escuro passa de 9:1.
+///
+/// A 0,80 que veio antes o contraste era 12:1, mas a faixa lia como tarja colada na
+/// tela. O creme do pergaminho não serve mais como tinta aqui: a 0,62 ele cairia para
+/// 4,3:1, abaixo do mínimo. Placa mais leve exige tinta mais clara.
+#macro UI_PLACA_ALPHA  0.62
+#macro UI_PLACA_FADE_X 96
+#macro UI_PLACA_FADE_Y 22
 
 /// Logo das telas de menu, sempre no mesmo lugar.
 function ui_logo() {
@@ -187,7 +195,7 @@ function ui_reset() {
 /// bordas somem em degradê e ela não lê como tarja colada no cenário.
 ///
 /// Use ESTA função para qualquer texto que não tenha painel atrás. É o padrão.
-function ui_texto_flutuante(_cx, _cy, _texto, _alpha = 1, _fonte = f_padrao_pequena, _cor = UI_COR_PERGAMINHO) {
+function ui_texto_flutuante(_cx, _cy, _texto, _alpha = 1, _fonte = f_padrao_pequena, _cor = c_white) {
     if (_texto == "" || _alpha <= 0) {
         return;
     }
@@ -203,8 +211,8 @@ function ui_texto_flutuante(_cx, _cy, _texto, _alpha = 1, _fonte = f_padrao_pequ
     // invadir a faixa de degradê, as pontas das letras perdem o fundo e voltam a
     // depender do céu — que é justamente o problema que a placa existe para resolver.
     var _pad = 18;
-    var _fade_x = 60;
-    var _fade_y = 10;
+    var _fade_x = UI_PLACA_FADE_X;
+    var _fade_y = UI_PLACA_FADE_Y;
 
     var _meia = (string_width(_texto) / 2) + _pad + _fade_x;
     var _alt  = (string_height(_texto) / 2) + _pad + _fade_y;

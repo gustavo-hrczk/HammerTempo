@@ -533,20 +533,23 @@ function hud_titulo_fase() {
     var _gw = display_get_gui_width();
     var _meia = HUD_TITULO_ALTURA / 2;
 
-    // A placa vai de ponta a ponta e o alpha cai a zero em 420 px de cada lado, entao
-    // ela nao lê como tarja. O miolo cobre as duas linhas com folga.
+    // Mesma opacidade do texto flutuante (UI_PLACA_ALPHA), para as duas faixas lerem
+    // como a mesma coisa. O degrade lateral de 420 px e o vertical de 64 px fazem a
+    // placa dissolver no cenario em vez de terminar numa linha reta.
     hud_placa_suave(0, HUD_TITULO_CY - _meia, _gw, HUD_TITULO_CY + _meia,
-                    c_black, UI_PLACA_ALPHA * _alpha, 420, 46);
+                    c_black, UI_PLACA_ALPHA * _alpha, 420, 64);
 
     draw_set_alpha(_alpha);
 
     draw_set_font(f_padrao);
     hud_texto(_gw / 2, HUD_TITULO_CY - 22, string_upper(_fase.nome), c_white, 1);
 
+    // Branco tambem na segunda linha: a 0,62 de placa o creme cai para 4,3:1, abaixo
+    // do minimo. A hierarquia entre as duas linhas ja vem do corpo da fonte.
     draw_set_font(f_padrao_pequena);
     hud_texto(_gw / 2, HUD_TITULO_CY + 26,
               _fase.dificuldade + "  -  " + string(round(_fase.beat_tempo_bpm)) + " BPM",
-              UI_COR_PERGAMINHO, 1);
+              c_white, 1);
 
     draw_set_alpha(1);
 }
