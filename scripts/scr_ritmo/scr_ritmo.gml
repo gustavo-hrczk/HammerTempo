@@ -21,12 +21,19 @@
 /// espelho — ele fica à direita da tela e do teclado, então a atenção dele mora no
 /// canto direito, e é de lá que as notas precisam chegar.
 function ritmo_linha_x(_dono = 0) {
+    // FORA DO VERSUS o layout e sempre o mesmo, seja quem for que esta jogando. O
+    // jogador 2 sozinho joga no enquadramento validado — o que muda e a paleta dele,
+    // nao o lugar das coisas. Olhar so para o dono espelhava a pista de quem jogava
+    // sozinho e mandava as notas para o topo da tela.
+    if (!versus_ativo()) return RITMO_LINHA_X;
+
     return (_dono == 0) ? RITMO_LINHA_X : (RITMO_LARGURA - RITMO_LINHA_X);
 }
 
 /// Sentido de viagem das notas de um jogador: -1 anda para a esquerda, +1 para a
 /// direita.
 function ritmo_sentido(_dono = 0) {
+    if (!versus_ativo()) return -1;
     return (_dono == 0) ? -1 : 1;
 }
 
@@ -39,6 +46,7 @@ function ritmo_sentido(_dono = 0) {
 #macro RITMO_CORREDOR_P2 0
 
 function ritmo_corredor_topo(_dono = 0) {
+    if (!versus_ativo()) return RITMO_CORREDOR_P1;
     return (_dono == 0) ? RITMO_CORREDOR_P1 : RITMO_CORREDOR_P2;
 }
 

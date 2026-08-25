@@ -192,9 +192,13 @@ ganho_martelada = 0.256;   // 20% abaixo dos 0,32 anteriores, ou -1,94 dB
 ///    frequencia (comb filtering) e soam ocas.
 /// 3. Sem separacao, nao da para saber de ouvido quem acertou.
 ///
-/// A divisao dos cinco samples resolve 1 e 2; a panoramica resolve 3, e de quebra
-/// casa com o lado da tela e do gabinete onde cada jogador esta. Pitch NAO foi usado:
-/// ja tinha sido testado e descartado por descaracterizar a martelada.
+/// A divisao dos cinco samples resolve 1 e 2. O 3 fica em aberto: PANORAMICA NAO FOI
+/// USADA porque o GameMaker nao tem funcao de pan para sons simples — separar os
+/// canais exigiria emissor posicional com listener e falloff, o que e desproporcional
+/// ao ganho. Pitch tambem nao: ja tinha sido testado e descartado por descaracterizar
+/// a martelada.
+///
+/// Na pratica os dois samples ja soam diferentes o bastante para nao se confundirem.
 martelada_p2_index = 0;
 
 play_martelada_de = function(_dono) {
@@ -205,10 +209,8 @@ play_martelada_de = function(_dono) {
 
     // o jogador 2 fica com as amostras pares, que o jogador 1 nunca toca
     var _pares = [sons_martelada[1], sons_martelada[3]];
-    var _som = _pares[martelada_p2_index];
 
-    play_sfx(_som, ganho_martelada);
-    audio_sound_pan(_som, 0.6);
+    play_sfx(_pares[martelada_p2_index], ganho_martelada);
 
     martelada_p2_index = (martelada_p2_index + 1) mod array_length(_pares);
 };
@@ -220,9 +222,7 @@ play_martelada_sequencial_sfx = function() {
         martelada_index_atual = (martelada_index_atual + 1) mod array_length(sons_martelada);
     }
 
-    var _som = sons_martelada[martelada_index_atual];
-    play_sfx(_som, ganho_martelada);
-    audio_sound_pan(_som, versus_ativo() ? -0.6 : 0);
+    play_sfx(sons_martelada[martelada_index_atual], ganho_martelada);
 
     if (martelada_direcao == 1) {
         if (martelada_index_atual >= array_length(sons_martelada) - 1) {

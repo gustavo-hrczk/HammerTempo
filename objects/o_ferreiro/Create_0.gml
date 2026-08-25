@@ -45,6 +45,11 @@ adotar_sprites = function() {
 /// senao o ferreiro 2 se desespelharia no meio de qualquer animacao, e apareceria de
 /// costas para o oponente.
 frente = function() {
+    // Espelho SO no Versus, onde os dois se encaram. O jogador 2 jogando sozinho fica
+    // no lugar de sempre e olha para o mesmo lado de sempre: espelha-lo ali o deixava
+    // de costas para a propria bigorna.
+    if (!versus_ativo()) return 1;
+
     return (dono == 0) ? 1 : -1;
 };
 

@@ -149,9 +149,26 @@ function input_comando_p2(_acao) {
     switch (_acao) {
         case ACAO.CONFIRMAR: return ACAO.CONFIRMAR2;
         case ACAO.VOLTAR:    return ACAO.VOLTAR2;
-        case ACAO.PAUSAR:    return ACAO.PAUSAR2;
+
+        // PAUSAR e o unico que se ISOLA durante a partida: pausar o jogo de outra
+        // pessoa e a unica forma de um jogador atrapalhar o outro de fora da propria
+        // pista. Confirmar e Voltar continuam valendo para os dois em qualquer
+        // situacao, DE PROPOSITO — silencia-los criaria o risco de ninguem conseguir
+        // sair de uma tela se quem comecou a partida largar o gabinete, que numa feira
+        // e pior que a molestia que evitariam.
+        case ACAO.PAUSAR:
+            return (versus_ativo() || solo_jogador() == 1) ? ACAO.PAUSAR2 : -1;
     }
     return -1;
+}
+
+/// O comando do jogador 1 fica suspenso enquanto o jogador 2 joga sozinho.
+///
+/// So vale para PAUSAR, pelo mesmo motivo acima. As faixas ja estao isoladas por
+/// construcao: os alvos perguntam pelas acoes do proprio dono, entao o WASD nao
+/// alcanca a partida do jogador 2 nem as setas alcancam a do jogador 1 no Versus.
+function input_comando_suspenso(_acao) {
+    return (_acao == ACAO.PAUSAR) && !versus_ativo() && (solo_jogador() == 1);
 }
 
 /// A ação de faixa de um jogador. _dono é 0 para o jogador 1 e 1 para o 2.
@@ -348,6 +365,8 @@ function input_pressed(_acao) {
     var _p2 = input_comando_p2(_acao);
     if (_p2 >= 0 && input_pressed(_p2)) return true;
 
+    if (input_comando_suspenso(_acao)) return false;
+
     var _teclas = global.input_teclas[_acao];
     for (var i = 0; i < array_length(_teclas); i++) {
         if (keyboard_check_pressed(_teclas[i])) {
@@ -395,6 +414,8 @@ function input_held(_acao) {
     // partida que tambem e dele.
     var _p2 = input_comando_p2(_acao);
     if (_p2 >= 0 && input_held(_p2)) return true;
+
+    if (input_comando_suspenso(_acao)) return false;
 
     var _teclas = global.input_teclas[_acao];
     for (var i = 0; i < array_length(_teclas); i++) {
