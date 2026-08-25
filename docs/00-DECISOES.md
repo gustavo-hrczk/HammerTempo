@@ -1306,3 +1306,36 @@ resultado **correto**, já que a associação anterior passou a estar errada. SH
 Os BPM passaram a ser arredondados na exibição, no cartão e na entrada da fase. O valor
 medido tem casas decimais (89,99 · 99,99 · 130,01) que são necessárias no cálculo e viram
 ruído na leitura.
+
+**D-116 · Nomenclatura de dificuldade por progressão de ofício.** Novato → Aprendiz → Adepto
+→ Veterano → Especialista → Mestre. Cinco fases, cinco níveis ocupados, e "Mestre" vago à
+espera da sexta faixa.
+
+Os dois primeiros níveis são definidos pelo **número de faixas**, que é o degrau que o jogador
+sente primeiro: Novato tem 2, Aprendiz tem 3. Dai em diante a ordem sai do índice medido.
+
+| Nível | Fase | Faixas | Índice |
+|---|---|---|---|
+| Novato | Adaga | 2 | 0,89 |
+| Aprendiz | Lança | 3 | 1,63 |
+| Adepto | Maça | 3 | 1,61 |
+| Veterano | Machado | 4 | 1,73 |
+| Especialista | Espada | 4 | 1,94 |
+
+Ressalva honesta: Maça e Lança diferem em **1,2%**, dentro do ruído da medição. A ordem entre
+as duas é julgamento, não medida — a Lança vem antes por ter 40 s contra os 45 s da Maça, ou
+seja, menos tempo de exigência contínua.
+
+**D-117 · Higiene do diretório.** Varredura completa: nenhum recurso declarado no `.yyp`
+falta no disco, nenhum recurso no disco deixa de ser declarado, nenhuma função de script sem
+chamada, nenhuma macro sem uso, nenhum som sem referência.
+
+Sobrou material sem uso que **não foi removido de propósito**, por ser arte que pode entrar
+na migração para pixel art: `s_alvos_setas`, `s_bg_sky`, `s_linha_nota` e `s_option_menu`. E
+o objeto `o_faisca`, que ficou órfão quando a faísca saiu do acerto perfeito (D-91) — mantido
+porque a restauração dela foi oferecida e continua de pé.
+
+O `03-ROADMAP-SPRINTS.md` descrevia como pendente coisas já entregues, incluindo "reativar o
+Machado". Ganhou um quadro de estado no topo, com as pendências reais e as **limitações
+conhecidas do tracking**, para elas não se perderem: a ambiguidade de oitava no andamento e a
+faixa da nota ainda sorteada.

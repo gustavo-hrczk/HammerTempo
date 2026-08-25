@@ -150,26 +150,31 @@ molduras_resultado = [s_canva01, s_canva02, s_canva03, s_canva04, s_canva05];
 
 fases_data = [];
 
-// ORDENADAS POR DIFICULDADE MEDIDA, nao por ordem de criacao.
+// ORDENADAS POR DIFICULDADE, com um nivel para cada fase.
 //
-// O indice composto (densidade x faixas / tempo de leitura, ajustado pela tolerancia
-// a erro) mostrou que os rotulos estavam trocados: a Espada marca 1,94 e o Machado
-// 1,73, entao a Espada e a mais dificil das cinco — e nao o Machado, que carregava
-// o rotulo "Mestre".
+// Os dois primeiros niveis sao definidos pelo NUMERO DE FAIXAS, que e o degrau que o
+// jogador sente primeiro: Novato tem 2, Aprendiz tem 3. Dai em diante a ordem sai do
+// indice medido (densidade x faixas / tempo de leitura, ajustado pela tolerancia):
 //
 //   Adaga 0,89 | Maca 1,61 | Lanca 1,63 | Machado 1,73 | Espada 1,94
 //
+// Ressalva honesta: Maca e Lanca diferem em 1,2%, dentro do ruido da medicao. A
+// ordem entre as duas e julgamento, nao medida — Lanca vem antes por ter 40 s contra
+// os 45 s da Maca, ou seja, menos tempo de exigencia continua.
+//
+// A Espada e a mais dificil apesar de ser 20 BPM mais lenta que o Machado: tem mais
+// notas por segundo com o mesmo tempo de leitura. Andamento alto nao e dificuldade
+// quando o padrao e todo em seminima.
+//
 // "Mestre" fica vago de proposito, para a sexta faixa.
 //
-// O campo `id` e o identificador do placar e NAO PODE mudar com a ordem. Antes ele
-// era derivado do indice, e esta reordenacao teria embaralhado os recordes ja
-// gravados: quem fez placar na fase 3 apareceria na fase 3 nova, que e outra arma.
+// O campo `id` e o identificador do placar e NAO acompanha a ordem (D-115).
 
-// 1: Adaga (Facil) - 90 BPM
+// Novato - 2 faixas
 fases_data[0] = {
     id: "adaga",
     nome: "Forjar Adaga",
-    dificuldade: "Fácil",
+    dificuldade: "Novato",
     musica_fase: snd_fase_01,
     ganho_musica: 0.951,
     sprites_resultado: [s_adaga01, s_adaga02, s_adaga03, s_adaga04, s_adaga05],
@@ -186,12 +191,31 @@ fases_data[0] = {
     ]
 };
 
-// 2: Maca (Medio) - 100 BPM | Saltarello II
-// Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
+// Aprendiz - 3 faixas
 fases_data[1] = {
+    id: "lanca",
+    nome: "Forjar Lança",
+    dificuldade: "Aprendiz",
+    musica_fase: snd_fase_02,
+    ganho_musica: 0.703,
+    sprites_resultado: [s_lanca01, s_lanca02, s_lanca03, s_lanca04, s_lanca05],
+    duracao_segundos: 40,
+    velocidade_notas: 5,
+    tipos_seta_permitidos: 3,
+    stats_limite_sequencia_errada: 5,
+    beat_tempo_bpm: 100,
+    primeira_batida_ms: 592.1,
+    ritmo_patterns: [
+        [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 3]
+    ]
+};
+
+// Adepto - 3 faixas, mas 45 s de exigencia continua | Saltarello II
+// Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
+fases_data[2] = {
     id: "maca",
     nome: "Forjar Maca",
-    dificuldade: "Médio",
+    dificuldade: "Adepto",
     musica_fase: snd_fase_05,
     ganho_musica: 0.544,
     sprites_resultado: [],
@@ -208,32 +232,13 @@ fases_data[1] = {
     ]
 };
 
-// 3: Lanca (Medio) - 100 BPM
-fases_data[2] = {
-    id: "lanca",
-    nome: "Forjar Lança",
-    dificuldade: "Médio",
-    musica_fase: snd_fase_02,
-    ganho_musica: 0.703,
-    sprites_resultado: [s_lanca01, s_lanca02, s_lanca03, s_lanca04, s_lanca05],
-    duracao_segundos: 40,
-    velocidade_notas: 5,
-    tipos_seta_permitidos: 3,
-    stats_limite_sequencia_errada: 5,
-    beat_tempo_bpm: 100,
-    primeira_batida_ms: 592.1,
-    ritmo_patterns: [
-        [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 3]
-    ]
-};
-
-// 4: Machado (Dificil) - 130 BPM | Il Trotto
+// Veterano - 4 faixas | Il Trotto
 // Contraste tempo/contratempo de 24,16, o melhor material do projeto: so ha ataque
 // nos tempos, entao o padrao e todo em seminima (D-112).
 fases_data[3] = {
     id: "machado",
     nome: "Forjar Machado",
-    dificuldade: "Difícil",
+    dificuldade: "Veterano",
     musica_fase: snd_fase_04,
     ganho_musica: 1.0,
     sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
@@ -249,13 +254,11 @@ fases_data[3] = {
     ]
 };
 
-// 5: Espada (Muito Dificil) - 110 BPM
-// A mais dificil das cinco pelo indice medido (1,94), apesar de nao ser a mais
-// rapida: 4 faixas, 2,29 notas/s e o menor tempo de leitura do conjunto.
+// Especialista - 4 faixas, a maior densidade do jogo
 fases_data[4] = {
     id: "espada",
     nome: "Forjar Espada",
-    dificuldade: "Muito Difícil",
+    dificuldade: "Especialista",
     musica_fase: snd_fase_03,
     ganho_musica: 0.917,
     sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
