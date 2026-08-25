@@ -75,6 +75,14 @@ global.versus_x_original = [-1, -1];
 arcade_indice = 0;    // qual etapa do percurso, contando de zero
 arcade_pontos = 0;    // total acumulado ate aqui
 
+// O JULGAMENTO DAS FASES JA FECHADAS do percurso. A leitura do painel e da tela de
+// resultado e a soma destes com os da fase corrente — ver arcade_stats_totais.
+//
+// Sao os quatro contadores, e nao so um par de totais: a tela de resultado mostra a
+// divisao por tier, e mostrar a precisao do percurso ao lado das contagens de uma fase
+// so faria os numeros da mesma tela discordarem entre si.
+arcade_stats_base = { perfeitas: 0, otimas: 0, boas: 0, erros: 0 };
+
 /// Uma entrada por fase JA CONCLUIDA do percurso: { icone, nivel, pontos }.
 ///
 /// E o que a tela final desenha como fileira de armas. So as fases jogadas entram —
@@ -122,6 +130,32 @@ arcade_registrar_forjada = function(_pontos_da_fase) {
         nivel:  icone_nivel(_j.stats_total_notas, _j.acertos(), fase_falhou),
         pontos: _pontos_da_fase
     });
+}
+
+/// O julgamento a EXIBIR: perfeitas, otimas, boas, erros.
+///
+/// No Arcade e o do percurso inteiro, e nao o da arma corrente. O percurso e uma
+/// partida so — o placar e o combo ja atravessam as fases — e ver a precisao despencar
+/// numa arma e voltar a 100% na seguinte fazia os numeros do painel contarem historias
+/// diferentes ao mesmo tempo. Nos outros modos devolve a fase, que e a partida.
+arcade_stats_totais = function(_dono = undefined) {
+    var _j = jogador(_dono);
+
+    var _t = {
+        perfeitas: _j.stats_acertos_perfeitos,
+        otimas:    _j.stats_acertos_otimos,
+        boas:      _j.stats_acertos_bons,
+        erros:     _j.stats_erros
+    };
+
+    if (modo_jogo == MODO.ARCADE) {
+        _t.perfeitas += arcade_stats_base.perfeitas;
+        _t.otimas    += arcade_stats_base.otimas;
+        _t.boas      += arcade_stats_base.boas;
+        _t.erros     += arcade_stats_base.erros;
+    }
+
+    return _t;
 }
 
 /// A fileira INCLUINDO a arma que acabou de ser forjada.
@@ -201,6 +235,16 @@ arcade_avancar = function() {
     // O COMBO ATRAVESSA AS FASES. O percurso e uma partida so, e zerar a sequencia na
     // troca de arma puniria justamente quem vinha bem — a recompensa de manter o combo
     // e o que segura a atencao ao longo de seis minutos.
+    // A PRECISAO ATRAVESSA AS FASES, como os pontos e o combo. Ela reiniciava em 100%
+    // a cada arma, e o percurso — que e uma partida so — ficava com tres numeros
+    // contando historias diferentes: o placar somando, o combo seguindo e a precisao
+    // esquecendo. Guardado antes do reset, que zera as estatisticas da fase.
+    var _jf = jogador();
+    arcade_stats_base.perfeitas += _jf.stats_acertos_perfeitos;
+    arcade_stats_base.otimas    += _jf.stats_acertos_otimos;
+    arcade_stats_base.boas      += _jf.stats_acertos_bons;
+    arcade_stats_base.erros     += _jf.stats_erros;
+
     var _combo = jogador().stats_sequencia;
     resetar_estatisticas();
     jogador().stats_sequencia = _combo;
@@ -223,6 +267,7 @@ arcade_avancar = function() {
 arcade_iniciar_percurso = function() {
     arcade_indice = 0;
     arcade_pontos = 0;
+    arcade_stats_base = { perfeitas: 0, otimas: 0, boas: 0, erros: 0 };
     arcade_forjadas = [];
 
     resetar_estatisticas();

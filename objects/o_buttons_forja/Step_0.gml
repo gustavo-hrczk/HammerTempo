@@ -53,18 +53,22 @@ var _nota = ritmo_nota_alcancavel(meu_tipo, dono);
 if (_nota == noone) {
     // Toque sem nota alcançável: custa pontos e quebra o combo, mas não encerra
     // a partida (auditoria GP-04).
-    // UM ERRO E UM ERRO, indiferente do motivo.
+    // O TOQUE FORA CUSTA, MAS NAO ENTRA NA PRECISAO.
     //
-    // Deixar a nota passar e apertar a tecla errada eram contados como coisas
-    // diferentes, e so o primeiro entrava em stats_erros. O resultado de um Versus saiu
-    // com um jogador de ZERO erros e quatro mil pontos a menos que o adversario: ele
-    // martelava fora do tempo, quebrava o proprio combo — que e quase toda a pontuacao
-    // — e ainda levava nota S, porque a precisao nao enxergava aquilo.
+    // Ele quebra o combo, tira pontos e mostra ERRO na tela: o jogador sente a falha na
+    // hora, que e o que importa. O que ele NAO faz e somar em stats_erros, porque esse
+    // e o denominador da precisao — e um denominador que cresce a cada tecla apertada
+    // nao e uma metrica. Da para levar a precisao a zero sem perder uma nota sequer,
+    // bastando apoiar a mao no teclado, e numa feira isso acontece o tempo todo.
     //
-    // Duas categorias para uma falha so nao descreviam melhor o que aconteceu; apenas
-    // escondiam metade dela. Agora conta como erro, entra na precisao e no rank.
-    jogador(dono).stats_erros++;
-    jogador(dono).stats_toques_invalidos++;   // so para o diagnostico do F3
+    // E o que DDR, Guitar Hero, osu! e Beat Saber fazem, pelo mesmo motivo: a nota e a
+    // unica unidade contavel de antemao, entao e ela que define o total.
+    //
+    // (A duvida original que levou a contar o toque fora era um resultado com um jogador
+    // de zero erros e quatro mil pontos a menos que o adversario. A causa nao era essa:
+    // era a seta do jogador 2 acionando a faixa do jogador 1 no Versus, corrigido em
+    // input_tecla_do_jogador2.)
+    jogador(dono).stats_toques_invalidos++;
     jogador(dono).pontuacao = max(0, jogador(dono).pontuacao - 10);
     jogador(dono).stats_sequencia = 0;
 

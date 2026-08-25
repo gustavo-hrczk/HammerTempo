@@ -126,6 +126,20 @@ function hud_pontos_base() {
     return (_c.modo_jogo == MODO.ARCADE) ? _c.arcade_pontos : 0;
 }
 
+/// Precisão a exibir, em porcentagem.
+///
+/// No Arcade ela é a do PERCURSO INTEIRO, e não a da arma corrente: o percurso é uma
+/// partida só, e o placar e o combo já atravessam as fases. Ver a precisão despencar
+/// para 77% numa arma e voltar a 100% na seguinte fazia os três números do painel
+/// contarem histórias diferentes ao mesmo tempo.
+function hud_precisao(_dono = undefined) {
+    var _t = o_controlador_geral.arcade_stats_totais(_dono);
+    var _a = _t.perfeitas + _t.otimas + _t.boas;
+    var _n = _a + _t.erros;
+
+    return (_n > 0) ? ((_a / _n) * 100) : 100;
+}
+
 /// Anima os valores do HUD. Chamado uma vez por frame durante a partida.
 function hud_update() {
     var _ctrl = o_controlador_geral;
@@ -478,9 +492,7 @@ function hud_draw() {
     // ganho de pontos subindo a partir do próprio número
     hud_desenhar_ganho(solo_jogador(), _dir, _bloco_y + 14, _entrada);
 
-    var _acertos = jogador().acertos();
-    var _julgadas = jogador().julgadas();
-    var _precisao = (_julgadas > 0) ? (_acertos / _julgadas) * 100 : 100;
+    var _precisao = hud_precisao();
     hud_texto_painel(_esq, _bloco_y + 72, "Precisão", _tinta, f_padrao_pequena, fa_left);
     hud_texto_painel(_dir, _bloco_y + 72, string(round(_precisao)) + "%", _tinta, f_padrao, fa_right);
 

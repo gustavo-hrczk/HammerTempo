@@ -13,10 +13,14 @@ var _col_dir = _cx + 300;
 var _linha1 = 522;
 var _linha2 = 558;
 
-var _perfeitas = jogador().stats_acertos_perfeitos;
-var _otimas = jogador().stats_acertos_otimos;
-var _boas = jogador().stats_acertos_bons;
-var _erros = jogador().stats_erros;
+// NO ARCADE ESTES SAO OS NUMEROS DO PERCURSO, e nao os da ultima arma — ver
+// arcade_stats_totais. Nos outros modos a fase E a partida, e nada muda.
+var _tot = o_controlador_geral.arcade_stats_totais();
+
+var _perfeitas = _tot.perfeitas;
+var _otimas = _tot.otimas;
+var _boas = _tot.boas;
+var _erros = _tot.erros;
 
 var _julgadas = _perfeitas + _otimas + _boas + _erros;
 var _precisao = (_julgadas > 0) ? ((_perfeitas + _otimas + _boas) / _julgadas) * 100 : 0;
