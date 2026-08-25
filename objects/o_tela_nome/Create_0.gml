@@ -7,8 +7,13 @@
 letras = array_create(PLACAR_NOME_TAMANHO, 0);   // índices em PLACAR_LETRAS
 cursor = 0;
 
-posicao_prevista = placar_posicao(o_controlador_geral.fase_atual,
-                                  o_controlador_geral.pontuacao);
+// A posicao prevista tem de vir da MESMA tabela em que a entrada vai ser gravada.
+// Lendo sempre a do Modo Livre, um percurso Arcade anunciava a posicao que o total
+// dele ocuparia entre pontuacoes de fase solta — um numero de outra natureza, quase
+// sempre "1o LUGAR!" por ser muito maior.
+posicao_prevista = (o_controlador_geral.modo_jogo == MODO.ARCADE)
+    ? placar_arcade_posicao(o_controlador_geral.pontuacao)
+    : placar_posicao(o_controlador_geral.fase_atual, o_controlador_geral.pontuacao);
 
 // Precisão pela mesma conta da tela de resultado, para os dois números baterem.
 var _p = o_controlador_geral.stats_acertos_perfeitos;
