@@ -1,6 +1,46 @@
 // De quem e este ferreiro. 0 e o jogador 1, que e o unico fora do Versus.
 dono = 0;
 
+// CONJUNTO DE SPRITES DO DONO.
+//
+// O ferreiro 2 e a mesma arte com outra paleta, entao ele tem os mesmos estados e a
+// mesma contagem de quadros — muda so de qual asset cada estado vem. Guardar o
+// conjunto num struct evita espalhar `if (dono == 1)` pelos treze pontos que trocam
+// de sprite, onde um esquecido daria ao jogador 2 a cor do jogador 1 no meio de uma
+// animacao.
+//
+// Preenchido no Step, no primeiro quadro: `dono` e definido por quem cria a
+// instancia, e no Create ele ainda vale 0.
+meus_sprites = undefined;
+
+/// Monta o conjunto do dono atual. Idempotente.
+adotar_sprites = function() {
+    meus_sprites = (dono == 0)
+        ? { idle: s_ferreiro_idle,  martelada: s_ferreiro_martelada,
+            andando: s_ferreiro_andando, win: s_ferreiro_win,
+            falha: s_ferreiro_falha, miss: s_ferreiro_miss }
+        : { idle: s_ferreiro2_idle, martelada: s_ferreiro2_martelada,
+            andando: s_ferreiro2_andando, win: s_ferreiro2_win,
+            falha: s_ferreiro2_falha, miss: s_ferreiro2_miss };
+
+    // O jogador 2 fica a DIREITA e encara o jogador 1. A origem dos sprites e a base
+    // centrada (120,240), entao o espelho gira em torno dos proprios pes.
+    image_xscale = frente();
+
+    sprite_index = meus_sprites.idle;
+};
+
+/// Para que lado este ferreiro olha quando esta de frente.
+///
+/// O jogador 1 olha para a direita, como sempre olhou. O jogador 2 e o espelho: ele
+/// fica a direita da tela e encara o 1. Toda vez que o codigo antigo dizia
+/// `image_xscale = 1` para dizer "volte a olhar para frente", ele agora diz frente() —
+/// senao o ferreiro 2 se desespelharia no meio de qualquer animacao, e apareceria de
+/// costas para o oponente.
+frente = function() {
+    return (dono == 0) ? 1 : -1;
+};
+
 estado = FERREIRO_ESTADO.IDLE;
 
 // Posição de trabalho, junto à bigorna. O ócio da seleção de fase sempre termina
@@ -57,10 +97,10 @@ aplicar_dano = function() {
     if (estado == FERREIRO_ESTADO.FALHA || estado == FERREIRO_ESTADO.FALHOU_ESTATICO) exit;
 
     estado = FERREIRO_ESTADO.DANO;
-    sprite_index = s_ferreiro_miss;
+    sprite_index = meus_sprites.miss;
     image_index = 0;
     image_speed = 0;
-    image_xscale = 1;
+    image_xscale = frente();
     dano_timer = room_speed * 0.18;
 }
 
@@ -80,22 +120,22 @@ aplicar_dano = function() {
 // Função para iniciar a martelada NORMAL
 iniciar_martelada_normal = function() {
     estado = FERREIRO_ESTADO.MARTELANDO;
-    sprite_index = s_ferreiro_martelada;
+    sprite_index = meus_sprites.martelada;
     image_index = MARTELADA_QUADRO_INICIAL;
     image_speed = 1;
     velocidade_martelada = 1;
-    image_xscale = 1;
+    image_xscale = frente();
     x = home_x;
 }
 
 // Função para iniciar a martelada PERFEITA
 iniciar_martelada_perfeita = function() {
     estado = FERREIRO_ESTADO.MARTELANDO;
-    sprite_index = s_ferreiro_martelada;
+    sprite_index = meus_sprites.martelada;
     image_index = MARTELADA_QUADRO_INICIAL;
     image_speed = 0.8;
     velocidade_martelada = 0.8;
-    image_xscale = 1;
+    image_xscale = frente();
     x = home_x;
 
     // A faísca antiga saiu daqui. Ela disparava no instante da tecla, enquanto o
@@ -107,23 +147,23 @@ iniciar_martelada_perfeita = function() {
 /// quando ele pode estar congelado no meio de uma martelada.
 voltar_ao_repouso = function() {
     estado = FERREIRO_ESTADO.IDLE;
-    sprite_index = s_ferreiro_idle;
+    sprite_index = meus_sprites.idle;
     image_index = 0;
     image_speed = 0.5;
-    image_xscale = 1;
+    image_xscale = frente();
     x = home_x;
 }
 
 // --- ANIMAÇÕES DE RESULTADO ---
 iniciar_comemoracao = function() {
     estado = FERREIRO_ESTADO.COMEMORANDO;
-    image_xscale = 1;
+    image_xscale = frente();
 }
 
 iniciar_animacao_falha = function() {
     estado = FERREIRO_ESTADO.FALHA;
-    sprite_index = s_ferreiro_falha;
+    sprite_index = meus_sprites.falha;
     image_index = 0;
     image_speed = 1;
-    image_xscale = 1;
+    image_xscale = frente();
 }
