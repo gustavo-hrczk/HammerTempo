@@ -85,6 +85,17 @@ function input_vinculos_fixos() {
     global.input_teclas_fixas[ACAO.LANE_BAIXO] = [vk_down];
     global.input_teclas_fixas[ACAO.LANE_ESQ]   = [vk_left];
     global.input_teclas_fixas[ACAO.LANE_DIR]   = [vk_right];
+
+    // AS SETAS SAO ABSOLUTAS PARA OS DOIS jogadores, e nao so para o primeiro. No solo
+    // do jogador 2 elas eram o vinculo dele e paravam de valer se ele remapeasse — o
+    // jogador 1 tinha uma rede que o 2 nao tinha.
+    //
+    // No Versus estes vinculos ficam suspensos, senao as setas martelariam nas duas
+    // pistas ao mesmo tempo.
+    global.input_teclas_fixas[ACAO.LANE2_CIMA]  = [vk_up];
+    global.input_teclas_fixas[ACAO.LANE2_BAIXO] = [vk_down];
+    global.input_teclas_fixas[ACAO.LANE2_ESQ]   = [vk_left];
+    global.input_teclas_fixas[ACAO.LANE2_DIR]   = [vk_right];
 }
 
 /// Teclas que a captura recusa.
@@ -213,8 +224,10 @@ function ritmo_sprite_alvo(_tipo) {
 /// das faixas do jogador 1 desde sempre, e no Versus elas pertencem ao jogador 2 —
 /// sem isto, cada tecla do jogador 2 martelaria também para o jogador 1.
 function input_lane_do_jogador1(_acao) {
-    return (_acao == ACAO.LANE_CIMA || _acao == ACAO.LANE_BAIXO
-         || _acao == ACAO.LANE_ESQ  || _acao == ACAO.LANE_DIR);
+    return (_acao == ACAO.LANE_CIMA  || _acao == ACAO.LANE_BAIXO
+         || _acao == ACAO.LANE_ESQ   || _acao == ACAO.LANE_DIR
+         || _acao == ACAO.LANE2_CIMA || _acao == ACAO.LANE2_BAIXO
+         || _acao == ACAO.LANE2_ESQ  || _acao == ACAO.LANE2_DIR);
 }
 
 /// Identificador estável da ação no save. Não usa o índice do enum de propósito:

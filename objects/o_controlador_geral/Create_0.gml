@@ -70,6 +70,7 @@ solo_dono = 0;
 // A cena do Versus esta montada agora? Bandeira global porque quem monta e quem
 // desmonta sao funcoes de script, e nao o controlador.
 global.versus_montado = false;
+global.versus_pista_montada = false;
 global.versus_x_original = [-1, -1];
 arcade_indice = 0;    // qual etapa do percurso, contando de zero
 arcade_pontos = 0;    // total acumulado ate aqui

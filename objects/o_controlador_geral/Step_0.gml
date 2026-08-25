@@ -115,6 +115,10 @@ switch (estado_jogo) {
         break;
 
     case MINIGAME.CONTAGEM:
+        // A pista do jogador 2 nasce com a fase, e nao no seletor de armas: la ela
+        // ficaria desenhada por cima do ceu, sem nota nenhuma para receber.
+        versus_montar_pista();
+
         if (contagem_timer > 0) {
             contagem_timer--;
         } else {
@@ -123,6 +127,7 @@ switch (estado_jogo) {
         break;
 
     case MINIGAME.RITMO:
+        versus_montar_pista();
         hud_update();
 
         // Garante que o spawner seja criado apenas uma vez.

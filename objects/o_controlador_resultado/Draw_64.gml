@@ -55,6 +55,11 @@ if (array_length(fileira) == 0 && tempo >= RESULTADO_T_ESTATISTICAS) {
     var _rank = icone_rank(_precisao);
     var _nota_x = _cx + 150;
 
+    // A nota fica sobre o CENARIO, e nao sobre o painel: sem placa, a letra dourada do
+    // S sumia contra o ceu claro do ciclo. Mesmo padrao de ui_texto_flutuante.
+    hud_placa_suave(_nota_x - 74, 122, _nota_x + 74, 250,
+                    c_black, UI_PLACA_ALPHA, 30, 22);
+
     draw_set_font(f_padrao_pequena);
     draw_set_color(UI_COR_APAGADA);
     draw_text(_nota_x, 152, "NOTA");

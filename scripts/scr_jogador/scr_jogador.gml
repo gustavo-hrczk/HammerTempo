@@ -181,13 +181,24 @@ function cena_sincronizar() {
 /// Reposiciona o jogador 1 e cria o jogador 2. Idempotente.
 function versus_montar_cena() {
     if (!versus_ativo()) return;
+    if (global.versus_montado) return;
+
+    // A AUTORIDADE DAS PISTAS E FIXA, e nao herdada de quem abriu o menu.
+    //
+    // Jogador 1 e SEMPRE a pista de baixo, jogador 2 SEMPRE a de cima. Quem entra no
+    // Versus depois de uma partida solo do jogador 2 chegava com as instancias da sala
+    // marcadas com dono 1 — e entao ferreiro_de(0) nao achava ninguem e a montagem
+    // desistia na primeira linha, deixando um ferreiro so, com a paleta errada.
+    //
+    // Reivindicar o dono aqui torna a montagem imune ao caminho que o jogador fez.
+    with (o_ferreiro)      { if (!criado_pelo_versus) { dono = 0; adotar_sprites(); } }
+    with (o_bigorna)       { if (!criado_pelo_versus) dono = 0; }
+    with (o_buttons_forja) { if (!criado_pelo_versus) dono = 0; }
+    with (o_fundo_ui)      { if (!criado_pelo_versus) dono = 0; }
 
     var _b1 = bigorna_de(0);
     var _f1 = ferreiro_de(0);
     if (_b1 == noone || _f1 == noone) return;
-
-    // ja montado?
-    if (bigorna_de(1) != noone) return;
 
     var _y_bigorna = _b1.y;
     var _y_ferreiro = _f1.y;
@@ -231,7 +242,21 @@ function versus_montar_cena() {
     // e, remonta com a paleta e o espelho certos
     with (_f2) adotar_sprites();
 
-    // Alvos e corredor do jogador 2, no topo da tela.
+    // A pista fica para depois: no seletor de armas so a CENA aparece (dois ferreiros,
+    // duas bigornas). Ver versus_montar_pista.
+}
+
+/// Cria a pista do jogador 2: os quatro alvos e o corredor de cima.
+///
+/// Separada da cena porque ela so faz sentido com a fase comecando. Durante a selecao
+/// de armas o corredor de cima ficava desenhado por cima do ceu, sem nota nenhuma
+/// para receber.
+function versus_montar_pista() {
+    if (!versus_ativo() || global.versus_pista_montada) return;
+    if (!global.versus_montado) return;
+
+    global.versus_pista_montada = true;
+
     var _linha2 = ritmo_linha_x(1);
     for (var _t = 0; _t < 4; _t++) {
         var _a = instance_create_layer(_linha2, ritmo_lane_y(_t, 1), "Gameplay", o_buttons_forja);
@@ -250,7 +275,6 @@ function versus_montar_cena() {
     // 2 aparecia sem fundo, so com as notas soltas no ceu.
     _fundo2.image_alpha = 0;
 
-    with (o_buttons_forja) { if (dono == 1) image_alpha = 0; }
 }
 
 /// Faz a cena do jogador 2 ganhar corpo. Chamada todo quadro; para sozinha no fim.
@@ -268,13 +292,19 @@ function versus_revelar_cena() {
 /// Desfaz a montagem, devolvendo a cena de um jogador.
 function versus_desmontar_cena() {
     global.versus_montado = false;
+    global.versus_pista_montada = false;
 
-    if (variable_global_exists("versus_x_original")) {
-        var _o = global.versus_x_original;
+    // SO restaura posicao de verdade. O valor inicial e [-1,-1], e restaura-lo mandava
+    // a bigorna para x=-1, encostada na borda esquerda da tela — era o que aparecia
+    // como "a bigorna foi projetada para outra posicao" ao sair de uma partida.
+    var _o = global.versus_x_original;
 
+    if (_o[0] >= 0) {
         with (o_bigorna)  { if (!criado_pelo_versus) x = _o[0]; }
         with (o_ferreiro) { if (!criado_pelo_versus) { x = _o[1]; home_x = _o[1]; } }
     }
+
+    global.versus_x_original = [-1, -1];
 
     // SO o que o Versus criou. Destruir por `dono == 1` apagava a cena do jogador 2
     // jogando sozinho, que usa as instancias da SALA com o dono trocado.
