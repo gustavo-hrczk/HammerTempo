@@ -232,6 +232,12 @@ function versus_montar_cena() {
     // ferreiro 1. Menor desenha na frente.
     _b2.depth = -1;
 
+    // A BIGORNA TAMBEM ESPELHA. Ela ficava virada para o mesmo lado da do jogador 1, e
+    // isso nao era so estetica: o efeito de impacto nasce a IMPACTO_DX da borda dela,
+    // no ponto onde o martelo encosta — com a bigorna ao contrario, o clarao caia do
+    // lado errado, longe da martelada.
+    _b2.image_xscale = -1;
+
     // O ferreiro 2 fica do outro lado da propria bigorna: a cena inteira dele e o
     // espelho da do jogador 1.
     var _f2 = instance_create_layer(VERSUS_BIGORNA_P2 - VERSUS_VAO_FERREIRO,

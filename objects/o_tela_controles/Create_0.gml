@@ -9,7 +9,9 @@
 pagina = 0;
 
 acoes_por_pagina = [input_acoes_configuraveis(), input_acoes_configuraveis_p2()];
-titulos_pagina = ["CONTROLES", "CONTROLES  -  JOGADOR 2"];
+// Titulos CURTOS: "CONTROLES - JOGADOR 2" media mais que a largura da moldura e
+// vazava pelos dois lados, junto com as setas de pagina.
+titulos_pagina = ["CONTROLES  P1", "CONTROLES  P2"];
 
 acoes = acoes_por_pagina[pagina];
 

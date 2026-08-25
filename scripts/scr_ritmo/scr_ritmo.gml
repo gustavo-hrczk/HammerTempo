@@ -15,6 +15,9 @@
 /// ao centro dela.
 #macro RITMO_LARGURA 1280
 
+/// Largura da sprite do alvo e da nota. Entra na simetria das duas pistas.
+#macro RITMO_ALVO_LARGURA 45
+
 /// Onde fica a zona de acerto de um jogador.
 ///
 /// O jogador 1 acerta à esquerda e as notas dele vêm da direita; o jogador 2 é o
@@ -27,7 +30,13 @@ function ritmo_linha_x(_dono = 0) {
     // sozinho e mandava as notas para o topo da tela.
     if (!versus_ativo()) return RITMO_LINHA_X;
 
-    return (_dono == 0) ? RITMO_LINHA_X : (RITMO_LARGURA - RITMO_LINHA_X);
+    // A largura do alvo entra na conta. As sprites tem origem no canto ESQUERDO, entao
+    // a coluna do jogador 1 ocupa 98..143 — 98 px de folga ate a borda. Espelhar so a
+    // coordenada poria a do jogador 2 em 1182..1227, com 53 px de folga do outro lado.
+    // Subtrair a largura devolve os mesmos 98 px nas duas pontas.
+    return (_dono == 0)
+        ? RITMO_LINHA_X
+        : (RITMO_LARGURA - RITMO_LINHA_X - RITMO_ALVO_LARGURA);
 }
 
 /// Sentido de viagem das notas de um jogador: -1 anda para a esquerda, +1 para a
@@ -251,14 +260,18 @@ function ritmo_impacto_bigorna(_tipo, _julgamento, _forca, _atraso, _dono = 0) {
     var _b = bigorna_de(_dono);
     if (_b == noone) exit;
 
-    var _e = instance_create_layer(_b.x + IMPACTO_DX,
+    // O deslocamento acompanha o espelho da bigorna: no jogador 2 o ponto de contato
+    // fica do outro lado dela.
+    var _lado = (_b.image_xscale < 0) ? -1 : 1;
+
+    var _e = instance_create_layer(_b.x + (_lado * IMPACTO_DX),
                                    _b.y + IMPACTO_DY,
                                    "Gameplay", o_impacto_bigorna);
 
     _e.dono = _dono;
 
     _e.sprite_index = ritmo_sprite_impacto(_tipo, _julgamento);
-    _e.image_xscale = IMPACTO_ESCALA;
+    _e.image_xscale = IMPACTO_ESCALA * _lado;
     _e.image_yscale = IMPACTO_ESCALA;
     _e.atraso = _atraso;
     _e.forca = _forca;

@@ -4,6 +4,9 @@ draw_self();
 // O trilho começa na zona de acerto e se desfaz à direita: ele existe para guiar a
 // chegada da nota, não para riscar a tela de ponta a ponta. É mais estreito que a
 // lane e fica centralizado nela, passando por baixo da nota.
+// Os TRILHOS so aparecem durante a partida. A faixa de pergaminho em si (draw_self,
+// acima) continua sempre — e ela que recebe o resultado do Versus, projetado no
+// corredor de cada jogador.
 if (!instance_exists(o_controlador_geral) || o_controlador_geral.estado_jogo != MINIGAME.RITMO) {
     exit;
 }

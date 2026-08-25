@@ -58,21 +58,31 @@ switch (estado_jogo) {
 // =================================================================
 if (pausa && retomada_timer > 0) {
     // Retomada: o campo fica à vista, só com a contagem por cima.
+    //
+    // NO VERSUS A CONTAGEM APARECE NAS DUAS PISTAS. Ela vivia so no corredor de baixo,
+    // entao o jogador 2 nao tinha como saber quanto faltava para voltar — os dois
+    // retomam ao mesmo tempo, e os dois precisam ver o mesmo numero.
     var _rn = string(ceil(retomada_timer / room_speed));
     var _rcx = display_get_gui_width() / 2;
-    var _rcy = (HUD_CORREDOR_TOPO + HUD_CORREDOR_BASE) / 2;
 
-    draw_set_font(f_padrao);
-    draw_set_color(c_black);
-    draw_set_halign(fa_center);
-    draw_set_valign(fa_middle);
-    draw_text(_rcx, _rcy - 58, "Retomando em...");
+    var _pistas = versus_ativo() ? [0, 1] : [solo_jogador()];
 
-    draw_set_halign(fa_left);
-    draw_set_valign(fa_top);
-    var _rw = string_width(_rn) * 3;
-    var _rh = string_height(_rn) * 3;
-    draw_text_transformed(floor(_rcx - (_rw / 2)), floor(_rcy + 26 - (_rh / 2)), _rn, 3, 3, 0);
+    for (var _i = 0; _i < array_length(_pistas); _i++) {
+        var _rcy = ritmo_corredor_topo(_pistas[_i]) + 119;
+
+        draw_set_font(f_padrao);
+        draw_set_color(c_black);
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_middle);
+        draw_text(_rcx, _rcy - 58, "Retomando em...");
+
+        draw_set_halign(fa_left);
+        draw_set_valign(fa_top);
+        var _rw = string_width(_rn) * 3;
+        var _rh = string_height(_rn) * 3;
+        draw_text_transformed(floor(_rcx - (_rw / 2)), floor(_rcy + 26 - (_rh / 2)),
+                              _rn, 3, 3, 0);
+    }
 
     ui_reset();
 }
