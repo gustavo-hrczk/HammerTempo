@@ -106,8 +106,8 @@ function ritmo_nota_perdida(_nota) {
 
 /// Deslocamento do centro do efeito em relacao ao canto da bigorna, que mede 120x70
 /// com origem no canto superior esquerdo. E o ponto onde o martelo a encontra.
-#macro IMPACTO_DX 65
-#macro IMPACTO_DY 0
+#macro IMPACTO_DX 70
+#macro IMPACTO_DY 5
 
 /// Frames de espera ate o martelo encostar na bigorna.
 ///

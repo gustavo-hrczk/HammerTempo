@@ -72,3 +72,13 @@ enum MODO {
 /// e seria ejetado em vinte, sem ter jogado. A primeira fase E a rampa de aprendizado
 /// do percurso, entao ela nao expulsa ninguem.
 #macro ARCADE_PRIMEIRA_IMUNE true
+
+/// O tutorial reaparece a cada percurso Arcade.
+///
+/// tutorial_ja_foi_visto guarda a SESSAO inteira, o que serve para quem joga em casa e
+/// atrapalha na feira: ali cada partida e um visitante novo, que alem de nao conhecer
+/// o jogo nao conhece os botoes do gabinete. No Modo Livre o comportamento continua
+/// sendo uma vez por sessao.
+///
+/// Custa ~25 s por percurso. Se a fila apertar, este e o primeiro a desligar.
+#macro ARCADE_SEMPRE_TUTORIAL true

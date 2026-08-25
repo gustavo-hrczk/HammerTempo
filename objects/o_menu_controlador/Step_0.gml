@@ -3,8 +3,8 @@ if (fluxo_ocupado()) {
     exit;
 }
 
-// Com uma sobreposição aberta, ela é quem responde ao input.
-if (instance_exists(o_tela_recordes) || instance_exists(o_tela_modos)) {
+// Com a tabela de recordes aberta, ela é quem responde ao input.
+if (instance_exists(o_tela_recordes)) {
     exit;
 }
 
@@ -35,10 +35,13 @@ if (input_pressed(ACAO.CONFIRMAR)) {
 
     switch (opcao_selecionada) {
         case 0: // Começar Jogo
-            // Passa a abrir a escolha de MODO. É ela que decide o destino e cuida do
+            // Vai para a escolha de MODO. É ela que decide o destino e cuida do
             // tutorial, porque a pergunta "Arcade ou Livre" vem antes de qualquer
             // coisa que aconteça dentro da forja.
-            instance_create_depth(0, 0, -9000, o_tela_modos);
+            //
+            // Sem fade, como a tela de opções: as duas compartilham logo e moldura,
+            // então o corte seco lê como troca de conteúdo e o fade leria como piscada.
+            ir_para_sala(rm_modos, 0, false);
             break;
 
         case 1: // Recordes
