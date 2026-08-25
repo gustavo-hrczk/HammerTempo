@@ -1387,3 +1387,30 @@ densa do jogo. Na velocidade 7 o vão vai a 99 px.
 
 A mesma mudança que casa com a energia da música também desafoga a leitura. Índice final
 3,46 contra 1,94 da Espada.
+
+**D-120 · A faixa da nota passou a andar por figuras, não por sorteio.** "A disposição das
+notas não está boa" era o sintoma; a causa é `irandom()`. Com 2 ou 3 faixas ele passa, porque
+o sorteio produz corridas por acaso — a Adaga mede 59% de repetição de linha. Com 4 cai para
+19% e vira ruído: sem corrida, sem simetria, sem repetição deliberada.
+
+A sequência agora é montada por **figuras** — repete, sobe, desce, alterna —, que é como uma
+linha de percussão anda. O sorteio decide qual figura vem, não cada nota.
+
+| | Sorteio uniforme | Figuras |
+|---|---|---|
+| Repetição de linha | 32% | 25% |
+| **Salto extremo (topo↔pé)** | **15%** | **0%** |
+| Salto médio | 1,20 linhas | 0,75 |
+
+O ganho decisivo é o salto extremo ir a zero. A 2,92 notas/s e velocidade 7, um pulo do topo
+da pista para o pé a cada 343 ms é fisicamente brutal e não vem de lugar nenhum musicalmente.
+
+Duas decisões dentro da implementação: as figuras andam pela **linha visual**, não pela ordem
+do enum — `rm_forja` põe cima(1) em y=515 e esquerda(3) em 565, então "subir uma faixa" sem
+essa tradução pularia pela tela. E a escada **quica na borda** em vez de dar a volta: saltar
+do pé para o topo lê como erro, não como frase.
+
+**D-121 · O laço tocava a introdução em todas as repetições.** A introdução volta a tocar
+**uma vez**, e só o groove entra em laço: 3 compassos de entrada mais 8 compassos repetidos
+3x = 37,024 s, ou 27,000 compassos inteiros. As seis repetições anteriores tinham ficado
+longas e monótonas — faixa mais curta que as demais não é problema numa fase de nível Mestre.

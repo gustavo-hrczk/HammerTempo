@@ -214,3 +214,43 @@ function ritmo_relogio() {
 function ritmo_x_da_nota(_t_alvo, _agora, _velocidade) {
     return RITMO_LINHA_X + (_t_alvo - _agora) * _velocidade * game_get_speed(gamespeed_fps);
 }
+
+// =====================================================================
+// DISPOSICAO DAS FAIXAS
+//
+// A faixa da nota era irandom(). Com 2 ou 3 faixas isso passa, porque o sorteio
+// produz corridas por acaso — a Adaga mede 59% de repeticao de linha. Com 4 faixas
+// cai para 19% e vira ruido: sem corrida, sem simetria, sem repeticao deliberada.
+// O ouvido espera frase e a mao recebe aleatoriedade.
+//
+// Aqui a sequencia e montada por FIGURAS, que e como uma linha de percussao anda:
+// repete, sobe, desce, alterna. O sorteio decide qual figura vem, nao cada nota.
+// =====================================================================
+
+/// Tipos de seta ordenados pela LINHA VISUAL, de cima para baixo.
+///
+/// rm_forja poe cima(1) em y=515, esquerda(3) em 565, direita(2) em 615 e baixo(0)
+/// em 665. Sem esta traducao, "subir uma faixa" andaria na ordem do enum e pularia
+/// pela tela.
+function ritmo_linhas_permitidas(_tipos) {
+    var _visual = [1, 3, 2, 0];
+    var _out = [];
+
+    for (var i = 0; i < array_length(_visual); i++) {
+        if (_visual[i] < _tipos) array_push(_out, _visual[i]);
+    }
+    return _out;
+}
+
+enum FIGURA { REPETIR, ESCADA, ALTERNAR, SALTO }
+
+/// Sorteia a proxima figura e quantas notas ela dura.
+function ritmo_sortear_figura() {
+    var _r = irandom(99);
+
+    if (_r < 30) return { tipo: FIGURA.ESCADA,   notas: irandom_range(3, 5) };
+    if (_r < 58) return { tipo: FIGURA.ALTERNAR, notas: irandom_range(4, 6) };
+    if (_r < 88) return { tipo: FIGURA.REPETIR,  notas: irandom_range(2, 3) };
+
+    return { tipo: FIGURA.SALTO, notas: 1 };
+}

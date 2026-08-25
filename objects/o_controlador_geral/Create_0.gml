@@ -281,7 +281,10 @@ fases_data[4] = {
 // A primeira versao do laco comecava em 0,128 s e repetia essa introducao quatro
 // vezes. O corte agora parte de 4,242 s, a linha de compasso onde o groove entra.
 //
-// 8 compassos (10,9702 s) repetidos 6x = 65,821 s, ou 48,000 compassos inteiros.
+// A introducao TOCA UMA VEZ e so o groove entra em laco: 3 compassos de entrada
+// mais 8 compassos repetidos 3x = 37,024 s, ou 27,000 compassos inteiros. Seis
+// repeticoes tinham ficado longas e monotonas; faixa mais curta que as demais
+// nao e problema numa fase de nivel Mestre.
 // Fade de 3 ms nas pontas de cada copia mata o estalo sem deslocar o tempo.
 //
 // So o groove, o perfil fica |#   #   #   #   | com contraste 6,46 (era 5,37 com a
@@ -301,9 +304,9 @@ fases_data[5] = {
     nome: "Forjar Alabarda",
     dificuldade: "Mestre",
     musica_fase: snd_fase_06,
-    ganho_musica: 0.625,
+    ganho_musica: 0.663,
     sprites_resultado: [],
-    duracao_segundos: 55,
+    duracao_segundos: 32,
     velocidade_notas: 7,
     tipos_seta_permitidos: 4,
     stats_limite_sequencia_errada: 6,

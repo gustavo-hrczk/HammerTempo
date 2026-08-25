@@ -60,9 +60,63 @@ var _batidas = ceil((_minimo - _fase_batida) / beat_seg);
 
 proximo_t = _fase_batida + (_batidas * beat_seg);
 
+// =================================================================
+// DISPOSICAO DAS FAIXAS
+// Estado da sequencia de figuras. Ver ritmo_sortear_figura em scr_ritmo: a faixa da
+// nota deixou de ser sorteada uma a uma e passou a andar por figuras — repete, sobe,
+// desce, alterna —, que e como uma linha de percussao se move.
+// =================================================================
+linhas = ritmo_linhas_permitidas(tipos_permitidos);
+linha_pos = irandom(array_length(linhas) - 1);
+linha_dir = choose(-1, 1);
+
+figura = ritmo_sortear_figura();
+figura_resta = figura.notas;
+
+/// Proximo tipo de seta, seguindo a figura em curso.
+proxima_faixa = function() {
+    var _n = array_length(linhas);
+
+    if (figura_resta <= 0) {
+        figura = ritmo_sortear_figura();
+        figura_resta = figura.notas;
+
+        // figura nova comeca de um lugar novo, senao ela apenas continua a anterior
+        if (figura.tipo == FIGURA.SALTO) {
+            linha_pos = irandom(_n - 1);
+        }
+        linha_dir = choose(-1, 1);
+    }
+
+    figura_resta--;
+
+    switch (figura.tipo) {
+        case FIGURA.ESCADA:
+            // anda uma linha por vez e QUICA na borda, em vez de dar a volta:
+            // saltar do pe da pista para o topo lê como erro, nao como frase
+            linha_pos += linha_dir;
+            if (linha_pos < 0)   { linha_pos = min(1, _n - 1); linha_dir =  1; }
+            if (linha_pos >= _n) { linha_pos = max(0, _n - 2); linha_dir = -1; }
+            break;
+
+        case FIGURA.ALTERNAR:
+            linha_pos = clamp(linha_pos + linha_dir, 0, _n - 1);
+            linha_dir = -linha_dir;
+            break;
+
+        case FIGURA.SALTO:
+            linha_pos = irandom(_n - 1);
+            break;
+
+        // REPETIR fica onde esta
+    }
+
+    return linhas[clamp(linha_pos, 0, _n - 1)];
+}
+
 /// Cria uma nota que deve encostar na zona de acerto no instante _t.
 criar_nota = function(_t) {
-    var _tipo = irandom(tipos_permitidos - 1);
+    var _tipo = proxima_faixa();
     var _pos_y;
 
     switch (_tipo) {
