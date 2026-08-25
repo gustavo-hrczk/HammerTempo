@@ -10,7 +10,10 @@
 // mesmas armas do Modo Livre e a mesma tela de seleção — o que muda é quem está do
 // outro lado da bigorna.
 // =================================================================
-opcoes_menu = ["Modo Arcade", "Modo Livre", "Modo Versus", "Voltar"];
+// "Modo Livre" confundiu quem testou: soou como liberdade de COMPOR, e nao de
+// escolher a arma. "Forja Livre" ancora a palavra no gesto do jogo — o que e livre e a
+// forja, nao a musica.
+opcoes_menu = ["Modo Arcade", "Forja Livre", "Modo Versus", "Voltar"];
 
 // Uma linha por modo, abaixo da moldura. O jogador de feira decide de pé, em dois
 // segundos: a diferença entre os modos precisa caber numa frase.
@@ -19,8 +22,8 @@ opcoes_menu = ["Modo Arcade", "Modo Livre", "Modo Versus", "Voltar"];
 // faria a área piscar ao passar o cursor.
 descricoes = [
     "As " + string(ARCADE_TOTAL_FASES) + " armas em sequência, pontos somando.",
-    "Escolha a arma e forje sem pressa.",
-    "Dois na mesma forja. WASD contra as setas.",
+    "Escolha uma arma e forje sem pressa.",
+    "Dispute contra outro jogador.",
     ""
 ];
 

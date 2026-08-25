@@ -157,38 +157,73 @@ function solo_jogador() {
 // trecho de ambos vira o climax do ciclo em vez do estado normal.
 // =================================================================
 
-/// Duracao de cada trecho, em segundos.
-#macro VERSUS_TRECHO 8
+/// Duracao ALVO de cada estrofe solo, em segundos. O valor real e ajustado para as
+/// estrofes fecharem exatamente no terco da fase.
+#macro VERSUS_ESTROFE 4.5
 
-/// Quantos trechos o ciclo tem. Tres: P1 sozinho, P2 sozinho, os dois.
-#macro VERSUS_TRECHOS_NO_CICLO 3
-
-/// Em que trecho do ciclo a partida esta, de 0 a 2.
+/// Quanto da fase e disputado em estrofes alternadas. O resto e tocado pelos dois.
 ///
-/// Conta pelo RELOGIO DA FAIXA, e nao por um cronometro proprio: assim a alternancia
-/// acompanha a musica mesmo se um quadro demorar, pelo mesmo motivo que as notas
-/// pararam de ser agendadas por alarme (D-94).
-function versus_trecho() {
-    var _agora = ritmo_relogio();
-    if (_agora < 0) return 0;
+/// Dois tercos alternando, um terco junto. Ficar oito segundos sem receber nota era
+/// tempo demais parado numa partida de menos de um minuto — o jogador desengajava
+/// justamente quando devia estar disputando. Estrofes curtas mantem os dois no jogo, e
+/// o terco final junto vira o climax em vez de mais um trecho igual aos outros.
+#macro VERSUS_FRACAO_ALTERNADA (2 / 3)
 
-    return floor(_agora / VERSUS_TRECHO) mod VERSUS_TRECHOS_NO_CICLO;
+/// A janela util da fase: da primeira nota ate o fim.
+function versus_janela() {
+    if (!instance_exists(o_spawner_ritmo)) return [0, 0];
+
+    var _sp = o_spawner_ritmo;
+    var _ini = _sp.primeiro_t;
+    var _fim = _sp.duracao_total / room_speed;
+
+    return [_ini, max(_ini, _fim)];
+}
+
+/// Quantas estrofes alternadas a fase tem. SEMPRE PAR, para os dois jogadores ficarem
+/// com a mesma quantidade de solos.
+function versus_estrofes() {
+    var _j = versus_janela();
+    var _alternado = (_j[1] - _j[0]) * VERSUS_FRACAO_ALTERNADA;
+
+    var _n = max(2, round(_alternado / VERSUS_ESTROFE));
+    if (_n mod 2 == 1) _n++;
+
+    return _n;
 }
 
 /// Este jogador esta recebendo nota agora?
 ///
-/// Fora do Versus a resposta e sempre sim para o jogador 1 — a alternancia nao existe
-/// e o modo de um jogador nao precisa saber dela.
+/// Fora do Versus a resposta e sempre sim para quem esta jogando.
 function versus_recebe_nota(_dono) {
     if (!versus_ativo()) {
         return (_dono == solo_jogador());
     }
 
-    switch (versus_trecho()) {
-        case 0: return (_dono == 0);   // solo do jogador 1
-        case 1: return (_dono == 1);   // solo do jogador 2
-    }
-    return true;                        // os dois
+    var _agora = ritmo_relogio();
+    if (_agora < 0) return (_dono == 0);
+
+    var _j = versus_janela();
+    var _t = _agora - _j[0];
+    if (_t < 0) return (_dono == 0);
+
+    var _janela = _j[1] - _j[0];
+    var _alternado = _janela * VERSUS_FRACAO_ALTERNADA;
+
+    // TERCO FINAL: os dois tocam.
+    if (_t >= _alternado) return true;
+
+    // ESTROFES ALTERNADAS: comeca no jogador 1 e vai revezando.
+    var _n = versus_estrofes();
+    var _estrofe = floor(_t / (_alternado / _n));
+
+    return ((_estrofe mod 2) == _dono);
+}
+
+/// Em que trecho a partida esta: 0 solo do 1, 1 solo do 2, 2 os dois.
+function versus_trecho() {
+    if (versus_recebe_nota(0) && versus_recebe_nota(1)) return 2;
+    return versus_recebe_nota(1) ? 1 : 0;
 }
 
 /// Rotulo do trecho atual, para a tela mostrar de quem e a vez.

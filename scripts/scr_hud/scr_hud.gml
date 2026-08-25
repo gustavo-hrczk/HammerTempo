@@ -735,16 +735,18 @@ function versus_marcar_pistas(_alpha) {
     draw_set_valign(fa_middle);
     draw_set_alpha(_alpha);
 
+    // NA BORDA EXTERNA de cada corredor, e nao no meio: o meio e onde a contagem
+    // regressiva e desenhada, e os dois textos se sobrepunham durante a preparacao.
+    //
+    // O rotulo do jogador 2 sobe para o topo do corredor dele; o do jogador 1 desce
+    // para a base do dele. Cada um se afasta do centro para o proprio lado.
     for (var _d = 0; _d < 2; _d++) {
-        var _y = ritmo_corredor_topo(_d) + 96;
+        var _topo = ritmo_corredor_topo(_d);
+        var _y = (_d == 0) ? (_topo + 200) : (_topo + 26);
 
         draw_set_font(f_padrao);
         draw_set_color(versus_cor(_d));
-        draw_text(_cx, _y - 22, versus_nome(_d));
-
-        draw_set_font(f_padrao_pequena);
-        draw_set_color(c_black);
-        draw_text(_cx, _y + 16, "esta e a sua pista");
+        draw_text(_cx, _y, versus_nome(_d) + " — esta e a sua pista");
     }
 
     draw_set_alpha(1);

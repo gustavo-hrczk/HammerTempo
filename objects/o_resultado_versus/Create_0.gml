@@ -16,6 +16,13 @@ var _j2 = jogador(1);
 pontos = [_j1.pontuacao, _j2.pontuacao];
 precisoes = [_j1.precisao(), _j2.precisao()];
 acertos = [_j1.acertos(), _j2.acertos()];
+
+// O DETALHAMENTO POR TIER. Perfeito, otimo e bom valem pontuacoes diferentes (100, 75
+// e 50 na base, mais o combo), e sem mostrar a divisao o jogador nao tem como saber
+// por que perdeu tendo acertado quase tanto quanto o outro.
+perfeitas = [_j1.stats_acertos_perfeitos, _j2.stats_acertos_perfeitos];
+otimas    = [_j1.stats_acertos_otimos,    _j2.stats_acertos_otimos];
+boas      = [_j1.stats_acertos_bons,      _j2.stats_acertos_bons];
 erros = [_j1.stats_erros, _j2.stats_erros];
 notas = [icone_rank(precisoes[0]), icone_rank(precisoes[1])];
 

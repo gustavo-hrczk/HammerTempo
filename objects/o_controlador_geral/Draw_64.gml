@@ -8,23 +8,30 @@ switch (estado_jogo) {
             // pulso, sem variação de opacidade. Do ajuste anterior ficou só o
             // enquadramento — centralizado na faixa por onde as notas vão correr.
             var _cx = display_get_gui_width() / 2;
-            var _cy = (HUD_CORREDOR_TOPO + HUD_CORREDOR_BASE) / 2;
 
-            draw_set_font(f_padrao);
-            draw_set_color(c_black);
-            draw_set_halign(fa_center);
-            draw_set_valign(fa_middle);
+            // NAS DUAS PISTAS no Versus: os dois comecam juntos e os dois precisam ver
+            // o mesmo numero. Antes so o corredor de baixo tinha a contagem.
+            var _pistas = versus_ativo() ? [0, 1] : [solo_jogador()];
 
-            draw_text(_cx, _cy - 58, "Prepare-se para forjar em...");
+            for (var _i = 0; _i < array_length(_pistas); _i++) {
+                var _cy = ritmo_corredor_topo(_pistas[_i]) + 119;
 
-            // escala 3 é inteira; a posição é arredondada para não sair da grade
-            draw_set_halign(fa_left);
-            draw_set_valign(fa_top);
-            var _largura = string_width(_numero) * 3;
-            var _altura = string_height(_numero) * 3;
-            draw_text_transformed(floor(_cx - (_largura / 2)),
-                                  floor(_cy + 26 - (_altura / 2)),
-                                  _numero, 3, 3, 0);
+                draw_set_font(f_padrao);
+                draw_set_color(c_black);
+                draw_set_halign(fa_center);
+                draw_set_valign(fa_middle);
+
+                draw_text(_cx, _cy - 58, "Prepare-se para forjar em...");
+
+                // escala 3 é inteira; a posição é arredondada para não sair da grade
+                draw_set_halign(fa_left);
+                draw_set_valign(fa_top);
+                var _largura = string_width(_numero) * 3;
+                var _altura = string_height(_numero) * 3;
+                draw_text_transformed(floor(_cx - (_largura / 2)),
+                                      floor(_cy + 26 - (_altura / 2)),
+                                      _numero, 3, 3, 0);
+            }
 
             ui_reset();
         }

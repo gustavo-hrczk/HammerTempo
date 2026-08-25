@@ -64,6 +64,10 @@ var _batidas = ceil((_minimo - _fase_batida) / beat_seg);
 
 proximo_t = _fase_batida + (_batidas * beat_seg);
 
+// Guardado para a alternancia do Versus: os trechos sao contados a partir da PRIMEIRA
+// NOTA, e nao do inicio da faixa, senao o respiro inicial come o trecho do jogador 1.
+primeiro_t = proximo_t;
+
 // =================================================================
 // DISPOSICAO DAS FAIXAS
 // Estado da sequencia de figuras. Ver ritmo_sortear_figura em scr_ritmo: a faixa da

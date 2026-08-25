@@ -268,7 +268,10 @@ concluir_retomada = function() {
 
 /// Limpa o gameplay em curso. Usada tanto por reiniciar quanto por sair.
 limpar_partida = function() {
-    versus_desmontar_cena();
+    // No Versus a cena SOBREVIVE entre uma partida e a proxima: o retorno e a selecao
+    // de armas, com os dois ferreiros ja em cena. Desmontar aqui os faria sumir e
+    // renascer em degrade a cada rodada.
+    if (!versus_ativo()) versus_desmontar_cena();
 
     pausa = false;
     retomada_timer = 0;

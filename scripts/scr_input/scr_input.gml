@@ -493,6 +493,36 @@ function input_nome_da_tecla(_codigo) {
         case vk_shift:   return "SHIFT";
         case vk_control: return "CTRL";
         case vk_tab:     return "TAB";
+
+        case vk_rshift:   return "SHIFT D";
+        case vk_rcontrol: return "CTRL D";
+        case vk_lshift:   return "SHIFT E";
+        case vk_lcontrol: return "CTRL E";
+        case vk_alt:      return "ALT";
+        case vk_backspace: return "BACKSP";
+        case vk_insert:   return "INS";
+        case vk_delete:   return "DEL";
+        case vk_home:     return "HOME";
+        case vk_end:      return "END";
+        case vk_pageup:   return "PG CIMA";
+        case vk_pagedown: return "PG BAIXO";
+        case vk_multiply: return "NUM *";
+        case vk_divide:   return "NUM /";
+        case vk_add:      return "NUM +";
+        case vk_subtract: return "NUM -";
+        case vk_decimal:  return "NUM .";
+    }
+
+    // TECLADO NUMERICO. Ele manda codigos proprios (vk_numpad0 em diante), diferentes
+    // dos numeros da fileira de cima — sem tratar, um vinculo perfeitamente valido
+    // aparecia como "?" na tela de controles e o jogador achava que nao tinha pegado.
+    if (_codigo >= vk_numpad0 && _codigo <= vk_numpad9) {
+        return "NUM " + string(_codigo - vk_numpad0);
+    }
+
+    // teclas de funcao
+    if (_codigo >= vk_f1 && _codigo <= vk_f12) {
+        return "F" + string(_codigo - vk_f1 + 1);
     }
 
     // letras e números falam por si
@@ -501,7 +531,9 @@ function input_nome_da_tecla(_codigo) {
         return chr(_codigo);
     }
 
-    return "?";
+    // Ultimo recurso: o CODIGO, e nao um ponto de interrogacao. Uma tecla exotica sem
+    // nome proprio ainda precisa ser distinguivel de outra na tela de controles.
+    return "#" + string(_codigo);
 }
 
 /// Nome de exibição de um botão de controle.

@@ -271,6 +271,10 @@ function ritmo_impacto_bigorna(_tipo, _julgamento, _forca, _atraso, _dono = 0) {
     _e.dono = _dono;
 
     _e.sprite_index = ritmo_sprite_impacto(_tipo, _julgamento);
+    // Na frente da propria bigorna. Sem isto o clarao do jogador 2 nascia em depth 0 e
+    // sumia atras da bigorna dele, que esta em -1.
+    _e.depth = _b.depth - 1;
+
     _e.image_xscale = IMPACTO_ESCALA * _lado;
     _e.image_yscale = IMPACTO_ESCALA;
     _e.atraso = _atraso;

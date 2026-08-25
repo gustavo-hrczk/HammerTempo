@@ -20,12 +20,13 @@ if (!revelacao_pronta) {
 
 o_audio_manager.play_sfx(snd_menu_confirm);
 
-// O Versus volta ao MENU, e não ao seletor de armas: a partida acabou para os dois, e
-// quem quiser outra escolhe o modo de novo — inclusive porque o segundo jogador pode
-// ser outra pessoa.
-o_controlador_geral.modo_jogo = MODO.LIVRE;
-o_controlador_geral.estado_jogo = MINIGAME.NENHUM;
+// VOLTA PARA A SELECAO DE ARMAS DO VERSUS, e nao para o menu.
+//
+// A dupla que acabou de jogar quase sempre quer outra partida, e mandar os dois de
+// volta ao menu principal os obrigava a atravessar duas telas para isso. O modo
+// continua sendo VERSUS: sair dali e escolha de quem quiser, pelo ESC.
+o_controlador_geral.estado_jogo = MINIGAME.SELECAO_FASE;
 o_controlador_geral.resetar_estatisticas();
 
 instance_destroy();
-ir_para_sala(rm_menu);
+ir_para_sala(rm_forja);

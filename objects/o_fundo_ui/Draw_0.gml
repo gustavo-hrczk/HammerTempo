@@ -1,3 +1,14 @@
+// O corredor do jogador 2 SO existe durante a partida. O do jogador 1 e mobilia da
+// sala e aparece sempre — sobre ele ficam os cartoes da selecao de armas —, mas o de
+// cima nao tem nada para mostrar fora da fase e ficava pendurado no ceu depois dela.
+if (dono == 1 && instance_exists(o_controlador_geral)) {
+    var _e = o_controlador_geral.estado_jogo;
+
+    if (_e != MINIGAME.CONTAGEM && _e != MINIGAME.RITMO && _e != MINIGAME.RESULTADO) {
+        exit;
+    }
+}
+
 draw_self();
 
 // --- TRILHOS DAS LANES ---

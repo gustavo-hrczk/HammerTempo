@@ -62,15 +62,31 @@ for (var i = 0; i < 2; i++) {
     // Acertos, erros e nota entram depois das barras: primeiro quem ganhou, depois
     // por quê.
     if (tempo >= VERSUS_T_DETALHE) {
+        var _yd = _by + _bh + 28;
+
         draw_set_font(f_padrao_pequena);
         draw_set_halign(fa_left);
-        draw_set_color(_tinta);
-        draw_text(_esq, _by + _bh + 28,
-                  "Acertos " + string(acertos[i]) + "     Erros " + string(erros[i]));
+
+        // Cada tier na propria cor, a mesma das bolhas de acerto: e a divisao que
+        // explica a diferenca de pontos entre dois jogadores com acertos parecidos.
+        var _tx = _esq;
+        var _rotulos = ["Perfeitas ", "Ótimas ", "Boas "];
+        var _valores = [perfeitas[i], otimas[i], boas[i]];
+        var _cores = [COR_PERFEITO_GANHO, COR_OTIMO_GANHO, COR_BOM_GANHO];
+
+        for (var _k = 0; _k < 3; _k++) {
+            var _txt = _rotulos[_k] + string(_valores[_k]);
+            draw_set_color(_cores[_k]);
+            draw_text(_tx, _yd, _txt);
+            _tx += string_width(_txt) + 26;
+        }
+
+        draw_set_color(UI_COR_CARMIM);
+        draw_text(_tx, _yd, "Erros " + string(erros[i]));
 
         draw_set_halign(fa_right);
         draw_set_color(icone_rank_cor(notas[i]));
-        draw_text(_dir, _by + _bh + 28, "Nota " + notas[i]);
+        draw_text(_dir, _yd, "Nota " + notas[i]);
     }
 }
 
@@ -79,19 +95,34 @@ for (var i = 0; i < 2; i++) {
 // =================================================================
 draw_set_halign(fa_center);
 
-ui_texto_flutuante(_cx, 268, "FIM DA DISPUTA", 1, f_padrao, c_white);
+// A FAIXA DO MEIO E CENTRADA ENTRE OS DOIS CORREDORES.
+//
+// O corredor de cima acaba em 228 e o de baixo comeca em 492, entao o centro da cena
+// e 360 — e nao um valor escolhido a olho. Os tres textos se distribuem em volta dele.
+//
+// Uma placa unica atras dos tres, mais densa que a do texto flutuante: aqui o fundo e
+// a forja inteira, cheia de detalhe e contraste, e o degrade padrao nao dava conta.
+var _cm = (RITMO_CORREDOR_P2 + 228 + 492) / 2;
+
+hud_placa_suave(0, _cm - 92, _gw, _cm + 92, c_black, 0.78, 300, 40);
+
+draw_set_font(f_padrao);
+draw_set_color(c_white);
+draw_text(_cx, _cm - 58, "FIM DA DISPUTA");
 
 if (tempo >= VERSUS_T_VENCEDOR) {
     var _texto = (vencedor == -1)
         ? "EMPATE"
         : (versus_nome(vencedor) + " VENCEU!");
 
-    ui_texto_flutuante(_cx, 336, _texto, 1, f_padrao,
-                       (vencedor == -1) ? c_white : versus_cor(vencedor));
+    draw_set_color((vencedor == -1) ? c_white : versus_cor(vencedor));
+    draw_text_transformed(floor(_cx), floor(_cm), _texto, 2, 2, 0);
 }
 
 if (revelacao_pronta) {
-    ui_prompt(_cx, 420, ui_texto_confirmar() + " para continuar", 65);
+    draw_set_font(f_padrao_pequena);
+    draw_set_color(UI_COR_DESTAQUE);
+    draw_text(_cx, _cm + 62, ui_texto_confirmar() + " para continuar");
 }
 
 ui_reset();
