@@ -10,7 +10,7 @@ draw_set_font(f_padrao);
 draw_set_color(c_black);
 draw_text(_cx, _topo + 40, "RECORDES");
 
-// --- FASE EXIBIDA ---
+// --- PÁGINA EXIBIDA ---
 // As setas laterais só aparecem quando há para onde ir.
 var _arcade = (pagina == 0);
 var _nome_pagina = _arcade
@@ -23,25 +23,32 @@ draw_set_color(UI_COR_DESTAQUE);
 draw_text(_cx, _topo + 82, _rotulo);
 
 // =================================================================
-// TABELA — grade de vãos iguais
+// TABELA
 //
-// As colunas eram posicionadas a olho e "Pontos" terminava a 14 px de "Precisão".
-// Agora a grade sai da MEDIDA de cada coluna, e a folga que sobra é dividida em
-// partes iguais: 328 px úteis menos 232 de conteúdo dão 96 px, ou 32 px por vão.
+// O TOP 3 vem em f_padrao e o resto em f_padrao_pequena. O destaque tinha de sair de
+// FONTE e não de escala: Kobold 7 é fonte de pixel, e 1,5x destruiria o traço (D-33).
+// Como só existem dois corpos no projeto, o degrau entre eles É o destaque possível —
+// e ele calha de cair exatamente no pódio.
 //
-// Cada coluna é medida pelo maior entre o cabeçalho e o dado. "Precisão" (86) é mais
-// larga que "100%" (43), e "Pontos" (68) é mais larga que "999999" (60) — dimensionar
-// pelo dado deixaria os cabeçalhos se tocando.
+// A última coluna muda com a frente e mede coisas diferentes em cada uma:
+//   Livre  — NOTA, de F a S. Porcentagem é um número que o jogador precisa
+//            interpretar; a letra ele compara de relance com a do vizinho na fila.
+//   Arcade — ARMAS, quantas ele chegou a forjar. Num percurso, o quanto se andou é o
+//            que desempata totais parecidos.
 // =================================================================
-var _col_pos      = _cx - 140;   // fim da posição       (24 px, à direita)
-var _col_nome     = _cx - 108;   // início do nome       (54 px, à esquerda)
-var _col_pontos   = _cx +  46;   // fim da pontuação     (68 px, à direita)
-var _col_precisao = _cx + 164;   // fim da precisão      (86 px, à direita)
+var _col_pos    = _cx - 150;   // fim da posição, à direita
+var _col_nome   = _cx - 138;   // início do nome, em slots fixos
+var _col_pontos = _cx +  74;   // fim da pontuação, à direita
+var _col_nota   = _cx + 150;   // fim da nota, à direita
 
-var _y_cabecalho = _topo + 120;
-var _y_primeira  = _topo + 152;
-var _linha_gap   = 32;
+var _y_cabecalho = _topo + 124;
+var _y_primeira  = _topo + 164;
 
+// vãos por corpo de fonte: o pódio respira mais porque a letra é maior
+var _gap_topo = 40;
+var _gap_resto = 31;
+
+// --- CABEÇALHO ---
 draw_set_font(f_padrao_pequena);
 draw_set_color(c_black);
 
@@ -50,40 +57,43 @@ draw_set_halign(fa_left);
 draw_text(_col_nome, _y_cabecalho, "Nome");
 draw_set_halign(fa_right);
 draw_text(_col_pontos, _y_cabecalho, "Pontos");
-
-// A terceira coluna muda de significado com a frente: no Livre e a precisao daquela
-// fase, no Arcade e quantas armas o jogador chegou a forjar. Sao as duas coisas que
-// desempatam totais parecidos em cada modo.
-draw_text(_col_precisao, _y_cabecalho, _arcade ? "Armas" : "Precisão");
+draw_text(_col_nota, _y_cabecalho, _arcade ? "Armas" : "Nota");
 draw_set_alpha(1);
 
-// linha separando o cabeçalho das entradas
 draw_set_alpha(0.25);
-draw_line(_col_pos - 24, _y_cabecalho + 18, _col_precisao, _y_cabecalho + 18);
+draw_line(_col_pos - 26, _y_cabecalho + 20, _col_nota, _y_cabecalho + 20);
 draw_set_alpha(1);
 
 var _lista = _arcade ? placar_arcade() : placar_livre(pagina - 1);
 
 if (array_length(_lista) == 0) {
     draw_set_halign(fa_center);
+    draw_set_font(f_padrao);
     draw_set_color(UI_COR_APAGADA);
-    draw_text(_cx, _y_primeira + 100, "Nenhum recorde ainda");
+    draw_text(_cx, _y_primeira + 110, "Nenhum recorde ainda");
+
 } else {
+    var _y = _y_primeira;
+
     for (var i = 0; i < array_length(_lista); i++) {
 
         var _e = _lista[i];
-        var _y = _y_primeira + (i * _linha_gap);
+        var _podio = (i < 3);
 
-        // O primeiro lugar em cobre, o resto na tinta comum: a tabela inteira
-        // colorida não destacaria ninguém.
-        draw_set_color((i == 0) ? UI_COR_COBRE : c_black);
+        draw_set_font(_podio ? f_padrao : f_padrao_pequena);
+
+        // O primeiro em cobre, o resto do pódio em cobre claro, os demais na tinta
+        // comum: a tabela inteira colorida não destacaria ninguém.
+        var _tinta = (i == 0) ? UI_COR_COBRE
+                   : (_podio ? UI_COR_COBRE_CLARO : c_black);
+        draw_set_color(_tinta);
 
         draw_set_halign(fa_right);
         draw_text(_col_pos, _y, string(i + 1) + ".");
 
         // espaçamento fixo por letra, senão as três colunas do nome dançam de uma
         // linha para outra (ver placar_desenhar_nome)
-        placar_desenhar_nome(_col_nome, _y, _e.nome);
+        placar_desenhar_nome(_col_nome, _y, _e.nome, _podio ? 23 : 18);
 
         draw_set_halign(fa_right);
         draw_text(_col_pontos, _y, string(_e.pontos));
@@ -93,10 +103,18 @@ if (array_length(_lista) == 0) {
             // parecidos, quem completou fez a corrida mais longa.
             var _armas = variable_struct_exists(_e, "armas") ? _e.armas : 0;
             var _fim = (variable_struct_exists(_e, "completou") && _e.completou) ? "*" : "";
-            draw_text(_col_precisao, _y, string(_armas) + _fim);
+            draw_text(_col_nota, _y, string(_armas) + _fim);
+
         } else {
-            draw_text(_col_precisao, _y, string(_e.precisao) + "%");
+            // A nota tem cor própria, que não obedece à tinta da posição: ela é a
+            // informação da linha, não a decoração dela.
+            var _rank = icone_rank(_e.precisao);
+            draw_set_color(icone_rank_cor(_rank));
+            draw_text(_col_nota, _y, _rank);
+            draw_set_color(_tinta);
         }
+
+        _y += _podio ? _gap_topo : _gap_resto;
     }
 }
 

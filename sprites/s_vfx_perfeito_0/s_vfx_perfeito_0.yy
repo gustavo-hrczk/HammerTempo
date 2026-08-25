@@ -2,7 +2,7 @@
   "$GMSprite":"",
   "%Name":"s_vfx_perfeito_0",
   "bboxMode":0,
-  "bbox_bottom":47,
+  "bbox_bottom":46,
   "bbox_left":0,
   "bbox_right":47,
   "bbox_top":0,

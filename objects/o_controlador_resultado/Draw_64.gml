@@ -40,6 +40,32 @@ if (tempo >= RESULTADO_T_ESTATISTICAS) {
     draw_text(_col_dir, _linha2, "Precisão: " + string(round(_precisao)) + "%");
 }
 
+// --- NOTA DA FORJA ---
+// A mesma letra que a tabela de recordes mostra, pela mesma função. As duas telas
+// precisam dizer a mesma coisa do mesmo jeito: o jogador vê a nota aqui e a procura
+// lá, e porcentagem de um lado com letra do outro quebraria essa ponte.
+//
+// Fica AO LADO DA ARMA, e não na grade de estatísticas: a nota é o veredito sobre a
+// peça forjada, então ela pertence à peça. Em escala 2, inteira (D-33).
+//
+// Só no Modo Livre. Num percurso a precisão é a da ÚLTIMA fase, e uma nota grande ao
+// lado de seis armas diria que ela vale para todas — quem conta a história do
+// percurso ali é a fileira.
+if (array_length(fileira) == 0 && tempo >= RESULTADO_T_ESTATISTICAS) {
+    var _rank = icone_rank(_precisao);
+    var _nota_x = _cx + 150;
+
+    draw_set_font(f_padrao_pequena);
+    draw_set_color(UI_COR_APAGADA);
+    draw_text(_nota_x, 152, "NOTA");
+
+    draw_set_font(f_padrao);
+    draw_set_color(icone_rank_cor(_rank));
+    draw_text_transformed(floor(_nota_x), floor(212), _rank, 2, 2, 0);
+
+    draw_set_color(c_black);
+}
+
 // --- PONTUAÇÃO EM DESTAQUE ---
 // Era preta, igual à grade de estatísticas acima, e sumia no meio delas. O cobre
 // vem da rampa do combo, então a paleta da partida e a do resultado são a mesma;

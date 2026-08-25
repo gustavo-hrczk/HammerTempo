@@ -97,3 +97,40 @@ function icone_desenhar(_arma, _nivel, _x, _y, _escala, _alpha = 1) {
 function icone_tamanho(_escala) {
     return ICONE_LADO * max(1, floor(_escala));
 }
+
+// =====================================================================
+// NOTA DA FORJA
+// =====================================================================
+
+/// Nota em letra, de F a S, a partir da precisao em porcentagem.
+///
+/// Porcentagem e um numero que o jogador precisa INTERPRETAR: 87% e bom? e ruim? Ele
+/// nao tem com o que comparar. A letra ele le de relance e compara com a do vizinho
+/// na fila, que numa feira e exatamente o que acontece.
+///
+/// Seis faixas contra os cinco niveis de arte de proposito: a nota e mais fina que a
+/// arma. C e B dividem o mesmo nivel de arma (o 2), o que da ao jogador um degrau
+/// intermediario para perseguir sem prometer arma nova.
+function icone_rank(_pct) {
+    if (_pct < 40)  return "F";
+    if (_pct < 70)  return "D";
+    if (_pct < 85)  return "C";
+    if (_pct < 95)  return "B";
+    if (_pct < 100) return "A";
+    return "S";
+}
+
+/// Cor da nota. Segue a rampa de calor da forja: frio embaixo, incandescente no topo.
+///
+/// A cor NUNCA e o unico sinal — a letra ja diz tudo sozinha. Ela e reforco, pelo
+/// mesmo motivo que as bolhas de julgamento deixaram de depender so de cor.
+function icone_rank_cor(_rank) {
+    switch (_rank) {
+        case "S": return make_colour_rgb(255, 196,  64);   // ouro incandescente
+        case "A": return make_colour_rgb(212,  92,  32);   // cobre quente
+        case "B": return make_colour_rgb(150,  66,  24);   // cobre, a tinta do jogo
+        case "C": return make_colour_rgb(120, 105,  95);   // apagada
+        case "D": return make_colour_rgb(110,  96,  86);
+    }
+    return make_colour_rgb(128,  40,  44);                 // F, carmim escuro
+}

@@ -16,5 +16,8 @@ total_fases = array_length(o_controlador_geral.fases_data);
 pagina = 0;
 total_paginas = total_fases + 1;
 
-PAINEL_LARGURA = 380;
-PAINEL_ALTURA  = 480;
+// A moldura cresceu junto com a letra. O TOP 3 saiu para f_padrao (30 px) e os vaos
+// dele passaram de 32 para 40 px, o que empurra a decima linha para baixo:
+//   cabecalho 124 + 3 linhas de 40 + 7 de 31 = 461, mais 40 de folga = 501.
+PAINEL_LARGURA = 420;
+PAINEL_ALTURA  = 520;

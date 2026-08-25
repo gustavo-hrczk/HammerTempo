@@ -76,7 +76,7 @@ switch (_julgamento) {
         o_ferreiro.iniciar_martelada_perfeita();
         o_audio_manager.play_martelada_sequencial_sfx();
 
-        hud_registrar_julgamento("PERFEITO!", COR_PERFEITO, true);
+        hud_registrar_julgamento("PERFEITO!", COR_PERFEITO, true, 3);
         hud_registrar_ganho(_ganho, COR_PERFEITO_GANHO);
 
         debug_registrar_julgamento("PERFEITO", _erro_ms);
@@ -96,7 +96,7 @@ switch (_julgamento) {
         o_ferreiro.iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
 
-        hud_registrar_julgamento("ÓTIMO!", COR_OTIMO, true);
+        hud_registrar_julgamento("ÓTIMO!", COR_OTIMO, true, 2);
         hud_registrar_ganho(_ganho_otimo, COR_OTIMO_GANHO);
 
         debug_registrar_julgamento("ÓTIMO", _erro_ms);
@@ -116,7 +116,7 @@ switch (_julgamento) {
         o_ferreiro.iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
 
-        hud_registrar_julgamento("BOM!", COR_BOM, true);
+        hud_registrar_julgamento("BOM!", COR_BOM, true, 1);
         hud_registrar_ganho(_ganho_bom, COR_BOM_GANHO);
 
         debug_registrar_julgamento("BOM", _erro_ms);
