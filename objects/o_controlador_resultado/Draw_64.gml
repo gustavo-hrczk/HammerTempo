@@ -122,37 +122,12 @@ if (revelacao_pronta) {
 }
 
 // =================================================================
-// --- DESENHA A ARMA FORJADA E SUA MOLDURA (NOVA SEÇÃO) ---
+// A ARMA FORJADA
+//
+// Sanduiche de fundo, arma e moldura, montado por icone_desenhar. Escala 6 leva os
+// 26 px do icone a 156 px na tela — inteira, pela regra do pixel art (D-33). A arte
+// antiga era de 250x250 e vinha em escala 0,8, o que sujava a grade de pixels.
 // =================================================================
-
-// Posições baseadas no centro superior do painel de resultados (se você tiver um)
-var _panel_top_y = 200; // Altura do topo do seu painel de resultados (ajuste conforme necessário)
-var _center_x = _cx;
-
-// Posição central para a arma e a moldura
-// Ajuste este valor para mover tudo para cima ou para baixo na tela.
-var _pos_y_arma_e_moldura = _panel_top_y - 45; // Por exemplo, 200 pixels acima do topo do painel
-
-// 1. Desenha a arma forjada
-// As sprites fixas de arma têm 250x250.
-// Vamos desenhá-las em sua escala original (1,1) para caberem bem na moldura.
-// Se você quiser que a arma seja menor dentro da moldura, ajuste a escala.
-if (tem_arte) {
-    draw_sprite_ext(sprite_da_arma_final, 0, _center_x, _pos_y_arma_e_moldura, 0.8, 0.8, 0, c_white, 1);
-} else {
-    // Sem arte ainda: a moldura sozinha com um "?" le como pendencia, e nao como
-    // um buraco na tela.
-    draw_set_font(f_padrao);
-    draw_set_halign(fa_center);
-    draw_set_valign(fa_middle);
-    draw_set_color(UI_COR_COBRE);
-    draw_text_transformed(_center_x, _pos_y_arma_e_moldura, "?", 3, 3, 0);
-    draw_set_color(c_black);
-}
-
-// 2. Desenha a moldura por cima da arma
-// A moldura tem 300x300. Usaremos escala 1,1 se ela já tiver o tamanho que você quer.
-// Se quiser que a moldura seja um pouco maior ou menor, ajuste a escala.
-draw_sprite_ext(sprite_da_moldura_final, 0, _center_x, _pos_y_arma_e_moldura, 1.1, 1.1, 0, c_white, 1);
+icone_desenhar(arma_forjada, nivel_forjado, _cx, 190, 6);
 
 ui_reset();

@@ -247,11 +247,6 @@ fase_atual = 0; // Guarda o ÍNDICE da fase selecionada
 
 // --- ESTRUTURA DE DADOS DAS FASES ---
 // Um array que guarda as configurações de cada fase como um objeto (struct)
-// Molduras do resultado, por nivel de desempenho: 0 falha ... 4 perfeito. Cada arma
-// tem a sua moldura correspondente, e o par arma+moldura precisa vir sempre do MESMO
-// indice. Ficava so no o_controlador_resultado, e o seletor de fases desenhava a
-// melhor arma dentro da moldura de falha por copiar o sprite errado.
-molduras_resultado = [s_canva01, s_canva02, s_canva03, s_canva04, s_canva05];
 
 fases_data = [];
 
@@ -298,7 +293,7 @@ fases_data[0] = {
     dificuldade: "Novato",
     musica_fase: snd_fase_01,
     ganho_musica: 0.951,
-    sprites_resultado: [s_adaga01, s_adaga02, s_adaga03, s_adaga04, s_adaga05],
+    icone: s_icone_adaga,
     duracao_segundos: 40,
     velocidade_notas: 4,
     tipos_seta_permitidos: 2,
@@ -324,7 +319,7 @@ fases_data[1] = {
     dificuldade: "Aprendiz",
     musica_fase: snd_fase_02,
     ganho_musica: 0.703,
-    sprites_resultado: [s_lanca01, s_lanca02, s_lanca03, s_lanca04, s_lanca05],
+    icone: s_icone_lanca,
     duracao_segundos: 40,
     velocidade_notas: 5,
     tipos_seta_permitidos: 3,
@@ -368,14 +363,13 @@ fases_data[1] = {
 // fica em 0,667 com forca 3,62, contra 0,50 em 3/4 — nao e ritmo pontuado. E o balanco
 // se mantem pelos 60 s (4,62 / 3,11 / 3,62 / 3,42 por bloco de 15 s).
 //
-// Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
 fases_data[2] = {
     id: "florete",
     nome: "Forjar Florete",
     dificuldade: "Adepto",
     musica_fase: snd_fase_03,
     ganho_musica: 0.975,
-    sprites_resultado: [],
+    icone: s_icone_florete,
     duracao_segundos: 50,
     velocidade_notas: 5,
     tipos_seta_permitidos: 3,
@@ -394,14 +388,13 @@ fases_data[2] = {
 };
 
 // Veterano - 4 faixas, e 45 s de exigencia continua | Saltarello II
-// Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
 fases_data[3] = {
     id: "maca",
     nome: "Forjar Maca",
     dificuldade: "Veterano",
     musica_fase: snd_fase_04,
     ganho_musica: 0.544,
-    sprites_resultado: [],
+    icone: s_icone_maca,
     duracao_segundos: 45,
     velocidade_notas: 5,
     tipos_seta_permitidos: 4,
@@ -428,7 +421,7 @@ fases_data[4] = {
     dificuldade: "Especialista",
     musica_fase: snd_fase_05,
     ganho_musica: 1.0,
-    sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
+    icone: s_icone_machado,
     duracao_segundos: 60,
     velocidade_notas: 5,
     tipos_seta_permitidos: 4,
@@ -463,7 +456,7 @@ fases_data[5] = {
     dificuldade: "Mestre",
     musica_fase: snd_fase_06,
     ganho_musica: 0.917,
-    sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
+    icone: s_icone_espada,
     duracao_segundos: 60,
     velocidade_notas: 5,
     tipos_seta_permitidos: 4,

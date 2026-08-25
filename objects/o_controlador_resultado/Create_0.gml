@@ -112,54 +112,29 @@ concluir_revelacao = function() {
     revelacao_pronta = true;
 }
 
-// Molduras por nivel de desempenho, vindas do controlador geral: o seletor de fases
-// usa a mesma lista, e duas copias da mesma ordem ja renderam moldura trocada.
-sprites_das_molduras = o_controlador_geral.molduras_resultado;
-
-sprite_da_moldura_final = sprites_das_molduras[0]; // Padrao e a primeira
-
-
-// --- LÓGICA DE CÁLCULO DE PERFORMANCE ---
+// --- DESEMPENHO DA FASE ---
+// A regra mora em icone_nivel(), no scr_icone: o resumo do percurso Arcade precisa do
+// mesmo calculo para cada arma da fileira, e duas copias da mesma regra ja renderam
+// moldura trocada neste projeto.
 var _fase_jogada = o_controlador_geral.fase_atual;
 var _total_notas = o_controlador_geral.stats_total_notas;
-var _acertos_perfeitos = o_controlador_geral.stats_acertos_perfeitos;
-var _acertos_otimos = o_controlador_geral.stats_acertos_otimos;
-var _acertos_bons = o_controlador_geral.stats_acertos_bons;
-var _total_acertos = _acertos_perfeitos + _acertos_otimos + _acertos_bons;
+var _total_acertos = o_controlador_geral.stats_acertos_perfeitos
+                   + o_controlador_geral.stats_acertos_otimos
+                   + o_controlador_geral.stats_acertos_bons;
 
-// Calcula a porcentagem de acertos
-var _porcentagem_acerto_total = 0;
-if (_total_notas > 0) {
-    _porcentagem_acerto_total = (_total_acertos / _total_notas) * 100;
-}
-
-// Variável para guardar o índice do resultado (0=Falha, 1=Aceitável, etc.)
-var _resultado_index = 0;
-
-// Define o resultado com base na performance
-if (_porcentagem_acerto_total < 40) { _resultado_index = 0; } // Falha
-else if (_porcentagem_acerto_total < 70) { _resultado_index = 1; } // Aceitável
-else if (_porcentagem_acerto_total < 95) { _resultado_index = 2; } // Bom
-else if (_porcentagem_acerto_total < 100) { _resultado_index = 3; } // Excelente
-else { _resultado_index = 4; } // Perfeito (100% de acertos)
-
-// Game over é game over. Quem perde a fase por excesso de notas perdidas recebe o
-// resultado de falha, mesmo que a precisão até ali estivesse alta — antes o jogador
-// avançado levava jingle de vitória, comemoração e a melhor arma ao ser derrotado.
-if (o_controlador_geral.fase_falhou) {
-    _resultado_index = 0;
-}
+var _resultado_index = icone_nivel(_total_notas, _total_acertos,
+                                   o_controlador_geral.fase_falhou);
 
 // Pega os dados da fase que acabamos de jogar
 var _dados_fase = o_controlador_geral.fases_data[_fase_jogada];
 
-// --- ESCOLHE A FRASE E A ARMA FINAL ---
-// Fase sem arte de arma ainda mostra a moldura, com um "?" dentro (ver o Draw).
-// -1 e o sinal de "sem arma", e nao um sprite invalido passado adiante.
-tem_arte = (array_length(_dados_fase.sprites_resultado) > 0);
-
-sprite_da_arma_final = tem_arte ? _dados_fase.sprites_resultado[_resultado_index] : -1;
-sprite_da_moldura_final = sprites_das_molduras[tem_arte ? _resultado_index : 0];
+// --- A ARMA FORJADA ---
+// A tela guarda a ARMA e o NIVEL, e nao um sprite ja escolhido: quem monta o
+// sanduiche de fundo, arma e moldura e icone_desenhar, e as tres camadas precisam
+// receber o mesmo nivel. Guardar sprites prontos foi o que ja rendeu moldura de
+// falha embaixo da melhor arma.
+arma_forjada = _dados_fase.icone;
+nivel_forjado = _resultado_index;
 
 // A lógica para escolher a frase pode ser baseada no mesmo índice
 if (_resultado_index <= 1) { // Falha ou Aceitável

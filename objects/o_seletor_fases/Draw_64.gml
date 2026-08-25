@@ -25,9 +25,10 @@ var _y_nome    = 636;
 var _y_detalhe = 663;
 var _y_recorde = 694;   // em f_padrao, entao precisa de mais linha embaixo
 
-var _escala_moldura = 0.34;             // s_canva01 tem 250px -> 85px na tela
-var _escala_arma    = 0.26;
-var _meia_moldura   = (250 * _escala_moldura) / 2;
+// Miniatura do cartao em escala 3: 26 px do icone viram 78 px na tela, inteira
+// (D-33). A arte antiga vinha em 0,34 e 0,26 — escalas fracionarias que sujavam a
+// grade de pixels da arte.
+var _meia_moldura = icone_tamanho(3) / 2;
 
 var _tinta = UI_COR_TEXTO;
 
@@ -85,7 +86,7 @@ for (var i = _primeiro; i <= _ultimo; i++) {
         var _conteudo = max(_larg_nome + 70,                  // nome + espaço do cursor
                             string_width(_txt_detalhe),
                             _larg_recorde,
-                            250 * _escala_moldura);
+                            icone_tamanho(3));
 
         var _caixa_topo = _y_icone - _meia_moldura - 5;
         var _caixa_base = _y_recorde + 16;
@@ -96,35 +97,17 @@ for (var i = _primeiro; i <= _ultimo; i++) {
                           _caixa_base - _caixa_topo);
     }
 
-    // Arma e moldura so aparecem em fase ja forjada: sem recorde nao ha o que
-    // exibir, e mostrar a melhor arma de uma fase nunca jogada entregava o premio
-    // antes da conquista.
+    // O icone so aparece em fase JA FORJADA: sem recorde nao ha o que exibir, e
+    // mostrar a melhor arma de uma fase nunca jogada entregava o premio antes da
+    // conquista. Fase sem campeao mostra fundo e moldura de falha, vazios — o lugar
+    // continua ocupado, entao le como pendencia e nao como buraco (D-107).
     //
-    // O par arma+moldura vem sempre do MESMO indice da lista de desempenho. Antes a
-    // moldura era s_canva01 fixa, a de FALHA, enquanto a arma era a ultima da lista,
-    // a melhor — a borda errada que voce viu.
-    // Fase sem arte de arma ainda desenha a moldura, com um "?" dentro. Some seria
-    // pior: o cartao ficaria com um buraco e pareceria defeito, nao pendencia.
-    var _tem_arte = array_length(_fase.sprites_resultado) > 0;
-
-    if (_tem_campeao || !_tem_arte) {
-        var _nivel = max(0, array_length(_fase.sprites_resultado) - 1);
-        var _moldura = o_controlador_geral.molduras_resultado[_tem_arte ? _nivel : 0];
-
-        if (_tem_arte && _tem_campeao) {
-            draw_sprite_ext(_fase.sprites_resultado[_nivel], 0, _pos_x, _y_icone,
-                            _escala_arma, _escala_arma, 0, c_white, 1);
-        }
-
-        draw_sprite_ext(_moldura, 0, _pos_x, _y_icone, _escala_moldura, _escala_moldura, 0, c_white, 1);
-
-        if (!_tem_arte) {
-            draw_set_font(f_padrao);
-            draw_set_color(UI_COR_COBRE);
-            draw_text(_pos_x, _y_icone, "?");
-            draw_set_color(_tinta);
-        }
-    }
+    // Miniatura em escala 3: 26 px viram 78 px, inteira (D-33). A arte antiga vinha
+    // em 0,34 e 0,26, escalas fracionarias que sujavam a grade de pixels.
+    var _tem_campeao_arte = _tem_campeao;
+    icone_desenhar(_tem_campeao_arte ? _fase.icone : -1,
+                   _tem_campeao_arte ? 4 : 0,
+                   _pos_x, _y_icone, 3);
 
     // nome
     draw_set_font(f_padrao);
