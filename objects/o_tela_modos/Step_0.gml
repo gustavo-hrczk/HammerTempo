@@ -35,6 +35,11 @@ if (input_pressed(ACAO.CONFIRMAR)) {
 
     o_audio_manager.play_sfx(snd_menu_confirm);
 
+    // QUEM confirmou decide quem joga no solo. input_pressed(CONFIRMAR) responde aos
+    // dois jogadores de proposito, entao a pergunta especifica precisa ser feita a
+    // acao do jogador 2 — que so responde as teclas dele.
+    var _dono = input_pressed(ACAO.CONFIRMAR2) ? 1 : 0;
+
     var _arcade = (opcao_selecionada == 0);
 
     switch (opcao_selecionada) {
@@ -42,6 +47,10 @@ if (input_pressed(ACAO.CONFIRMAR)) {
         case 2:  o_controlador_geral.modo_jogo = MODO.VERSUS; break;
         default: o_controlador_geral.modo_jogo = MODO.LIVRE;  break;
     }
+
+    // No Versus os dois jogam, entao nao ha "dono do solo".
+    o_controlador_geral.solo_dono =
+        (o_controlador_geral.modo_jogo == MODO.VERSUS) ? 0 : _dono;
 
     // No Arcade o tutorial volta a cada percurso. tutorial_ja_foi_visto guarda a
     // sessão inteira, o que serve para quem está jogando em casa e atrapalha na feira:

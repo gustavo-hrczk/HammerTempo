@@ -53,9 +53,9 @@ var _nota = ritmo_nota_alcancavel(meu_tipo, dono);
 if (_nota == noone) {
     // Toque sem nota alcançável: custa pontos e quebra o combo, mas não encerra
     // a partida (auditoria GP-04).
-    jogador().stats_toques_invalidos++;
-    jogador().pontuacao = max(0, jogador().pontuacao - 10);
-    jogador().stats_sequencia = 0;
+    jogador(dono).stats_toques_invalidos++;
+    jogador(dono).pontuacao = max(0, jogador(dono).pontuacao - 10);
+    jogador(dono).stats_sequencia = 0;
     debug_registrar_julgamento("inválido", 0);
     exit;
 }
@@ -64,16 +64,16 @@ var _erro_frames = ritmo_erro_frames(_nota);
 var _erro_ms = ritmo_frames_ms(_erro_frames);
 var _julgamento = ritmo_julgar(_nota);
 
-jogador().stats_toques_invalidos = 0;
-jogador().stats_sequencia_errada = 0;
+jogador(dono).stats_toques_invalidos = 0;
+jogador(dono).stats_sequencia_errada = 0;
 
 switch (_julgamento) {
 
     case JULGAMENTO.PERFEITO:
-        var _ganho = 100 + (10 * jogador().stats_sequencia);
-        jogador().pontuacao += _ganho;
-        jogador().stats_sequencia++;
-        jogador().stats_acertos_perfeitos++;
+        var _ganho = 100 + (10 * jogador(dono).stats_sequencia);
+        jogador(dono).pontuacao += _ganho;
+        jogador(dono).stats_sequencia++;
+        jogador(dono).stats_acertos_perfeitos++;
 
         _nota.estourar(COR_PERFEITO_NOTA);
         pop = 1;
@@ -92,10 +92,10 @@ switch (_julgamento) {
         break;
 
     case JULGAMENTO.OTIMO:
-        var _ganho_otimo = 75 + (7 * jogador().stats_sequencia);
-        jogador().pontuacao += _ganho_otimo;
-        jogador().stats_sequencia++;
-        jogador().stats_acertos_otimos++;
+        var _ganho_otimo = 75 + (7 * jogador(dono).stats_sequencia);
+        jogador(dono).pontuacao += _ganho_otimo;
+        jogador(dono).stats_sequencia++;
+        jogador(dono).stats_acertos_otimos++;
 
         _nota.estourar(COR_OTIMO_NOTA);
         pop = 0.55;
@@ -114,10 +114,10 @@ switch (_julgamento) {
         break;
 
     case JULGAMENTO.BOM:
-        var _ganho_bom = 50 + (5 * jogador().stats_sequencia);
-        jogador().pontuacao += _ganho_bom;
-        jogador().stats_sequencia++;
-        jogador().stats_acertos_bons++;
+        var _ganho_bom = 50 + (5 * jogador(dono).stats_sequencia);
+        jogador(dono).pontuacao += _ganho_bom;
+        jogador(dono).stats_sequencia++;
+        jogador(dono).stats_acertos_bons++;
 
         _nota.estourar(COR_BOM_NOTA);
         pop = 0.28;

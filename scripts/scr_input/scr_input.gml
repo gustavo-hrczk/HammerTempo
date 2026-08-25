@@ -40,6 +40,13 @@ enum ACAO {
     LANE2_ESQ,
     LANE2_DIR,
 
+    // Comandos do jogador 2. Ele confirma, volta e pausa por conta propria: sem isso
+    // ficaria dependente do jogador 1 para tudo fora da forja, inclusive para pausar
+    // uma partida que tambem e dele.
+    CONFIRMAR2,
+    VOLTAR2,
+    PAUSAR2,
+
     __COUNT
 }
 
@@ -120,6 +127,31 @@ function input_vinculos_de_fabrica() {
     input_bind(ACAO.LANE2_BAIXO, [vk_down],  []);
     input_bind(ACAO.LANE2_ESQ,   [vk_left],  []);
     input_bind(ACAO.LANE2_DIR,   [vk_right], []);
+
+    // Comandos do jogador 2, do lado DIREITO do teclado, como as faixas dele.
+    //
+    // vk_rshift e vk_rcontrol, e nao vk_shift e vk_control: os genericos respondem as
+    // duas teclas, e o jogador 1 dispararia o confirmar do jogador 2 sem querer.
+    //
+    // Voltar e Pausar compartilham a tecla, espelhando o jogador 1 — la os dois sao
+    // ESC desde sempre.
+    input_bind(ACAO.CONFIRMAR2, [vk_rshift],   []);
+    input_bind(ACAO.VOLTAR2,    [vk_rcontrol], []);
+    input_bind(ACAO.PAUSAR2,    [vk_rcontrol], []);
+}
+
+/// O comando equivalente do jogador 2, ou -1 se a acao nao for um comando.
+///
+/// Existe para input_pressed tratar CONFIRMAR, VOLTAR e PAUSAR como "de QUALQUER
+/// jogador". A alternativa seria trocar a chamada nas dezenas de telas que perguntam
+/// por CONFIRMAR, e bastaria esquecer uma para o jogador 2 ficar preso nela.
+function input_comando_p2(_acao) {
+    switch (_acao) {
+        case ACAO.CONFIRMAR: return ACAO.CONFIRMAR2;
+        case ACAO.VOLTAR:    return ACAO.VOLTAR2;
+        case ACAO.PAUSAR:    return ACAO.PAUSAR2;
+    }
+    return -1;
 }
 
 /// A ação de faixa de um jogador. _dono é 0 para o jogador 1 e 1 para o 2.
@@ -185,6 +217,9 @@ function input_id_acao(_acao) {
         case ACAO.LANE2_BAIXO: return "lane2_baixo";
         case ACAO.LANE2_ESQ:   return "lane2_esq";
         case ACAO.LANE2_DIR:   return "lane2_dir";
+        case ACAO.CONFIRMAR2:  return "confirmar2";
+        case ACAO.VOLTAR2:     return "voltar2";
+        case ACAO.PAUSAR2:     return "pausar2";
     }
 
     // MENU_* cai aqui de propósito: sem identificador, input_aplicar_save() e
@@ -209,6 +244,9 @@ function input_rotulo_acao(_acao) {
         case ACAO.LANE2_ESQ:   return "P2 Faixa 2";
         case ACAO.LANE2_DIR:   return "P2 Faixa 3";
         case ACAO.LANE2_BAIXO: return "P2 Faixa 4";
+        case ACAO.CONFIRMAR2:  return "Confirmar";
+        case ACAO.VOLTAR2:     return "Voltar";
+        case ACAO.PAUSAR2:     return "Pausar";
     }
     return "?";
 }
@@ -226,7 +264,8 @@ function input_acoes_configuraveis() {
 /// moldura — e porque quem esta configurando o jogador 1 raramente quer o 2 na mesma
 /// tela.
 function input_acoes_configuraveis_p2() {
-    return [ACAO.LANE2_CIMA, ACAO.LANE2_ESQ, ACAO.LANE2_DIR, ACAO.LANE2_BAIXO];
+    return [ACAO.LANE2_CIMA, ACAO.LANE2_ESQ, ACAO.LANE2_DIR, ACAO.LANE2_BAIXO,
+            ACAO.CONFIRMAR2, ACAO.VOLTAR2, ACAO.PAUSAR2];
 }
 
 /// Aplica sobre os vínculos de fábrica o que estiver gravado no save.
@@ -303,6 +342,12 @@ function input_update() {
 
 /// A ação foi acionada neste frame?
 function input_pressed(_acao) {
+    // CONFIRMAR, VOLTAR e PAUSAR valem para OS DOIS jogadores. Toda tela do jogo
+    // pergunta por elas, e sem isto o jogador 2 dependeria do 1 ate para pausar uma
+    // partida que tambem e dele.
+    var _p2 = input_comando_p2(_acao);
+    if (_p2 >= 0 && input_pressed(_p2)) return true;
+
     var _teclas = global.input_teclas[_acao];
     for (var i = 0; i < array_length(_teclas); i++) {
         if (keyboard_check_pressed(_teclas[i])) {
@@ -345,6 +390,12 @@ function input_pressed(_acao) {
 
 /// A ação está sendo mantida pressionada?
 function input_held(_acao) {
+    // CONFIRMAR, VOLTAR e PAUSAR valem para OS DOIS jogadores. Toda tela do jogo
+    // pergunta por elas, e sem isto o jogador 2 dependeria do 1 ate para pausar uma
+    // partida que tambem e dele.
+    var _p2 = input_comando_p2(_acao);
+    if (_p2 >= 0 && input_held(_p2)) return true;
+
     var _teclas = global.input_teclas[_acao];
     for (var i = 0; i < array_length(_teclas); i++) {
         if (keyboard_check(_teclas[i])) return true;

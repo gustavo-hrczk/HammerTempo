@@ -9,8 +9,15 @@ dono = 0;
 // de sprite, onde um esquecido daria ao jogador 2 a cor do jogador 1 no meio de uma
 // animacao.
 //
-// Preenchido no Step, no primeiro quadro: `dono` e definido por quem cria a
-// instancia, e no Create ele ainda vale 0.
+// Montado JA NO CREATE, com o dono que a instancia tem neste instante.
+//
+// Estava sendo montado no primeiro Step, o que abria uma janela fatal: o evento
+// Animation End dispara ANTES do Step do primeiro quadro, e chegava em meus_sprites
+// ainda indefinido — o jogo travava ao abrir qualquer fase.
+//
+// Para o ferreiro 1, que nasce com a sala, `dono` ja vale 0 aqui e esta correto. Para
+// o ferreiro 2, criado em codigo, quem o cria chama adotar_sprites() de novo depois de
+// definir o dono — a funcao e idempotente exatamente para isso.
 meus_sprites = undefined;
 
 /// Monta o conjunto do dono atual. Idempotente.
@@ -46,6 +53,9 @@ estado = FERREIRO_ESTADO.IDLE;
 // Posição de trabalho, junto à bigorna. O ócio da seleção de fase sempre termina
 // aqui antes da partida começar.
 home_x = x;
+
+// Ultima coisa do Create: adotar_sprites depende de frente(), definida acima.
+adotar_sprites();
 
 // Alcance do passeio. Era -110/+30 (140 px); foi alargado para dar variedade ao
 // ócio. A trava da contagem (ver o Step) garante a volta à bigorna a tempo mesmo

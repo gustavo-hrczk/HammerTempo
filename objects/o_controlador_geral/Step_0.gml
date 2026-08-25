@@ -104,6 +104,10 @@ switch (estado_jogo) {
             // contagem comecar.
             versus_montar_cena();
 
+            // Fora do Versus, a cena inteira passa a pertencer a quem esta jogando —
+            // o que so muda alguma coisa quando o jogador 2 comeca a partida sozinho.
+            if (!versus_ativo()) solo_adotar_dono(solo_dono);
+
             // No Arcade o seletor de armas nao existe: o percurso e a lista inteira,
             // em ordem, e comeca na primeira. Os dois modos entram por este mesmo
             // estado justamente para a contagem so comecar com a sala ja montada.

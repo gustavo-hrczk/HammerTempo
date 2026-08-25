@@ -59,6 +59,13 @@ for (var i = 0; i < JOGADORES_MAX; i++) {
 // precisar saber em que modo esta.
 // =================================================================
 modo_jogo = MODO.LIVRE;
+
+/// Quem esta jogando, nos modos de UM jogador.
+///
+/// Quase sempre 0. Vale 1 quando o jogador 2 inicia a partida com as teclas dele — ele
+/// joga com a propria arte e o proprio placar, no layout de um jogador que ja esta
+/// validado. Zerado ao entrar no Versus, onde os dois jogam.
+solo_dono = 0;
 arcade_indice = 0;    // qual etapa do percurso, contando de zero
 arcade_pontos = 0;    // total acumulado ate aqui
 

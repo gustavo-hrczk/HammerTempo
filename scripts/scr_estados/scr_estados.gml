@@ -122,6 +122,26 @@ function jogadores_em_jogo() {
     return versus_ativo() ? 2 : 1;
 }
 
+/// Quais jogadores estao em jogo, por indice.
+///
+/// No solo NAO e sempre [0]: o jogador 2 pode iniciar uma partida sozinho, e nesse
+/// caso ele joga com a propria arte, as proprias teclas e o proprio placar — no
+/// layout de um jogador, que ja esta validado. Dar autonomia a ele exigia que o jogo
+/// soubesse QUEM joga, e nao so quantos.
+function jogadores_ativos() {
+    if (versus_ativo()) return [0, 1];
+    return [solo_jogador()];
+}
+
+/// Indice do jogador que esta jogando sozinho. Zero fora do caso acima.
+///
+/// Chama-se solo_jogador e nao solo_dono porque o controlador tem uma VARIAVEL com
+/// esse nome, e o GML nao admite funcao e variavel homonimas.
+function solo_jogador() {
+    if (!instance_exists(o_controlador_geral)) return 0;
+    return o_controlador_geral.solo_dono;
+}
+
 // =================================================================
 // ALTERNANCIA DO VERSUS
 //
@@ -161,7 +181,7 @@ function versus_trecho() {
 /// e o modo de um jogador nao precisa saber dela.
 function versus_recebe_nota(_dono) {
     if (!versus_ativo()) {
-        return (_dono == 0);
+        return (_dono == solo_jogador());
     }
 
     switch (versus_trecho()) {

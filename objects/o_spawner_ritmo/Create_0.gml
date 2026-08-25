@@ -171,7 +171,10 @@ proxima_faixa = function() {
 criar_nota = function(_t) {
     var _tipo = proxima_faixa();
 
-    for (var _d = 0; _d < jogadores_em_jogo(); _d++) {
+    var _ativos = jogadores_ativos();
+
+    for (var _i = 0; _i < array_length(_ativos); _i++) {
+        var _d = _ativos[_i];
         if (!versus_recebe_nota(_d)) continue;
 
         var _x = ritmo_linha_x(_d) - (ritmo_sentido(_d) * viagem_seg

@@ -66,8 +66,14 @@ function EstadoJogador() constructor {
     }
 }
 
-/// Estado de um jogador. Sem argumento, o jogador 1 — que é o único fora do Versus.
-function jogador(_n = 0) {
+/// Estado de um jogador.
+///
+/// Sem argumento devolve o jogador ATIVO do modo solo — que é o 1 na esmagadora
+/// maioria das vezes, mas pode ser o 2 quando ele inicia uma partida sozinho. Todo o
+/// gameplay passa o índice explicitamente; quem omite são as telas de um jogador, e
+/// para elas "o jogador" é exatamente esse.
+function jogador(_n = undefined) {
+    if (is_undefined(_n)) _n = solo_jogador();
     return o_controlador_geral.jogadores[_n];
 }
 
@@ -122,6 +128,18 @@ function bigorna_de(_dono = 0) {
 /// Distancia entre a bigorna e o ferreiro, preservada da cena original (661 - 619).
 #macro VERSUS_VAO_FERREIRO 42
 
+/// Passa a cena de um jogador para o jogador 2.
+///
+/// Quando o jogador 2 inicia uma partida sozinho, nada de layout muda — ele joga no
+/// enquadramento de sempre, que ja esta validado. O que muda e de quem sao o ferreiro,
+/// a bigorna e os alvos que a sala criou, e a paleta que o ferreiro veste.
+function solo_adotar_dono(_dono) {
+    with (o_ferreiro)      { dono = _dono; adotar_sprites(); }
+    with (o_bigorna)         dono = _dono;
+    with (o_buttons_forja)   dono = _dono;
+    with (o_fundo_ui)        dono = _dono;
+}
+
 /// Reposiciona o jogador 1 e cria o jogador 2. Idempotente.
 function versus_montar_cena() {
     if (!versus_ativo()) return;
@@ -149,6 +167,10 @@ function versus_montar_cena() {
                                     _y_ferreiro, "Gameplay", o_ferreiro);
     _f2.dono = 1;
     _f2.home_x = _f2.x;
+
+    // o conjunto de sprites foi montado no Create com dono 0; agora que ele sabe quem
+    // e, remonta com a paleta e o espelho certos
+    with (_f2) adotar_sprites();
 
     // Alvos e corredor do jogador 2, no topo da tela.
     var _linha2 = ritmo_linha_x(1);
