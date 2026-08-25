@@ -4,7 +4,16 @@
 // (rm_forja: y 515, 565, 615, 665). Antes o tutorial as mostrava lado a lado, na
 // horizontal, o que ensinava uma leitura que o jogo não usa.
 // =================================================================
-lane_acao   = [ACAO.LANE_CIMA, ACAO.LANE_ESQ,   ACAO.LANE_DIR,  ACAO.LANE_BAIXO];
+// Qual conjunto de teclas o tutorial ensina.
+//
+// No Versus ele ensina os DOIS: cada jogador precisa encontrar as proprias teclas
+// antes da partida, e no gabinete eles dividem o mesmo teclado — quem nao souber qual
+// metade e a sua descobre errando durante a fase.
+//
+// Fora do Versus so existe o jogador 1, e o tutorial le exatamente como antes.
+lane_dono = 0;
+
+lane_acao = [input_lane(0, 1), input_lane(0, 3), input_lane(0, 2), input_lane(0, 0)]
 lane_sprite = [s_alvo_cima,    s_alvo_esquerda, s_alvo_direita, s_alvo_baixo];
 
 // O rótulo NÃO é escrito na unha: vem de input_nome_da_acao(), que lê o vínculo em
@@ -16,3 +25,15 @@ lane_sprite = [s_alvo_cima,    s_alvo_esquerda, s_alvo_direita, s_alvo_baixo];
 lane_frame  = [0, 0, 0, 0];
 lane_afunda = [0, 0, 0, 0];
 lane_pop    = [0, 0, 0, 0];
+
+
+/// Troca o tutorial para o outro jogador. Só o Versus usa.
+trocar_de_jogador = function() {
+    lane_dono = 1 - lane_dono;
+    lane_acao = [input_lane(lane_dono, 1), input_lane(lane_dono, 3),
+                 input_lane(lane_dono, 2), input_lane(lane_dono, 0)];
+
+    for (var i = 0; i < 4; i++) {
+        lane_afunda[i] = 0;
+    }
+};

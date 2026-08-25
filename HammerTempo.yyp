@@ -60,6 +60,7 @@
     {"id":{"name":"o_spawner_ritmo","path":"objects/o_spawner_ritmo/o_spawner_ritmo.yy",},},
     {"id":{"name":"o_splash_controlador","path":"objects/o_splash_controlador/o_splash_controlador.yy",},},
     {"id":{"name":"o_tela_controles","path":"objects/o_tela_controles/o_tela_controles.yy",},},
+    {"id":{"name":"o_resultado_versus","path":"objects/o_resultado_versus/o_resultado_versus.yy",},},
     {"id":{"name":"o_tela_intervalo","path":"objects/o_tela_intervalo/o_tela_intervalo.yy",},},
     {"id":{"name":"o_tela_modos","path":"objects/o_tela_modos/o_tela_modos.yy",},},
     {"id":{"name":"o_tela_nome","path":"objects/o_tela_nome/o_tela_nome.yy",},},

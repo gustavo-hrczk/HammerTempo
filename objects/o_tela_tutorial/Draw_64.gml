@@ -98,7 +98,15 @@ var _lane_topo = _bloco_topo + _rotulo_h + _vao_rotulo + (_icone_h / 2);
 draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
 draw_set_color(c_black);
-draw_text(_coluna_x, _rotulo_y, "TESTE AS TECLAS");
+// No Versus o rotulo diz DE QUEM sao as teclas em teste: os dois dividem o teclado, e
+// sem isso o jogador 2 tentaria as proprias teclas na etapa do jogador 1.
+if (versus_ativo()) {
+    draw_set_color(versus_cor(lane_dono));
+    draw_text(_coluna_x, _rotulo_y, string_upper(versus_nome(lane_dono)) + ", TESTE");
+    draw_set_color(c_black);
+} else {
+    draw_text(_coluna_x, _rotulo_y, "TESTE AS TECLAS");
+}
 
 for (var i = 0; i < array_length(lane_sprite); i++) {
 

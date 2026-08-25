@@ -32,11 +32,24 @@ switch (estado_jogo) {
         // O titulo abre JUNTO com a contagem, e nao depois dela: assim ele ja saiu
         // quando a fase comeca. Ver hud_titulo_fase.
         hud_titulo_fase();
+
+        // No Versus, cada pista se apresenta durante a preparacao. Quem chega no
+        // gabinete precisa saber qual das duas e a sua ANTES da primeira nota.
+        if (versus_ativo()) versus_marcar_pistas(1);
         break;
 
     case MINIGAME.RITMO:
         hud_draw();
         hud_titulo_fase();
+
+        // O rotulo da pista some junto com o titulo: depois disso ele viraria ruido
+        // por cima da partida.
+        if (versus_ativo()) {
+            var _tp = hud_titulo_tempo() / room_speed;
+            if (_tp < HUD_TITULO_DUR) {
+                versus_marcar_pistas(1 - (_tp / HUD_TITULO_DUR));
+            }
+        }
         break;
 }
 

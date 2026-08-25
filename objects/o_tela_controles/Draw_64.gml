@@ -19,7 +19,7 @@ draw_rectangle(_cx - (ITEM_LARGURA / 2), _primeira - 22,
 draw_set_alpha(1);
 
 draw_set_color(UI_COR_DESTAQUE);
-draw_text(_cx, _primeira, "CONTROLES");
+draw_text(_cx, _primeira, "<  " + titulos_pagina[pagina] + "  >");
 
 // --- LISTA DE AÇÕES ---
 for (var i = 0; i < LINHA_RESTAURAR; i++) {

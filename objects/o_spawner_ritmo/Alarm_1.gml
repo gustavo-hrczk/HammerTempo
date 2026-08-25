@@ -31,6 +31,16 @@ if (o_controlador_geral.arcade_tem_proxima()) {
     exit;
 }
 
+// O Versus tem tela propria: a do modo de um jogador conta UMA historia — quanto voce
+// forjou — e e construida em volta de uma arma so, um bonus so e um recorde.
+if (versus_ativo()) {
+    show_debug_message("Versus concluido.");
+    o_controlador_geral.estado_jogo = MINIGAME.RESULTADO;
+    instance_create_depth(0, 0, -9000, o_resultado_versus);
+    instance_destroy();
+    exit;
+}
+
 show_debug_message("Fase Concluída! Mostrando resultados...");
 
 o_controlador_geral.estado_jogo = MINIGAME.RESULTADO;

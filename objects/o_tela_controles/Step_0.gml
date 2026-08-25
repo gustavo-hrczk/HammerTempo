@@ -55,6 +55,16 @@ if (keyboard_check_pressed(vk_escape) || input_pressed(ACAO.VOLTAR)) {
 }
 
 // --- NAVEGAÇÃO ---
+// LADOS trocam de pagina, como na tela de recordes. Fora da captura: durante ela o
+// teclado inteiro esta sendo lido para o vinculo novo.
+var _h = input_eixo_h();
+if (_h != 0) {
+    o_audio_manager.play_sfx(o_controlador_geral.nav_sounds[o_controlador_geral.nav_sound_index]);
+    o_controlador_geral.nav_sound_index = 1 - o_controlador_geral.nav_sound_index;
+    ir_para_pagina(pagina + _h);
+    exit;
+}
+
 var _move = input_eixo_v();
 if (_move != 0) {
     opcao_selecionada += _move;

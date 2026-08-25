@@ -328,6 +328,27 @@ function hud_placa_suave(_x1, _y1, _x2, _y2, _cor, _pico, _fade_x, _fade_y) {
 }
 
 function hud_draw() {
+
+    // O VERSUS TEM O PROPRIO HUD. O painel de pergaminho, o combo e a vinheta de
+    // perigo sao todos de um jogador so — desenha-los aqui mostraria os numeros do
+    // jogador 1 como se fossem da partida inteira.
+    if (versus_ativo()) {
+        var _e = global.hud_entrada;
+
+        versus_placar(0, _e);
+        versus_placar(1, _e);
+        versus_faixa_vez(_e);
+
+        // barra de progresso da fase, no rodape, igual ao modo de um jogador
+        var _prog = 1;
+        if (instance_exists(o_spawner_ritmo) && o_spawner_ritmo.duracao_total > 0) {
+            _prog = 1 - (o_spawner_ritmo.minha_duracao / o_spawner_ritmo.duracao_total);
+        }
+        hud_barra(300, 708, 680, 10, _prog, make_colour_rgb(255, 122, 69), c_yellow, _e);
+
+        ui_reset();
+        return;
+    }
     var _ctrl = o_controlador_geral;
     var _fase = _ctrl.fases_data[_ctrl.fase_atual];
     var _gw = display_get_gui_width();
@@ -572,4 +593,82 @@ function hud_titulo_fase() {
               c_white, 1);
 
     draw_set_alpha(1);
+}
+
+// =================================================================
+// HUD DO VERSUS
+//
+// O painel de pergaminho e do modo de um jogador e fica onde sempre esteve. No Versus
+// ele nao serve: sao dois placares, e um deles precisa ficar perto do corredor de
+// cima. Entra no lugar um par de leituras compactas, uma junto de cada pista.
+// =================================================================
+
+/// Cor de cada jogador. Vem da paleta da forja, nao de vermelho-contra-azul: o
+/// jogador 1 e o cobre que o jogo inteiro usa, e o jogador 2 e o verde-oliva do
+/// ferreiro de paleta trocada.
+function versus_cor(_dono) {
+    return (_dono == 0) ? make_colour_rgb(212, 122, 40)
+                        : make_colour_rgb(120, 170, 96);
+}
+
+function versus_nome(_dono) {
+    return (_dono == 0) ? "JOGADOR 1" : "JOGADOR 2";
+}
+
+/// Placar compacto de um jogador, ancorado no corredor dele.
+function versus_placar(_dono, _alpha) {
+    var _gw = display_get_gui_width();
+    var _j = jogador(_dono);
+
+    // fica na ponta OPOSTA a linha de acerto, onde a pista esta vazia
+    var _x = (_dono == 0) ? (_gw - 30) : 30;
+    var _halign = (_dono == 0) ? fa_right : fa_left;
+
+    var _y = ritmo_corredor_topo(_dono) + ((_dono == 0) ? -34 : 202);
+
+    draw_set_alpha(_alpha);
+
+    draw_set_font(f_padrao_pequena);
+    hud_texto(_x, _y - 22, versus_nome(_dono), versus_cor(_dono), 1, _halign);
+
+    draw_set_font(f_padrao);
+    hud_texto(_x, _y + 8, string(_j.pontuacao), versus_cor(_dono), 1, _halign);
+
+    if (_j.stats_sequencia >= HUD_COMBO_MINIMO) {
+        draw_set_font(f_padrao_pequena);
+        hud_texto(_x, _y + 36, "x" + string(_j.stats_sequencia),
+                  hud_cor_combo(_j.stats_sequencia), 1, _halign);
+    }
+
+    draw_set_alpha(1);
+}
+
+/// De quem e a vez agora. Some quando os dois estao tocando, porque ai a faixa
+/// "OS DOIS!" ja diz tudo e mais texto so disputaria atencao com as notas.
+function versus_faixa_vez(_alpha) {
+    var _gw = display_get_gui_width();
+    var _t = versus_trecho();
+
+    var _cor = (_t == 2) ? c_white : versus_cor(_t);
+
+    draw_set_font(f_padrao);
+    draw_set_alpha(_alpha);
+    ui_texto_flutuante(_gw / 2, 258, versus_rotulo_trecho(), _alpha, f_padrao, _cor);
+    draw_set_alpha(1);
+}
+
+/// Diz de quem e cada pista, durante a preparacao.
+///
+/// Aparece junto com a contagem e some com ela: quem chega no gabinete precisa saber
+/// qual das duas pistas e a sua ANTES da primeira nota, e depois disso o rotulo vira
+/// ruido sobre a partida.
+function versus_marcar_pistas(_alpha) {
+    if (_alpha <= 0) return;
+
+    for (var _d = 0; _d < 2; _d++) {
+        var _x = (_d == 0) ? 260 : (display_get_gui_width() - 260);
+        var _y = ritmo_corredor_topo(_d) + 100;
+
+        ui_texto_flutuante(_x, _y, versus_nome(_d), _alpha, f_padrao, versus_cor(_d));
+    }
 }
