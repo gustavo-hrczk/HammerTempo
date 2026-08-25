@@ -213,8 +213,9 @@ function hud_desenhar_ganho(_dono, _x, _y, _alpha = 1, _halign = fa_right) {
 /// trocado no meio da animação e aos olhos virava tremulação. Agora cada julgamento
 /// sobe e some no seu próprio tempo, e os que ainda estão subindo ficam em alturas
 /// diferentes: a sobreposição vira leitura de sequência.
-function hud_registrar_julgamento(_texto, _cor, _sobe = true) {
+function hud_registrar_julgamento(_texto, _cor, _sobe = true, _dono = 0) {
     array_push(global.hud_julgamentos, {
+        dono: _dono,
         texto: _texto,
         cor: _cor,
         sobe: _sobe,
@@ -223,10 +224,77 @@ function hud_registrar_julgamento(_texto, _cor, _sobe = true) {
         desvio_x: irandom_range(-9, 9)
     });
 
-    // teto de 3 simultâneos: acima disso vira poluição
-    while (array_length(global.hud_julgamentos) > 3) {
-        array_delete(global.hud_julgamentos, 0, 1);
+    // TETO DE 3 SIMULTANEOS POR JOGADOR, e nao no total. Sem o dono, o "ERRO" do
+    // jogador 2 aparecia na pista do jogador 1 — quem estava com o combo intacto via
+    // a falha do outro piscar na propria faixa e concluia ter quebrado a sequencia.
+    // A pontuacao sempre esteve certa; era a bolha que mentia.
+    var _n = 0;
+    for (var i = array_length(global.hud_julgamentos) - 1; i >= 0; i--) {
+        if (global.hud_julgamentos[i].dono != _dono) continue;
+
+        _n++;
+        if (_n > 3) array_delete(global.hud_julgamentos, i, 1);
     }
+}
+
+/// Onde os julgamentos deste jogador nascem.
+///
+/// O JOGADOR 1 FICA ONDE SEMPRE FICOU: 10 px para dentro da borda de cima do corredor,
+/// que é logo acima do botão vermelho. É o enquadramento validado no solo, e o Versus
+/// não muda nada para ele.
+///
+/// O jogador 2 é o espelho exato: 10 px para dentro da borda de BAIXO, logo abaixo do
+/// botão amarelo. Os dois textos correm na direção do meio da tela, cada um saindo do
+/// próprio corredor — quem olha para cima nunca vê um texto que não é seu.
+function hud_julgamento_ancora(_dono) {
+    var _topo = ritmo_corredor_topo(_dono);
+
+    var _y = (_dono == 0)
+        ? (_topo + 10)
+        : (_topo + RITMO_CORREDOR_ALTURA - 10);
+
+    return [ritmo_linha_x(_dono) + (RITMO_ALVO_LARGURA / 2), _y];
+}
+
+/// Os julgamentos de UM jogador, subindo (ou descendo) a partir da ancora dele.
+function hud_desenhar_julgamentos(_dono, _entrada) {
+    var _a = hud_julgamento_ancora(_dono);
+    var _jx = _a[0];
+    var _jy_base = _a[1];
+
+    // O jogador 2 lê a pista de cima para baixo, então tudo se inverte: o acerto DESCE
+    // e o erro SOBE. Sem isso o texto dele entraria por dentro do próprio corredor,
+    // por cima das notas que ainda estão chegando.
+    var _sentido = (_dono == 0) ? 1 : -1;
+
+    draw_set_font(f_padrao);
+
+    for (var i = 0; i < array_length(global.hud_julgamentos); i++) {
+        var _j = global.hud_julgamentos[i];
+        if (_j.dono != _dono) continue;
+
+        var _prog = _j.timer / _j.dur;
+
+        // sobe rápido e vai freando. A distância é curta de propósito: subindo
+        // demais o texto atravessava o bloco inteiro e perdia a âncora visual.
+        // O erro afunda pouco, só o suficiente para a direção marcar a falha.
+        var _distancia = _j.sobe ? 33 : 16;
+        var _desloca = _distancia * (1 - power(1 - _prog, 2));
+        if (_j.sobe) _desloca = -_desloca;
+
+        // Opaco no impacto e totalmente apagado aos 65% do trajeto: o movimento
+        // continua o mesmo, mas o texto já sumiu antes de subir sobre o combo.
+        var _alpha = (_prog < 0.2) ? 1 : max(0, 1 - ((_prog - 0.2) / 0.45));
+
+        // clarão de cor nos primeiros frames
+        var _cor = (_prog < 0.12) ? merge_colour(_j.cor, c_white, 0.55) : _j.cor;
+
+        draw_set_alpha(_alpha * _entrada);
+        hud_texto(_jx + _j.desvio_x, round(_jy_base + (_desloca * _sentido)), _j.texto,
+                  _cor, 1);
+    }
+
+    draw_set_alpha(1);
 }
 
 /// Cor do combo, medida contra o pergaminho do painel (rgb 229,214,161).
@@ -364,6 +432,11 @@ function hud_draw() {
         hud_painel_jogador(0, _e);
         hud_painel_jogador(1, _e);
 
+        // BOM / OTIMO / PERFEITO de cada um na propria pista. O jogador 1 sobe a partir
+        // do botao vermelho, exatamente como no solo; o 2 desce a partir do amarelo.
+        hud_desenhar_julgamentos(0, _e);
+        hud_desenhar_julgamentos(1, _e);
+
         // barra de progresso da fase, no rodape, igual ao modo de um jogador
         var _prog = 1;
         if (instance_exists(o_spawner_ritmo) && o_spawner_ritmo.duracao_total > 0) {
@@ -436,40 +509,7 @@ function hud_draw() {
         draw_set_alpha(_entrada);
     }
 
-    // ---------------------------------------------------------------
-    // JULGAMENTOS — sobem a partir da base do bloco e somem no caminho
-    // ---------------------------------------------------------------
-    var _jx = HUD_BLOCO_X + (HUD_BLOCO_W / 2);
-    // 30 px abaixo da base do bloco. O corredor das notas começa em y = 515 e o
-    // texto tem 30 px de altura, então a borda de baixo encosta nele por 2 px —
-    // o limite prático de quanto a origem pode descer.
-    var _jy_base = _bloco_y + HUD_BLOCO_H + 30;
-
-    draw_set_font(f_padrao);
-
-    for (var i = 0; i < array_length(global.hud_julgamentos); i++) {
-        var _j = global.hud_julgamentos[i];
-        var _prog = _j.timer / _j.dur;
-
-        // sobe rápido e vai freando. A distância é curta de propósito: subindo
-        // demais o texto atravessava o bloco inteiro e perdia a âncora visual.
-        // O erro afunda pouco, só o suficiente para a direção marcar a falha.
-        var _distancia = _j.sobe ? 33 : 16;
-        var _desloca = _distancia * (1 - power(1 - _prog, 2));
-        if (_j.sobe) _desloca = -_desloca;
-
-        // Opaco no impacto e totalmente apagado aos 65% do trajeto: o movimento
-        // continua o mesmo, mas o texto já sumiu antes de subir sobre o combo.
-        var _alpha = (_prog < 0.2) ? 1 : max(0, 1 - ((_prog - 0.2) / 0.45));
-
-        // clarão de cor nos primeiros frames
-        var _cor = (_prog < 0.12) ? merge_colour(_j.cor, c_white, 0.55) : _j.cor;
-
-        draw_set_alpha(_alpha * _entrada);
-        hud_texto(_jx + _j.desvio_x, round(_jy_base + _desloca), _j.texto, _cor, 1);
-    }
-
-    draw_set_alpha(1);
+    hud_desenhar_julgamentos(solo_jogador(), _entrada);
 
     // ---------------------------------------------------------------
     // PROGRESSO DA FASE — faixa de 13 px no rodapé

@@ -47,5 +47,5 @@ registrar_erro = function() {
         with (_f) aplicar_dano();
     }
 
-    hud_registrar_julgamento("ERRO", COR_ERRO, false);
+    hud_registrar_julgamento("ERRO", COR_ERRO, false, dono);
 }

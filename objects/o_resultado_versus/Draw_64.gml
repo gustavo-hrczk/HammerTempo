@@ -64,11 +64,20 @@ for (var i = 0; i < 2; i++) {
     if (tempo >= VERSUS_T_DETALHE) {
         var _yd = _by + _bh + 28;
 
+        // TEXTO COM CONTORNO, e nao draw_text puro.
+        //
+        // Estas cores foram escolhidas para o fundo escuro da pista e sao desenhadas
+        // sobre o pergaminho do corredor, que e claro (rgb 229,214,161). Medido: o
+        // ouro da nota S dava 1,09:1 de contraste — invisivel — e a linha inteira de
+        // tiers ficava entre 1,76 e 2,72, toda abaixo do minimo de 4,5:1.
+        //
+        // Trocar as cores por versoes escuras resolveria o contraste e mataria a
+        // leitura: e o CALOR que diz que perfeito vale mais que bom, e num fundo claro
+        // calor nao pode vir de luminosidade. O contorno preto resolve os dois: a borda
+        // faz o contraste, e o miolo continua quente. E o mesmo motivo pelo qual o HUD
+        // em jogo usa hud_texto e nao draw_text.
         draw_set_font(f_padrao_pequena);
-        draw_set_halign(fa_left);
 
-        // Cada tier na propria cor, a mesma das bolhas de acerto: e a divisao que
-        // explica a diferenca de pontos entre dois jogadores com acertos parecidos.
         var _tx = _esq;
         var _rotulos = ["Perfeitas ", "Ótimas ", "Boas "];
         var _valores = [perfeitas[i], otimas[i], boas[i]];
@@ -76,17 +85,31 @@ for (var i = 0; i < 2; i++) {
 
         for (var _k = 0; _k < 3; _k++) {
             var _txt = _rotulos[_k] + string(_valores[_k]);
-            draw_set_color(_cores[_k]);
-            draw_text(_tx, _yd, _txt);
+            hud_texto(_tx, _yd, _txt, _cores[_k], 1, fa_left);
             _tx += string_width(_txt) + 26;
         }
 
-        draw_set_color(UI_COR_CARMIM);
-        draw_text(_tx, _yd, "Erros " + string(erros[i]));
+        var _te = "Erros " + string(erros[i]);
+        hud_texto(_tx, _yd, _te, COR_ERRO, 1, fa_left);
+        _tx += string_width(_te) + 26;
 
-        draw_set_halign(fa_right);
-        draw_set_color(icone_rank_cor(notas[i]));
-        draw_text(_dir, _yd, "Nota " + notas[i]);
+        // TOQUES FORA DA NOTA. Quebram o combo exatamente como uma nota perdida, mas
+        // nunca apareceram em lugar nenhum: deu um resultado com um jogador de zero
+        // erros e quatro mil pontos a menos que o adversario, sem nada explicando a
+        // diferenca. Como o combo e quase toda a pontuacao, esta e a linha que fecha a
+        // conta.
+        if (fora[i] > 0) {
+            hud_texto(_tx, _yd, "Fora " + string(fora[i]), UI_COR_APAGADA, 1, fa_left);
+        }
+
+        // A NOTA E O VEREDITO, e ganha o corpo de veredito: a letra sai em escala 2,
+        // com o rotulo pequeno ao lado.
+        draw_set_font(f_padrao);
+        var _letra = notas[i];
+        var _lw = string_width(_letra) * 2;
+
+        hud_texto(_dir - _lw - 6, _yd, "Nota", make_colour_rgb(40, 28, 18), 1, fa_right);
+        hud_texto(_dir, _yd, _letra, icone_rank_cor(_letra), 2, fa_right);
     }
 }
 

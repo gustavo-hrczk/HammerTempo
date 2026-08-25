@@ -56,6 +56,14 @@ if (_nota == noone) {
     jogador(dono).stats_toques_invalidos++;
     jogador(dono).pontuacao = max(0, jogador(dono).pontuacao - 10);
     jogador(dono).stats_sequencia = 0;
+
+    // O TOQUE INVALIDO PRECISA APARECER. Ele quebra o combo igual a uma nota perdida,
+    // mas nao contava como "Erro" em lugar nenhum: no resultado de um Versus deu um
+    // jogador com zero erros e quatro mil pontos a menos que o adversario, sem nada na
+    // tela explicando a diferenca. O combo e quase toda a pontuacao, e o que o derruba
+    // tem de ser visivel na hora em que acontece.
+    hud_registrar_julgamento("FORA!", COR_ERRO, false, dono);
+
     debug_registrar_julgamento("inválido", 0);
     exit;
 }
@@ -85,7 +93,7 @@ switch (_julgamento) {
         with (ferreiro_de(dono)) iniciar_martelada_perfeita();
         o_audio_manager.play_martelada_de(dono);
 
-        hud_registrar_julgamento("PERFEITO!", COR_PERFEITO, true);
+        hud_registrar_julgamento("PERFEITO!", COR_PERFEITO, true, dono);
         hud_registrar_ganho(_ganho, COR_PERFEITO_GANHO, dono);
 
         debug_registrar_julgamento("PERFEITO", _erro_ms);
@@ -107,7 +115,7 @@ switch (_julgamento) {
         with (ferreiro_de(dono)) iniciar_martelada_normal();
         o_audio_manager.play_martelada_de(dono);
 
-        hud_registrar_julgamento("ÓTIMO!", COR_OTIMO, true);
+        hud_registrar_julgamento("ÓTIMO!", COR_OTIMO, true, dono);
         hud_registrar_ganho(_ganho_otimo, COR_OTIMO_GANHO, dono);
 
         debug_registrar_julgamento("ÓTIMO", _erro_ms);
@@ -127,7 +135,7 @@ switch (_julgamento) {
         with (ferreiro_de(dono)) iniciar_martelada_normal();
         o_audio_manager.play_martelada_de(dono);
 
-        hud_registrar_julgamento("BOM!", COR_BOM, true);
+        hud_registrar_julgamento("BOM!", COR_BOM, true, dono);
         hud_registrar_ganho(_ganho_bom, COR_BOM_GANHO, dono);
 
         debug_registrar_julgamento("BOM", _erro_ms);
