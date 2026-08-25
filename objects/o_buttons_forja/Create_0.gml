@@ -1,9 +1,10 @@
 // De quem e este alvo. Decide qual jogador ele julga e qual entrada ele escuta.
 dono = 0;
 
-// A ação que esta instância escuta e o tipo de seta que ela julga são definidos
-// pelo Instance Creation Code de cada alvo, em rm_forja.
-minha_acao = ACAO.LANE_CIMA;
+// O tipo de seta que esta instância julga vem do Instance Creation Code de cada alvo,
+// em rm_forja. A AÇÃO deixou de ser gravada aqui: ela é derivada do dono e do tipo
+// (ver input_lane), porque os alvos do jogador 2 são criados em código e não têm
+// creation code para preencher.
 meu_tipo = -1;
 
 // Inicia a animação parada no primeiro frame.

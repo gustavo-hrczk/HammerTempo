@@ -182,8 +182,47 @@ ganho_martelada = 0.256;   // 20% abaixo dos 0,32 anteriores, ou -1,94 dB
 
 // Toca os sons de martelada em vai-e-vem, dando variação a cada acerto.
 // Variação de pitch foi testada e descartada: descaracterizava o som da martelada.
+/// Marteladas do jogador 2, se houver.
+///
+/// TRES PROBLEMAS resolvidos de uma vez quando os dois martelam junto:
+///
+/// 1. play_sfx PARA a instancia anterior do mesmo asset. Com os dois usando a mesma
+///    amostra, a martelada do jogador 2 cortaria a do jogador 1 no meio.
+/// 2. Duas copias da MESMA amostra a poucos ms uma da outra se cancelam em faixas de
+///    frequencia (comb filtering) e soam ocas.
+/// 3. Sem separacao, nao da para saber de ouvido quem acertou.
+///
+/// A divisao dos cinco samples resolve 1 e 2; a panoramica resolve 3, e de quebra
+/// casa com o lado da tela e do gabinete onde cada jogador esta. Pitch NAO foi usado:
+/// ja tinha sido testado e descartado por descaracterizar a martelada.
+martelada_p2_index = 0;
+
+play_martelada_de = function(_dono) {
+    if (_dono == 0) {
+        play_martelada_sequencial_sfx();
+        return;
+    }
+
+    // o jogador 2 fica com as amostras pares, que o jogador 1 nunca toca
+    var _pares = [sons_martelada[1], sons_martelada[3]];
+    var _som = _pares[martelada_p2_index];
+
+    play_sfx(_som, ganho_martelada);
+    audio_sound_pan(_som, 0.6);
+
+    martelada_p2_index = (martelada_p2_index + 1) mod array_length(_pares);
+};
+
 play_martelada_sequencial_sfx = function() {
-    play_sfx(sons_martelada[martelada_index_atual], ganho_martelada);
+    // fora do Versus o jogador 1 usa as cinco; dentro dele, so as impares, para nao
+    // disputar amostra com o jogador 2
+    if (versus_ativo() && (martelada_index_atual mod 2) == 1) {
+        martelada_index_atual = (martelada_index_atual + 1) mod array_length(sons_martelada);
+    }
+
+    var _som = sons_martelada[martelada_index_atual];
+    play_sfx(_som, ganho_martelada);
+    audio_sound_pan(_som, versus_ativo() ? -0.6 : 0);
 
     if (martelada_direcao == 1) {
         if (martelada_index_atual >= array_length(sons_martelada) - 1) {

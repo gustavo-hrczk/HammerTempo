@@ -27,7 +27,7 @@ if (_move != 0) {
 // --- SELEÇÃO ---
 if (input_pressed(ACAO.CONFIRMAR)) {
 
-    if (opcao_selecionada == 2) {
+    if (opcao_selecionada == 3) {
         o_audio_manager.play_sfx(snd_menu_return);
         ir_para_sala(rm_menu, 0, false);
         exit;
@@ -36,7 +36,12 @@ if (input_pressed(ACAO.CONFIRMAR)) {
     o_audio_manager.play_sfx(snd_menu_confirm);
 
     var _arcade = (opcao_selecionada == 0);
-    o_controlador_geral.modo_jogo = _arcade ? MODO.ARCADE : MODO.LIVRE;
+
+    switch (opcao_selecionada) {
+        case 0:  o_controlador_geral.modo_jogo = MODO.ARCADE; break;
+        case 2:  o_controlador_geral.modo_jogo = MODO.VERSUS; break;
+        default: o_controlador_geral.modo_jogo = MODO.LIVRE;  break;
+    }
 
     // No Arcade o tutorial volta a cada percurso. tutorial_ja_foi_visto guarda a
     // sessão inteira, o que serve para quem está jogando em casa e atrapalha na feira:

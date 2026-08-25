@@ -97,3 +97,78 @@ function bigorna_de(_dono = 0) {
     }
     return noone;
 }
+
+// =====================================================================
+// MONTAGEM DA CENA
+//
+// A sala rm_forja e montada para UM jogador, com o ferreiro e a bigorna no centro. O
+// Versus reaproveita a mesma sala e reposiciona: o jogador 1 recua para a esquerda e o
+// jogador 2 nasce a direita, os dois virados um para o outro, com a forja ao fundo
+// entre eles.
+//
+// Feito em codigo e nao numa sala propria porque quase tudo e igual — cenario, fundo,
+// HUD, controlador. Uma segunda sala seria uma copia que precisaria ser mantida em
+// paralelo para sempre.
+// =====================================================================
+
+/// X da bigorna de cada jogador no Versus.
+///
+/// Espelhar a posicao original (619) em torno do centro poria as duas bigornas em 619
+/// e 661 — encostadas. Os dois lados precisam recuar de verdade, e 330/950 da 620 px
+/// de separacao mantendo a construcao da forja visivel no meio.
+#macro VERSUS_BIGORNA_P1 330
+#macro VERSUS_BIGORNA_P2 950
+
+/// Distancia entre a bigorna e o ferreiro, preservada da cena original (661 - 619).
+#macro VERSUS_VAO_FERREIRO 42
+
+/// Reposiciona o jogador 1 e cria o jogador 2. Idempotente.
+function versus_montar_cena() {
+    if (!versus_ativo()) return;
+
+    var _b1 = bigorna_de(0);
+    var _f1 = ferreiro_de(0);
+    if (_b1 == noone || _f1 == noone) return;
+
+    // ja montado?
+    if (bigorna_de(1) != noone) return;
+
+    var _y_bigorna = _b1.y;
+    var _y_ferreiro = _f1.y;
+
+    _b1.x = VERSUS_BIGORNA_P1;
+    _f1.x = VERSUS_BIGORNA_P1 + VERSUS_VAO_FERREIRO;
+    _f1.home_x = _f1.x;
+
+    var _b2 = instance_create_layer(VERSUS_BIGORNA_P2, _y_bigorna, "Gameplay", o_bigorna);
+    _b2.dono = 1;
+
+    // O ferreiro 2 fica do outro lado da propria bigorna: a cena inteira dele e o
+    // espelho da do jogador 1.
+    var _f2 = instance_create_layer(VERSUS_BIGORNA_P2 - VERSUS_VAO_FERREIRO,
+                                    _y_ferreiro, "Gameplay", o_ferreiro);
+    _f2.dono = 1;
+    _f2.home_x = _f2.x;
+
+    // Alvos e corredor do jogador 2, no topo da tela.
+    var _linha2 = ritmo_linha_x(1);
+    for (var _t = 0; _t < 4; _t++) {
+        var _a = instance_create_layer(_linha2, ritmo_lane_y(_t, 1), "Gameplay", o_buttons_forja);
+        _a.dono = 1;
+        _a.meu_tipo = _t;
+        _a.sprite_index = ritmo_sprite_alvo(_t);
+    }
+
+    var _fundo2 = instance_create_layer(0, RITMO_CORREDOR_P2, "Gameplay", o_fundo_ui);
+    _fundo2.dono = 1;
+    _fundo2.image_yscale = -1;   // a moldura do corredor aponta para dentro da tela
+}
+
+/// Desfaz a montagem, devolvendo a cena de um jogador.
+function versus_desmontar_cena() {
+    with (o_bigorna)       { if (dono == 1) instance_destroy(); }
+    with (o_ferreiro)      { if (dono == 1) instance_destroy(); }
+    with (o_buttons_forja) { if (dono == 1) instance_destroy(); }
+    with (o_fundo_ui)      { if (dono == 1) instance_destroy(); }
+    with (o_nota_seta)     { if (dono == 1) instance_destroy(); }
+}

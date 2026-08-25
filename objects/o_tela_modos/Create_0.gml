@@ -6,10 +6,11 @@
 // "Sair do Jogo". Virou sala, como rm_opcoes — mesma logo, mesma moldura, mesmos
 // itens, então a troca não desloca nem repinta nada.
 //
-// O modo Versus NÃO aparece enquanto não existir. Item de menu que não responde lê
-// como defeito do jogo, e numa feira ninguém para para descobrir que era promessa.
+// O Versus divide a mesma forja e a mesma faixa entre dois jogadores. Ele usa as
+// mesmas armas do Modo Livre e a mesma tela de seleção — o que muda é quem está do
+// outro lado da bigorna.
 // =================================================================
-opcoes_menu = ["Modo Arcade", "Modo Livre", "Voltar"];
+opcoes_menu = ["Modo Arcade", "Modo Livre", "Modo Versus", "Voltar"];
 
 // Uma linha por modo, abaixo da moldura. O jogador de feira decide de pé, em dois
 // segundos: a diferença entre os modos precisa caber numa frase.
@@ -19,6 +20,7 @@ opcoes_menu = ["Modo Arcade", "Modo Livre", "Voltar"];
 descricoes = [
     "As " + string(ARCADE_TOTAL_FASES) + " armas em sequência, pontos somando.",
     "Escolha a arma e forje sem pressa.",
+    "Dois na mesma forja. WASD contra as setas.",
     ""
 ];
 

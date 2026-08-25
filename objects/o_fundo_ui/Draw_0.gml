@@ -8,13 +8,15 @@ if (!instance_exists(o_controlador_geral) || o_controlador_geral.estado_jogo != 
     exit;
 }
 
-var _lanes = [515, 565, 615, 665];
+var _lanes = ritmo_lanes_y(dono);
 var _lane_altura = 42;
 var _altura = 26;                       // mais estreito que a lane
 var _offset = (_lane_altura - _altura) / 2;
 
-var _x_inicio = RITMO_LINHA_X;          // nasce na zona de acerto
-var _x_fim = 820;                       // e se desfaz bem antes da borda direita
+// O trilho nasce na zona de acerto do DONO e se desfaz na direcao de onde as notas
+// vem — para o jogador 2 isso e o lado oposto, porque a pista dele e o espelho.
+var _x_inicio = ritmo_linha_x(dono);
+var _x_fim = _x_inicio - (ritmo_sentido(dono) * 722);
 // segue o mesmo fade de entrada do HUD, para nada aparecer de uma vez só
 var _alpha_inicio = 0.10 * global.hud_entrada;
 var _cor = c_black;

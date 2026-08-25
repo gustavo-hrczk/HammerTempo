@@ -25,7 +25,12 @@ afundamento = max(0, afundamento - 0.8);
 // =================================================================
 // PARTE 1: ANIMAÇÃO DO ALVO ENQUANTO A AÇÃO ESTÁ PRESSIONADA
 // =================================================================
-if (input_held(minha_acao)) {
+// A acao vem do DONO e do TIPO, e nao de uma variavel gravada na criacao: assim os
+// alvos do jogador 2 escutam as teclas dele sem depender do codigo de criacao da sala,
+// que so existe para os quatro alvos originais.
+var _minha = input_lane(dono, meu_tipo);
+
+if (input_held(_minha)) {
     image_index = min(image_index + 1, image_number - 1);
 } else {
     image_index = 0;
@@ -37,7 +42,7 @@ if (input_held(minha_acao)) {
 // "perfeito" de ~1 frame e criava faixas em que a tecla certa não valia nada
 // (auditoria GP-01 e GP-02). Agora o erro é medido em frames/milissegundos.
 // =================================================================
-if (!input_pressed(minha_acao)) {
+if (!input_pressed(_minha)) {
     exit;
 }
 
@@ -78,7 +83,7 @@ switch (_julgamento) {
         eco_cor = COR_PERFEITO;
         ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.PERFEITO, 3, IMPACTO_ATRASO_PERFEITO, dono);
         with (ferreiro_de(dono)) iniciar_martelada_perfeita();
-        o_audio_manager.play_martelada_sequencial_sfx();
+        o_audio_manager.play_martelada_de(dono);
 
         hud_registrar_julgamento("PERFEITO!", COR_PERFEITO, true);
         hud_registrar_ganho(_ganho, COR_PERFEITO_GANHO);
@@ -100,7 +105,7 @@ switch (_julgamento) {
         eco_cor = COR_OTIMO;
         ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.OTIMO, 2, IMPACTO_ATRASO_NORMAL, dono);
         with (ferreiro_de(dono)) iniciar_martelada_normal();
-        o_audio_manager.play_martelada_sequencial_sfx();
+        o_audio_manager.play_martelada_de(dono);
 
         hud_registrar_julgamento("ÓTIMO!", COR_OTIMO, true);
         hud_registrar_ganho(_ganho_otimo, COR_OTIMO_GANHO);
@@ -120,7 +125,7 @@ switch (_julgamento) {
         brilho_cor = COR_BOM;
         ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.BOM, 1, IMPACTO_ATRASO_NORMAL, dono);
         with (ferreiro_de(dono)) iniciar_martelada_normal();
-        o_audio_manager.play_martelada_sequencial_sfx();
+        o_audio_manager.play_martelada_de(dono);
 
         hud_registrar_julgamento("BOM!", COR_BOM, true);
         hud_registrar_ganho(_ganho_bom, COR_BOM_GANHO);

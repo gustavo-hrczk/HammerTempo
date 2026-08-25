@@ -126,22 +126,36 @@ function input_vinculos_de_fabrica() {
 ///
 /// Todo o gameplay pergunta por aqui em vez de nomear ACAO.LANE_* direto: é o que
 /// permite o mesmo código de julgamento servir aos dois jogadores.
+/// O par tipo->acao NAO e o que a intuicao sugere: o tipo 2 e DIREITA e o tipo 3 e
+/// ESQUERDA. Quem manda e o Instance Creation Code de rm_forja, que e a origem da
+/// convencao desde a jam, e a mesma inversao aparece nos nomes dos sprites de impacto.
+/// Escrever na ordem "natural" aqui trocaria as duas faixas do meio do jogador 2.
 function input_lane(_dono, _tipo) {
     if (_dono == 0) {
         switch (_tipo) {
             case 0: return ACAO.LANE_BAIXO;
             case 1: return ACAO.LANE_CIMA;
-            case 2: return ACAO.LANE_ESQ;
-            case 3: return ACAO.LANE_DIR;
+            case 2: return ACAO.LANE_DIR;
+            case 3: return ACAO.LANE_ESQ;
         }
     }
     switch (_tipo) {
         case 0: return ACAO.LANE2_BAIXO;
         case 1: return ACAO.LANE2_CIMA;
-        case 2: return ACAO.LANE2_ESQ;
-        case 3: return ACAO.LANE2_DIR;
+        case 2: return ACAO.LANE2_DIR;
+        case 3: return ACAO.LANE2_ESQ;
     }
     return ACAO.LANE_CIMA;
+}
+
+/// Sprite do alvo de cada faixa, na mesma convencao.
+function ritmo_sprite_alvo(_tipo) {
+    switch (_tipo) {
+        case 0: return s_alvo_baixo;
+        case 1: return s_alvo_cima;
+        case 2: return s_alvo_direita;
+    }
+    return s_alvo_esquerda;
 }
 
 /// A ação é uma faixa da forja do jogador 1?

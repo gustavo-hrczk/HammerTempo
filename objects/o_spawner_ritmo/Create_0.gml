@@ -163,21 +163,26 @@ proxima_faixa = function() {
 }
 
 /// Cria uma nota que deve encostar na zona de acerto no instante _t.
+/// Cria uma nota que deve encostar na zona de acerto no instante _t.
+///
+/// No Versus a MESMA faixa e sorteada uma vez e entregue aos dois jogadores: eles
+/// disputam a execucao do mesmo trecho, e sortear duas vezes daria padroes diferentes
+/// — a partida deixaria de ser comparavel.
 criar_nota = function(_t) {
     var _tipo = proxima_faixa();
-    var _pos_y;
 
-    switch (_tipo) {
-        case 0: _pos_y = 665; break;
-        case 1: _pos_y = 515; break;
-        case 2: _pos_y = 615; break;
-        case 3: _pos_y = 565; break;
+    for (var _d = 0; _d < jogadores_em_jogo(); _d++) {
+        if (!versus_recebe_nota(_d)) continue;
+
+        var _x = ritmo_linha_x(_d) - (ritmo_sentido(_d) * viagem_seg
+                                      * velocidade_das_notas * room_speed);
+
+        var _n = instance_create_layer(_x, ritmo_lane_y(_tipo, _d), "Gameplay", o_nota_seta);
+        _n.tipo_seta = _tipo;
+        _n.velocidade = velocidade_das_notas;
+        _n.t_alvo = _t;
+        _n.dono = _d;
+
+        jogador(_d).stats_total_notas++;
     }
-
-    var _n = instance_create_layer(x, _pos_y, "Gameplay", o_nota_seta);
-    _n.tipo_seta = _tipo;
-    _n.velocidade = velocidade_das_notas;
-    _n.t_alvo = _t;
-
-    jogador().stats_total_notas++;
 }

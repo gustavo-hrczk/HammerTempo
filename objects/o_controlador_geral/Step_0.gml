@@ -99,6 +99,11 @@ switch (estado_jogo) {
     case MINIGAME.SELECAO_FASE:
         // Só cria o seletor se estivermos na sala da forja.
         if (room == rm_forja) {
+            // O Versus reaproveita esta sala e reposiciona os dois lados. Feito aqui,
+            // no estado que antecede a partida, para a cena ja estar montada quando a
+            // contagem comecar.
+            versus_montar_cena();
+
             // No Arcade o seletor de armas nao existe: o percurso e a lista inteira,
             // em ordem, e comeca na primeira. Os dois modos entram por este mesmo
             // estado justamente para a contagem so comecar com a sala ja montada.

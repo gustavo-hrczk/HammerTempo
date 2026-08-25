@@ -30,6 +30,40 @@ function ritmo_sentido(_dono = 0) {
     return (_dono == 0) ? -1 : 1;
 }
 
+/// Onde comeca o corredor de notas de um jogador.
+///
+/// O do jogador 1 fica embaixo, onde sempre esteve. O do jogador 2 vai para o TOPO da
+/// tela: e la que mora a atencao de quem esta do lado direito do gabinete, e e a
+/// convencao que o Guitar Hero estabeleceu para dois jogadores na mesma tela.
+#macro RITMO_CORREDOR_P1 492
+#macro RITMO_CORREDOR_P2 0
+
+function ritmo_corredor_topo(_dono = 0) {
+    return (_dono == 0) ? RITMO_CORREDOR_P1 : RITMO_CORREDOR_P2;
+}
+
+/// Y de cada faixa, na ORDEM DO TIPO (0 baixo, 1 cima, 2 esq, 3 dir).
+///
+/// A pista do jogador 2 NAO e espelhada na vertical: a ordem visual das faixas e a
+/// mesma dos dois lados, so o corredor inteiro que muda de lugar. Espelhar tambem na
+/// vertical obrigaria cada jogador a aprender uma leitura diferente da do vizinho.
+function ritmo_lane_y(_tipo, _dono = 0) {
+    var _topo = ritmo_corredor_topo(_dono);
+
+    switch (_tipo) {
+        case 1: return _topo + 23;   // cima
+        case 3: return _topo + 73;   // dir
+        case 2: return _topo + 123;  // esq
+    }
+    return _topo + 173;              // baixo
+}
+
+/// As quatro faixas na ordem VISUAL, de cima para baixo.
+function ritmo_lanes_y(_dono = 0) {
+    var _topo = ritmo_corredor_topo(_dono);
+    return [_topo + 23, _topo + 73, _topo + 123, _topo + 173];
+}
+
 /// Janelas de julgamento, em frames a 60 fps.
 /// Três faixas: o "perfeito" antigo (+-50 ms) saía com frequência alta demais para
 /// quem já pegou o ritmo, então virou o intervalo do "ótimo" e o perfeito apertou.
