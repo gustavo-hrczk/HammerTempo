@@ -344,11 +344,11 @@ footer {
 <div class="wrap">
 
 <header>
-  <p class="eyebrow">HammerTempo · branch <code>versus</code> · 66 commits à frente de <code>main</code></p>
+  <p class="eyebrow">HammerTempo · branch <code>versus</code> · 68 commits à frente de <code>main</code></p>
   <h1>Bancada HammerTempo</h1>
   <p class="lede">Roteiro de testes para validar a branch <code>versus</code> antes da feira. Cada caso diz o que fazer, o que deve acontecer e qual defeito ele guarda.</p>
   <div class="meta">
-    <span><b>Build</b> 7c139fc</span>
+    <span><b>Build</b> 375a62e</span>
     <span><b>Data</b> 25/08/2026</span>
     <span><b>Alvo</b> 1280×720 · vsync ligado</span>
     <span><b>Estável anterior</b> tag <code>estavel-feira</code></span>
@@ -665,9 +665,9 @@ footer {
   <div class="case-top"><span class="id">VER-05</span><h4>A tela de resultado é legível</h4></div>
   <div class="cols">
     <div class="col"><h5>Passos</h5><ol><li>Ler a linha de detalhe dos dois lados, a um metro da tela.</li></ol></div>
-    <div class="col"><h5>Esperado</h5><p>Perfeitas, ótimas, boas, erros e a nota — todos legíveis. A <strong>nota S</strong> é o caso crítico: era dourado sobre pergaminho claro, com contraste medido de 1,09:1.</p></div>
+    <div class="col"><h5>Esperado</h5><p>A linha de contagens usa a <strong>mesma grade da tela de um jogador</strong>: tinta escura, rótulo com dois-pontos, sem contorno. Só a <strong>letra da nota</strong> tem tratamento próprio — cor do rank, escala 2, com contorno.</p></div>
   </div>
-  <div class="guard"><b>Guarda</b>Escurecer as cores mataria a leitura, que vem do calor. A saída foi contorno, como o HUD em jogo já fazia.</div>
+  <div class="guard"><b>Guarda</b>O ouro do S dava 1,09:1 de contraste sobre o pergaminho — invisível. Escurecer a cor mataria a leitura, que vem do calor, então a borda faz o contraste. O contorno fica reservado ao veredito: aplicado também às contagens, criava uma segunda linguagem visual competindo com a nota na mesma tela.</div>
 </div>
 
 <div class="case">
@@ -778,12 +778,13 @@ footer {
     <li><strong>Tutorial unificado.</strong> Foi pedido e não foi feito. Hoje o Versus mostra o tutorial de um jogador por vez, alternando.</li>
     <li><strong>Créditos.</strong> O arranjador de duas faixas é desconhecido, e o crédito da Espada repete o título da Lança. É anterior a esta branch.</li>
     <li><strong>Ajustes finos de HUD.</strong> Enquadramento e tamanho de fonte foram apontados de forma geral e não foram tratados.</li>
+    <li><strong>Nota do Modo Livre.</strong> A letra do rank ao lado da arma forjada está com acabamento provisório — uma placa de degradê sem borda, ao lado de um medalhão emoldurado. Aguarda arte nova. <em>Não reportar como defeito.</em></li>
     <li><strong>Código morto.</strong> Existe pelo menos uma função de placar do Versus que nunca é chamada. Sem efeito no jogo.</li>
   </ul>
 </section>
 
 <footer>
-  <p>HammerTempo · branch <code>versus</code> em <code>7c139fc</code> · plano gerado em 25 de agosto de 2026.<br>
+  <p>HammerTempo · branch <code>versus</code> em <code>375a62e</code> · plano gerado em 25 de agosto de 2026.<br>
   Todas as correções desta branch foram feitas por leitura de código e compilação limpa. <strong>Nenhuma foi verificada com o jogo em execução</strong> — é o que este documento pede que se faça.</p>
 </footer>
 
