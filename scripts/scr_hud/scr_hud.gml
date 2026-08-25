@@ -652,11 +652,16 @@ function hud_painel_jogador(_dono, _alpha) {
     var _j = jogador(_dono);
     var _y = hud_bloco_y(_dono);
 
-    // AS DUAS CAIXAS CENTRADAS na propria metade da tela, e nao encostadas nas bordas:
-    // cada painel fica em cima do meio do corredor a que pertence, entao a leitura
-    // acompanha a pista em vez de fugir para o canto.
-    var _cx = display_get_gui_width() / 2;
-    var _x = _cx - (HUD_BLOCO_W / 2);
+    // O JOGADOR 1 FICA ONDE SEMPRE FICOU — canto esquerdo, acima do corredor dele. E o
+    // enquadramento validado, e mexer nele so porque existe um segundo jogador seria
+    // mudar o que ja estava certo.
+    //
+    // O jogador 2 e o espelho: canto direito, abaixo do corredor dele. Centrar os dois
+    // no meio da tela, como cheguei a fazer, empilhava as duas caixas em cima da forja
+    // e escondia a cena inteira.
+    var _x = (_dono == 0)
+        ? HUD_BLOCO_X
+        : (display_get_gui_width() - HUD_BLOCO_X - HUD_BLOCO_W);
 
     var _tinta = make_colour_rgb(40, 28, 18);
     var _meio = _x + (HUD_BLOCO_W / 2);

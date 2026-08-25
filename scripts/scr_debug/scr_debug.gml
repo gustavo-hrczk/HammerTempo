@@ -87,7 +87,14 @@ function debug_draw() {
         "controladores: " + string(instance_number(o_controlador_geral)) +
             "  audio: " + string(instance_number(o_audio_manager)) +
             "  fundo: " + string(instance_number(o_background_manajer_forja)),
-        "estado: " + string(o_controlador_geral.estado_jogo),
+        "estado: " + string(o_controlador_geral.estado_jogo) +
+            "  modo: " + ["LIVRE","ARCADE","VERSUS"][o_controlador_geral.modo_jogo] +
+            "  solo_dono: " + string(o_controlador_geral.solo_dono),
+
+        // LINHA DA CENA. Existe porque o Versus foi diagnosticado por deducao vezes
+        // demais: aqui se le, em tempo real, se a cena esta montada e onde cada peca
+        // esta. Uma peca faltando ou com alpha zero aparece na hora.
+        debug_texto_cena(),
         "notas vivas: " + string(instance_number(o_nota_seta)) +
             "  telas: tut=" + string(instance_number(o_tela_tutorial)) +
             " sel=" + string(instance_number(o_seletor_fases)) +
@@ -129,4 +136,30 @@ function debug_draw() {
     }
 
     ui_reset();
+}
+
+
+/// Estado da cena, uma linha. Diz o que existe, de quem e e se esta visivel.
+///
+/// Serve ao Versus, onde "so aparece um ferreiro" pode significar tres coisas: a
+/// instancia nao existe, existe transparente, ou existe atras do cenario. As tres se
+/// distinguem aqui.
+function debug_texto_cena() {
+    var _t = "cena montada=" + (global.versus_montado ? "S" : "N");
+
+    _t += "  ferreiros:";
+    with (o_ferreiro) {
+        _t += " [d" + string(dono) + " x" + string(round(x))
+            + " a" + string(round(image_alpha * 10)) + "]";
+    }
+
+    _t += "  bigornas:";
+    with (o_bigorna) {
+        _t += " [d" + string(dono) + " x" + string(round(x)) + "]";
+    }
+
+    _t += "  alvos=" + string(instance_number(o_buttons_forja))
+        + "  fundos=" + string(instance_number(o_fundo_ui));
+
+    return _t;
 }

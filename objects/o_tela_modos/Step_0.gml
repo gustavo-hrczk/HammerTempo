@@ -56,7 +56,13 @@ if (input_pressed(ACAO.CONFIRMAR)) {
     // sessão inteira, o que serve para quem está jogando em casa e atrapalha na feira:
     // ali cada partida é um visitante novo, que além de não conhecer o jogo não
     // conhece os botões do gabinete.
-    if (_arcade && ARCADE_SEMPRE_TUTORIAL) {
+    // O VERSUS TAMBEM refaz o tutorial, e por um motivo mais forte que o do Arcade:
+    // sao DOIS jogadores dividindo um teclado, e cada um precisa achar as proprias
+    // teclas antes da primeira nota. Sem isso o segundo descobre errando.
+    var _refaz = (o_controlador_geral.modo_jogo == MODO.VERSUS)
+              || (_arcade && ARCADE_SEMPRE_TUTORIAL);
+
+    if (_refaz) {
         o_controlador_geral.tutorial_ja_foi_visto = false;
     }
 
