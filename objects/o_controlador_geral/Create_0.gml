@@ -273,6 +273,42 @@ fases_data[4] = {
     ]
 };
 
+// Mestre - 4 faixas, a maior densidade do jogo | In Taberna Quando Sumus
+//
+// O trecho original tinha 15,7 s e 11,38 compassos — nao fechava. Foi cortado em 10
+// compassos exatos (13,7127 s, evitando o fade do fim) e repetido 4x, com 3 ms de
+// fade nas pontas de cada copia para matar o estalo da emenda sem deslocar o tempo.
+// Remedido no arquivo final: 175,02 BPM, primeira batida em 0,0 ms, 40,000 compassos
+// inteiros. A grade sobreviveu ao laco.
+//
+// Perfil |#   #   #   #   |, contraste 5,37: os quatro tempos fortes e parelhos, os
+// contratempos praticamente mudos. Padrao em seminima corrida, que a 175 BPM da 2,92
+// notas por segundo — indice 2,47 contra 1,94 da Espada.
+//
+// Velocidade fica em 5, e nao 6: a 175 BPM as notas ja chegam a cada 343 ms, e
+// encurtar o tempo de leitura junto tornaria a fase punitiva em vez de dificil. A
+// dificuldade vem da densidade.
+//
+// Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
+fases_data[5] = {
+    id: "alabarda",
+    nome: "Forjar Alabarda",
+    dificuldade: "Mestre",
+    musica_fase: snd_fase_06,
+    ganho_musica: 0.746,
+    sprites_resultado: [],
+    duracao_segundos: 45,
+    velocidade_notas: 5,
+    tipos_seta_permitidos: 4,
+    stats_limite_sequencia_errada: 6,
+    beat_tempo_bpm: 175.02,
+    primeira_batida_ms: 0,
+    ritmo_patterns: [
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 2, 1, 1, 1, 1]
+    ]
+};
+
 // Fase 4: Machado (Extremo) e Modo Infinito entram na Sprint 7, junto com o
 // novo pipeline de mapeamento rítmico. Os assets (snd_fase_04, s_machado01..05)
 // já existem no projeto.

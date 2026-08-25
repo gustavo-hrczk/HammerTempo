@@ -1339,3 +1339,29 @@ O `03-ROADMAP-SPRINTS.md` descrevia como pendente coisas já entregues, incluind
 Machado". Ganhou um quadro de estado no topo, com as pendências reais e as **limitações
 conhecidas do tracking**, para elas não se perderem: a ambiguidade de oitava no andamento e a
 faixa da nota ainda sorteada.
+
+**D-118 · Fase Mestre: In Taberna, com laço cortado em compasso inteiro.** O trecho entregue
+tinha 15,7 s — curto demais para uma fase. A saída foi repetir o material, e o ponto crítico
+é **onde cortar**: o trecho continha 11,38 compassos, e um laço com meio compasso sobrando
+deslocaria a grade a cada repetição, desfazendo a sincronia absoluta da D-94.
+
+Corte em **10 compassos exatos** (13,7127 s), que também evita o fade do fim do trecho — ele
+começa por volta de 15,3 s e ficaria audível em cada emenda. Repetido 4x, com 3 ms de fade
+nas pontas de cada cópia para matar o estalo sem deslocar o tempo (3 ms são 0,9% de uma
+batida de 343 ms).
+
+Validado no arquivo final, e é o que fecha o argumento: **175,02 BPM, primeira batida em
+0,0 ms, 40,000 compassos inteiros**, emendas todas em −17,8 dBFS sem queda nem pico. A grade
+sobreviveu ao laço.
+
+O perfil é `|#   #   #   #   |` com contraste 5,37 — os quatro tempos fortes e parelhos, os
+contratempos praticamente mudos. Padrão em semínima corrida, que a 175 BPM dá 2,92 notas por
+segundo: **índice 2,47 contra 1,94 da Espada**.
+
+A velocidade ficou em 5, não 6. A 175 BPM as notas já chegam a cada 343 ms, e encurtar o
+tempo de leitura junto tornaria a fase punitiva em vez de difícil — a dificuldade tem de vir
+da densidade, que já é a maior do jogo.
+
+Nota de ferramenta: o escritor Vorbis do libsndfile trava nesta máquina (o processo morre
+depois de criar um arquivo de 4 KB, com código 127). O WAV funciona, então a faixa entrou
+como WAV — 9,7 MB, que o GameMaker comprime no build como as demais.
