@@ -570,6 +570,13 @@ function hud_titulo_fase() {
     var _gw = display_get_gui_width();
     var _meia = HUD_TITULO_ALTURA / 2;
 
+    // No Versus a faixa se centra na CENA — o vao entre os dois corredores —, e nao no
+    // valor fixo de um jogador. Com o corredor de cima ocupando o topo, 300 deixava a
+    // placa 60 px acima do centro real.
+    var _cy = versus_ativo()
+        ? ((RITMO_CORREDOR_P2 + RITMO_CORREDOR_ALTURA + RITMO_CORREDOR_P1) / 2)
+        : HUD_TITULO_CY;
+
     // Mesma opacidade do texto flutuante (UI_PLACA_ALPHA), para as duas faixas lerem
     // como a mesma coisa.
     //
@@ -577,7 +584,7 @@ function hud_titulo_fase() {
     // a ponta da tela, entao ela precisa dissolver nas bordas ou viraria uma tarja
     // atravessada. Na vertical vale a regra do texto flutuante — cauda curta, para a
     // faixa ter forma em vez de virar mancha.
-    hud_placa_suave(0, HUD_TITULO_CY - _meia, _gw, HUD_TITULO_CY + _meia,
+    hud_placa_suave(0, _cy - _meia, _gw, _cy + _meia,
                     c_black, UI_PLACA_ALPHA * _alpha, 300, 22);
 
     draw_set_alpha(_alpha);
@@ -587,11 +594,11 @@ function hud_titulo_fase() {
     // fracionaria suja o traco da fonte de pixel, entao 1,5 nao era opcao — o degrau
     // possivel e esse.
     draw_set_font(f_padrao);
-    hud_texto(_gw / 2, HUD_TITULO_CY - 30, string_upper(_fase.nome), c_white, 2);
+    hud_texto(_gw / 2, _cy - 30, string_upper(_fase.nome), c_white, 2);
 
     // Branco tambem na segunda linha: a 0,62 de placa o creme cai para 4,3:1, abaixo
     // do minimo. A hierarquia entre as duas ja vem do corpo, nao da cor.
-    hud_texto(_gw / 2, HUD_TITULO_CY + 42,
+    hud_texto(_gw / 2, _cy + 42,
               _fase.dificuldade + "  -  " + string(round(_fase.beat_tempo_bpm)) + " BPM",
               c_white, 1);
 
@@ -633,8 +640,9 @@ function hud_bloco_y(_dono) {
     // O jogador 1 tem 20 px entre a caixa e o corredor dele (492 - 344 - 128). O
     // jogador 2 precisa dos MESMOS 20 px do outro lado: o corredor dele acaba em 228,
     // entao a caixa comeca em 248. Antes ela encostava na faixa.
-    return (_dono == 0) ? HUD_BLOCO_Y
-                        : (RITMO_CORREDOR_P2 + 228 + 20);
+    return (_dono == 0)
+        ? HUD_BLOCO_Y
+        : (RITMO_CORREDOR_P2 + RITMO_CORREDOR_ALTURA + 20);
 }
 
 /// Para que lado sobe o texto de julgamento deste jogador.
@@ -746,7 +754,9 @@ function versus_marcar_pistas(_alpha) {
 
         draw_set_font(f_padrao);
         draw_set_color(versus_cor(_d));
-        draw_text(_cx, _y, versus_nome(_d) + " — esta e a sua pista");
+                // Hifen simples: o travessao nao existe na Kobold 7 e virava um quadrado
+        // vazio na tela.
+        draw_text(_cx, _y, versus_nome(_d) + " - esta é a sua pista");
     }
 
     draw_set_alpha(1);

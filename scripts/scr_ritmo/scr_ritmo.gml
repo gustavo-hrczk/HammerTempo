@@ -51,8 +51,21 @@ function ritmo_sentido(_dono = 0) {
 /// O do jogador 1 fica embaixo, onde sempre esteve. O do jogador 2 vai para o TOPO da
 /// tela: e la que mora a atencao de quem esta do lado direito do gabinete, e e a
 /// convencao que o Guitar Hero estabeleceu para dois jogadores na mesma tela.
+/// Altura do sprite do corredor (s_fundo_ui).
+#macro RITMO_CORREDOR_ALTURA 240
+
 #macro RITMO_CORREDOR_P1 492
-#macro RITMO_CORREDOR_P2 0
+
+/// O corredor de cima nasce em -12, e nao em 0.
+///
+/// O sprite tem 240 px, mas o do jogador 1 nasce em 492 e a tela acaba em 720: 12 px
+/// dele ficam FORA da tela desde sempre, e a faixa visivel tem 228. O de cima, nascendo
+/// em 0, mostrava os 240 inteiros — 12 px a mais de moldura de um lado so.
+///
+/// Em vez de consertar o corte do jogador 1, que ja e o enquadramento validado, o
+/// jogador 2 REPETE o mesmo corte. As duas faixas passam a ter 228 px visiveis, e o
+/// desequilibrio que a medicao acusou (242 contra 256 px medidos) desaparece.
+#macro RITMO_CORREDOR_P2 (-12)
 
 function ritmo_corredor_topo(_dono = 0) {
     if (!versus_ativo()) return RITMO_CORREDOR_P1;
