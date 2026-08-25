@@ -124,6 +124,34 @@ arcade_registrar_forjada = function(_pontos_da_fase) {
     });
 }
 
+/// A fileira INCLUINDO a arma que acabou de ser forjada.
+///
+/// arcade_forjadas so recebe a fase quando o jogador confirma "Continuar", porque quem
+/// calcula o bonus dela e arcade_avancar. O intervalo e desenhado ANTES disso e ficava
+/// sempre uma arma atras: nenhuma depois da primeira fase, uma depois da segunda.
+///
+/// Aqui a entrada da fase corrente e montada em carater PROVISORIO, so para a leitura.
+/// Quem grava continua sendo arcade_avancar, uma vez so — duplicar a gravacao para
+/// arrumar o desenho faria a soma das entradas parar de fechar com o total.
+arcade_fileira_ate_agora = function() {
+    var _lista = [];
+
+    for (var i = 0; i < array_length(arcade_forjadas); i++) {
+        array_push(_lista, arcade_forjadas[i]);
+    }
+
+    var _j = jogador();
+    var _b = fase_bonus(_j.pontuacao);
+
+    array_push(_lista, {
+        icone:  fases_data[fase_atual].icone,
+        nivel:  icone_nivel(_j.stats_total_notas, _j.acertos(), fase_falhou),
+        pontos: _j.pontuacao + _b.sem_erro + _b.impecavel
+    });
+
+    return _lista;
+}
+
 /// Ainda ha arma depois desta no percurso?
 arcade_tem_proxima = function() {
     if (modo_jogo != MODO.ARCADE || fase_falhou) {

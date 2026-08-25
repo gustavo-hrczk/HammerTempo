@@ -202,7 +202,12 @@ ganho_martelada = 0.256;   // 20% abaixo dos 0,32 anteriores, ou -1,94 dB
 martelada_p2_index = 0;
 
 play_martelada_de = function(_dono) {
-    if (_dono == 0) {
+    // A DIVISAO DAS AMOSTRAS SO EXISTE NO VERSUS, onde os dois martelam ao mesmo tempo
+    // e duas copias da mesma amostra a poucos ms uma da outra soam ocas. Fora dele ha
+    // uma marreta so na tela, e ela usa as cinco: o jogador 2 jogando sozinho ouvia
+    // duas amostras em laco, um som visivelmente mais pobre que o do jogador 1 na
+    // mesma fase.
+    if (!versus_ativo() || _dono == 0) {
         play_martelada_sequencial_sfx();
         return;
     }

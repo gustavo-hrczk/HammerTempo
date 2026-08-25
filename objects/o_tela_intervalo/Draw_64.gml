@@ -11,7 +11,7 @@ draw_set_alpha(1);
 // --- A FILEIRA DO QUE JÁ FOI FORJADO ---
 // O mesmo desenho da tela final, em escala menor: o jogador decide olhando para o que
 // já conquistou, e não para um número solto.
-var _forjadas = o_controlador_geral.arcade_forjadas;
+var _forjadas = fileira;
 var _n = array_length(_forjadas);
 
 if (_n > 0) {

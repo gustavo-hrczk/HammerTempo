@@ -249,9 +249,13 @@ function hud_registrar_julgamento(_texto, _cor, _sobe = true, _dono = 0) {
 function hud_julgamento_ancora(_dono) {
     var _topo = ritmo_corredor_topo(_dono);
 
-    var _y = (_dono == 0)
-        ? (_topo + 10)
-        : (_topo + RITMO_CORREDOR_ALTURA - 10);
+    // O ESPELHO SO EXISTE NO VERSUS. Fora dele o jogador 2 joga no corredor de baixo,
+    // o mesmo do jogador 1, e o texto tem de subir como sempre subiu — a condicao
+    // olhava so para o dono e mandava o julgamento do jogador 2 para baixo tambem no
+    // Arcade e no Livre.
+    var _y = versus_espelhado(_dono)
+        ? (_topo + RITMO_CORREDOR_ALTURA - 10)
+        : (_topo + 10);
 
     return [ritmo_linha_x(_dono) + (RITMO_ALVO_LARGURA / 2), _y];
 }
@@ -262,10 +266,11 @@ function hud_desenhar_julgamentos(_dono, _entrada) {
     var _jx = _a[0];
     var _jy_base = _a[1];
 
-    // O jogador 2 lê a pista de cima para baixo, então tudo se inverte: o acerto DESCE
-    // e o erro SOBE. Sem isso o texto dele entraria por dentro do próprio corredor,
-    // por cima das notas que ainda estão chegando.
-    var _sentido = (_dono == 0) ? 1 : -1;
+    // O jogador 2 lê a pista de cima para baixo, então TUDO desce: o acerto e o erro.
+    // Espelhar também a direção do erro — fazendo-o subir — deixava um único texto
+    // andando contra todos os outros da mesma tela, e lia-se como defeito, não como
+    // sinal. O que distingue erro de acerto continua sendo a cor e a distância curta.
+    var _espelhado = versus_espelhado(_dono);
 
     draw_set_font(f_padrao);
 
@@ -280,7 +285,7 @@ function hud_desenhar_julgamentos(_dono, _entrada) {
         // O erro afunda pouco, só o suficiente para a direção marcar a falha.
         var _distancia = _j.sobe ? 33 : 16;
         var _desloca = _distancia * (1 - power(1 - _prog, 2));
-        if (_j.sobe) _desloca = -_desloca;
+        if (_j.sobe && !_espelhado) _desloca = -_desloca;
 
         // Opaco no impacto e totalmente apagado aos 65% do trajeto: o movimento
         // continua o mesmo, mas o texto já sumiu antes de subir sobre o combo.
@@ -290,8 +295,7 @@ function hud_desenhar_julgamentos(_dono, _entrada) {
         var _cor = (_prog < 0.12) ? merge_colour(_j.cor, c_white, 0.55) : _j.cor;
 
         draw_set_alpha(_alpha * _entrada);
-        hud_texto(_jx + _j.desvio_x, round(_jy_base + (_desloca * _sentido)), _j.texto,
-                  _cor, 1);
+        hud_texto(_jx + _j.desvio_x, round(_jy_base + _desloca), _j.texto, _cor, 1);
     }
 
     draw_set_alpha(1);

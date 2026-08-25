@@ -11,9 +11,14 @@
 // metade e a sua descobre errando durante a fase.
 //
 // Fora do Versus so existe o jogador 1, e o tutorial le exatamente como antes.
-lane_dono = 0;
+// Fora do Versus o tutorial ensina as teclas de QUEM ESTA JOGANDO. Estava fixo no
+// jogador 1: o jogador 2 abria o tutorial, via as teclas do outro e nao conseguia
+// acionar nenhum dos quatro alvos — a tela que existe para ele achar os proprios
+// botoes era justamente a que nao respondia a eles.
+lane_dono = solo_jogador();
 
-lane_acao = [input_lane(0, 1), input_lane(0, 3), input_lane(0, 2), input_lane(0, 0)]
+lane_acao = [input_lane(lane_dono, 1), input_lane(lane_dono, 3),
+             input_lane(lane_dono, 2), input_lane(lane_dono, 0)]
 lane_sprite = [s_alvo_cima,    s_alvo_esquerda, s_alvo_direita, s_alvo_baixo];
 
 // O rótulo NÃO é escrito na unha: vem de input_nome_da_acao(), que lê o vínculo em

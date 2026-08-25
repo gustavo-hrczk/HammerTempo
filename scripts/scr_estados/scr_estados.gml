@@ -128,6 +128,16 @@ function jogadores_em_jogo() {
 /// caso ele joga com a propria arte, as proprias teclas e o proprio placar — no
 /// layout de um jogador, que ja esta validado. Dar autonomia a ele exigia que o jogo
 /// soubesse QUEM joga, e nao so quantos.
+/// Este jogador esta na pista ESPELHADA, a de cima?
+///
+/// So o Versus tem duas pistas. Fora dele, quem joga sozinho — seja o jogador 1 ou o 2
+/// — ocupa o corredor de baixo, e tudo que depende do espelho tem de continuar valendo
+/// como sempre valeu. Perguntar apenas "o dono e 1?" mandava a leitura do jogador 2
+/// para o espelho tambem no Arcade e no Livre.
+function versus_espelhado(_dono) {
+    return (versus_ativo() && _dono == 1);
+}
+
 function jogadores_ativos() {
     if (versus_ativo()) return [0, 1];
     return [solo_jogador()];

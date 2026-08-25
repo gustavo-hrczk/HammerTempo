@@ -21,6 +21,11 @@ var _ctrl = o_controlador_geral;
 
 total_ate_aqui = _ctrl.arcade_total_projetado();
 
+// A fileira e capturada AQUI, uma vez, ja com a arma que acabou de sair da forja —
+// ver arcade_fileira_ate_agora. Ler arcade_forjadas direto no Draw mostrava sempre uma
+// arma a menos, e a primeira fase nao mostrava nenhuma.
+fileira = _ctrl.arcade_fileira_ate_agora();
+
 // Quantas armas já foram forjadas e quantas o percurso tem. arcade_indice conta de
 // zero e a fase corrente acabou de terminar, então ela já conta como feita.
 feitas = _ctrl.arcade_indice + 1;

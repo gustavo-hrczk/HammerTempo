@@ -1,7 +1,11 @@
 // O corredor do jogador 2 SO existe durante a partida. O do jogador 1 e mobilia da
 // sala e aparece sempre — sobre ele ficam os cartoes da selecao de armas —, mas o de
 // cima nao tem nada para mostrar fora da fase e ficava pendurado no ceu depois dela.
-if (dono == 1 && instance_exists(o_controlador_geral)) {
+// A condicao e criado_pelo_versus, e NAO dono == 1. Quando o jogador 2 joga sozinho,
+// a faixa da sala passa a ser dele — e com a regra antiga ela se escondia no seletor de
+// armas, deixando os cartoes das armas flutuando sobre o ceu. Quem some fora da partida
+// e o corredor de cima, que o Versus cria e destroi; o da sala e mobilia e fica sempre.
+if (criado_pelo_versus && instance_exists(o_controlador_geral)) {
     var _e = o_controlador_geral.estado_jogo;
 
     if (_e != MINIGAME.CONTAGEM && _e != MINIGAME.RITMO && _e != MINIGAME.RESULTADO) {
