@@ -2,7 +2,7 @@ if (!instance_exists(o_controlador_geral) || o_controlador_geral.estado_jogo != 
     exit;
 }
 
-if (o_controlador_geral.pausa) {
+if (gameplay_congelado()) {
     exit;
 }
 

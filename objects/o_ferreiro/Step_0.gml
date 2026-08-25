@@ -1,5 +1,5 @@
 // --- LÓGICA DE PAUSA ---
-if (instance_exists(o_controlador_geral) && o_controlador_geral.pausa) {
+if (gameplay_congelado()) {
     image_speed = 0;
     exit;
 }

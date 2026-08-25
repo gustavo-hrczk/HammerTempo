@@ -82,3 +82,25 @@ enum MODO {
 ///
 /// Custa ~25 s por percurso. Se a fila apertar, este e o primeiro a desligar.
 #macro ARCADE_SEMPRE_TUTORIAL true
+
+
+/// O gameplay esta congelado por alguma tela aberta por cima dele?
+///
+/// Existem DUAS telas que param a partida sem trocar de estado: o menu de pausa e o
+/// intervalo do percurso Arcade. Nos dois casos o estado continua sendo RITMO, entao
+/// quem checa so o estado continua rodando por baixo.
+///
+/// Foi assim que o intervalo virou defeito critico: o menu e navegado com o
+/// direcional, que sao as MESMAS teclas das faixas da forja, entao cada movimento do
+/// cursor entrava como martelada invalida e custava pontos ao jogador enquanto ele
+/// decidia se queria continuar.
+///
+/// Toda checagem de "posso agir?" no gameplay passa a ser esta funcao, e nao
+/// `o_controlador_geral.pausa` — uma tela nova que congele a partida so precisa
+/// entrar aqui.
+function gameplay_congelado() {
+    if (!instance_exists(o_controlador_geral)) {
+        return true;
+    }
+    return o_controlador_geral.pausa || instance_exists(o_tela_intervalo);
+}

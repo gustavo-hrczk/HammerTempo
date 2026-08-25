@@ -1,5 +1,5 @@
-if (o_controlador_geral.pausa){
-	exit;
+if (gameplay_congelado()) {
+    exit;
 }
 // Se a fase já estiver no período de tolerância, não faz mais nada aqui.
 if (esta_finalizando) {

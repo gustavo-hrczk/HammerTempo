@@ -1,4 +1,4 @@
-if (o_controlador_geral.pausa) {
+if (gameplay_congelado()) {
     exit;
 }
 
