@@ -13,10 +13,10 @@ var _col_dir = _cx + 300;
 var _linha1 = 522;
 var _linha2 = 558;
 
-var _perfeitas = o_controlador_geral.stats_acertos_perfeitos;
-var _otimas = o_controlador_geral.stats_acertos_otimos;
-var _boas = o_controlador_geral.stats_acertos_bons;
-var _erros = o_controlador_geral.stats_erros;
+var _perfeitas = jogador().stats_acertos_perfeitos;
+var _otimas = jogador().stats_acertos_otimos;
+var _boas = jogador().stats_acertos_bons;
+var _erros = jogador().stats_erros;
 
 var _julgadas = _perfeitas + _otimas + _boas + _erros;
 var _precisao = (_julgadas > 0) ? ((_perfeitas + _otimas + _boas) / _julgadas) * 100 : 0;
@@ -36,7 +36,7 @@ if (tempo >= RESULTADO_T_ESTATISTICAS) {
     draw_text(_col_dir, _linha1, "Boas: " + string(_boas));
 
     draw_text(_col_esq, _linha2, "Erros: " + string(_erros));
-    draw_text(_cx,      _linha2, "Total: " + string(o_controlador_geral.stats_total_notas));
+    draw_text(_cx,      _linha2, "Total: " + string(jogador().stats_total_notas));
     draw_text(_col_dir, _linha2, "Precisão: " + string(round(_precisao)) + "%");
 }
 

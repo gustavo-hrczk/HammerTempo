@@ -137,7 +137,7 @@ function hud_update() {
     // No Arcade o painel mostra o TOTAL DO PERCURSO, e nao o da fase: o jogador esta
     // perseguindo um numero so, e ver o contador voltar a zero a cada arma desfaria
     // exatamente a sensacao de percurso que o modo existe para criar.
-    var _alvo = hud_pontos_base() + _ctrl.pontuacao;
+    var _alvo = hud_pontos_base() + jogador().pontuacao;
     if (abs(global.hud_pontos_exibidos - _alvo) < 1) {
         global.hud_pontos_exibidos = _alvo;
     } else {
@@ -146,7 +146,7 @@ function hud_update() {
 
     // o combo tem tamanho fixo: quem comunica o crescimento é a cor, que vai
     // esquentando. A quebra ganha um tremor curto com o último valor alcançado.
-    var _combo = _ctrl.stats_sequencia;
+    var _combo = jogador().stats_sequencia;
 
     if (_combo < global.hud_combo_anterior && global.hud_combo_anterior >= HUD_COMBO_MINIMO) {
         global.hud_combo_exibido = global.hud_combo_anterior;
@@ -362,8 +362,8 @@ function hud_draw() {
         draw_set_alpha(_entrada);
     }
 
-    var _acertos = _ctrl.stats_acertos_perfeitos + _ctrl.stats_acertos_otimos + _ctrl.stats_acertos_bons;
-    var _julgadas = _acertos + _ctrl.stats_erros;
+    var _acertos = jogador().acertos();
+    var _julgadas = jogador().julgadas();
     var _precisao = (_julgadas > 0) ? (_acertos / _julgadas) * 100 : 100;
     hud_texto_painel(_esq, HUD_BLOCO_Y + 72, "Precisão", _tinta, f_padrao_pequena, fa_left);
     hud_texto_painel(_dir, HUD_BLOCO_Y + 72, string(round(_precisao)) + "%", _tinta, f_padrao, fa_right);
@@ -378,9 +378,10 @@ function hud_draw() {
     var _combo_x = HUD_BLOCO_X + (HUD_BLOCO_W / 2);
     var _combo_y = HUD_BLOCO_Y + 106;
 
-    if (_ctrl.stats_sequencia >= HUD_COMBO_MINIMO) {
-        hud_texto_painel(_combo_x, _combo_y, "Combo x" + string(_ctrl.stats_sequencia),
-                         hud_cor_combo(_ctrl.stats_sequencia), f_padrao, fa_center);
+    var _seq = jogador().stats_sequencia;
+    if (_seq >= HUD_COMBO_MINIMO) {
+        hud_texto_painel(_combo_x, _combo_y, "Combo x" + string(_seq),
+                         hud_cor_combo(_seq), f_padrao, fa_center);
     }
     else if (global.hud_combo_quebra > 0) {
         // sequência quebrada: o número treme e some depressa
@@ -452,7 +453,7 @@ function hud_draw() {
     // exatamente o jogador que a imunidade existe para proteger.
     var _perigo = _ctrl.arcade_fase_imune()
         ? { estagio: 0, total: 1 }
-        : hud_perigo_estagio(_ctrl.stats_sequencia_errada,
+        : hud_perigo_estagio(jogador().stats_sequencia_errada,
                              _fase.stats_limite_sequencia_errada);
 
     if (_perigo.estagio <= 0) {

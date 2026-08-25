@@ -66,7 +66,7 @@ recorde_novo = false;
 // Proporcionais, nao fixas: uma fase de 137 notas vale mais que uma de 60, e um
 // bonus fixo premiaria desproporcionalmente a fase curta.
 // =================================================================
-pontuacao_base = o_controlador_geral.pontuacao;
+pontuacao_base = jogador().pontuacao;
 
 // A regra de bonus mora no controlador porque as fases do meio de um percurso Arcade
 // nao chegam a esta tela — se ela vivesse so aqui, so a ultima seria bonificada.
@@ -82,7 +82,7 @@ arcade_acumulado = (o_controlador_geral.modo_jogo == MODO.ARCADE)
     : 0;
 
 pontuacao_final = arcade_acumulado + pontuacao_base + bonus_sem_erro + bonus_impecavel;
-o_controlador_geral.pontuacao = pontuacao_final;
+jogador().pontuacao = pontuacao_final;
 
 // A ULTIMA fase do percurso entra na fileira aqui, e nao no encadeamento: e esta tela
 // que calcula o bonus dela. Com isso arcade_forjadas passa a ter todas as fases
@@ -142,10 +142,10 @@ concluir_revelacao = function() {
 // mesmo calculo para cada arma da fileira, e duas copias da mesma regra ja renderam
 // moldura trocada neste projeto.
 var _fase_jogada = o_controlador_geral.fase_atual;
-var _total_notas = o_controlador_geral.stats_total_notas;
-var _total_acertos = o_controlador_geral.stats_acertos_perfeitos
-                   + o_controlador_geral.stats_acertos_otimos
-                   + o_controlador_geral.stats_acertos_bons;
+var _total_notas = jogador().stats_total_notas;
+var _total_acertos = jogador().stats_acertos_perfeitos
+                   + jogador().stats_acertos_otimos
+                   + jogador().stats_acertos_bons;
 
 var _resultado_index = icone_nivel(_total_notas, _total_acertos,
                                    o_controlador_geral.fase_falhou);

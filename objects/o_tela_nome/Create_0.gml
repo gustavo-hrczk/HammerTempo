@@ -12,14 +12,14 @@ cursor = 0;
 // dele ocuparia entre pontuacoes de fase solta — um numero de outra natureza, quase
 // sempre "1o LUGAR!" por ser muito maior.
 posicao_prevista = (o_controlador_geral.modo_jogo == MODO.ARCADE)
-    ? placar_arcade_posicao(o_controlador_geral.pontuacao)
-    : placar_posicao(o_controlador_geral.fase_atual, o_controlador_geral.pontuacao);
+    ? placar_arcade_posicao(jogador().pontuacao)
+    : placar_posicao(o_controlador_geral.fase_atual, jogador().pontuacao);
 
 // Precisão pela mesma conta da tela de resultado, para os dois números baterem.
-var _p = o_controlador_geral.stats_acertos_perfeitos;
-var _o = o_controlador_geral.stats_acertos_otimos;
-var _b = o_controlador_geral.stats_acertos_bons;
-var _julgadas = _p + _o + _b + o_controlador_geral.stats_erros;
+var _p = jogador().stats_acertos_perfeitos;
+var _o = jogador().stats_acertos_otimos;
+var _b = jogador().stats_acertos_bons;
+var _julgadas = _p + _o + _b + jogador().stats_erros;
 
 precisao = (_julgadas > 0) ? (((_p + _o + _b) / _julgadas) * 100) : 0;
 
@@ -45,7 +45,7 @@ confirmar = function() {
                                         array_length(o_controlador_geral.fases_data)));
 
         _pos = placar_arcade_registrar(_nome,
-                                       o_controlador_geral.pontuacao,
+                                       jogador().pontuacao,
                                        _armas,
                                        _completou);
     } else {
@@ -58,7 +58,7 @@ confirmar = function() {
 
         _pos = placar_registrar(o_controlador_geral.fase_atual,
                                 _nome,
-                                o_controlador_geral.pontuacao,
+                                jogador().pontuacao,
                                 precisao,
                                 _nivel);
     }

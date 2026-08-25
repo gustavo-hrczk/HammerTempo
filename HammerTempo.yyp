@@ -77,6 +77,7 @@
     {"id":{"name":"scr_estados","path":"scripts/scr_estados/scr_estados.yy",},},
     {"id":{"name":"scr_fluxo","path":"scripts/scr_fluxo/scr_fluxo.yy",},},
     {"id":{"name":"scr_hud","path":"scripts/scr_hud/scr_hud.yy",},},
+    {"id":{"name":"scr_jogador","path":"scripts/scr_jogador/scr_jogador.yy",},},
     {"id":{"name":"scr_icone","path":"scripts/scr_icone/scr_icone.yy",},},
     {"id":{"name":"scr_input","path":"scripts/scr_input/scr_input.yy",},},
     {"id":{"name":"scr_placar","path":"scripts/scr_placar/scr_placar.yy",},},

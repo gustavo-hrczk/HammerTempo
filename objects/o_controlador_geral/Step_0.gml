@@ -139,7 +139,7 @@ switch (estado_jogo) {
         // notas/s sao 1,8 segundo sem acertar nada — quem nunca jogou seria ejetado
         // em vinte segundos, sem ter jogado.
         if (!fase_falhou && !arcade_fase_imune()
-            && stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
+            && jogador().stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
             show_debug_message("Game Over por excesso de notas perdidas!");
 
             fase_falhou = true;

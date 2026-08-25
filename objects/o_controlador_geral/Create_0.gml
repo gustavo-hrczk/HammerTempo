@@ -37,15 +37,15 @@ nav_sound_index = 0;
 // --- ESTATÍSTICAS DA FASE ---
 tutorial_ja_foi_visto = false;
 pausa = false;
-pontuacao = 0;
-stats_total_notas = 0;
-stats_acertos_perfeitos = 0;
-stats_acertos_otimos = 0;
-stats_acertos_bons = 0;
-stats_sequencia = 0;
-stats_erros = 0;
-stats_sequencia_errada = 0;
-stats_toques_invalidos = 0;
+// ESTADO POR JOGADOR. Pontuacao, combo, acertos e erros deixaram de ser variaveis
+// soltas aqui e viraram um struct por jogador (ver scr_jogador): no Versus os dois
+// dividem tela, musica e teclado, e nada da pontuacao de um pode vazar para o outro.
+//
+// Fora do Versus so o indice 0 e usado, e jogador() sem argumento devolve ele.
+jogadores = [];
+for (var i = 0; i < JOGADORES_MAX; i++) {
+    array_push(jogadores, new EstadoJogador());
+}
 
 // =================================================================
 // MODO DE JOGO E PERCURSO ARCADE
@@ -81,18 +81,16 @@ arcade_fase_imune = function() {
 /// Virou funcao porque no Arcade as fases do meio do percurso nao passam pela tela de
 /// resultado — sem isto, so a ultima fase de um percurso seria bonificada.
 fase_bonus = function(_base) {
-    var _julgadas = stats_acertos_perfeitos + stats_acertos_otimos
-                  + stats_acertos_bons + stats_erros;
-
+    var _j = jogador();
     var _r = { sem_erro: 0, impecavel: 0 };
 
-    if (fase_falhou || _julgadas <= 0 || stats_erros > 0) {
+    if (fase_falhou || _j.julgadas() <= 0 || _j.stats_erros > 0) {
         return _r;
     }
 
     _r.sem_erro = floor(_base * 0.10);
 
-    if (stats_acertos_otimos == 0 && stats_acertos_bons == 0) {
+    if (_j.stats_acertos_otimos == 0 && _j.stats_acertos_bons == 0) {
         _r.impecavel = floor(_base * 0.15);
     }
     return _r;
@@ -104,11 +102,11 @@ fase_bonus = function(_base) {
 /// a arma: numa fase perdida ele da 0, que e a arma QUEBRADA — o quadro 0 de cada arma
 /// existe so para isso.
 arcade_registrar_forjada = function(_pontos_da_fase) {
-    var _acertos = stats_acertos_perfeitos + stats_acertos_otimos + stats_acertos_bons;
+    var _j = jogador();
 
     array_push(arcade_forjadas, {
         icone:  fases_data[fase_atual].icone,
-        nivel:  icone_nivel(stats_total_notas, _acertos, fase_falhou),
+        nivel:  icone_nivel(_j.stats_total_notas, _j.acertos(), fase_falhou),
         pontos: _pontos_da_fase
     });
 }
@@ -127,8 +125,9 @@ arcade_tem_proxima = function() {
 /// percurso emenda a proxima, ou quando a tela de resultado fecha o total. Aqui ela e
 /// projetada, para o menu de intervalo poder mostrar o numero real.
 arcade_total_projetado = function() {
-    var _b = fase_bonus(pontuacao);
-    return arcade_pontos + pontuacao + _b.sem_erro + _b.impecavel;
+    var _p = jogador().pontuacao;
+    var _b = fase_bonus(_p);
+    return arcade_pontos + _p + _b.sem_erro + _b.impecavel;
 }
 
 /// Fecha a fase corrente do percurso e emenda a proxima, se houver.
@@ -149,8 +148,9 @@ arcade_avancar = function() {
         return false;
     }
 
-    var _b = fase_bonus(pontuacao);
-    var _total_fase = pontuacao + _b.sem_erro + _b.impecavel;
+    var _p = jogador().pontuacao;
+    var _b = fase_bonus(_p);
+    var _total_fase = _p + _b.sem_erro + _b.impecavel;
 
     arcade_registrar_forjada(_total_fase);
     arcade_pontos += _total_fase;
@@ -269,15 +269,9 @@ falha_timer = 0;
 
 // Função para resetar as estatísticas antes de começar uma fase
 resetar_estatisticas = function() {
-    pontuacao = 0;
-    stats_total_notas = 0;
-    stats_acertos_perfeitos = 0;
-    stats_acertos_otimos = 0;
-    stats_acertos_bons = 0;
-    stats_erros = 0;
-    stats_sequencia = 0;
-    stats_sequencia_errada = 0;
-    stats_toques_invalidos = 0;
+    for (var i = 0; i < array_length(jogadores); i++) {
+        jogadores[i].reiniciar();
+    }
     fase_falhou = false;
     falha_timer = 0;
 }

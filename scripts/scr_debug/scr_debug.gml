@@ -92,15 +92,15 @@ function debug_draw() {
             "  telas: tut=" + string(instance_number(o_tela_tutorial)) +
             " sel=" + string(instance_number(o_seletor_fases)) +
             " res=" + string(instance_number(o_controlador_resultado)),
-        "pontos: " + string(o_controlador_geral.pontuacao) +
-            "  combo: " + string(o_controlador_geral.stats_sequencia) +
-            "  perf: " + string(o_controlador_geral.stats_acertos_perfeitos) +
-            "  otim: " + string(o_controlador_geral.stats_acertos_otimos) +
-            "  bons: " + string(o_controlador_geral.stats_acertos_bons),
-        "perdidas: " + string(o_controlador_geral.stats_erros) +
-            "  seguidas: " + string(o_controlador_geral.stats_sequencia_errada) +
-            "  toques inválidos: " + string(o_controlador_geral.stats_toques_invalidos) +
-            "  total de notas: " + string(o_controlador_geral.stats_total_notas),
+        "pontos: " + string(jogador().pontuacao) +
+            "  combo: " + string(jogador().stats_sequencia) +
+            "  perf: " + string(jogador().stats_acertos_perfeitos) +
+            "  otim: " + string(jogador().stats_acertos_otimos) +
+            "  bons: " + string(jogador().stats_acertos_bons),
+        "perdidas: " + string(jogador().stats_erros) +
+            "  seguidas: " + string(jogador().stats_sequencia_errada) +
+            "  toques inválidos: " + string(jogador().stats_toques_invalidos) +
+            "  total de notas: " + string(jogador().stats_total_notas),
         "último acerto: " + global.debug_ultimo_julgamento +
             " (" + string_format(global.debug_ultimo_erro_ms, 1, 1) + " ms)",
         "música: " + debug_texto_musica(),

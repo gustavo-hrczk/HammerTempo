@@ -177,5 +177,5 @@ criar_nota = function(_t) {
     _n.velocidade = velocidade_das_notas;
     _n.t_alvo = _t;
 
-    o_controlador_geral.stats_total_notas++;
+    jogador().stats_total_notas++;
 }
