@@ -1365,3 +1365,25 @@ da densidade, que já é a maior do jogo.
 Nota de ferramenta: o escritor Vorbis do libsndfile trava nesta máquina (o processo morre
 depois de criar um arquivo de 4 KB, com código 127). O WAV funciona, então a faixa entrou
 como WAV — 9,7 MB, que o GameMaker comprime no build como as demais.
+
+**D-119 · O laço repetia a introdução, e o "ficou lenta" pedia velocidade e não densidade.**
+Duas correções na fase Mestre, ambas medidas.
+
+**A introdução.** O trecho tem 4 segundos de entrada: até 3,99 s a faixa fica entre −44 e
+−28 dBFS, e em 4,00 s salta para −15 — um degrau de 15 dB. O primeiro laço partia de 0,128 s
+e repetia essa entrada quatro vezes. O corte agora parte de **4,242 s**, a linha de compasso
+onde o groove entra, e leva 8 compassos (10,9702 s) repetidos 6x: **65,821 s, ou 48,000
+compassos inteiros**.
+
+**A densidade não podia subir.** Medindo o perfil só do groove, sem a introdução diluindo, o
+contraste sobe de 5,37 para **6,46** e os contratempos ficam entre 0,06 e 0,12 —
+praticamente mudos. Colcheia aqui cairia em silêncio. As 2,92 notas/s em semínima são o
+**teto musical** da faixa, não uma escolha conservadora.
+
+**Por isso a resposta foi velocidade**, de 5 para 7. E há um segundo motivo, geométrico, que
+só apareceu ao medir: a 175 BPM as notas distam 343 ms, o que na velocidade 5 dava 103 px
+entre elas — **58 px de vão para alvos de 45 px**. A pista embolava justamente na fase mais
+densa do jogo. Na velocidade 7 o vão vai a 99 px.
+
+A mesma mudança que casa com a energia da música também desafoga a leitura. Índice final
+3,46 contra 1,94 da Espada.

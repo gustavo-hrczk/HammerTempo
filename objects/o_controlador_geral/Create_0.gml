@@ -273,21 +273,27 @@ fases_data[4] = {
     ]
 };
 
-// Mestre - 4 faixas, a maior densidade do jogo | In Taberna Quando Sumus
+// Mestre - 4 faixas, a maior densidade e a maior velocidade do jogo
+// In Taberna Quando Sumus
 //
-// O trecho original tinha 15,7 s e 11,38 compassos — nao fechava. Foi cortado em 10
-// compassos exatos (13,7127 s, evitando o fade do fim) e repetido 4x, com 3 ms de
-// fade nas pontas de cada copia para matar o estalo da emenda sem deslocar o tempo.
-// Remedido no arquivo final: 175,02 BPM, primeira batida em 0,0 ms, 40,000 compassos
-// inteiros. A grade sobreviveu ao laco.
+// LACO SEM A INTRODUCAO. O trecho tem 4 segundos de entrada — medidos: ate 3,99 s a
+// faixa fica entre -44 e -28 dBFS e em 4,00 s salta para -15, um degrau de 15 dB.
+// A primeira versao do laco comecava em 0,128 s e repetia essa introducao quatro
+// vezes. O corte agora parte de 4,242 s, a linha de compasso onde o groove entra.
 //
-// Perfil |#   #   #   #   |, contraste 5,37: os quatro tempos fortes e parelhos, os
-// contratempos praticamente mudos. Padrao em seminima corrida, que a 175 BPM da 2,92
-// notas por segundo — indice 2,47 contra 1,94 da Espada.
+// 8 compassos (10,9702 s) repetidos 6x = 65,821 s, ou 48,000 compassos inteiros.
+// Fade de 3 ms nas pontas de cada copia mata o estalo sem deslocar o tempo.
 //
-// Velocidade fica em 5, e nao 6: a 175 BPM as notas ja chegam a cada 343 ms, e
-// encurtar o tempo de leitura junto tornaria a fase punitiva em vez de dificil. A
-// dificuldade vem da densidade.
+// So o groove, o perfil fica |#   #   #   #   | com contraste 6,46 (era 5,37 com a
+// introducao diluindo) e contratempos entre 0,06 e 0,12 — praticamente mudos.
+// Colcheia aqui cairia em silencio: 2,92 notas/s em seminima e o TETO MUSICAL desta
+// faixa, e nao uma escolha conservadora.
+//
+// Por isso a resposta ao "ficou lenta" e VELOCIDADE, nao densidade. E ha um segundo
+// motivo, geometrico: a 175 BPM as notas distam 343 ms, o que na velocidade 5 dava
+// 103 px entre elas — 58 px de vao para alvos de 45 px. A pista embolava justamente
+// na fase mais densa. Na velocidade 7 o vao vai a 99 px: a mesma mudanca que casa
+// com a energia da musica tambem desafoga a leitura.
 //
 // Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
 fases_data[5] = {
@@ -295,10 +301,10 @@ fases_data[5] = {
     nome: "Forjar Alabarda",
     dificuldade: "Mestre",
     musica_fase: snd_fase_06,
-    ganho_musica: 0.746,
+    ganho_musica: 0.625,
     sprites_resultado: [],
-    duracao_segundos: 45,
-    velocidade_notas: 5,
+    duracao_segundos: 55,
+    velocidade_notas: 7,
     tipos_seta_permitidos: 4,
     stats_limite_sequencia_errada: 6,
     beat_tempo_bpm: 175.02,
