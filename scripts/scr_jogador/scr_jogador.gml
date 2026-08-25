@@ -120,10 +120,16 @@ function bigorna_de(_dono = 0) {
 /// X da bigorna de cada jogador no Versus.
 ///
 /// Espelhar a posicao original (619) em torno do centro poria as duas bigornas em 619
-/// e 661 — encostadas. Os dois lados precisam recuar de verdade, e 330/950 da 620 px
-/// de separacao mantendo a construcao da forja visivel no meio.
-#macro VERSUS_BIGORNA_P1 330
-#macro VERSUS_BIGORNA_P2 950
+/// e 661 — encostadas. Os dois lados precisam recuar de verdade.
+///
+/// 250 e 1030 sao SIMETRICOS em relacao ao centro da tela (640), e nao em relacao a
+/// construcao da forja, que nao e centrada — ela vai de 324 a ~1030. Alinhar pela
+/// forja dava mais area util ao jogador 1 que ao 2.
+///
+/// Com o ferreiro do lado de dentro de cada bigorna, os dois pares ficam nas pontas e
+/// a construcao respira no meio.
+#macro VERSUS_BIGORNA_P1 250
+#macro VERSUS_BIGORNA_P2 1030
 
 /// Distancia entre a bigorna e o ferreiro, preservada da cena original (661 - 619).
 #macro VERSUS_VAO_FERREIRO 42
@@ -218,10 +224,13 @@ function versus_montar_cena() {
     _b2.dono = 1;
     _b2.criado_pelo_versus = true;
 
-    // MESMA PROFUNDIDADE DO JOGADOR 1. Sem isto o par do jogador 2 nascia atras da
-    // construcao da forja, que ocupa o meio da tela ate perto de x=1030 — o ferreiro 2
-    // existia e simplesmente nao aparecia.
-    _b2.depth = _b1.depth;
+    // PROFUNDIDADE EXPLICITA, e nao "a mesma do jogador 1".
+    //
+    // Todo o cenario vive na camada Gameplay com depth 0, e ali a ordem entre uma
+    // instancia da SALA e outra criada em tempo real e indefinida — foi por isso que o
+    // ferreiro 2 continuou atras da forja mesmo depois de copiar a profundidade do
+    // ferreiro 1. Menor desenha na frente.
+    _b2.depth = -1;
 
     // O ferreiro 2 fica do outro lado da propria bigorna: a cena inteira dele e o
     // espelho da do jogador 1.
@@ -230,7 +239,7 @@ function versus_montar_cena() {
     _f2.dono = 1;
     _f2.criado_pelo_versus = true;
     _f2.home_x = _f2.x;
-    _f2.depth = _f1.depth;
+    _f2.depth = -1;
 
     // ENTRADA EM DEGRADE. O par do jogador 2 nao pode simplesmente aparecer no meio da
     // cena: ele surge transparente e ganha corpo em meio segundo, o que le como "o
@@ -265,11 +274,17 @@ function versus_montar_pista() {
         _a.meu_tipo = _t;
         _a.sprite_index = ritmo_sprite_alvo(_t);
         _a.image_alpha = 0;
+        _a.depth = -1;   // na frente do corredor, como os do jogador 1
     }
 
     var _fundo2 = instance_create_layer(0, RITMO_CORREDOR_P2, "Gameplay", o_fundo_ui);
     _fundo2.dono = 1;
     _fundo2.criado_pelo_versus = true;
+
+    // O corredor fica ATRAS das notas. Com todos em depth 0 a ordem era indefinida, e
+    // o fundo do jogador 2 acabava por cima — a pista dele parecia vazia porque as
+    // notas estavam escondidas debaixo do proprio corredor.
+    _fundo2.depth = 2;
     // SEM espelho vertical: a origem do sprite fica no topo, entao yscale -1 desenhava
     // a faixa inteira para cima, fora da tela — era por isso que o corredor do jogador
     // 2 aparecia sem fundo, so com as notas soltas no ceu.

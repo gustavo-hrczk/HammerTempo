@@ -630,8 +630,11 @@ function versus_nome(_dono) {
 function hud_bloco_y(_dono) {
     if (!versus_ativo()) return HUD_BLOCO_Y;
 
+    // O jogador 1 tem 20 px entre a caixa e o corredor dele (492 - 344 - 128). O
+    // jogador 2 precisa dos MESMOS 20 px do outro lado: o corredor dele acaba em 228,
+    // entao a caixa comeca em 248. Antes ela encostava na faixa.
     return (_dono == 0) ? HUD_BLOCO_Y
-                        : (RITMO_CORREDOR_P2 + 210 + 22);
+                        : (RITMO_CORREDOR_P2 + 228 + 20);
 }
 
 /// Para que lado sobe o texto de julgamento deste jogador.
