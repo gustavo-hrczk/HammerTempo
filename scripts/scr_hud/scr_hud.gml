@@ -189,46 +189,14 @@ function hud_registrar_ganho(_valor, _cor = c_white) {
 /// trocado no meio da animação e aos olhos virava tremulação. Agora cada julgamento
 /// sobe e some no seu próprio tempo, e os que ainda estão subindo ficam em alturas
 /// diferentes: a sobreposição vira leitura de sequência.
-/// Registra uma bolha de julgamento.
-///
-/// _peso separa os tres acertos VISUALMENTE, e nao so por cor. Cor sozinha e o canal
-/// mais fraco que existe: some no calor da partida, e e o primeiro a falhar para quem
-/// tem daltonismo — o que numa feira aberta ao publico nao e detalhe.
-///
-/// O "pop" classico (escala saltando de 1,3 para 1,0) esta FORA: Kobold 7 e fonte de
-/// pixel, e escala fracionaria suja o traco (D-33). O peso vem entao de quatro eixos
-/// que respeitam a grade:
-///
-///   corpo     — 2 so no PERFEITO, e inteiro. E o degrau mais visivel que a regra
-///               permite, entao fica reservado ao acerto mais raro.
-///   duracao   — quanto tempo a bolha vive na tela
-///   distancia — quanto ela sobe
-///   clarao    — quanto tempo ela fica lavada de branco no impacto
-///
-/// Somados, Bom e Otimo se distinguem sem mudar de corpo, e o Perfeito salta.
-function hud_registrar_julgamento(_texto, _cor, _sobe = true, _peso = 1) {
-    // [duracao_seg, distancia, escala, clarao_ate]
-    var _perfil;
-    switch (_peso) {
-        case 3:  _perfil = [0.95, 54, 2, 0.22]; break;   // perfeito
-        case 2:  _perfil = [0.72, 38, 1, 0.16]; break;   // otimo
-        case 1:  _perfil = [0.50, 24, 1, 0.09]; break;   // bom
-        default: _perfil = [0.60, 16, 1, 0.10]; break;   // erro
-    }
-
+function hud_registrar_julgamento(_texto, _cor, _sobe = true) {
     array_push(global.hud_julgamentos, {
         texto: _texto,
         cor: _cor,
         sobe: _sobe,
         timer: 0,
-        dur: room_speed * _perfil[0],
-        distancia: _perfil[1],
-        escala: _perfil[2],
-        clarao: _perfil[3],
-
-        // O perfeito nasce centrado: com desvio ele parecia deslocado justamente no
-        // acerto que o jogador quer ver bem.
-        desvio_x: (_peso >= 3) ? 0 : irandom_range(-9, 9)
+        dur: room_speed * 0.7,
+        desvio_x: irandom_range(-9, 9)
     });
 
     // teto de 3 simultâneos: acima disso vira poluição
@@ -446,7 +414,7 @@ function hud_draw() {
         // sobe rápido e vai freando. A distância é curta de propósito: subindo
         // demais o texto atravessava o bloco inteiro e perdia a âncora visual.
         // O erro afunda pouco, só o suficiente para a direção marcar a falha.
-        var _distancia = _j.distancia;
+        var _distancia = _j.sobe ? 33 : 16;
         var _desloca = _distancia * (1 - power(1 - _prog, 2));
         if (_j.sobe) _desloca = -_desloca;
 
@@ -454,17 +422,11 @@ function hud_draw() {
         // continua o mesmo, mas o texto já sumiu antes de subir sobre o combo.
         var _alpha = (_prog < 0.2) ? 1 : max(0, 1 - ((_prog - 0.2) / 0.45));
 
-        // Clarão de impacto: quanto maior o acerto, mais tempo a bolha fica lavada
-        // de branco. É o quarto eixo do peso — ver hud_registrar_julgamento.
-        var _cor = (_prog < _j.clarao) ? merge_colour(_j.cor, c_white, 0.55) : _j.cor;
-
-        // O corpo 2 do PERFEITO sobe a partir de mais baixo, senão ele nasceria
-        // encostando no corredor de notas: a origem é a mesma, a altura é que dobra.
-        var _oy = (_j.escala > 1) ? -14 : 0;
+        // clarão de cor nos primeiros frames
+        var _cor = (_prog < 0.12) ? merge_colour(_j.cor, c_white, 0.55) : _j.cor;
 
         draw_set_alpha(_alpha * _entrada);
-        hud_texto(_jx + _j.desvio_x, round(_jy_base + _desloca + _oy),
-                  _j.texto, _cor, _j.escala);
+        hud_texto(_jx + _j.desvio_x, round(_jy_base + _desloca), _j.texto, _cor, 1);
     }
 
     draw_set_alpha(1);

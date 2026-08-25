@@ -11,5 +11,17 @@ image_index = 0;
 // A cor e a força do brilho distinguem perfeito de bom — redundância com o texto.
 pop = 0;
 brilho = 0;
+
+// ECO: anel que se expande a partir do alvo no acerto.
+//
+// A "bolha" sobre a tecla precisava separar os tres acertos de forma NITIDA, e o pop
+// sozinho nao dava conta: a 0,11 de amplitude, Bom e Perfeito ficavam a 1,06 e 1,11
+// de escala — 5% de diferenca, que ninguem enxerga no meio da partida.
+//
+// O eco e o eixo novo, e ele e categorico em vez de gradual: Perfeito tem eco cheio,
+// Otimo tem eco curto, Bom nao tem nenhum. Presenca ou ausencia le mais rapido que
+// intensidade.
+eco = 0;
+eco_cor = c_white;
 brilho_cor = c_white;
 afundamento = 0;

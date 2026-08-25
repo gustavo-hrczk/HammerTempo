@@ -42,5 +42,5 @@ registrar_erro = function() {
         o_ferreiro.aplicar_dano();
     }
 
-    hud_registrar_julgamento("ERRO", COR_ERRO, false, 0);
+    hud_registrar_julgamento("ERRO", COR_ERRO, false);
 }

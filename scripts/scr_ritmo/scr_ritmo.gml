@@ -133,11 +133,11 @@ function ritmo_tabela_impacto() {
         // Um conjunto POR QUALIDADE, indexado pelo tipo da faixa. Os sprites novos ja
         // sao nomeados pelo tipo, entao o indice e direto.
         //
-        // O conjunto anterior era um so para as tres qualidades, e a lista dele vinha
-        // com os indices 2 e 3 invertidos DE PROPOSITO: os sprites s_impacto_esq e
-        // s_impacto_dir estao com os nomes trocados — o "esq" e verde e o "dir" e
-        // azul, enquanto a faixa 2 (ESQ) usa nota azul e a 3 (DIR) usa verde. A
-        // inversao na tabela consertava a troca no nome. Aqui isso deixa de existir.
+        // O conjunto anterior era um so para as tres qualidades, e vinha com os
+        // indices 2 e 3 invertidos DE PROPOSITO: naqueles sprites o "esq" era verde e
+        // o "dir" era azul, enquanto a faixa 2 (ESQ) usa nota azul e a 3 (DIR) usa
+        // verde — a inversao na tabela consertava a troca no nome. Eles estao na
+        // pasta Legado, e aqui essa compensacao deixa de existir.
         _tabela = {};
 
         _tabela[$ string(JULGAMENTO.BOM)] =

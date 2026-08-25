@@ -12,12 +12,14 @@ if (o_controlador_geral.fase_falhou) {
     afundamento = max(0, afundamento - 0.8);
     pop = max(0, pop - 0.14);
     brilho = max(0, brilho - 0.10);
+    eco = max(0, eco - 0.075);
     exit;
 }
 
 // --- decaimento do feedback visual ---
 pop = max(0, pop - 0.14);
 brilho = max(0, brilho - 0.10);
+eco = max(0, eco - 0.075);
 afundamento = max(0, afundamento - 0.8);
 
 // =================================================================
@@ -72,11 +74,13 @@ switch (_julgamento) {
         pop = 1;
         brilho = 1;
         brilho_cor = COR_PERFEITO;
+        eco = 1;
+        eco_cor = COR_PERFEITO;
         ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.PERFEITO, 3, IMPACTO_ATRASO_PERFEITO);
         o_ferreiro.iniciar_martelada_perfeita();
         o_audio_manager.play_martelada_sequencial_sfx();
 
-        hud_registrar_julgamento("PERFEITO!", COR_PERFEITO, true, 3);
+        hud_registrar_julgamento("PERFEITO!", COR_PERFEITO, true);
         hud_registrar_ganho(_ganho, COR_PERFEITO_GANHO);
 
         debug_registrar_julgamento("PERFEITO", _erro_ms);
@@ -89,14 +93,16 @@ switch (_julgamento) {
         o_controlador_geral.stats_acertos_otimos++;
 
         _nota.estourar(COR_OTIMO_NOTA);
-        pop = 0.8;
-        brilho = 0.75;
+        pop = 0.55;
+        brilho = 0.7;
         brilho_cor = COR_OTIMO;
+        eco = 0.55;
+        eco_cor = COR_OTIMO;
         ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.OTIMO, 2, IMPACTO_ATRASO_NORMAL);
         o_ferreiro.iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
 
-        hud_registrar_julgamento("ÓTIMO!", COR_OTIMO, true, 2);
+        hud_registrar_julgamento("ÓTIMO!", COR_OTIMO, true);
         hud_registrar_ganho(_ganho_otimo, COR_OTIMO_GANHO);
 
         debug_registrar_julgamento("ÓTIMO", _erro_ms);
@@ -109,14 +115,14 @@ switch (_julgamento) {
         o_controlador_geral.stats_acertos_bons++;
 
         _nota.estourar(COR_BOM_NOTA);
-        pop = 0.55;
-        brilho = 0.5;
+        pop = 0.28;
+        brilho = 0.45;
         brilho_cor = COR_BOM;
         ritmo_impacto_bigorna(meu_tipo, JULGAMENTO.BOM, 1, IMPACTO_ATRASO_NORMAL);
         o_ferreiro.iniciar_martelada_normal();
         o_audio_manager.play_martelada_sequencial_sfx();
 
-        hud_registrar_julgamento("BOM!", COR_BOM, true, 1);
+        hud_registrar_julgamento("BOM!", COR_BOM, true);
         hud_registrar_ganho(_ganho_bom, COR_BOM_GANHO);
 
         debug_registrar_julgamento("BOM", _erro_ms);

@@ -9,8 +9,8 @@
   "name":"o_faisca",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objects",
-    "path":"folders/Objects.yy",
+    "name":"Legado",
+    "path":"folders/Legado.yy",
   },
   "parentObjectId":null,
   "persistent":false,
