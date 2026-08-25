@@ -1,0 +1,790 @@
+<title>Bancada HammerTempo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+:root {
+  --ground:  #F1F2EF;
+  --surface: #FFFFFF;
+  --sunk:    #E7E9E4;
+  --ink:     #191C1A;
+  --muted:   #5B625D;
+  --rule:    #D6DAD3;
+  --rule-sf: #E4E7E1;
+
+  --ember:   #B4401A;
+  --steel:   #2E5E7E;
+  --moss:    #4C6B3B;
+  --rust:    #8A4B12;
+  --plum:    #6B3A63;
+
+  --chip-bg: #E7E9E4;
+  --shadow:  0 1px 2px rgba(25,28,26,.06), 0 4px 12px rgba(25,28,26,.04);
+
+  --f-disp: "Bitter", Georgia, "Times New Roman", serif;
+  --f-body: "Source Sans 3", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:  #141718;
+    --surface: #1C2123;
+    --sunk:    #23292B;
+    --ink:     #E7E5E0;
+    --muted:   #99A19C;
+    --rule:    #2D3437;
+    --rule-sf: #262D30;
+
+    --ember:   #E37547;
+    --steel:   #6FA6CC;
+    --moss:    #8FB073;
+    --rust:    #C98B45;
+    --plum:    #B189A9;
+
+    --chip-bg: #262D30;
+    --shadow:  0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.24);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:  #141718;
+  --surface: #1C2123;
+  --sunk:    #23292B;
+  --ink:     #E7E5E0;
+  --muted:   #99A19C;
+  --rule:    #2D3437;
+  --rule-sf: #262D30;
+
+  --ember:   #E37547;
+  --steel:   #6FA6CC;
+  --moss:    #8FB073;
+  --rust:    #C98B45;
+  --plum:    #B189A9;
+
+  --chip-bg: #262D30;
+  --shadow:  0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.24);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 17px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0 20px 96px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: 860px; margin: 0 auto; }
+
+/* ---------- cabeçalho ---------- */
+
+header {
+  padding: 56px 0 28px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 8px;
+}
+
+.eyebrow {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ember);
+  margin: 0 0 14px;
+}
+
+h1 {
+  font-family: var(--f-disp);
+  font-weight: 800;
+  font-size: clamp(34px, 6vw, 50px);
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+
+.lede {
+  font-size: 19px;
+  color: var(--muted);
+  max-width: 62ch;
+  margin: 0 0 26px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  font-family: var(--f-mono);
+  font-size: 13px;
+  color: var(--muted);
+  padding-bottom: 4px;
+}
+.meta b { color: var(--ink); font-weight: 600; }
+
+/* ---------- blocos de texto ---------- */
+
+section { margin-top: 52px; }
+
+h2 {
+  font-family: var(--f-disp);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -.01em;
+  margin: 0 0 6px;
+  text-wrap: balance;
+}
+
+h3 {
+  font-family: var(--f-disp);
+  font-weight: 600;
+  font-size: 19px;
+  margin: 32px 0 8px;
+}
+
+p { margin: 0 0 14px; max-width: 70ch; }
+.small { font-size: 15px; color: var(--muted); }
+
+a { color: var(--ember); text-underline-offset: 2px; }
+
+code, kbd {
+  font-family: var(--f-mono);
+  font-size: .88em;
+  background: var(--chip-bg);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+kbd { border-bottom: 2px solid var(--rule); }
+
+.callout {
+  background: var(--surface);
+  border: 1px solid var(--rule-sf);
+  border-left: 4px solid var(--steel);
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin: 22px 0;
+  box-shadow: var(--shadow);
+}
+.callout.warn { border-left-color: var(--ember); }
+.callout p:last-child { margin-bottom: 0; }
+.callout strong { font-weight: 600; }
+
+/* ---------- suítes ---------- */
+
+.suite-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: 46px 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+.suite-head h2 { margin: 0; }
+.suite-head .tag {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  color: var(--surface);
+  background: var(--sig);
+  border-radius: 3px;
+  padding: 3px 8px;
+  flex: none;
+}
+.suite-note {
+  font-size: 15px;
+  color: var(--muted);
+  margin: 10px 0 18px;
+  max-width: 68ch;
+}
+
+.s-blo { --sig: var(--ember); }
+.s-liv { --sig: var(--moss); }
+.s-arc { --sig: var(--rust); }
+.s-ver { --sig: var(--steel); }
+.s-inp { --sig: var(--plum); }
+.s-aud { --sig: var(--muted); }
+
+/* ---------- caso de teste ---------- */
+
+.case {
+  background: var(--surface);
+  border: 1px solid var(--rule-sf);
+  border-left: 4px solid var(--sig);
+  border-radius: 4px;
+  padding: 16px 20px 18px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+
+.case-top {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.id {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--sig);
+  background: var(--chip-bg);
+  border-radius: 3px;
+  padding: 2px 7px;
+  flex: none;
+}
+
+.case-top h4 {
+  font-family: var(--f-disp);
+  font-weight: 600;
+  font-size: 17px;
+  margin: 0;
+  flex: 1 1 320px;
+}
+
+.blocker {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ember);
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  padding: 1px 6px;
+  flex: none;
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 26px;
+}
+@media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+
+.col h5 {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 4px;
+}
+.col ol, .col ul { margin: 0; padding-left: 18px; }
+.col li { margin-bottom: 3px; font-size: 15.5px; }
+.col p { font-size: 15.5px; margin: 0; }
+
+.guard {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--rule);
+  font-size: 14px;
+  color: var(--muted);
+}
+.guard b {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-right: 6px;
+}
+
+/* ---------- tabelas ---------- */
+
+.tbl-wrap { overflow-x: auto; margin: 18px 0; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 15.5px;
+  min-width: 460px;
+}
+th, td {
+  text-align: left;
+  padding: 9px 14px 9px 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+th {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--ink);
+}
+td.num { font-variant-numeric: tabular-nums; font-family: var(--f-mono); font-size: 14px; }
+
+footer {
+  margin-top: 64px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  font-size: 14px;
+  color: var(--muted);
+}
+
+@media print {
+  body { background: #fff; color: #000; padding: 0; }
+  .case { break-inside: avoid; box-shadow: none; }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">HammerTempo · branch <code>versus</code> · 66 commits à frente de <code>main</code></p>
+  <h1>Bancada HammerTempo</h1>
+  <p class="lede">Roteiro de testes para validar a branch <code>versus</code> antes da feira. Cada caso diz o que fazer, o que deve acontecer e qual defeito ele guarda.</p>
+  <div class="meta">
+    <span><b>Build</b> 7c139fc</span>
+    <span><b>Data</b> 25/08/2026</span>
+    <span><b>Alvo</b> 1280×720 · vsync ligado</span>
+    <span><b>Estável anterior</b> tag <code>estavel-feira</code></span>
+  </div>
+</header>
+
+<section>
+  <h2>Antes de começar</h2>
+  <p>Tudo o que está nesta branch foi corrigido por <strong>leitura de código e compilação limpa</strong>. Nada foi verificado com o jogo rodando — é exatamente para isso que este documento existe. Trate cada caso como não-verificado até alguém marcar.</p>
+
+  <h3>Como reportar uma falha</h3>
+  <p>Aperte <kbd>F3</kbd> no momento em que o problema acontecer e fotografe a tela. O painel de depuração traz as três linhas que quase sempre resolvem sozinhas:</p>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Linha</th><th>Responde</th></tr></thead>
+    <tbody>
+      <tr><td class="num">música: / saindo:</td><td>Qual faixa toca, com que ganho, e qual está em fade. Resolve som dobrado, mudo ou fora de sincronia.</td></tr>
+      <tr><td class="num">ctrl J1 / J2</td><td>Qual dispositivo pertence a cada jogador. <code>J2 -</code> com dois controles ligados significa que o segundo não foi enumerado.</td></tr>
+      <tr><td class="num">cena montada</td><td>Dono, posição e alpha de cada ferreiro e bigorna. Resolve elemento sumido, duplicado ou fora do lugar.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small">Sem essas linhas, um relato de áudio ou de cena custa horas de tentativa. Com elas, costuma custar uma leitura.</p>
+
+  <div class="callout warn">
+    <p><strong>Windows Defender.</strong> O executável não é assinado e o Defender pode colocá-lo em quarentena na primeira execução em uma máquina nova. Adicione uma exclusão de pasta na máquina do gabinete <em>antes</em> da feira — no dia, não haverá tempo.</p>
+  </div>
+</section>
+
+<div class="s-blo">
+<div class="suite-head"><span class="tag">BLO</span><h2>Bloqueadores</h2></div>
+<p class="suite-note">Se qualquer um destes falhar, a branch não vai para a <code>main</code>. São sessões inteiras, sem atalho: o objetivo é o tempo de exposição real, não o caminho feliz.</p>
+
+<div class="case">
+  <div class="case-top"><span class="id">BLO-01</span><h4>Sessão completa de Modo Livre, do menu ao recorde</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Abrir o jogo, entrar em Forja Livre.</li>
+      <li>Jogar as <strong>seis</strong> armas até o fim, uma a uma.</li>
+      <li>Voltar ao menu entre cada uma.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Nenhum travamento, nenhuma tela em branco, nenhum elemento fora do lugar. Recorde gravado ao fim de cada arma.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>A branch mexeu em profundidade de desenho, geometria de corredor, vínculo de tecla, compressão de áudio e no controlador central. Tudo isso alcança o modo de um jogador.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">BLO-02</span><h4>Percurso Arcade inteiro, sem intervenção</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Modo Arcade, seguir da Adaga à Espada.</li>
+      <li>Escolher <em>Continuar</em> em todos os intervalos.</li>
+      <li>Deixar a tela de resultado até o fim.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Seis armas na fileira final. O total da tela final bate com a soma das armas. Recorde entra no ranking do <strong>Arcade</strong>, não no do Livre.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>O percurso é a experiência que o visitante da feira recebe. Uma falha aqui não tem contorno no dia.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">BLO-03</span><h4>Partida de Versus completa, com duas pessoas</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Modo Versus, escolher uma arma.</li>
+      <li>Duas pessoas jogam de verdade, até o fim.</li>
+      <li>Confirmar o resultado e jogar de novo.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Volta ao seletor de armas do Versus, pronto para a próxima dupla, sem passar pelo menu.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>O Versus é o atrativo do estande e a fila roda a cada 20 minutos. Ele precisa reiniciar sem intervenção.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">BLO-04</span><h4>Executável em máquina limpa</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Copiar o build para outro computador.</li>
+      <li>Executar sem instalar nada.</li>
+      <li>Jogar uma fase inteira observando a rolagem das notas.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Nenhuma pasta de áudio solta ao lado do executável. As notas rolam liso, sem arrasto. O Defender não bloqueia (ou a exclusão já foi criada).</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>As faixas passaram de streaming externo para embutidas e o vsync foi ligado. As duas coisas só se manifestam fora da máquina de desenvolvimento.</div>
+</div>
+</div>
+
+<div class="s-inp">
+<div class="suite-head"><span class="tag">INP</span><h2>Controles e interferência</h2></div>
+<p class="suite-note">A área com mais correções recentes e o maior risco no gabinete. No Versus os dois jogadores dividem um teclado, e a regra é: <strong>WASD é do jogador 1, setas são do jogador 2</strong>.</p>
+
+<div class="case">
+  <div class="case-top"><span class="id">INP-01</span><h4>A seta do jogador 2 não alcança a pista do jogador 1</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Versus, com a fase rodando.</li>
+      <li>Jogador 1 fica parado, sem tocar em nada.</li>
+      <li>Jogador 2 aperta as setas repetidamente.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Só a pista de cima reage. O combo e a pontuação do jogador 1 <strong>não se alteram</strong> e nenhum ERRO aparece na pista de baixo.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Era um defeito real: cada seta do jogador 2 acionava também a faixa do jogador 1, que quase nunca tinha nota ali e perdia o combo. Aparecia no placar como um jogador com zero notas perdidas e milhares de pontos a menos.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">INP-02</span><h4>O WASD do jogador 1 não alcança a pista do jogador 2</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Mesmo cenário, papéis trocados.</li><li>Jogador 1 martela WASD; jogador 2 fica parado.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Só a pista de baixo reage.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>O simétrico de INP-01. O desempate favorece o jogador 2, então este caminho nunca foi o suspeito — e é justamente por isso que precisa ser conferido.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">INP-03</span><h4>Dois controles, um por jogador</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Ligar dois controles antes de abrir o jogo.</li>
+      <li>Entrar no Versus e apertar <kbd>F3</kbd>.</li>
+      <li>Mover só o manche do jogador 1; depois só o do 2.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>O F3 mostra <code>ctrl J1 0 / J2 1 de 2</code>. Cada manche move apenas a própria pista.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Havia um slot de gamepad só, compartilhado. Com dois manches, o de um marretaria na pista do outro. Nunca apareceu porque só um controle foi testado.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">INP-04</span><h4>Versus com um controle só</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Um controle ligado.</li><li>Versus; os dois tentam usar o controle.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>O controle é do jogador 1. O jogador 2 <strong>não responde a ele</strong> — usa as setas. Isso é intencional: um controle servindo aos dois traz de volta a interferência.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>É o comportamento correto, mas parece defeito para quem não sabe. Documentado aqui para não virar chamado.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">INP-05</span><h4>O jogador 2 remapeia e navega o menu</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Controles → Jogador 2, mapear as quatro faixas para outras teclas ou botões.</li>
+      <li>Sair e navegar o menu principal com elas.</li>
+      <li>Entrar numa fase e usá-las.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>O cursor anda com o que foi configurado, <em>e</em> as setas continuam funcionando. Nenhuma das duas coisas anula a outra.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>A navegação vive em ações próprias que nunca são remapeáveis. O jogador 2 configurava os botões e nada respondia no menu.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">INP-06</span><h4>Nomes de tecla legíveis na tela de controles</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Mapear ações para o teclado numérico, teclas de função e teclas especiais.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Todas aparecem com nome (<code>NUM 4</code>, <code>F5</code>). Nenhum <code>?</code> na tela.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>O teclado numérico é o vínculo mais provável num encoder de gabinete.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">INP-07</span><h4>Tutorial como jogador 2</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Iniciar uma partida solo confirmando com as teclas do jogador 2.</li><li>No tutorial, apertar as quatro faixas dele.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Os rótulos mostram as teclas <strong>do jogador 2</strong> e os quatro alvos respondem a elas.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>O tutorial estava fixo no jogador 1 — a tela que existe para achar os próprios botões era a que não respondia a eles.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">INP-08</span><h4>Isolamento do Pausar</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Partida solo do jogador 2.</li><li>Jogador 1 tenta pausar com a tecla dele.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Não pausa. Confirmar e Voltar continuam valendo para os dois, de propósito — se quem começou largar o gabinete, o outro precisa conseguir sair.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Pausar o jogo alheio é a única forma de um jogador atrapalhar o outro de fora da própria pista.</div>
+</div>
+</div>
+
+<div class="s-arc">
+<div class="suite-head"><span class="tag">ARC</span><h2>Modo Arcade</h2></div>
+<p class="suite-note">O percurso é <strong>uma partida só</strong>: placar, combo e precisão atravessam as seis armas. Vários casos aqui verificam justamente essa continuidade.</p>
+
+<div class="case">
+  <div class="case-top"><span class="id">ARC-01</span><h4>A sessão para durante o intervalo</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Terminar a primeira arma e chegar ao menu de intervalo.</li>
+      <li><strong>Esperar dois minutos sem tocar em nada.</strong></li>
+      <li>Escolher Continuar.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Silêncio absoluto durante a espera. Nenhuma nota atrás do menu. A fase seguinte começa do zero, em compasso.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>O estado continuava sendo o de partida durante o intervalo, e o controlador iniciava a próxima fase atrás do menu. Era também a causa das notas fora de compasso na fase seguinte.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">ARC-02</span><h4>A arma recém-forjada aparece na fileira</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Terminar a <strong>primeira</strong> arma.</li><li>Olhar a fileira no menu de intervalo.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Uma arma na fileira, já na primeira parada. Duas depois da segunda, e assim por diante.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>A fileira ficava uma arma atrás: nenhuma depois da primeira fase, uma depois da segunda.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">ARC-03</span><h4>A precisão não reinicia entre as armas</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Errar de propósito na primeira arma até a precisão cair visivelmente.</li><li>Continuar para a segunda e observar o painel.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>A precisão continua de onde parou. Não volta a 100%.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Placar e combo já atravessavam as fases; a precisão esquecia. Três números do mesmo painel contavam histórias diferentes.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">ARC-04</span><h4>Tecla vazia derruba o combo, mas não a precisão</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Numa fase, martelar sem parar em faixas sem nota.</li><li>Observar combo, pontos e precisão.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Combo zera, pontos caem, <code>ERRO</code> aparece na tela. A <strong>precisão não muda</strong> — ela conta apenas notas.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Decisão deliberada, alinhada ao padrão do gênero. Se a tecla vazia entrasse na precisão, o denominador cresceria a cada toque e daria para zerar o rank sem perder uma nota — o que numa feira aconteceria o tempo todo.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">ARC-05</span><h4>O combo atravessa as fases</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Chegar ao fim de uma arma com combo alto.</li><li>Continuar e acertar a primeira nota da seguinte.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>O combo continua de onde parou.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>É a recompensa que segura a atenção ao longo de quase seis minutos.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">ARC-06</span><h4>A Adaga não elimina ninguém</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Modo Arcade. Na primeira arma, não tocar em nada até o fim.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>A fase termina normalmente e o percurso segue. Sem game over.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>A primeira arma é a rampa de aprendizado. Quem nunca jogou seria expulso em vinte segundos.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">ARC-07</span><h4>Encerrar percurso fecha com o que já tem</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Chegar ao intervalo e escolher <em>Encerrar percurso</em>.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Vai à tela de resultado com o total acumulado, incluindo a arma que acabou de terminar. Entra no ranking normalmente — encerrar não é desistir.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Existe para respeitar o tempo de quem não está gostando, sem obrigá-lo a perder de propósito.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">ARC-08</span><h4>Recordes do Arcade isolados do Livre</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Fazer um recorde no Arcade.</li><li>Abrir o ranking do Modo Livre.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>O total do percurso não aparece entre os recordes de fase do Livre, e vice-versa.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Um total de percurso é uma ordem de grandeza maior que o de uma fase. Misturados, o ranking do Livre viraria uma lista só de percursos.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">ARC-09</span><h4>Arcade como jogador 2, do início ao fim</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Confirmar o modo com as teclas do jogador 2.</li>
+      <li>Percorrer menu, seletor, tutorial e fases.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>O corredor de pergaminho aparece no seletor de armas — os cartões não podem ficar flutuando sobre o céu. O julgamento <strong>sobe</strong>, como para o jogador 1. O ferreiro nasce na posição do modo solo.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Três defeitos distintos já apareceram só aqui: corredor sumindo, texto descendo e ferreiro na posição do Versus. O caminho do jogador 2 sozinho é o menos percorrido de todos.</div>
+</div>
+</div>
+
+<div class="s-ver">
+<div class="suite-head"><span class="tag">VER</span><h2>Modo Versus</h2></div>
+<p class="suite-note">Jogador 1 é <strong>vermelho</strong>, na pista de baixo. Jogador 2 é <strong>azul</strong>, na de cima. A pista de cima é espelhada em tudo: sentido das notas, lado da bigorna e direção dos textos.</p>
+
+<div class="case">
+  <div class="case-top"><span class="id">VER-01</span><h4>Os dois recebem a mesma quantidade de notas</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Jogar uma partida até o fim.</li>
+      <li>Na tela de resultado, somar de cada lado: perfeitas + ótimas + boas + erros.</li>
+      <li>Repetir em armas diferentes — o Florete é o teste mais duro.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Os dois totais são <strong>idênticos</strong>.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>A divisão era por tempo, e os motivos têm densidade irregular — no Florete os intervalos vão de um terço de batida a uma batida inteira. Trechos de igual duração entregavam quantidades diferentes. Agora a divisão é por contagem de notas.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">VER-02</span><h4>A bolha de julgamento fica na pista de quem a produziu</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Jogador 2 erra de propósito.</li><li>Observar a pista de baixo.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Nada aparece na pista do jogador 1.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>As bolhas não tinham dono: o ERRO do jogador 2 era desenhado na pista do 1, que via a falha do outro piscar na própria faixa e concluía ter quebrado o combo. A pontuação sempre esteve certa — a bolha é que mentia.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">VER-03</span><h4>Direção dos textos em cada pista</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Acertar e errar com cada jogador.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Jogador 1: acerto <strong>sobe</strong> a partir do botão vermelho, erro afunda um pouco. Jogador 2: <strong>tudo desce</strong> a partir do botão amarelo — acerto e erro.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>O erro do jogador 2 subia enquanto todo o resto descia, e um único texto andando contra os outros lia-se como defeito.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">VER-04</span><h4>O incremento de pontos aparece nos dois painéis</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Os dois acertam ao mesmo tempo, repetidamente.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Cada painel mostra o próprio <code>+N</code> subindo, na cor do tier. Um não substitui o outro.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>O indicador guardava um valor global. Com os dois martelando junto, o ganho de um apagava o do outro no meio da subida.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">VER-05</span><h4>A tela de resultado é legível</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Ler a linha de detalhe dos dois lados, a um metro da tela.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Perfeitas, ótimas, boas, erros e a nota — todos legíveis. A <strong>nota S</strong> é o caso crítico: era dourado sobre pergaminho claro, com contraste medido de 1,09:1.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Escurecer as cores mataria a leitura, que vem do calor. A saída foi contorno, como o HUD em jogo já fazia.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">VER-06</span><h4>O tema não volta dobrado</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Terminar uma partida.</li><li>Confirmar o resultado e ouvir os primeiros segundos do seletor.</li><li>Repetir três ou quatro vezes seguidas.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Uma faixa só. Sem eco, sem sobreposição.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Correção defensiva: o áudio é zerado antes de devolver o seletor. A causa exata nunca foi isolada, então <strong>este caso merece repetição</strong>. Se dobrar, F3 e fotografe <code>música:</code> e <code>saindo:</code>.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">VER-07</span><h4>Pausa e retomada valem para os dois</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Pausar no meio da partida.</li><li>Retomar e observar a contagem.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>A espera corre igual para os dois. Nenhum volta antes do outro.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Uma diferença de meio segundo na retomada decide a partida.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">VER-08</span><h4>Geometria e simetria das duas pistas</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Fotografar a tela durante uma partida.</li><li>Medir as duas faixas e as duas zonas de acerto.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Faixas com a mesma altura visível. Zonas de acerto à mesma distância das bordas opostas. Nenhum ferreiro coberto por painel.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>A faixa mede 240 px e a de baixo é cortada em 12 px pela borda da tela. A de cima foi deslocada para repetir o mesmo corte.</div>
+</div>
+</div>
+
+<div class="s-liv">
+<div class="suite-head"><span class="tag">LIV</span><h2>Modo Livre</h2></div>
+<p class="suite-note">O modo mais antigo e o menos testado nesta branch — justamente porque ninguém suspeita dele.</p>
+
+<div class="case">
+  <div class="case-top"><span class="id">LIV-01</span><h4>Cada arma, do início ao fim</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Jogar as seis armas.</li><li>Observar HUD, julgamentos e efeito de impacto.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Painel no canto de sempre. Julgamento sobe a partir do botão vermelho. Impacto na marreta na camada certa.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>A assinatura de várias funções do HUD mudou nesta branch.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">LIV-02</span><h4>Modo Livre como jogador 2</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Confirmar com as teclas do jogador 2 e jogar uma fase.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Julgamento sobe. Corredor visível no seletor. As <strong>cinco</strong> amostras de martelada tocam, não duas.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>A divisão de amostras entre os dois jogadores estava valendo fora do Versus, e o jogador 2 sozinho ouvia duas amostras em laço.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">LIV-03</span><h4>Game over por notas perdidas</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Numa arma que não seja a primeira do Arcade, deixar passar notas seguidas.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>A fase encerra em derrota, com animação do ferreiro e música em fade. Nenhuma nota sobrevive à tela de resultado.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Tecla vazia <em>não</em> conta para o game over, de propósito: quem está experimentando os botões não pode ser expulso.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">LIV-04</span><h4>Recorde e nível da arma</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Fazer um recorde e reabrir o jogo.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Recorde persiste. O ícone reflete o maior nível já atingido. A arma quebrada aparece só em falhas.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>A precisão que gera o rank mudou nesta branch. Recordes antigos foram feitos com a régua anterior, mais generosa.</div>
+</div>
+</div>
+
+<div class="s-aud">
+<div class="suite-head"><span class="tag">AUD</span><h2>Áudio</h2></div>
+<p class="suite-note">A área com mais correções sem causa isolada. Qualquer anomalia aqui pede F3 na hora.</p>
+
+<div class="case">
+  <div class="case-top"><span class="id">AUD-01</span><h4>Sincronia entre notas e música</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Em cada arma, verificar se a nota chega à zona no tempo da batida.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Acerto no tempo da música resulta em Perfeito. Se exigir antecipação ou atraso constante, há deriva.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>A posição da nota deriva do relógio absoluto do áudio. Se a faixa não estiver tocando ou a instância estiver errada, tudo se desloca junto.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">AUD-02</span><h4>Transições de faixa entre telas</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Percorrer menu → modos → seletor → fase → resultado → menu, várias vezes.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Sempre uma faixa por vez. Sem corte seco, sem faixa órfã em laço por baixo, sem silêncio onde deveria haver tema.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>É o caminho onde o tema dobrado apareceu.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">AUD-03</span><h4>Volume da martelada contra a música</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Jogar uma fase acertando bastante, no volume que o gabinete vai usar.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>A martelada é audível sem encobrir a música.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>O ajuste foi calibrado com fones. O gabinete tem outra caixa e outro ambiente — vale reavaliar no local.</div>
+</div>
+</div>
+
+<section>
+  <h2>O que este plano não cobre</h2>
+  <p>Dito com clareza, para ninguém contar com o que não existe:</p>
+  <ul>
+    <li><strong>Tutorial unificado.</strong> Foi pedido e não foi feito. Hoje o Versus mostra o tutorial de um jogador por vez, alternando.</li>
+    <li><strong>Créditos.</strong> O arranjador de duas faixas é desconhecido, e o crédito da Espada repete o título da Lança. É anterior a esta branch.</li>
+    <li><strong>Ajustes finos de HUD.</strong> Enquadramento e tamanho de fonte foram apontados de forma geral e não foram tratados.</li>
+    <li><strong>Código morto.</strong> Existe pelo menos uma função de placar do Versus que nunca é chamada. Sem efeito no jogo.</li>
+  </ul>
+</section>
+
+<footer>
+  <p>HammerTempo · branch <code>versus</code> em <code>7c139fc</code> · plano gerado em 25 de agosto de 2026.<br>
+  Todas as correções desta branch foram feitas por leitura de código e compilação limpa. <strong>Nenhuma foi verificada com o jogo em execução</strong> — é o que este documento pede que se faça.</p>
+</footer>
+
+</div>
