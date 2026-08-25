@@ -49,8 +49,8 @@
 /// tela. O creme do pergaminho não serve mais como tinta aqui: a 0,62 ele cairia para
 /// 4,3:1, abaixo do mínimo. Placa mais leve exige tinta mais clara.
 #macro UI_PLACA_ALPHA  0.62
-#macro UI_PLACA_FADE_X 26
-#macro UI_PLACA_FADE_Y 10
+#macro UI_PLACA_FADE_X 16
+#macro UI_PLACA_FADE_Y 6
 
 /// Logo das telas de menu, sempre no mesmo lugar.
 function ui_logo() {

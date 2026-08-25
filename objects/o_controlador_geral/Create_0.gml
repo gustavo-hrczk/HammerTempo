@@ -67,6 +67,64 @@ arcade_fase_imune = function() {
     return (modo_jogo == MODO.ARCADE && ARCADE_PRIMEIRA_IMUNE && arcade_indice == 0);
 }
 
+/// Bonus de fim de fase, pela regra de D-67: bonus e de trabalho CONCLUIDO, entao
+/// fase perdida nao bonifica. Devolve as duas parcelas separadas porque a tela de
+/// resultado mostra uma linha para cada.
+///
+/// Virou funcao porque no Arcade as fases do meio do percurso nao passam pela tela de
+/// resultado — sem isto, so a ultima fase de um percurso seria bonificada.
+fase_bonus = function(_base) {
+    var _julgadas = stats_acertos_perfeitos + stats_acertos_otimos
+                  + stats_acertos_bons + stats_erros;
+
+    var _r = { sem_erro: 0, impecavel: 0 };
+
+    if (fase_falhou || _julgadas <= 0 || stats_erros > 0) {
+        return _r;
+    }
+
+    _r.sem_erro = floor(_base * 0.10);
+
+    if (stats_acertos_otimos == 0 && stats_acertos_bons == 0) {
+        _r.impecavel = floor(_base * 0.15);
+    }
+    return _r;
+}
+
+/// Fecha a fase corrente do percurso e emenda a proxima, se houver.
+/// Devolve true quando emendou; false quando o percurso acabou aqui.
+///
+/// A fase FINAL — a sexta, ou aquela em que o jogador falhou — nao e somada aqui de
+/// proposito: ela segue para a tela de resultado, que calcula o bonus dela e fecha o
+/// total. arcade_pontos guarda sempre o que veio ANTES da fase corrente, e e essa
+/// separacao que impede a ultima fase de ser contada duas vezes.
+arcade_avancar = function() {
+    if (modo_jogo != MODO.ARCADE) {
+        return false;
+    }
+
+    var _ultima = min(ARCADE_TOTAL_FASES, array_length(fases_data));
+
+    if (fase_falhou || arcade_indice + 1 >= _ultima) {
+        return false;
+    }
+
+    var _b = fase_bonus(pontuacao);
+    arcade_pontos += pontuacao + _b.sem_erro + _b.impecavel;
+
+    arcade_indice++;
+    resetar_estatisticas();
+    fase_atual = arcade_indice;
+
+    // Emenda pela CONTAGEM, que e o que faz a faixa com o nome da proxima arma
+    // aparecer entre uma fase e outra. O respiro de 1,8 s do fim da fase anterior ja
+    // cobre a saida da musica, entao a transicao inteira sai em ~4,8 s sem nenhum
+    // momento morto.
+    estado_jogo = MINIGAME.CONTAGEM;
+    contagem_timer = 3 * room_speed;
+    return true;
+}
+
 /// Comeca o percurso na primeira fase da lista.
 ///
 /// Chamada de dentro da forja, e nao da tela de modos: iniciar a contagem antes da

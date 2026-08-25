@@ -66,28 +66,22 @@ recorde_novo = false;
 // Proporcionais, nao fixas: uma fase de 137 notas vale mais que uma de 60, e um
 // bonus fixo premiaria desproporcionalmente a fase curta.
 // =================================================================
-var _p = o_controlador_geral.stats_acertos_perfeitos;
-var _o = o_controlador_geral.stats_acertos_otimos;
-var _b = o_controlador_geral.stats_acertos_bons;
-var _e = o_controlador_geral.stats_erros;
-var _julgadas = _p + _o + _b + _e;
-
 pontuacao_base = o_controlador_geral.pontuacao;
 
-bonus_sem_erro = 0;
-bonus_impecavel = 0;
+// A regra de bonus mora no controlador porque as fases do meio de um percurso Arcade
+// nao chegam a esta tela — se ela vivesse so aqui, so a ultima seria bonificada.
+var _bonus = o_controlador_geral.fase_bonus(pontuacao_base);
+bonus_sem_erro = _bonus.sem_erro;
+bonus_impecavel = _bonus.impecavel;
 
-// Fase perdida nao bonifica: bonus e de trabalho concluido, como o recorde (D-67).
-if (!o_controlador_geral.fase_falhou && _julgadas > 0) {
-    if (_e == 0) {
-        bonus_sem_erro = floor(pontuacao_base * 0.10);
-    }
-    if (_e == 0 && _o == 0 && _b == 0) {
-        bonus_impecavel = floor(pontuacao_base * 0.15);
-    }
-}
+// No Arcade o numero que sobe e o TOTAL DO PERCURSO. arcade_pontos guarda o que veio
+// antes desta fase; as duas linhas de bonus continuam sendo as DESTA fase, que e o
+// que o jogador acabou de conquistar.
+arcade_acumulado = (o_controlador_geral.modo_jogo == MODO.ARCADE)
+    ? o_controlador_geral.arcade_pontos
+    : 0;
 
-pontuacao_final = pontuacao_base + bonus_sem_erro + bonus_impecavel;
+pontuacao_final = arcade_acumulado + pontuacao_base + bonus_sem_erro + bonus_impecavel;
 o_controlador_geral.pontuacao = pontuacao_final;
 
 // =================================================================

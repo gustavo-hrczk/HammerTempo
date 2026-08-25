@@ -53,7 +53,12 @@ o_audio_manager.play_sfx(snd_menu_confirm);
 //
 // Fase perdida nao entra, pelo mesmo motivo do recorde (D-67).
 // =================================================================
+// O placar POR FASE nao serve para o Arcade: pontuacao_final ali e o total do
+// percurso inteiro, e grava-lo no recorde da ultima arma corromperia a tabela do Modo
+// Livre com um numero de outra natureza. O ranking do Arcade e uma frente propria
+// (leaderboard.arcade, ja reservado no save) e entra em seguida.
 if (!pediu_iniciais
+    && o_controlador_geral.modo_jogo != MODO.ARCADE
     && !o_controlador_geral.fase_falhou
     && placar_posicao(o_controlador_geral.fase_atual, pontuacao_final) > 0) {
 

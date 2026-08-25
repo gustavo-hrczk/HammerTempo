@@ -105,7 +105,9 @@ function hud_init() {
 
 /// Reinicia o HUD no começo de cada partida.
 function hud_resetar() {
-    global.hud_pontos_exibidos = 0;
+    // No Arcade o contador NAO volta a zero entre as fases: ele retoma do total ja
+    // acumulado. Zerar aqui faria o numero despencar e subir de novo a cada arma.
+    global.hud_pontos_exibidos = hud_pontos_base();
     global.hud_ganho_valor = 0;
     global.hud_ganho_timer = 0;
     global.hud_julgamentos = [];
@@ -114,6 +116,12 @@ function hud_resetar() {
     global.hud_combo_quebra = 0;
     global.hud_fase_timer = 0;
     global.hud_entrada = 0;
+}
+
+/// Pontuacao ja acumulada ANTES da fase corrente. Zero fora do Arcade.
+function hud_pontos_base() {
+    var _c = o_controlador_geral;
+    return (_c.modo_jogo == MODO.ARCADE) ? _c.arcade_pontos : 0;
 }
 
 /// Anima os valores do HUD. Chamado uma vez por frame durante a partida.
@@ -125,7 +133,11 @@ function hud_update() {
     global.hud_entrada = min(1, global.hud_entrada + (1 / (room_speed * 0.45)));
 
     // pontuação sobe suavemente até o valor real
-    var _alvo = _ctrl.pontuacao;
+    //
+    // No Arcade o painel mostra o TOTAL DO PERCURSO, e nao o da fase: o jogador esta
+    // perseguindo um numero so, e ver o contador voltar a zero a cada arma desfaria
+    // exatamente a sensacao de percurso que o modo existe para criar.
+    var _alvo = hud_pontos_base() + _ctrl.pontuacao;
     if (abs(global.hud_pontos_exibidos - _alvo) < 1) {
         global.hud_pontos_exibidos = _alvo;
     } else {
@@ -541,17 +553,20 @@ function hud_titulo_fase() {
     // atravessada. Na vertical vale a regra do texto flutuante — cauda curta, para a
     // faixa ter forma em vez de virar mancha.
     hud_placa_suave(0, HUD_TITULO_CY - _meia, _gw, HUD_TITULO_CY + _meia,
-                    c_black, UI_PLACA_ALPHA * _alpha, 420, 34);
+                    c_black, UI_PLACA_ALPHA * _alpha, 300, 22);
 
     draw_set_alpha(_alpha);
 
+    // Corpo maior nas duas linhas, sempre em ESCALA INTEIRA (D-33): o nome sai em
+    // f_padrao dobrada e a segunda linha troca a fonte pequena pela padrao. Escala
+    // fracionaria suja o traco da fonte de pixel, entao 1,5 nao era opcao — o degrau
+    // possivel e esse.
     draw_set_font(f_padrao);
-    hud_texto(_gw / 2, HUD_TITULO_CY - 22, string_upper(_fase.nome), c_white, 1);
+    hud_texto(_gw / 2, HUD_TITULO_CY - 30, string_upper(_fase.nome), c_white, 2);
 
     // Branco tambem na segunda linha: a 0,62 de placa o creme cai para 4,3:1, abaixo
-    // do minimo. A hierarquia entre as duas linhas ja vem do corpo da fonte.
-    draw_set_font(f_padrao_pequena);
-    hud_texto(_gw / 2, HUD_TITULO_CY + 26,
+    // do minimo. A hierarquia entre as duas ja vem do corpo, nao da cor.
+    hud_texto(_gw / 2, HUD_TITULO_CY + 42,
               _fase.dificuldade + "  -  " + string(round(_fase.beat_tempo_bpm)) + " BPM",
               c_white, 1);
 

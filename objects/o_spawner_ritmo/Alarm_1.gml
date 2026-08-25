@@ -18,6 +18,16 @@ if (!esperando_respiro) {
     exit;
 }
 
+// No Arcade o percurso emenda a proxima fase aqui, sem passar pela tela de resultado:
+// ela custa ~5,5 s por fase e corta o embalo justamente entre uma arma e outra. A
+// faixa com o nome da proxima aparece na contagem, que ja comeca dentro de
+// arcade_avancar.
+if (o_controlador_geral.arcade_avancar()) {
+    show_debug_message("Percurso Arcade: emendando a proxima fase.");
+    instance_destroy();
+    exit;
+}
+
 show_debug_message("Fase Concluída! Mostrando resultados...");
 
 o_controlador_geral.estado_jogo = MINIGAME.RESULTADO;
