@@ -66,6 +66,20 @@ if (!pediu_iniciais
 audio_stop_sound(snd_resultado_bom);
 audio_stop_sound(snd_resultado_ruim);
 
+// PENDENTE (frente 2): no Arcade daqui sai o encadeamento — somar a pontuacao em
+// arcade_pontos, avancar arcade_indice e emendar a proxima fase sem passar por esta
+// tela. Ate la o percurso termina aqui e volta ao menu, que e o comportamento SEGURO:
+// mandar SELECAO_FASE no Arcade reiniciaria o percurso num laco.
+if (o_controlador_geral.modo_jogo == MODO.ARCADE) {
+    o_controlador_geral.modo_jogo = MODO.LIVRE;
+    o_controlador_geral.estado_jogo = MINIGAME.NENHUM;
+    o_controlador_geral.resetar_estatisticas();
+
+    instance_destroy();
+    ir_para_sala(rm_menu);
+    exit;
+}
+
 o_controlador_geral.estado_jogo = MINIGAME.SELECAO_FASE;
 o_controlador_geral.resetar_estatisticas();
 

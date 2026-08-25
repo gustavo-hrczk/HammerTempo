@@ -3,8 +3,8 @@ if (fluxo_ocupado()) {
     exit;
 }
 
-// Com a tabela de recordes aberta, ela é quem responde ao input.
-if (instance_exists(o_tela_recordes)) {
+// Com uma sobreposição aberta, ela é quem responde ao input.
+if (instance_exists(o_tela_recordes) || instance_exists(o_tela_modos)) {
     exit;
 }
 
@@ -35,13 +35,10 @@ if (input_pressed(ACAO.CONFIRMAR)) {
 
     switch (opcao_selecionada) {
         case 0: // Começar Jogo
-            // Se o tutorial ainda não foi visto, ele vem antes da seleção de fase.
-            if (o_controlador_geral.tutorial_ja_foi_visto == false) {
-                o_controlador_geral.estado_jogo = MINIGAME.TUTORIAL;
-            } else {
-                o_controlador_geral.estado_jogo = MINIGAME.SELECAO_FASE;
-            }
-            ir_para_sala(rm_forja, 0, false);
+            // Passa a abrir a escolha de MODO. É ela que decide o destino e cuida do
+            // tutorial, porque a pergunta "Arcade ou Livre" vem antes de qualquer
+            // coisa que aconteça dentro da forja.
+            instance_create_depth(0, 0, -9000, o_tela_modos);
             break;
 
         case 1: // Recordes

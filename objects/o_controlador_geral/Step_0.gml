@@ -93,7 +93,12 @@ switch (estado_jogo) {
     case MINIGAME.SELECAO_FASE:
         // Só cria o seletor se estivermos na sala da forja.
         if (room == rm_forja) {
-            if (!instance_exists(o_seletor_fases)) {
+            // No Arcade o seletor de armas nao existe: o percurso e a lista inteira,
+            // em ordem, e comeca na primeira. Os dois modos entram por este mesmo
+            // estado justamente para a contagem so comecar com a sala ja montada.
+            if (modo_jogo == MODO.ARCADE) {
+                arcade_iniciar_percurso();
+            } else if (!instance_exists(o_seletor_fases)) {
                 instance_create_layer(0, 0, "Gameplay", o_seletor_fases);
             }
         }
@@ -123,7 +128,12 @@ switch (estado_jogo) {
         // Lógica de Fim de Jogo por notas perdidas em sequência.
         // Toques inválidos não encerram mais a partida (auditoria GP-04): eles só
         // custam pontos, para não expulsar quem está experimentando o jogo.
-        if (!fase_falhou && stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
+        // A primeira fase do percurso Arcade nao expulsa ninguem: ela E a rampa de
+        // aprendizado. A Adaga falha com 4 notas perdidas seguidas, o que a 2,25
+        // notas/s sao 1,8 segundo sem acertar nada — quem nunca jogou seria ejetado
+        // em vinte segundos, sem ter jogado.
+        if (!fase_falhou && !arcade_fase_imune()
+            && stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
             show_debug_message("Game Over por excesso de notas perdidas!");
 
             fase_falhou = true;

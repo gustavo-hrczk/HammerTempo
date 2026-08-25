@@ -47,6 +47,41 @@ stats_erros = 0;
 stats_sequencia_errada = 0;
 stats_toques_invalidos = 0;
 
+// =================================================================
+// MODO DE JOGO E PERCURSO ARCADE
+//
+// modo_jogo e escolhido em o_tela_modos, antes de entrar na forja, e decide se o
+// seletor de armas aparece (LIVRE) ou se o percurso comeca direto (ARCADE).
+//
+// arcade_pontos acumula ATRAVES das fases: a pontuacao de cada fase e somada aqui ao
+// terminar, e e esse total que vai para leaderboard.arcade. A pontuacao normal
+// (pontuacao) continua sendo so a da fase corrente, para a tela de resultado nao
+// precisar saber em que modo esta.
+// =================================================================
+modo_jogo = MODO.LIVRE;
+arcade_indice = 0;    // qual etapa do percurso, contando de zero
+arcade_pontos = 0;    // total acumulado ate aqui
+
+/// A primeira fase do percurso nao pode dar game over (ARCADE_PRIMEIRA_IMUNE).
+arcade_fase_imune = function() {
+    return (modo_jogo == MODO.ARCADE && ARCADE_PRIMEIRA_IMUNE && arcade_indice == 0);
+}
+
+/// Comeca o percurso na primeira fase da lista.
+///
+/// Chamada de dentro da forja, e nao da tela de modos: iniciar a contagem antes da
+/// troca de sala faria o cronometro correr durante o fade.
+arcade_iniciar_percurso = function() {
+    arcade_indice = 0;
+    arcade_pontos = 0;
+
+    resetar_estatisticas();
+    fase_atual = 0;
+
+    estado_jogo = MINIGAME.CONTAGEM;
+    contagem_timer = 3 * room_speed;
+}
+
 // --- PAUSA DA PARTIDA ---
 // A variável `pausa` existia desde a jam e era checada em seis lugares, mas nunca
 // era ativada (auditoria CV-07). Agora ela tem um menu.
@@ -110,6 +145,18 @@ reiniciar_partida = function() {
 
 abandonar_partida = function() {
     limpar_partida();
+
+    // No Arcade nao existe seletor de armas para onde voltar: a unidade e o percurso
+    // inteiro, entao abandonar leva ao menu. Sem isto o estado SELECAO_FASE chamaria
+    // arcade_iniciar_percurso() no frame seguinte, e "Sair" reiniciaria o percurso
+    // num laco em vez de sair.
+    if (modo_jogo == MODO.ARCADE) {
+        modo_jogo = MODO.LIVRE;
+        estado_jogo = MINIGAME.NENHUM;
+        ir_para_sala(rm_menu);
+        return;
+    }
+
     estado_jogo = MINIGAME.SELECAO_FASE;
 }
 
