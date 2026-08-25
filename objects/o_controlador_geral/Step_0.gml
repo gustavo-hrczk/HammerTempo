@@ -134,7 +134,19 @@ switch (estado_jogo) {
         // A checagem de fase_falhou é essencial: no game over o estado continua
         // sendo RITMO durante o respiro, e sem ela o spawner destruído voltava no
         // frame seguinte, gerando notas por cima da tela de resultado.
-        if (room == rm_forja && !fase_falhou && !instance_exists(o_spawner_ritmo)) {
+        // O INTERVALO DO ARCADE SEGURA A PROXIMA FASE.
+        //
+        // O estado continua sendo RITMO enquanto o menu de intervalo esta aberto, e o
+        // spawner da fase que acabou ja se destruiu ao abri-lo. Sem esta condicao o
+        // controlador via "estado RITMO, sem spawner" no quadro seguinte e comecava a
+        // proxima fase ali mesmo, atras do menu: a musica voltava a tocar e as notas
+        // corriam enquanto o jogador ainda estava escolhendo se queria continuar.
+        //
+        // Era tambem a causa das notas fora de compasso na fase seguinte — quando o
+        // jogador confirmava, a fase ja estava rodando ha vinte ou trinta segundos, e
+        // a contagem de arcade_avancar criava um SEGUNDO spawner por cima do primeiro.
+        if (room == rm_forja && !fase_falhou && !gameplay_congelado()
+            && !instance_exists(o_spawner_ritmo)) {
             show_debug_message("Iniciando minigame de ritmo para a fase: " + fases_data[fase_atual].nome);
             var _spawn_x = room_width + 120;
             instance_create_layer(_spawn_x, 0, "Gameplay", o_spawner_ritmo);

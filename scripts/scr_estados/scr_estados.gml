@@ -169,61 +169,68 @@ function solo_jogador() {
 /// o terco final junto vira o climax em vez de mais um trecho igual aos outros.
 #macro VERSUS_FRACAO_ALTERNADA (2 / 3)
 
-/// A janela util da fase: da primeira nota ate o fim.
-function versus_janela() {
-    if (!instance_exists(o_spawner_ritmo)) return [0, 0];
-
-    var _sp = o_spawner_ritmo;
-    var _ini = _sp.primeiro_t;
-    var _fim = _sp.duracao_total / room_speed;
-
-    return [_ini, max(_ini, _fim)];
-}
-
 /// Quantas estrofes alternadas a fase tem. SEMPRE PAR, para os dois jogadores ficarem
 /// com a mesma quantidade de solos.
 function versus_estrofes() {
-    var _j = versus_janela();
-    var _alternado = (_j[1] - _j[0]) * VERSUS_FRACAO_ALTERNADA;
+    if (!instance_exists(o_spawner_ritmo)) return 2;
 
-    var _n = max(2, round(_alternado / VERSUS_ESTROFE));
+    var _sp = o_spawner_ritmo;
+    var _alternadas = _sp.notas_totais * VERSUS_FRACAO_ALTERNADA;
+
+    // notas por estrofe, mirando VERSUS_ESTROFE segundos
+    var _por_seg = (_sp.duracao_total / room_speed);
+    var _densidade = (_por_seg > 0) ? (_sp.notas_totais / _por_seg) : 2;
+
+    var _n = max(2, round(_alternadas / max(1, VERSUS_ESTROFE * _densidade)));
     if (_n mod 2 == 1) _n++;
 
     return _n;
 }
 
-/// Este jogador esta recebendo nota agora?
+/// Este jogador esta recebendo esta nota?
 ///
-/// Fora do Versus a resposta e sempre sim para quem esta jogando.
-function versus_recebe_nota(_dono) {
+/// A divisao e por INDICE DE NOTA, e nao por tempo. Dividir por tempo parecia justo e
+/// nao e: os motivos tem densidade irregular, entao trechos de igual duracao entregam
+/// quantidades diferentes de nota — foi o que apareceu no Florete, com um jogador
+/// recebendo bem mais que o outro numa fase em que ninguem errou.
+///
+/// Contando nota, a conta fecha por construcao: as estrofes dividem exatamente as duas
+/// primeiras tercas partes, e o ultimo terco vai inteiro para os dois.
+function versus_recebe_nota(_dono, _indice = 0) {
     if (!versus_ativo()) {
         return (_dono == solo_jogador());
     }
 
-    var _agora = ritmo_relogio();
-    if (_agora < 0) return (_dono == 0);
+    if (!instance_exists(o_spawner_ritmo)) return (_dono == 0);
 
-    var _j = versus_janela();
-    var _t = _agora - _j[0];
-    if (_t < 0) return (_dono == 0);
+    var _total = o_spawner_ritmo.notas_totais;
+    if (_total <= 0) return true;
 
-    var _janela = _j[1] - _j[0];
-    var _alternado = _janela * VERSUS_FRACAO_ALTERNADA;
+    // O TRECHO ALTERNADO E ARREDONDADO PARA BAIXO ATE FECHAR NAS ESTROFES.
+    //
+    // Sem isso a ultima estrofe fica com uma nota a mais ou a menos que as outras, e
+    // como as estrofes se alternam entre os dois, essa sobra cai sempre no mesmo
+    // jogador. Com 78 notas eram quatro de diferenca. Cortando o resto para o terco
+    // final — que os dois tocam junto — a divisao fecha exata.
+    var _n = versus_estrofes();
+    var _tamanho = floor((_total * VERSUS_FRACAO_ALTERNADA) / _n);
+    var _alternadas = _tamanho * _n;
 
     // TERCO FINAL: os dois tocam.
-    if (_t >= _alternado) return true;
+    if (_indice >= _alternadas) return true;
 
-    // ESTROFES ALTERNADAS: comeca no jogador 1 e vai revezando.
-    var _n = versus_estrofes();
-    var _estrofe = floor(_t / (_alternado / _n));
+    // ESTROFES ALTERNADAS, comecando no jogador 1.
+    var _estrofe = floor(_indice / max(1, _tamanho));
 
     return ((_estrofe mod 2) == _dono);
 }
 
 /// Em que trecho a partida esta: 0 solo do 1, 1 solo do 2, 2 os dois.
 function versus_trecho() {
-    if (versus_recebe_nota(0) && versus_recebe_nota(1)) return 2;
-    return versus_recebe_nota(1) ? 1 : 0;
+    var _i = instance_exists(o_spawner_ritmo) ? o_spawner_ritmo.notas_criadas : 0;
+
+    if (versus_recebe_nota(0, _i) && versus_recebe_nota(1, _i)) return 2;
+    return versus_recebe_nota(1, _i) ? 1 : 0;
 }
 
 /// Rotulo do trecho atual, para a tela mostrar de quem e a vez.

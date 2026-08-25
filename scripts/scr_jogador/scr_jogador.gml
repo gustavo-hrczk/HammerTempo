@@ -130,8 +130,8 @@ function bigorna_de(_dono = 0) {
 /// a construcao respira no meio.
 /// 260 e 1020, e nao 250 e 1030: dez pixels para dentro de cada lado, para os
 /// ferreiros sairem de baixo das caixas de pontuacao que ficam nos cantos.
-#macro VERSUS_BIGORNA_P1 260
-#macro VERSUS_BIGORNA_P2 1020
+#macro VERSUS_BIGORNA_P1 270
+#macro VERSUS_BIGORNA_P2 1010
 
 /// Distancia entre a bigorna e o ferreiro, preservada da cena original (661 - 619).
 #macro VERSUS_VAO_FERREIRO 42

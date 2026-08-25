@@ -68,6 +68,27 @@ proximo_t = _fase_batida + (_batidas * beat_seg);
 // NOTA, e nao do inicio da faixa, senao o respiro inicial come o trecho do jogador 1.
 primeiro_t = proximo_t;
 
+// QUANTAS NOTAS ESTA FASE VAI GERAR, contadas percorrendo o proprio motivo.
+//
+// O Versus precisa disto para dividir as estrofes por NOTA e nao por tempo. Dividir
+// por tempo parecia justo e nao e: os motivos tem densidade irregular — o do Florete
+// vai de 0,33 a 1 batida entre notas —, entao trechos de igual duracao entregam
+// quantidades diferentes de nota a cada jogador.
+notas_totais = 0;
+notas_criadas = 0;
+
+if (minha_duracao > 0) {
+    var _t = proximo_t;
+    var _i = 0;
+    var _fim = minha_duracao / room_speed;
+
+    while (_t < _fim && notas_totais < 2000) {
+        notas_totais++;
+        _t += meu_pattern_atual[_i] * beat_seg;
+        _i = (_i + 1) mod array_length(meu_pattern_atual);
+    }
+}
+
 // =================================================================
 // DISPOSICAO DAS FAIXAS
 // Estado da sequencia de figuras. Ver ritmo_sortear_figura em scr_ritmo: a faixa da
@@ -179,7 +200,7 @@ criar_nota = function(_t) {
 
     for (var _i = 0; _i < array_length(_ativos); _i++) {
         var _d = _ativos[_i];
-        if (!versus_recebe_nota(_d)) continue;
+        if (!versus_recebe_nota(_d, notas_criadas)) continue;
 
         var _x = ritmo_linha_x(_d) - (ritmo_sentido(_d) * viagem_seg
                                       * velocidade_das_notas * room_speed);
@@ -192,4 +213,6 @@ criar_nota = function(_t) {
 
         jogador(_d).stats_total_notas++;
     }
+
+    notas_criadas++;
 }
