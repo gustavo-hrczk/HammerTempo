@@ -184,6 +184,12 @@ fases_data[0] = {
     stats_limite_sequencia_errada: 4,
     beat_tempo_bpm: 89.99,
     primeira_batida_ms: 290.2,
+
+    // A 4 de velocidade a viagem leva 5,4 s, e o respiro padrao punha a primeira nota
+    // aos 6,96 s — quase sete segundos de tela vazia na fase de entrada do jogo, que e
+    // justamente onde o jogador tem menos paciencia. Com 3 s ela cai na 5a batida, aos
+    // 3,62 s, nascendo no meio do caminho (D-110).
+    primeira_nota_seg: 3.0,
     // GALOPE. Longa-curta-curta, repetido. A fase tinha [1,1,1,1] — variedade zero, um
     // metronomo lento. Densidade sobe de 1,50 para 2,23 notas/s, que era a queixa de
     // ter ficado agradavel e sem personalidade. Aderencia 11,88x.
@@ -307,30 +313,23 @@ fases_data[4] = {
     figuras: [34, 24, 24, 18]
 };
 
-// Mestre - 4 faixas, a maior densidade e a maior velocidade do jogo
-// In Taberna Quando Sumus
+// Mestre - 4 faixas | La Rotta
 //
-// LACO SEM A INTRODUCAO. O trecho tem 4 segundos de entrada — medidos: ate 3,99 s a
-// faixa fica entre -44 e -28 dBFS e em 4,00 s salta para -15, um degrau de 15 dB.
-// A primeira versao do laco comecava em 0,128 s e repetia essa introducao quatro
-// vezes. O corte agora parte de 4,242 s, a linha de compasso onde o groove entra.
+// FASE QUE SEGUE A MELODIA, e nao a percussao. Medido: a banda de percussao desta
+// faixa marca forca 2,3x, contra 10,5x da melodia. Nao e preferencia — a musica
+// simplesmente nao tem tambor forte, e mapear a percussao aqui daria ruido.
 //
-// A introducao TOCA UMA VEZ e so o groove entra em laco: 3 compassos de entrada
-// mais 8 compassos repetidos 3x = 37,024 s, ou 27,000 compassos inteiros. Seis
-// repeticoes tinham ficado longas e monotonas; faixa mais curta que as demais
-// nao e problema numa fase de nivel Mestre.
-// Fade de 3 ms nas pontas de cada copia mata o estalo sem deslocar o tempo.
+// A melodia toca SEMINIMAS: nas 16 subdivisoes do compasso ela pontua 0,19 / 0,63 /
+// 0,62 / 1,00 nos quatro tempos e 0,01 a 0,03 em todos os contratempos. Motivos com
+// colcheia caem para 7,1x porque batem no vazio; a seminima marca 8,82x.
 //
-// So o groove, o perfil fica |#   #   #   #   | com contraste 6,46 (era 5,37 com a
-// introducao diluindo) e contratempos entre 0,06 e 0,12 — praticamente mudos.
-// Colcheia aqui cairia em silencio: 2,92 notas/s em seminima e o TETO MUSICAL desta
-// faixa, e nao uma escolha conservadora.
+// Entao a FORMA vem do silencio, nao da subdivisao: o motivo pula um tempo. E pula o
+// certo — o perfil mostra o primeiro tempo em 0,19 contra 1,00 do quarto, ou seja, a
+// melodia entra em anacruse. primeira_batida_ms conta a partir do quarto tempo (301,9
+// + 3 batidas), o que poe o repouso do motivo justamente sobre o tempo fraco.
 //
-// Por isso a resposta ao "ficou lenta" e VELOCIDADE, nao densidade. E ha um segundo
-// motivo, geometrico: a 175 BPM as notas distam 343 ms, o que na velocidade 5 dava
-// 103 px entre elas — 58 px de vao para alvos de 45 px. A pista embolava justamente
-// na fase mais densa. Na velocidade 7 o vao vai a 99 px: a mesma mudanca que casa
-// com a energia da musica tambem desafoga a leitura.
+// A faixa anterior desta fase (In Taberna em laco) saiu: o motivo em seminima corrida
+// virava caos a 175 BPM com quatro faixas.
 //
 // Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
 fases_data[5] = {
@@ -338,23 +337,22 @@ fases_data[5] = {
     nome: "Forjar Alabarda",
     dificuldade: "Mestre",
     musica_fase: snd_fase_06,
-    ganho_musica: 0.663,
+    ganho_musica: 0.654,
     sprites_resultado: [],
-    duracao_segundos: 32,
+    duracao_segundos: 50,
     velocidade_notas: 7,
     tipos_seta_permitidos: 4,
     stats_limite_sequencia_errada: 6,
-    beat_tempo_bpm: 175.02,
-    primeira_batida_ms: 0,
-    // FORMA COM RESPIRO. Semininma corrida dava 12,75x de aderencia e variedade ZERO — a
-    // metrica premiava dobrar o tambor, e foi ela que empurrou esta fase para o
-    // metronomo. Este motivo mantem a densidade (2,97 contra 2,94 n/s) e a folga na
-    // pista (96 px), com variedade 0,500 — o dobro da Espada. Aderencia 10,68x.
+    beat_tempo_bpm: 149.97,
+    primeira_batida_ms: 1501.9,
+
+    // ANACRUSE. Tres seminimas, dois tempos de repouso sobre o tempo fraco, tres
+    // seminimas. Variedade 0,350 contra 0,000 da seminima corrida, e 2,20 notas/s.
     //
-    // Movimento em VARREDURA: a 175 BPM a pista atravessada de ponta a ponta e o que
-    // da escala ao nivel Mestre.
+    // A 7 de velocidade as notas ficam a 168 px uma da outra, 123 px de vao — a fase
+    // mais larga do jogo. Indice 2,61 contra 1,94 da Espada.
     ritmo_patterns: [
-        [1, 1, 0.5, 0.5, 1, 2]
+        [1, 1, 1, 2, 1, 1, 1]
     ],
 
     // pesos de figura: [escada, varredura, alternar, repetir]

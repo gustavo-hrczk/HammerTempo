@@ -1490,3 +1490,33 @@ O movimento também ganhou caráter: `figuras` traz pesos de [escada, varredura,
 repetir] por fase. A Adaga pende para alternar, porque duas faixas não têm o que atravessar;
 o Machado marcha em escada; a Alabarda varre a pista de ponta a ponta, que é o que dá escala
 ao nível Mestre. Quem não declara herda o perfil da Espada.
+
+**D-125 · A fase Mestre passou a seguir a MELODIA, e a faixa mudou.** In Taberna a 175 BPM
+com semínima corrida virou caos: quatro faixas, 2,94 notas/s e nenhuma forma no motivo. La
+Rotta entrou no lugar.
+
+E a razão para seguir a melodia nesta faixa é medida, não preferência: a banda de percussão
+marca força **2,3x**, contra **10,5x** da melodia. A música não tem tambor forte — mapear a
+percussão aqui daria ruído.
+
+A melodia toca **semínimas**. Nas 16 subdivisões do compasso ela pontua 0,19 / 0,63 / 0,62 /
+1,00 nos quatro tempos, e entre 0,01 e 0,03 em **todos** os contratempos. Motivos com colcheia
+caem para 7,1x porque batem no vazio; a semínima marca 8,82x.
+
+Daí a decisão que resolve a tensão entre forma e aderência: **a forma vem do silêncio, não da
+subdivisão.** O motivo `[1, 1, 1, 2, 1, 1, 1]` toca três semínimas, repousa dois tempos e
+repete — variedade 0,350 contra 0,000 da semínima corrida, sem colocar uma única nota em
+posição muda.
+
+E ele repousa no lugar certo. O perfil mostra o primeiro tempo em 0,19 contra 1,00 do quarto,
+ou seja, a melodia entra em **anacruse**. `primeira_batida_ms` conta a partir do quarto tempo
+(301,9 ms mais 3 batidas = 1501,9), o que põe o repouso do motivo sobre o tempo fraco.
+
+A 7 de velocidade as notas ficam a 168 px uma da outra, 123 px de vão — a pista mais larga do
+jogo, e a 150 BPM isso é o que mantém legível a fase mais difícil. Índice 2,61 contra 1,94 da
+Espada.
+
+**D-126 · Respiro da Adaga.** A 4 de velocidade a viagem leva 5,4 s, e o respiro padrão punha
+a primeira nota aos 6,96 s — quase sete segundos de tela vazia na fase de entrada do jogo,
+que é justamente onde o jogador tem menos paciência. Com `primeira_nota_seg` em 3 s ela cai
+na 5ª batida, aos 3,62 s, nascendo no meio do caminho (D-110).
