@@ -1660,3 +1660,68 @@ Lanca, Florete e Maca ficam em 5% umas das outras — ordem medida, mas por marg
 
 Os recordes nao foram migrados: o usuario autorizou zera-los. O id "espada" continua o
 mesmo apesar de a fase ter mudado de musica e de nivel.
+
+## D-135 — A taxa de notas mudas NAO mede qualidade: mede o quanto o motivo dobra a faixa
+
+Terceira correcao de metodo desta sequencia, e a mais profunda. Depois de reverter a
+Espada, a verificacao ficou assim:
+
+| Fase | Mudas | Julgamento do usuario |
+|---|---|---|
+| Espada | **33,6%** | a melhor do jogo, a referencia de personalidade |
+| Adaga | **25,6%** | "ficou otima" |
+| Lanca | 21,3% | boa |
+| Machado | 19,0% | boa |
+| Maca | 14,3% | boa |
+| Florete | 12,4% | em avaliacao |
+
+**A metrica classifica as duas fases preferidas do usuario como as duas piores.** Isso
+nao e ruido, e o sentido dela: taxa baixa significa que o motivo cola no tambor. Colar
+no tambor e o metronomo de que ele reclamou tres vezes seguidas.
+
+Entao a leitura correta e:
+
+- **taxa baixa** — o motivo dobra a faixa. Seguro e sem gracia.
+- **taxa alta** — o motivo se afasta da faixa. E onde mora a personalidade, e tambem
+  onde mora o erro.
+
+A metrica **descreve**, nunca serve de alvo. Nao existe valor bom: existe intencao.
+
+**O que separa afastamento de erro.** A Espada se afasta numa posicao FIXA e REPETIDA —
+sempre o tempo 3, que mede 0,81 — e a repeticao transforma o desvio em gancho. O
+Florete se afastava sobre levantamentos de forcas desiguais (3,62 / 2,04 / 1,87 / 1,35),
+inconsistentes de compasso para compasso, e isso le como desleixo, nao como frase.
+
+**Afastamento tem de ser consistente e repetido para soar como intencao.**
+
+Historico das tres correcoes desta sequencia: D-130 (a medida dependia da minha janela
+de FFT), D-131 (o minimo reprovava ate as fases validadas), D-135 (a distribuicao nao
+mede qualidade). Em todas as tres o julgamento do usuario chegou antes da medida.
+
+## D-136 — Elenco final: as teclas sao o eixo, e a Espada volta inteira
+
+A ordem NAO segue o indice, e isso e deliberado. O degrau que o jogador sente primeiro e
+o numero de teclas, entao ele e o eixo principal.
+
+| # | Fase | Nivel | Teclas | Faixa | Asset | Indice | Mudas |
+|---|---|---|---|---|---|---|---|
+| 1 | Adaga | Novato | 2 | Istampitta Ghaetta | snd_fase_01 | 0,91 | 25,6% |
+| 2 | Lanca | Aprendiz | 3 | Des Oge Mais Quer | snd_fase_02 | 1,69 | 21,3% |
+| 3 | Florete | Adepto | 3 | Ductia | snd_fase_03 | 1,60 | 12,4% |
+| 4 | Maca | Veterano | 4 | Saltarello II | snd_fase_04 | 2,37 | 14,3% |
+| 5 | Machado | Especialista | 4 | Il Trotto | snd_fase_05 | 2,59 | 19,0% |
+| 6 | Espada | Mestre | 4 | 110 BPM, a original | snd_fase_06 | 2,32 | 33,6% |
+
+Onde as leituras discordam, fica registrado: o indice bruto poe a Espada abaixo da Maca
+e do Machado, porque o motivo do Machado ganhou densidade em D-112. A Espada fica em
+Mestre assim mesmo.
+
+**A Espada foi revertida por inteiro** — musica, motivo, andamento, velocidade, ganho e
+primeira batida. A troca por In Taberna a 120 BPM foi reprovada no teste. In Taberna sai
+do projeto; a faixa de 110 BPM voltou para snd_fase_06, recuperada do historico do git.
+
+**Florete:** o levantamento do 6/8 nao tem a mesma forca nos quatro tempos (3,62 / 2,04 /
+1,87 / 1,35) e a primeira versao tocava os dois mais fracos. Agora usa so os dois
+primeiros. Preencher os quatro foi testado e e pior — leva a nota mais fraca para 1,35.
+
+**Adaga** voltou para duas teclas, que e a porta do jogo para quem nunca jogou.

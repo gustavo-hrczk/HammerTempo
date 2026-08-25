@@ -147,9 +147,9 @@ credit_text = "CREDITOS \n"+
 "Compositor: Desconhecido (dança italiana medieval). Domínio público.\n" +
 "Arranjos e gravação: The Recorder Maniac \n\n" +
 
-"Fase 6 Espada: In Taberna Quando Sumus - Medieval Tunes Vol.1 (1 of 12)\n" +
-"Compositor: Desconhecido (Carmina Burana, século XIII). Domínio público.\n" +
-"Arranjos e gravação: Medieval Tunes Vol. 1 \n\n" +
+"Fase 6 Espada: Des Oge Mais Quer Eu Trobar - Medieval Tunes Vol.1 (6 of 12) (Trecho)\n" +
+"Compositor: Desconhecido.\n" +
+"Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
 
 "\n_____________________________________________________ \n" +
 "6. RECOMENDAÇÃO \n" +

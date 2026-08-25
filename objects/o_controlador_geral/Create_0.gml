@@ -154,11 +154,16 @@ fases_data = [];
 //
 // A ordem sai do indice medido — densidade x faixas / tempo de leitura:
 //
-//   Adaga 1,37 | Lanca 1,69 | Florete 1,74 | Maca 1,78 | Machado 2,59 | Espada 3,35
+//   Adaga 0,91 | Florete 1,60 | Lanca 1,70 | Espada 2,33 | Maca 2,37 | Machado 2,59
 //
-// Ressalva honesta: Lanca, Florete e Maca ficam em 5% umas das outras. A ordem entre
-// as tres e medida, mas por margem estreita — se o teste contrariar, e a percepcao que
-// manda, nao a tabela.
+// A ORDEM NAO SEGUE O INDICE, e isso e deliberado. O degrau que o jogador sente
+// primeiro e o NUMERO DE TECLAS, entao ele e o eixo principal: 2 / 3 3 / 4 4 4. Dentro
+// de cada grupo a ordem e julgamento.
+//
+// Onde as duas leituras discordam: o indice bruto poe a Espada (2,33) abaixo da Maca
+// (2,37) e do Machado (2,59), porque o motivo do Machado ganhou densidade em D-112.
+// A Espada fica em Mestre assim mesmo — e a fase de referencia do projeto e a de maior
+// duracao. Fica registrado que a tabela discorda.
 //
 // COMO OS MOTIVOS SAO ESCRITOS (D-130 e D-131). Cada posicao do compasso e medida
 // contra o piso de ruido da PROPRIA faixa, amostrando o maximo numa vizinhanca de
@@ -175,11 +180,13 @@ fases_data = [];
 // O indice do asset de audio acompanha a ordem: snd_fase_01 e a primeira fase, 06 a
 // ultima. O campo `id` e o identificador do PLACAR e nao acompanha nada (D-115).
 
-// Novato - 3 faixas | Istampitta Ghaetta
-// A Adaga deixou de ser a fase de duas teclas. O motivo dela ja usava os SEIS ataques
-// que a faixa tem — as duas colcheias livres medem 0,68 e 0,61, silencio real — e
-// semicolcheia nao cabe a 4 de velocidade: daria 8 px de vao entre sprites de 45 px.
-// Entao a fase cresce pela LARGURA da pista, e nao pela densidade. Indice 0,91 -> 1,37.
+// Novato - 2 faixas | Istampitta Ghaetta
+// A fase de entrada, e a unica com duas teclas. Chegou a ir para tres, e voltou: com
+// duas ela e a porta do jogo para quem nunca jogou, que e o caso da feira.
+//
+// Ela tambem nao pode receber mais NOTAS. O motivo ja usa os SEIS ataques que a faixa
+// tem — as duas colcheias livres medem 0,68 e 0,61, silencio real — e semicolcheia nao
+// cabe a 4 de velocidade: daria 8 px de vao entre sprites de 45 px.
 fases_data[0] = {
     id: "adaga",
     nome: "Forjar Adaga",
@@ -189,7 +196,7 @@ fases_data[0] = {
     sprites_resultado: [s_adaga01, s_adaga02, s_adaga03, s_adaga04, s_adaga05],
     duracao_segundos: 40,
     velocidade_notas: 4,
-    tipos_seta_permitidos: 3,
+    tipos_seta_permitidos: 2,
     stats_limite_sequencia_errada: 4,
     beat_tempo_bpm: 89.99,
     primeira_batida_ms: 290.2,
@@ -201,9 +208,8 @@ fases_data[0] = {
     ],
 
     // pesos de figura: [escada, varredura, alternar, repetir]
-    // Com a terceira faixa a pista passou a ter o que atravessar, entao o peso saiu do
-    // ALTERNAR (60, que era a unica coisa possivel com duas) e foi para a ESCADA.
-    figuras: [30, 20, 30, 20]
+    // Duas faixas nao tem o que atravessar, entao o movimento pende para ALTERNAR.
+    figuras: [10, 10, 60, 20]
 };
 
 // Aprendiz - 3 faixas
@@ -241,9 +247,21 @@ fases_data[1] = {
 // primeira_batida_ms conta a partir do TERCEIRO tempo (392,4 + 2 batidas): e la que
 // esta o ataque mais forte do compasso, 5,41.
 //
-// Duas frases que se respondem, cada uma com um buraco diferente sobre posicao viva —
-// a frase 1 pula o tempo 2, a frase 2 pula o terco do tempo 3. Os tercos usam 0,6667 e
-// 0,3333, que somam 4,0000 exatos por compasso: nao ha acumulo de erro na grade.
+// O LEVANTAMENTO NAO TEM A MESMA FORCA NOS QUATRO TEMPOS: 3,62 / 2,04 / 1,87 / 1,35.
+// A primeira versao tocava os dois mais fracos, e era isso que soava fora. Agora o
+// motivo so usa os dois primeiros, e a taxa de notas mudas caiu de 18,4% para 12,4% —
+// a melhor do jogo depois da Maca.
+//
+// Preencher os quatro foi testado e e pior: leva a nota mais fraca para 1,35 e a taxa
+// para 16,6%. Aqui completar prejudica; remover resolve.
+//
+// A frase 1 traz o balanco nos dois primeiros tempos e caminha em seminima; a frase 2
+// responde com o balanco so no primeiro. Os tercos usam 0,6667 e 0,3333, que somam
+// 4,0000 exatos por compasso: nao ha acumulo de erro na grade.
+//
+// O 6/8 foi confirmado por varredura continua dentro do tempo: o pico do levantamento
+// fica em 0,667 com forca 3,62, contra 0,50 em 3/4 — nao e ritmo pontuado. E o balanco
+// se mantem pelos 60 s (4,62 / 3,11 / 3,62 / 3,42 por bloco de 15 s).
 //
 // Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
 fases_data[2] = {
@@ -260,9 +278,9 @@ fases_data[2] = {
     beat_tempo_bpm: 90,
     primeira_batida_ms: 1725.7,
 
-    // frase 1:  1  1a  .  2a  3  3a  4  .      frase 2:  1  1a  2  2a  3  .  4  .
+    // frase 1:  1  1a  2  2a  3  .  4  .      frase 2:  1  1a  2  .  3  .  4  .
     ritmo_patterns: [
-        [0.6667, 1, 0.3333, 0.6667, 0.3333, 1,   0.6667, 0.3333, 0.6667, 0.3333, 1, 1]
+        [0.6667, 0.3333, 0.6667, 0.3333, 1, 1,   0.6667, 0.3333, 1, 1, 1]
     ],
 
     // pesos de figura: [escada, varredura, alternar, repetir]
@@ -270,7 +288,7 @@ fases_data[2] = {
     figuras: [40, 20, 25, 15]
 };
 
-// Veterano - 3 faixas, mas 45 s de exigencia continua | Saltarello II
+// Veterano - 4 faixas, e 45 s de exigencia continua | Saltarello II
 // Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
 fases_data[3] = {
     id: "maca",
@@ -281,7 +299,7 @@ fases_data[3] = {
     sprites_resultado: [],
     duracao_segundos: 45,
     velocidade_notas: 5,
-    tipos_seta_permitidos: 3,
+    tipos_seta_permitidos: 4,
     stats_limite_sequencia_errada: 5,
     beat_tempo_bpm: 99.99,
     primeira_batida_ms: 348.3,
@@ -323,46 +341,36 @@ fases_data[4] = {
     figuras: [50, 15, 20, 15]
 };
 
-// Mestre - 4 faixas | In Taberna Quando Sumus, 120 BPM
+// Mestre - 4 faixas | a faixa original de 110 BPM
 //
-// A MESMA MELODIA DA ESPADA, ACELERADA. Fecha o jogo com a musica que o jogador ja
-// domina, 10 BPM mais rapida e com a pista inteira aberta.
+// REVERTIDA POR INTEIRO. Esta fase chegou a trocar de musica (In Taberna a 120 BPM),
+// de andamento e de velocidade, e o teste reprovou: a versao antiga era melhor. Musica,
+// motivo, velocidade, ganho e primeira batida voltaram todos ao que eram.
 //
-// Substituiu La Rotta, que NAO era problema de sincronia: medida contra os ataques
-// reais, a grade dela ficava a -2,5 ms com dispersao de 75,9 ms, mais travada que a da
-// propria Espada (+83,7 ms). O defeito era outro — flauta solo sem tambor nao produz
-// pulso que o jogador consiga ANTECIPAR, e antecipar e o que o jogo pede. In Taberna
-// tem razao percussao/melodia 3,87 contra 0,22 de La Rotta, e 93% das batidas com
-// ataque real a menos de 40 ms.
+// Ela continua sendo A REFERENCIA de personalidade do projeto, e o motivo dela e a
+// prova da regra que vale para as outras: toca o tempo 3, que mede 0,81 — abaixo do
+// piso, silencio real — e pula o 4&, que mede 1,74. Toca onde a faixa cala.
 //
-// Perfil: 3,04 / 1,84 / 2,33 / 1,17 / 2,81 / 1,51 / 2,61 / 0,83. Vivas sao os quatro
-// tempos mais os contratempos de 1 e de 3; o 4& e morto e nunca e tocado.
-//
-// A frase 2 pula o tempo 2, que mede 2,33 e esta bem vivo — e o buraco de proposito.
-//
-// A 6 de velocidade a colcheia fica com 45 px de vao, MAIS largo que os 37 px que a
-// Espada usava a 110 BPM: a fase fica mais dificil sem ficar menos legivel.
+// Os pesos de figura dela sao o padrao das fases que nao declaram os seus.
 fases_data[5] = {
     id: "espada",
     nome: "Forjar Espada",
     dificuldade: "Mestre",
     musica_fase: snd_fase_06,
-    ganho_musica: 0.830,
+    ganho_musica: 0.917,
     sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
     duracao_segundos: 60,
-    velocidade_notas: 6,
+    velocidade_notas: 5,
     tipos_seta_permitidos: 4,
     stats_limite_sequencia_errada: 6,
-    beat_tempo_bpm: 120,
-    primeira_batida_ms: 355.3,
+    beat_tempo_bpm: 110,
+    primeira_batida_ms: 383.1,
 
-    // frase 1:  1  1&  2  .  3  3&  4  .      frase 2:  1  1&  .  .  3  3&  4  .
     ritmo_patterns: [
-        [0.5, 0.5, 1, 0.5, 0.5, 1,   0.5, 1.5, 0.5, 0.5, 1]
+        [1, 1, 0.5, 0.5, 1]
     ],
 
     // pesos de figura: [escada, varredura, alternar, repetir]
-    // o perfil da Espada, que e o padrao das fases que nao declaram o seu
     figuras: [34, 24, 24, 18]
 };
 
