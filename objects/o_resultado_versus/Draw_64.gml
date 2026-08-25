@@ -64,43 +64,38 @@ for (var i = 0; i < 2; i++) {
     if (tempo >= VERSUS_T_DETALHE) {
         var _yd = _by + _bh + 28;
 
-        // TEXTO COM CONTORNO, e nao draw_text puro.
+        // A MESMA GRADE DA TELA DE RESULTADO DE UM JOGADOR: tinta escura sobre o
+        // pergaminho, rotulo com dois-pontos, sem contorno e sem cor por tier.
         //
-        // Estas cores foram escolhidas para o fundo escuro da pista e sao desenhadas
-        // sobre o pergaminho do corredor, que e claro (rgb 229,214,161). Medido: o
-        // ouro da nota S dava 1,09:1 de contraste — invisivel — e a linha inteira de
-        // tiers ficava entre 1,76 e 2,72, toda abaixo do minimo de 4,5:1.
+        // As cores de tier foram tentadas aqui e reprovadas na medicao — elas nasceram
+        // para o fundo escuro da pista e dao entre 1,76 e 2,72 de contraste sobre o
+        // pergaminho, longe do minimo de 4,5. Contorna-las resolvia o contraste e
+        // criava uma segunda linguagem visual na mesma tela, competindo com a nota.
         //
-        // Trocar as cores por versoes escuras resolveria o contraste e mataria a
-        // leitura: e o CALOR que diz que perfeito vale mais que bom, e num fundo claro
-        // calor nao pode vir de luminosidade. O contorno preto resolve os dois: a borda
-        // faz o contraste, e o miolo continua quente. E o mesmo motivo pelo qual o HUD
-        // em jogo usa hud_texto e nao draw_text.
+        // O contorno fica reservado para UMA coisa so, que e o veredito.
         draw_set_font(f_padrao_pequena);
 
         var _tx = _esq;
-        var _rotulos = ["Perfeitas ", "Ótimas ", "Boas "];
-        var _valores = [perfeitas[i], otimas[i], boas[i]];
-        var _cores = [COR_PERFEITO_GANHO, COR_OTIMO_GANHO, COR_BOM_GANHO];
+        var _campos = ["Perfeitas: " + string(perfeitas[i]),
+                       "Ótimas: "    + string(otimas[i]),
+                       "Boas: "      + string(boas[i]),
+                       "Erros: "     + string(erros[i])];
 
-        for (var _k = 0; _k < 3; _k++) {
-            var _txt = _rotulos[_k] + string(_valores[_k]);
-            hud_texto(_tx, _yd, _txt, _cores[_k], 1, fa_left);
-            _tx += string_width(_txt) + 26;
+        for (var _k = 0; _k < array_length(_campos); _k++) {
+            hud_texto_painel(_tx, _yd, _campos[_k], _tinta, f_padrao_pequena, fa_left);
+            _tx += string_width(_campos[_k]) + 30;
         }
 
-        // UMA COLUNA SO DE ERRO. Nota perdida e tecla errada entram juntas: um erro e
-        // um erro, indiferente do motivo, e separar as duas so escondia metade da
-        // falha de quem lia o resultado.
-        hud_texto(_tx, _yd, "Erros " + string(erros[i]), COR_ERRO, 1, fa_left);
-
-        // A NOTA E O VEREDITO, e ganha o corpo de veredito: a letra sai em escala 2,
-        // com o rotulo pequeno ao lado.
+        // A NOTA E O VEREDITO, e e a unica coisa desta linha com tratamento proprio: a
+        // letra em escala 2, na cor do rank, com contorno. Medido, o ouro do S dava
+        // 1,09:1 sobre o pergaminho — invisivel sem a borda.
         draw_set_font(f_padrao);
         var _letra = notas[i];
         var _lw = string_width(_letra) * 2;
 
-        hud_texto(_dir - _lw - 6, _yd, "Nota", make_colour_rgb(40, 28, 18), 1, fa_right);
+        hud_texto_painel(_dir - _lw - 8, _yd, "Nota", _tinta, f_padrao_pequena, fa_right);
+
+        draw_set_font(f_padrao);
         hud_texto(_dir, _yd, _letra, icone_rank_cor(_letra), 2, fa_right);
     }
 }
