@@ -9,10 +9,10 @@ if (keyboard_check_pressed(vk_escape) || input_pressed(ACAO.VOLTAR)) {
     exit;
 }
 
-// --- TROCA DE FASE ---
+// --- TROCA DE PAGINA ---
 var _h = input_eixo_h();
-if (_h != 0 && total_fases > 1) {
-    fase_exibida = (fase_exibida + _h + total_fases) mod total_fases;
+if (_h != 0 && total_paginas > 1) {
+    pagina = (pagina + _h + total_paginas) mod total_paginas;
 
     var _som = o_controlador_geral.nav_sounds[o_controlador_geral.nav_sound_index];
     o_audio_manager.play_sfx(_som);

@@ -31,17 +31,32 @@ confirmar = function() {
         _nome += placar_letra(letras[i]);
     }
 
-    // O nivel vem da tela de resultado, que ja o calculou para desenhar a arma: recalcular
-    // aqui poderia dar outro numero, porque a precisao do placar usa outro denominador.
-    var _nivel = instance_exists(o_controlador_resultado)
-        ? o_controlador_resultado.nivel_forjado
-        : 0;
+    var _pos;
 
-    var _pos = placar_registrar(o_controlador_geral.fase_atual,
+    if (o_controlador_geral.modo_jogo == MODO.ARCADE) {
+        // O percurso vai para a tabela do Arcade com o TOTAL e quantas armas forjou.
+        var _armas = array_length(o_controlador_geral.arcade_forjadas);
+        var _completou = (_armas >= min(ARCADE_TOTAL_FASES,
+                                        array_length(o_controlador_geral.fases_data)));
+
+        _pos = placar_arcade_registrar(_nome,
+                                       o_controlador_geral.pontuacao,
+                                       _armas,
+                                       _completou);
+    } else {
+        // O nivel vem da tela de resultado, que ja o calculou para desenhar a arma:
+        // recalcular aqui poderia dar outro numero, porque a precisao do placar usa
+        // outro denominador.
+        var _nivel = instance_exists(o_controlador_resultado)
+            ? o_controlador_resultado.nivel_forjado
+            : 0;
+
+        _pos = placar_registrar(o_controlador_geral.fase_atual,
                                 _nome,
                                 o_controlador_geral.pontuacao,
                                 precisao,
                                 _nivel);
+    }
 
     // so o primeiro lugar vira anuncio na tela de resultado
     if (instance_exists(o_controlador_resultado)) {

@@ -130,13 +130,24 @@ function ritmo_tabela_impacto() {
     static _tabela = undefined;
 
     if (is_undefined(_tabela)) {
-        // conjunto base, o unico que existe por enquanto
-        var _base = [s_impacto_baixo, s_impacto_cima, s_impacto_dir, s_impacto_esq];
-
+        // Um conjunto POR QUALIDADE, indexado pelo tipo da faixa. Os sprites novos ja
+        // sao nomeados pelo tipo, entao o indice e direto.
+        //
+        // O conjunto anterior era um so para as tres qualidades, e a lista dele vinha
+        // com os indices 2 e 3 invertidos DE PROPOSITO: os sprites s_impacto_esq e
+        // s_impacto_dir estao com os nomes trocados — o "esq" e verde e o "dir" e
+        // azul, enquanto a faixa 2 (ESQ) usa nota azul e a 3 (DIR) usa verde. A
+        // inversao na tabela consertava a troca no nome. Aqui isso deixa de existir.
         _tabela = {};
-        _tabela[$ string(JULGAMENTO.BOM)]      = _base;   // <- trocar quando chegarem
-        _tabela[$ string(JULGAMENTO.OTIMO)]    = _base;
-        _tabela[$ string(JULGAMENTO.PERFEITO)] = _base;
+
+        _tabela[$ string(JULGAMENTO.BOM)] =
+            [s_vfx_bom_0, s_vfx_bom_1, s_vfx_bom_2, s_vfx_bom_3];
+
+        _tabela[$ string(JULGAMENTO.OTIMO)] =
+            [s_vfx_otimo_0, s_vfx_otimo_1, s_vfx_otimo_2, s_vfx_otimo_3];
+
+        _tabela[$ string(JULGAMENTO.PERFEITO)] =
+            [s_vfx_perfeito_0, s_vfx_perfeito_1, s_vfx_perfeito_2, s_vfx_perfeito_3];
     }
 
     return _tabela;

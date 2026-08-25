@@ -70,14 +70,21 @@ o_audio_manager.play_sfx(snd_menu_confirm);
 //
 // Fase perdida nao entra, pelo mesmo motivo do recorde (D-67).
 // =================================================================
-// O placar POR FASE nao serve para o Arcade: pontuacao_final ali e o total do
-// percurso inteiro, e grava-lo no recorde da ultima arma corromperia a tabela do Modo
-// Livre com um numero de outra natureza. O ranking do Arcade e uma frente propria
-// (leaderboard.arcade, ja reservado no save) e entra em seguida.
-if (!pediu_iniciais
-    && o_controlador_geral.modo_jogo != MODO.ARCADE
-    && !o_controlador_geral.fase_falhou
-    && placar_posicao(o_controlador_geral.fase_atual, pontuacao_final) > 0) {
+// AS DUAS TABELAS SAO SEPARADAS, e cada uma tem a sua regra de entrada.
+//
+// Livre  — recusa fase perdida, porque recorde e de trabalho concluido (D-67).
+// Arcade — ACEITA percurso perdido, porque perder e o jeito normal de o percurso
+//          acabar, e o quanto o jogador andou antes disso e o que a tabela mede.
+//
+// Misturar as duas seria pior que feio: o Arcade soma ate seis fases, entao um
+// percurso mediano vale mais que a melhor partida solta de qualquer fase, e o Modo
+// Livre sumiria do topo para sempre.
+var _entra_no_placar = (o_controlador_geral.modo_jogo == MODO.ARCADE)
+    ? (placar_arcade_posicao(pontuacao_final) > 0)
+    : (!o_controlador_geral.fase_falhou
+       && placar_posicao(o_controlador_geral.fase_atual, pontuacao_final) > 0);
+
+if (!pediu_iniciais && _entra_no_placar) {
 
     pediu_iniciais = true;
     instance_create_depth(0, 0, -9000, o_tela_nome);

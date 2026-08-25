@@ -12,8 +12,12 @@ draw_text(_cx, _topo + 40, "RECORDES");
 
 // --- FASE EXIBIDA ---
 // As setas laterais só aparecem quando há para onde ir.
-var _nome_fase = o_controlador_geral.fases_data[fase_exibida].nome;
-var _rotulo = (total_fases > 1) ? ("<  " + _nome_fase + "  >") : _nome_fase;
+var _arcade = (pagina == 0);
+var _nome_pagina = _arcade
+    ? "MODO ARCADE"
+    : o_controlador_geral.fases_data[pagina - 1].nome;
+
+var _rotulo = (total_paginas > 1) ? ("<  " + _nome_pagina + "  >") : _nome_pagina;
 
 draw_set_color(UI_COR_DESTAQUE);
 draw_text(_cx, _topo + 82, _rotulo);
@@ -46,7 +50,11 @@ draw_set_halign(fa_left);
 draw_text(_col_nome, _y_cabecalho, "Nome");
 draw_set_halign(fa_right);
 draw_text(_col_pontos, _y_cabecalho, "Pontos");
-draw_text(_col_precisao, _y_cabecalho, "Precisão");
+
+// A terceira coluna muda de significado com a frente: no Livre e a precisao daquela
+// fase, no Arcade e quantas armas o jogador chegou a forjar. Sao as duas coisas que
+// desempatam totais parecidos em cada modo.
+draw_text(_col_precisao, _y_cabecalho, _arcade ? "Armas" : "Precisão");
 draw_set_alpha(1);
 
 // linha separando o cabeçalho das entradas
@@ -54,7 +62,7 @@ draw_set_alpha(0.25);
 draw_line(_col_pos - 24, _y_cabecalho + 18, _col_precisao, _y_cabecalho + 18);
 draw_set_alpha(1);
 
-var _lista = placar_livre(fase_exibida);
+var _lista = _arcade ? placar_arcade() : placar_livre(pagina - 1);
 
 if (array_length(_lista) == 0) {
     draw_set_halign(fa_center);
@@ -79,7 +87,16 @@ if (array_length(_lista) == 0) {
 
         draw_set_halign(fa_right);
         draw_text(_col_pontos, _y, string(_e.pontos));
-        draw_text(_col_precisao, _y, string(_e.precisao) + "%");
+
+        if (_arcade) {
+            // Um asterisco marca quem fechou o percurso inteiro. Entre dois totais
+            // parecidos, quem completou fez a corrida mais longa.
+            var _armas = variable_struct_exists(_e, "armas") ? _e.armas : 0;
+            var _fim = (variable_struct_exists(_e, "completou") && _e.completou) ? "*" : "";
+            draw_text(_col_precisao, _y, string(_armas) + _fim);
+        } else {
+            draw_text(_col_precisao, _y, string(_e.precisao) + "%");
+        }
     }
 }
 
@@ -88,6 +105,6 @@ draw_set_font(f_padrao_pequena);
 draw_set_halign(fa_center);
 draw_set_color(c_black);
 draw_text(_cx, _topo + PAINEL_ALTURA + 30,
-          (total_fases > 1) ? "LADOS trocam de fase  -  ESC fecha" : "ESC fecha");
+          (total_paginas > 1) ? "LADOS trocam de tabela  -  ESC fecha" : "ESC fecha");
 
 ui_reset();

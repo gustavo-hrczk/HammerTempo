@@ -4,10 +4,15 @@
 ///   Livre  — top 10 por fase, com a pontuação daquela fase isolada
 ///   Arcade — top 10 do percurso inteiro, com o total acumulado
 ///
-/// Elas nunca se misturam: uma pontuação feita na Fase 3 dentro do Arcade não disputa
-/// com o recorde de quem jogou a Fase 3 sozinha, porque o Arcade grava o TOTAL do
-/// percurso e não pontuações de fase. Este arquivo trata da frente Livre; a Arcade
-/// entra quando o modo existir.
+/// Elas nunca se misturam, e a separação é OBRIGATÓRIA e não estética: o Arcade soma
+/// até seis fases, então um percurso mediano vale muito mais pontos que a melhor
+/// partida solta de qualquer fase. Numa tabela só, o Modo Livre desapareceria do topo
+/// para sempre — os dois números medem coisas diferentes.
+///
+/// Outra diferença: a frente Livre RECUSA fase perdida, porque recorde é de trabalho
+/// concluído (D-67). A Arcade ACEITA percurso perdido, porque no Arcade perder é o
+/// jeito normal de a partida acabar — e o quanto o jogador andou antes de perder é
+/// exatamente o que a tabela mede.
 
 #macro PLACAR_MAX 10
 #macro PLACAR_LETRAS "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -127,4 +132,68 @@ function placar_desenhar_nome(_x, _y, _nome, _slot = 18) {
     }
 
     draw_set_halign(_halign);
+}
+
+
+// =====================================================================
+// FRENTE ARCADE
+// Uma tabela só para o jogo inteiro, com o total do percurso. Não é por fase.
+// =====================================================================
+
+/// Tabela do Arcade, do maior para o menor. Leitura pura, como placar_livre.
+function placar_arcade() {
+    var _l = global.save.leaderboard;
+
+    if (!variable_struct_exists(_l, arcade) || !is_array(_l.arcade)) {
+        return [];
+    }
+    return _l.arcade;
+}
+
+/// Em que posição este total entraria (1 a PLACAR_MAX), ou 0 se não entra.
+///
+/// Empate não ultrapassa, pelo mesmo motivo da frente Livre: numa fila de feira,
+/// empates acontecem e quem chegou primeiro fica na frente.
+function placar_arcade_posicao(_pontos) {
+    if (_pontos <= 0) return 0;
+
+    var _lista = placar_arcade();
+
+    for (var i = 0; i < array_length(_lista); i++) {
+        if (_pontos > _lista[i].pontos) return i + 1;
+    }
+
+    if (array_length(_lista) < PLACAR_MAX) return array_length(_lista) + 1;
+
+    return 0;
+}
+
+/// Grava um percurso na tabela do Arcade. Devolve a posição, ou 0 se não entrou.
+///
+/// _armas é quantas armas o jogador chegou a forjar, e _completou diz se ele
+/// fechou o percurso inteiro. Os dois viram coluna: entre dois totais parecidos, quem
+/// forjou mais armas fez a corrida mais longa, e isso merece aparecer.
+function placar_arcade_registrar(_nome, _pontos, _armas, _completou) {
+    var _pos = placar_arcade_posicao(_pontos);
+    if (_pos == 0) return 0;
+
+    var _l = global.save.leaderboard;
+
+    if (!variable_struct_exists(_l, arcade) || !is_array(_l.arcade)) {
+        _l.arcade = [];
+    }
+
+    array_insert(_l.arcade, _pos - 1, {
+        nome: string_copy(string_upper(_nome), 1, PLACAR_NOME_TAMANHO),
+        pontos: _pontos,
+        armas: _armas,
+        completou: _completou
+    });
+
+    while (array_length(_l.arcade) > PLACAR_MAX) {
+        array_delete(_l.arcade, PLACAR_MAX, 1);
+    }
+
+    save_gravar();
+    return _pos;
 }
