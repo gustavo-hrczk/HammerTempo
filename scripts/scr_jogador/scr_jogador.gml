@@ -154,6 +154,11 @@ function versus_montar_cena() {
     var _y_bigorna = _b1.y;
     var _y_ferreiro = _f1.y;
 
+    // Guarda de onde o jogador 1 saiu, para o desmonte devolver. Sem isto, sair de um
+    // Versus e comecar uma partida solo na MESMA sala deixava o ferreiro recuado, e ele
+    // caminhava de volta ao home_x na frente do jogador.
+    global.versus_x_original = [_b1.x, _f1.x];
+
     _b1.x = VERSUS_BIGORNA_P1;
     _f1.x = VERSUS_BIGORNA_P1 + VERSUS_VAO_FERREIRO;
     _f1.home_x = _f1.x;
@@ -161,12 +166,24 @@ function versus_montar_cena() {
     var _b2 = instance_create_layer(VERSUS_BIGORNA_P2, _y_bigorna, "Gameplay", o_bigorna);
     _b2.dono = 1;
 
+    // MESMA PROFUNDIDADE DO JOGADOR 1. Sem isto o par do jogador 2 nascia atras da
+    // construcao da forja, que ocupa o meio da tela ate perto de x=1030 — o ferreiro 2
+    // existia e simplesmente nao aparecia.
+    _b2.depth = _b1.depth;
+
     // O ferreiro 2 fica do outro lado da propria bigorna: a cena inteira dele e o
     // espelho da do jogador 1.
     var _f2 = instance_create_layer(VERSUS_BIGORNA_P2 - VERSUS_VAO_FERREIRO,
                                     _y_ferreiro, "Gameplay", o_ferreiro);
     _f2.dono = 1;
     _f2.home_x = _f2.x;
+    _f2.depth = _f1.depth;
+
+    // ENTRADA EM DEGRADE. O par do jogador 2 nao pode simplesmente aparecer no meio da
+    // cena: ele surge transparente e ganha corpo em meio segundo, o que le como "o
+    // segundo ferreiro chegando a forja" em vez de um erro de desenho.
+    _f2.image_alpha = 0;
+    _b2.image_alpha = 0;
 
     // o conjunto de sprites foi montado no Create com dono 0; agora que ele sabe quem
     // e, remonta com a paleta e o espelho certos
@@ -179,15 +196,38 @@ function versus_montar_cena() {
         _a.dono = 1;
         _a.meu_tipo = _t;
         _a.sprite_index = ritmo_sprite_alvo(_t);
+        _a.image_alpha = 0;
     }
 
     var _fundo2 = instance_create_layer(0, RITMO_CORREDOR_P2, "Gameplay", o_fundo_ui);
     _fundo2.dono = 1;
     _fundo2.image_yscale = -1;   // a moldura do corredor aponta para dentro da tela
+    _fundo2.image_alpha = 0;
+
+    with (o_buttons_forja) { if (dono == 1) image_alpha = 0; }
+}
+
+/// Faz a cena do jogador 2 ganhar corpo. Chamada todo quadro; para sozinha no fim.
+function versus_revelar_cena() {
+    if (!versus_ativo()) return;
+
+    var _passo = 1 / (room_speed * 0.5);
+
+    with (o_ferreiro)      { if (dono == 1) image_alpha = min(1, image_alpha + _passo); }
+    with (o_bigorna)       { if (dono == 1) image_alpha = min(1, image_alpha + _passo); }
+    with (o_fundo_ui)      { if (dono == 1) image_alpha = min(1, image_alpha + _passo); }
+    with (o_buttons_forja) { if (dono == 1) image_alpha = min(1, image_alpha + _passo); }
 }
 
 /// Desfaz a montagem, devolvendo a cena de um jogador.
 function versus_desmontar_cena() {
+    if (variable_global_exists("versus_x_original")) {
+        var _o = global.versus_x_original;
+
+        with (o_bigorna)  { if (dono == 0) x = _o[0]; }
+        with (o_ferreiro) { if (dono == 0) { x = _o[1]; home_x = _o[1]; } }
+    }
+
     with (o_bigorna)       { if (dono == 1) instance_destroy(); }
     with (o_ferreiro)      { if (dono == 1) instance_destroy(); }
     with (o_buttons_forja) { if (dono == 1) instance_destroy(); }

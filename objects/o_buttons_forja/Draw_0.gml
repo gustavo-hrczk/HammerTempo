@@ -24,14 +24,16 @@ if (eco > 0) {
     var _ey = y + afundamento + (_h * (1 - _ee)) / 2;
 
     gpu_set_blendmode(bm_add);
-    draw_sprite_ext(sprite_index, image_index, _ex, _ey, _ee, _ee, 0, eco_cor, eco * 0.40);
+    draw_sprite_ext(sprite_index, image_index, _ex, _ey, _ee, _ee, 0, eco_cor, eco * 0.40 * image_alpha);
     gpu_set_blendmode(bm_normal);
 }
 
-draw_sprite_ext(sprite_index, image_index, _dx, _dy, _s, _s, 0, c_white, 1);
+// image_alpha e respeitado porque os alvos do jogador 2 nascem transparentes e ganham
+// corpo em degrade — ver versus_revelar_cena.
+draw_sprite_ext(sprite_index, image_index, _dx, _dy, _s, _s, 0, c_white, image_alpha);
 
 if (brilho > 0) {
     gpu_set_blendmode(bm_add);
-    draw_sprite_ext(sprite_index, image_index, _dx, _dy, _s, _s, 0, brilho_cor, brilho * 0.55);
+    draw_sprite_ext(sprite_index, image_index, _dx, _dy, _s, _s, 0, brilho_cor, brilho * 0.55 * image_alpha);
     gpu_set_blendmode(bm_normal);
 }

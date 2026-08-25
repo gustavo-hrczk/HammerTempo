@@ -89,7 +89,11 @@ else if (pausa) {
     var _cx = _gw / 2;
     var _cy = _gh / 2;
 
-    var _total = array_length(pausa_opcoes);
+    // A lista muda com o modo: Arcade e Versus nao tem "Reiniciar" (ver
+    // pausa_opcoes_agora). Desenhar a lista fixa mostraria uma opcao que o
+    // confirmar nao executa.
+    var _lista_pausa = pausa_opcoes_agora();
+    var _total = array_length(_lista_pausa);
     var _altura_painel = ((_total + 1) * UI_ITEM_GAP) + UI_PAINEL_PADDING; // +1 pelo título
 
     draw_sprite_stretched(s_menu_background_panel, 0,
@@ -105,7 +109,7 @@ else if (pausa) {
     var _primeiro = _cy - (((_total - 1) * UI_ITEM_GAP) / 2) + 20;
 
     for (var i = 0; i < _total; i++) {
-        ui_item_menu(_cx, _primeiro + (i * UI_ITEM_GAP), pausa_opcoes[i], i == pausa_opcao);
+        ui_item_menu(_cx, _primeiro + (i * UI_ITEM_GAP), _lista_pausa[i], i == pausa_opcao);
     }
 
     ui_reset();

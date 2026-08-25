@@ -335,8 +335,10 @@ function hud_draw() {
     if (versus_ativo()) {
         var _e = global.hud_entrada;
 
-        versus_placar(0, _e);
-        versus_placar(1, _e);
+        // O MESMO painel dos dois lados, um por jogador — ver hud_bloco_y. O jogador 1
+        // fica com o painel acima do corredor dele, o 2 com o painel abaixo do dele.
+        hud_painel_jogador(0, _e);
+        hud_painel_jogador(1, _e);
         versus_faixa_vez(_e);
 
         // barra de progresso da fase, no rodape, igual ao modo de um jogador
@@ -362,14 +364,16 @@ function hud_draw() {
     // BLOCO PRINCIPAL — mesmo painel usado nos menus, para o HUD falar
     // a mesma língua visual do resto do jogo.
     // ---------------------------------------------------------------
-    draw_sprite_stretched(s_menu_background_panel, 0, HUD_BLOCO_X, HUD_BLOCO_Y, HUD_BLOCO_W, HUD_BLOCO_H);
+    var _bloco_y = hud_bloco_y(solo_jogador());
+
+    draw_sprite_stretched(s_menu_background_panel, 0, HUD_BLOCO_X, _bloco_y, HUD_BLOCO_W, HUD_BLOCO_H);
 
     var _esq = HUD_BLOCO_X + 20;
     var _dir = HUD_BLOCO_X + HUD_BLOCO_W - 20;
     var _tinta = make_colour_rgb(40, 28, 18); // marrom bem escuro, casa com o pergaminho
 
-    hud_texto_painel(_esq, HUD_BLOCO_Y + 32, "Pontos", _tinta, f_padrao_pequena, fa_left);
-    hud_texto_painel(_dir, HUD_BLOCO_Y + 32, string(round(global.hud_pontos_exibidos)), _tinta, f_padrao, fa_right);
+    hud_texto_painel(_esq, _bloco_y + 32, "Pontos", _tinta, f_padrao_pequena, fa_left);
+    hud_texto_painel(_dir, _bloco_y + 32, string(round(global.hud_pontos_exibidos)), _tinta, f_padrao, fa_right);
 
     // ganho de pontos subindo a partir do próprio número
     if (global.hud_ganho_timer > 0) {
@@ -377,7 +381,7 @@ function hud_draw() {
         var _prog = 1 - (global.hud_ganho_timer / _dur);
 
         draw_set_alpha((1 - (_prog * _prog)) * _entrada);
-        hud_texto_painel(_dir, HUD_BLOCO_Y + 14 - (_prog * 22),
+        hud_texto_painel(_dir, _bloco_y + 14 - (_prog * 22),
                          "+" + string(global.hud_ganho_valor),
                          global.hud_ganho_cor, f_padrao, fa_right);
         draw_set_alpha(_entrada);
@@ -386,18 +390,18 @@ function hud_draw() {
     var _acertos = jogador().acertos();
     var _julgadas = jogador().julgadas();
     var _precisao = (_julgadas > 0) ? (_acertos / _julgadas) * 100 : 100;
-    hud_texto_painel(_esq, HUD_BLOCO_Y + 72, "Precisão", _tinta, f_padrao_pequena, fa_left);
-    hud_texto_painel(_dir, HUD_BLOCO_Y + 72, string(round(_precisao)) + "%", _tinta, f_padrao, fa_right);
+    hud_texto_painel(_esq, _bloco_y + 72, "Precisão", _tinta, f_padrao_pequena, fa_left);
+    hud_texto_painel(_dir, _bloco_y + 72, string(round(_precisao)) + "%", _tinta, f_padrao, fa_right);
 
     // linha separando os dados fixos do combo
     draw_set_alpha(0.25 * _entrada);
     draw_set_color(_tinta);
-    draw_line(_esq, HUD_BLOCO_Y + 86, _dir, HUD_BLOCO_Y + 86);
+    draw_line(_esq, _bloco_y + 86, _dir, _bloco_y + 86);
     draw_set_alpha(_entrada);
 
     // combo — só existe a partir de HUD_COMBO_MINIMO acertos seguidos
     var _combo_x = HUD_BLOCO_X + (HUD_BLOCO_W / 2);
-    var _combo_y = HUD_BLOCO_Y + 106;
+    var _combo_y = _bloco_y + 106;
 
     var _seq = jogador().stats_sequencia;
     if (_seq >= HUD_COMBO_MINIMO) {
@@ -425,7 +429,7 @@ function hud_draw() {
     // 30 px abaixo da base do bloco. O corredor das notas começa em y = 515 e o
     // texto tem 30 px de altura, então a borda de baixo encosta nele por 2 px —
     // o limite prático de quanto a origem pode descer.
-    var _jy_base = HUD_BLOCO_Y + HUD_BLOCO_H + 30;
+    var _jy_base = _bloco_y + HUD_BLOCO_H + 30;
 
     draw_set_font(f_padrao);
 
@@ -613,6 +617,69 @@ function versus_cor(_dono) {
 
 function versus_nome(_dono) {
     return (_dono == 0) ? "JOGADOR 1" : "JOGADOR 2";
+}
+
+/// Onde fica o painel de um jogador.
+///
+/// O MESMO painel de pergaminho dos dois lados, e nao uma leitura solta para o jogador
+/// 2: ele e a lingua visual do jogo inteiro, e trocar de caixa so para o de cima faria
+/// os dois placares parecerem coisas diferentes.
+///
+/// O jogador 1 tem o painel ACIMA do corredor dele, como sempre teve. O do jogador 2
+/// fica ABAIXO do corredor dele — os dois ficam entre a pista e a cena, que e onde
+/// sobra espaco em cada metade.
+function hud_bloco_y(_dono) {
+    if (!versus_ativo()) return HUD_BLOCO_Y;
+
+    return (_dono == 0) ? HUD_BLOCO_Y
+                        : (RITMO_CORREDOR_P2 + 210 + 22);
+}
+
+/// Para que lado sobe o texto de julgamento deste jogador.
+///
+/// Sobe no jogador 1 e DESCE no jogador 2: em cada metade da tela o texto se afasta da
+/// pista em vez de atravessa-la, e o gesto fica espelhado como o resto do layout.
+function hud_sentido_julgamento(_dono) {
+    if (!versus_ativo()) return -1;
+    return (_dono == 0) ? -1 : 1;
+}
+
+/// O painel de pergaminho de um jogador, com pontos, precisao e combo.
+///
+/// E o MESMO painel do modo de um jogador, so que posicionado pelo dono. Reaproveita-lo
+/// era o certo: uma caixa diferente para o jogador de cima faria os dois placares
+/// parecerem coisas de naturezas diferentes, quando eles medem exatamente o mesmo.
+function hud_painel_jogador(_dono, _alpha) {
+    var _j = jogador(_dono);
+    var _y = hud_bloco_y(_dono);
+
+    // O jogador 2 fica com o painel do lado DIREITO da tela, embaixo do corredor dele:
+    // ele esta a direita do gabinete, e a leitura dele acompanha.
+    var _x = (_dono == 0) ? HUD_BLOCO_X
+                          : (display_get_gui_width() - HUD_BLOCO_X - HUD_BLOCO_W);
+
+    var _tinta = make_colour_rgb(40, 28, 18);
+
+    draw_set_alpha(_alpha);
+    draw_sprite_stretched(s_menu_background_panel, 0, _x, _y, HUD_BLOCO_W, HUD_BLOCO_H);
+
+    var _esq = _x + 20;
+    var _dir = _x + HUD_BLOCO_W - 20;
+
+    hud_texto_painel(_esq, _y + 20, versus_nome(_dono), versus_cor(_dono),
+                     f_padrao_pequena, fa_left);
+
+    hud_texto_painel(_esq, _y + 58, "Pontos", _tinta, f_padrao_pequena, fa_left);
+    hud_texto_painel(_dir, _y + 58, string(_j.pontuacao), _tinta, f_padrao, fa_right);
+
+    var _seq = _j.stats_sequencia;
+    if (_seq >= HUD_COMBO_MINIMO) {
+        hud_texto_painel(_x + (HUD_BLOCO_W / 2), _y + 98,
+                         "Combo x" + string(_seq), hud_cor_combo(_seq),
+                         f_padrao, fa_center);
+    }
+
+    draw_set_alpha(1);
 }
 
 /// Placar compacto de um jogador, ancorado no corredor dele.

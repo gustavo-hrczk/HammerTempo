@@ -163,7 +163,14 @@ arcade_avancar = function() {
     arcade_pontos += _total_fase;
 
     arcade_indice++;
+
+    // O COMBO ATRAVESSA AS FASES. O percurso e uma partida so, e zerar a sequencia na
+    // troca de arma puniria justamente quem vinha bem — a recompensa de manter o combo
+    // e o que segura a atencao ao longo de seis minutos.
+    var _combo = jogador().stats_sequencia;
     resetar_estatisticas();
+    jogador().stats_sequencia = _combo;
+
     fase_atual = arcade_indice;
 
     // Emenda pela CONTAGEM, que e o que faz a faixa com o nome da proxima arma
@@ -202,6 +209,31 @@ pausa_opcao = 0;
 // O rótulo antigo também mentia: abandonar_partida() leva ao SELETOR DE FASES, não
 // ao menu principal.
 pausa_opcoes = ["Continuar", "Reiniciar", "Sair"];
+
+/// As opcoes de pausa da partida corrente.
+///
+/// REINICIAR SAI DO ARCADE E DO VERSUS. No Arcade ele e uma porta dos fundos para o
+/// game over: bastava pausar antes de perder e refazer a fase com a pontuacao das
+/// anteriores intacta, o que esvazia o risco que da sentido ao percurso.
+///
+/// No Versus o motivo e outro: reiniciar e decisao de UM jogador sobre a partida dos
+/// dois, e quem esta ganhando nunca vai querer.
+pausa_opcoes_agora = function() {
+    if (modo_jogo == MODO.ARCADE || modo_jogo == MODO.VERSUS) {
+        return ["Continuar", "Sair"];
+    }
+    return pausa_opcoes;
+};
+
+/// O que a opcao escolhida faz. Separado da lista porque os indices mudam com ela.
+pausa_executar = function(_opcao) {
+    var _lista = pausa_opcoes_agora();
+    var _rotulo = _lista[_opcao];
+
+    if (_rotulo == "Continuar") { retomar_partida();   return; }
+    if (_rotulo == "Reiniciar") { reiniciar_partida(); return; }
+    abandonar_partida();
+};
 
 // Contagem de retomada: sair da pausa direto no meio da música é injusto se houver
 // nota chegando. O jogo fica congelado mais alguns segundos, agora com o campo à
@@ -261,8 +293,15 @@ abandonar_partida = function() {
     // inteiro, entao abandonar leva ao menu. Sem isto o estado SELECAO_FASE chamaria
     // arcade_iniciar_percurso() no frame seguinte, e "Sair" reiniciaria o percurso
     // num laco em vez de sair.
-    if (modo_jogo == MODO.ARCADE) {
+    // ARCADE e VERSUS nao tem seletor de armas para onde voltar: a unidade dos dois e
+    // a partida inteira, entao abandonar leva ao menu.
+    //
+    // O Versus faltava aqui, e o efeito era pior que voltar ao lugar errado: o estado
+    // SELECAO_FASE chamava versus_montar_cena() de novo com a cena ja montada e o
+    // seletor por cima, e a tela virava um amontoado.
+    if (modo_jogo == MODO.ARCADE || modo_jogo == MODO.VERSUS) {
         modo_jogo = MODO.LIVRE;
+        solo_dono = 0;
         estado_jogo = MINIGAME.NENHUM;
         ir_para_sala(rm_menu);
         return;

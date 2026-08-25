@@ -12,7 +12,7 @@ if (pausa) {
 
     var _mv = input_eixo_v();
     if (_mv != 0) {
-        var _total = array_length(pausa_opcoes);
+        var _total = array_length(pausa_opcoes_agora());
         pausa_opcao = (pausa_opcao + _mv + _total) mod _total;
         o_audio_manager.play_sfx(nav_sounds[nav_sound_index]);
         nav_sound_index = 1 - nav_sound_index;
@@ -26,11 +26,7 @@ if (pausa) {
     }
     else if (input_pressed(ACAO.CONFIRMAR)) {
         o_audio_manager.play_sfx(snd_menu_confirm);
-        switch (pausa_opcao) {
-            case 0: retomar_partida();   break;
-            case 1: reiniciar_partida(); break;
-            case 2: abandonar_partida(); break;
-        }
+        pausa_executar(pausa_opcao);
     }
 
     exit; // pausado: nada mais roda
@@ -103,6 +99,7 @@ switch (estado_jogo) {
             // no estado que antecede a partida, para a cena ja estar montada quando a
             // contagem comecar.
             versus_montar_cena();
+            versus_revelar_cena();
 
             // Fora do Versus, a cena inteira passa a pertencer a quem esta jogando —
             // o que so muda alguma coisa quando o jogador 2 comeca a partida sozinho.
@@ -120,6 +117,9 @@ switch (estado_jogo) {
         break;
 
     case MINIGAME.CONTAGEM:
+        // o par do jogador 2 continua ganhando corpo durante a contagem
+        versus_revelar_cena();
+
         if (contagem_timer > 0) {
             contagem_timer--;
         } else {
