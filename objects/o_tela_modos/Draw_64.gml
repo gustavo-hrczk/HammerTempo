@@ -17,16 +17,9 @@ for (var i = 0; i < _total; i++) {
 }
 
 // --- DESCRIÇÃO DO MODO EM FOCO ---
-// Fora da moldura, em fonte pequena e tinta apagada: é apoio à decisão, não um item
-// de menu. Posição inteira pela regra da fonte de pixel (D-33).
-var _desc = descricoes[opcao_selecionada];
-
-if (_desc != "") {
-    draw_set_font(f_padrao_pequena);
-    draw_set_color(UI_COR_APAGADA);
-    draw_set_halign(fa_center);
-    draw_set_valign(fa_middle);
-    draw_text(_cx, floor(_cy + (_altura_painel / 2) + 26), _desc);
-}
+// Fora da moldura, então vai com placa de fundo: a tinta apagada sobre a nuvem clara
+// media 1,9:1 e era quase invisível. ui_texto_flutuante garante 8,7:1 no pior fundo
+// possível — é o padrão para qualquer texto sem painel atrás.
+ui_texto_flutuante(_cx, _cy + (_altura_painel / 2) + 34, descricoes[opcao_selecionada]);
 
 ui_reset();

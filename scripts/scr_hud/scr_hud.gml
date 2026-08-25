@@ -420,31 +420,6 @@ function hud_draw() {
     draw_set_alpha(1);
 
     // ---------------------------------------------------------------
-    // NOME DA FASE — abertura, some depois de 4 s
-    // ---------------------------------------------------------------
-    var _fade_inicio = room_speed * 4;
-    if (global.hud_fase_timer < _fade_inicio + room_speed) {
-        var _alpha = (global.hud_fase_timer < _fade_inicio)
-            ? 1
-            : 1 - ((global.hud_fase_timer - _fade_inicio) / room_speed);
-
-        // O texto branco ficava em 1,41:1 sobre o céu mais claro do ciclo
-        // (s_bg_mid_clouds, luminância medida 0,697) — legível só pelo contorno.
-        // A placa de ponta a ponta derruba o fundo para 0,195 e leva o contraste a
-        // 4,3:1. O miolo cobre exatamente as duas linhas (y 22 a 88) e o alpha cai
-        // a zero em 420 px de cada lado, então ela não lê como tarja.
-        hud_placa_suave(0, -6, _gw, 116, c_black,
-                        0.72 * _alpha * _entrada, 420, 28);
-
-        draw_set_alpha(_alpha * _entrada);
-        draw_set_font(f_padrao);
-        hud_texto(_gw / 2, 40, string_upper(_fase.nome), c_white, 1);
-        draw_set_font(f_padrao_pequena);
-        hud_texto(_gw / 2, 74, _fase.dificuldade + "  -  " + string(round(_fase.beat_tempo_bpm)) + " BPM", c_white, 1);
-        draw_set_alpha(1);
-    }
-
-    // ---------------------------------------------------------------
     // PROGRESSO DA FASE — faixa de 13 px no rodapé
     // ---------------------------------------------------------------
     var _progresso = 1;
@@ -460,8 +435,13 @@ function hud_draw() {
     // errava cinco vezes sem sinal nenhum e falhava na sexta. Agora ele cresce em
     // até 4 estágios (ver hud_perigo_estagio), e cresce em duas dimensões — o alpha
     // da vinheta e a velocidade do pulso.
-    var _perigo = hud_perigo_estagio(_ctrl.stats_sequencia_errada,
-                                     _fase.stats_limite_sequencia_errada);
+    // Na fase imune do Arcade a forja NAO esfria: sem game over possivel, a vinheta
+    // vermelha e o aviso estariam mentindo sobre um risco que nao existe — e assustando
+    // exatamente o jogador que a imunidade existe para proteger.
+    var _perigo = _ctrl.arcade_fase_imune()
+        ? { estagio: 0, total: 1 }
+        : hud_perigo_estagio(_ctrl.stats_sequencia_errada,
+                             _fase.stats_limite_sequencia_errada);
 
     if (_perigo.estagio <= 0) {
         global.hud_aviso_ritmo = 1;
@@ -487,4 +467,86 @@ function hud_draw() {
     }
 
     ui_reset();
+}
+
+// =================================================================
+// TITULO DA FASE
+// =================================================================
+
+/// Segundos da janela inteira do titulo, contados do inicio da CONTAGEM.
+///
+/// A contagem dura 3 s, entao 4,0 deixa o titulo sumir 1 s DEPOIS de ela acabar e
+/// muito antes da primeira nota — a mais cedo do jogo chega aos 4,94 s de musica, que
+/// sao ~7,9 s de relogio de parede. O titulo nunca divide a tela com nota.
+#macro HUD_TITULO_DUR      4.0
+#macro HUD_TITULO_FADE_IN  0.4
+#macro HUD_TITULO_FADE_OUT 0.8
+
+/// Centro vertical da placa. Vai no MEIO DA TELA, e nao no cabecalho.
+///
+/// Duas razoes. A leitura: no topo o texto competia com o ceu e com a barra de vida,
+/// e ninguem olha para o canto superior quando esta esperando a contagem. E o Versus:
+/// se o layout duplo existir, o cabecalho vira corredor de notas do jogador 2, e o
+/// titulo teria de sair dali de qualquer jeito.
+///
+/// Nao colide com a contagem regressiva, que e desenhada dentro do corredor de notas
+/// (HUD_CORREDOR_TOPO..BASE), bem abaixo daqui.
+#macro HUD_TITULO_CY     300
+#macro HUD_TITULO_ALTURA 210
+
+/// Quanto tempo, em frames, desde o inicio da contagem desta fase.
+///
+/// Derivado, sem variavel nova: durante a CONTAGEM sai do proprio contagem_timer, que
+/// anda para tras, e depois emenda no hud_fase_timer, que comeca do zero quando o
+/// ritmo comeca.
+function hud_titulo_tempo() {
+    var _ctrl = o_controlador_geral;
+    var _contagem = 3 * room_speed;
+
+    if (_ctrl.estado_jogo == MINIGAME.CONTAGEM) {
+        return _contagem - _ctrl.contagem_timer;
+    }
+    return _contagem + global.hud_fase_timer;
+}
+
+/// Placa de abertura com o nome da fase. Chamada na CONTAGEM e no RITMO.
+///
+/// Antes vivia dentro de hud_draw, que so roda no RITMO — ou seja, o titulo aparecia
+/// DEPOIS da contagem e ficava 5 s por cima da partida ja em andamento. Agora ele abre
+/// junto com a contagem e ja saiu quando a fase comeca de fato.
+function hud_titulo_fase() {
+    var _fase = o_controlador_geral.fases_data[o_controlador_geral.fase_atual];
+
+    var _t = hud_titulo_tempo() / room_speed;
+    if (_t < 0 || _t >= HUD_TITULO_DUR) {
+        return;
+    }
+
+    // entra em degrade, segura, e sai em degrade
+    var _alpha = 1;
+    if (_t < HUD_TITULO_FADE_IN) {
+        _alpha = _t / HUD_TITULO_FADE_IN;
+    } else if (_t > HUD_TITULO_DUR - HUD_TITULO_FADE_OUT) {
+        _alpha = (HUD_TITULO_DUR - _t) / HUD_TITULO_FADE_OUT;
+    }
+
+    var _gw = display_get_gui_width();
+    var _meia = HUD_TITULO_ALTURA / 2;
+
+    // A placa vai de ponta a ponta e o alpha cai a zero em 420 px de cada lado, entao
+    // ela nao lê como tarja. O miolo cobre as duas linhas com folga.
+    hud_placa_suave(0, HUD_TITULO_CY - _meia, _gw, HUD_TITULO_CY + _meia,
+                    c_black, UI_PLACA_ALPHA * _alpha, 420, 46);
+
+    draw_set_alpha(_alpha);
+
+    draw_set_font(f_padrao);
+    hud_texto(_gw / 2, HUD_TITULO_CY - 22, string_upper(_fase.nome), c_white, 1);
+
+    draw_set_font(f_padrao_pequena);
+    hud_texto(_gw / 2, HUD_TITULO_CY + 26,
+              _fase.dificuldade + "  -  " + string(round(_fase.beat_tempo_bpm)) + " BPM",
+              UI_COR_PERGAMINHO, 1);
+
+    draw_set_alpha(1);
 }

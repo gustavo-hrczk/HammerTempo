@@ -35,6 +35,14 @@
 #macro UI_COR_COBRE_CLARO  make_colour_rgb(176, 92, 32)   // 3,29:1 — só em texto de 30 px
 #macro UI_COR_CARMIM       make_colour_rgb(158, 22, 40)   // 5,57:1
 #macro UI_COR_APAGADA      make_colour_rgb(120, 105, 95)  // texto secundário
+#macro UI_COR_PERGAMINHO   make_colour_rgb(229, 214, 161)  // a cor do painel, luminância 0,673
+
+/// Opacidade da placa preta atrás de texto solto sobre o cenário.
+///
+/// 0,80 é o valor que torna o contraste MEDIDO em vez de sorteado: ela derruba o pior
+/// fundo possível (branco puro) para luminância 0,033, e o creme do pergaminho fica em
+/// 8,7:1 em cima dela — acima do mínimo AAA de 7:1. Sobre céu escuro passa de 12:1.
+#macro UI_PLACA_ALPHA 0.80
 
 /// Logo das telas de menu, sempre no mesmo lugar.
 function ui_logo() {
@@ -164,4 +172,53 @@ function ui_reset() {
     draw_set_alpha(1);
     draw_set_color(c_white);
     draw_set_font(f_padrao);
+}
+
+
+/// Texto legível sobre fundo QUALQUER — nuvem, céu, forja.
+///
+/// Texto solto sobre o cenário não tem contraste garantido. A descrição da tela de
+/// modos ficava em 1,9:1 sobre a nuvem clara e era quase invisível; o mesmo problema
+/// aparece em todo texto desenhado fora de um painel. Dentro dos menus o pergaminho
+/// resolve porque a cor de trás é conhecida — fora dele não existe cor conhecida, e
+/// só uma placa própria garante o contraste.
+///
+/// A placa usa a mesma grade de vértices do título da fase (hud_placa_suave), então as
+/// bordas somem em degradê e ela não lê como tarja colada no cenário.
+///
+/// Use ESTA função para qualquer texto que não tenha painel atrás. É o padrão.
+function ui_texto_flutuante(_cx, _cy, _texto, _alpha = 1, _fonte = f_padrao_pequena, _cor = UI_COR_PERGAMINHO) {
+    if (_texto == "" || _alpha <= 0) {
+        return;
+    }
+
+    var _halign = draw_get_halign();
+    var _valign = draw_get_valign();
+
+    draw_set_font(_fonte);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+
+    // O texto precisa caber no MIOLO da placa, onde o alpha está no pico. Se ele
+    // invadir a faixa de degradê, as pontas das letras perdem o fundo e voltam a
+    // depender do céu — que é justamente o problema que a placa existe para resolver.
+    var _pad = 18;
+    var _fade_x = 60;
+    var _fade_y = 10;
+
+    var _meia = (string_width(_texto) / 2) + _pad + _fade_x;
+    var _alt  = (string_height(_texto) / 2) + _pad + _fade_y;
+
+    hud_placa_suave(floor(_cx - _meia), floor(_cy - _alt),
+                    floor(_cx + _meia), floor(_cy + _alt),
+                    c_black, UI_PLACA_ALPHA * _alpha, _fade_x, _fade_y);
+
+    // Posição inteira pela regra da fonte de pixel (D-33).
+    draw_set_alpha(_alpha);
+    draw_set_color(_cor);
+    draw_text(floor(_cx), floor(_cy), _texto);
+    draw_set_alpha(1);
+
+    draw_set_halign(_halign);
+    draw_set_valign(_valign);
 }

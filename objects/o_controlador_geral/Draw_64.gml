@@ -28,10 +28,15 @@ switch (estado_jogo) {
 
             ui_reset();
         }
+
+        // O titulo abre JUNTO com a contagem, e nao depois dela: assim ele ja saiu
+        // quando a fase comeca. Ver hud_titulo_fase.
+        hud_titulo_fase();
         break;
 
     case MINIGAME.RITMO:
         hud_draw();
+        hud_titulo_fase();
         break;
 }
 
