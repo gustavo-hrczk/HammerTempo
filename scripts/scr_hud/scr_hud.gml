@@ -534,10 +534,14 @@ function hud_titulo_fase() {
     var _meia = HUD_TITULO_ALTURA / 2;
 
     // Mesma opacidade do texto flutuante (UI_PLACA_ALPHA), para as duas faixas lerem
-    // como a mesma coisa. O degrade lateral de 420 px e o vertical de 64 px fazem a
-    // placa dissolver no cenario em vez de terminar numa linha reta.
+    // como a mesma coisa.
+    //
+    // O degrade lateral e longo DE PROPOSITO aqui, e so aqui: esta faixa vai de ponta
+    // a ponta da tela, entao ela precisa dissolver nas bordas ou viraria uma tarja
+    // atravessada. Na vertical vale a regra do texto flutuante — cauda curta, para a
+    // faixa ter forma em vez de virar mancha.
     hud_placa_suave(0, HUD_TITULO_CY - _meia, _gw, HUD_TITULO_CY + _meia,
-                    c_black, UI_PLACA_ALPHA * _alpha, 420, 64);
+                    c_black, UI_PLACA_ALPHA * _alpha, 420, 34);
 
     draw_set_alpha(_alpha);
 

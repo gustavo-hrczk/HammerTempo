@@ -49,8 +49,8 @@
 /// tela. O creme do pergaminho não serve mais como tinta aqui: a 0,62 ele cairia para
 /// 4,3:1, abaixo do mínimo. Placa mais leve exige tinta mais clara.
 #macro UI_PLACA_ALPHA  0.62
-#macro UI_PLACA_FADE_X 96
-#macro UI_PLACA_FADE_Y 22
+#macro UI_PLACA_FADE_X 26
+#macro UI_PLACA_FADE_Y 10
 
 /// Logo das telas de menu, sempre no mesmo lugar.
 function ui_logo() {
@@ -191,8 +191,10 @@ function ui_reset() {
 /// resolve porque a cor de trás é conhecida — fora dele não existe cor conhecida, e
 /// só uma placa própria garante o contraste.
 ///
-/// A placa usa a mesma grade de vértices do título da fase (hud_placa_suave), então as
-/// bordas somem em degradê e ela não lê como tarja colada no cenário.
+/// A placa usa a mesma grade de vértices do título da fase (hud_placa_suave), mas com
+/// degradê CURTO. A 96 px de cauda ela deixava de ser uma placa e virava uma mancha
+/// difusa que sobrava muito além do texto — o degradê existe para a borda não terminar
+/// numa linha reta, e não para dissolver a forma inteira.
 ///
 /// Use ESTA função para qualquer texto que não tenha painel atrás. É o padrão.
 function ui_texto_flutuante(_cx, _cy, _texto, _alpha = 1, _fonte = f_padrao_pequena, _cor = c_white) {
@@ -210,7 +212,7 @@ function ui_texto_flutuante(_cx, _cy, _texto, _alpha = 1, _fonte = f_padrao_pequ
     // O texto precisa caber no MIOLO da placa, onde o alpha está no pico. Se ele
     // invadir a faixa de degradê, as pontas das letras perdem o fundo e voltam a
     // depender do céu — que é justamente o problema que a placa existe para resolver.
-    var _pad = 18;
+    var _pad = 14;
     var _fade_x = UI_PLACA_FADE_X;
     var _fade_y = UI_PLACA_FADE_Y;
 
