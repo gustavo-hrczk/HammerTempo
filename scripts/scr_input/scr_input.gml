@@ -60,13 +60,20 @@ function input_bind(_acao, _teclas, _botoes) {
 
 /// Prepara a camada de input. Chamado uma única vez, no boot.
 function input_init() {
-    global.input_slot = -1;              // slot do controle ativo (-1 = nenhum)
+    // UM CONTROLE POR JOGADOR. Antes havia um slot só, compartilhado: no Versus os dois
+    // manches do gabinete cairiam no mesmo slot e cada movimento de um seria lido como
+    // do outro. Agora o jogador 1 fica com o primeiro dispositivo conectado e o 2 com o
+    // segundo — e fora do Versus os dois leem o primeiro, porque só há uma pessoa ali.
+    global.input_slots = [-1, -1];
+    global.input_slot = -1;              // apelido do slot do jogador 1, para a UI
     global.input_dispositivo = "teclado"; // último dispositivo usado (para os ícones da UI)
     global.input_teclas = array_create(ACAO.__COUNT, []);
     global.input_botoes = array_create(ACAO.__COUNT, []);
     global.input_teclas_fixas = array_create(ACAO.__COUNT, []);
-    global.input_eixo_agora = [false, false, false, false];   // cima, baixo, esq, dir
-    global.input_eixo_antes = [false, false, false, false];
+
+    // cima, baixo, esq, dir — os quatro do jogador 1, depois os quatro do jogador 2
+    global.input_eixo_agora = array_create(8, false);
+    global.input_eixo_antes = array_create(8, false);
 
     input_vinculos_de_fabrica();
     input_vinculos_fixos();
@@ -134,10 +141,13 @@ function input_vinculos_de_fabrica() {
 
     // Faixas do jogador 2: as setas, do lado direito do teclado. Sem botão de
     // controle por padrão — um segundo gamepad precisa ser mapeado à mão.
-    input_bind(ACAO.LANE2_CIMA,  [vk_up],    []);
-    input_bind(ACAO.LANE2_BAIXO, [vk_down],  []);
-    input_bind(ACAO.LANE2_ESQ,   [vk_left],  []);
-    input_bind(ACAO.LANE2_DIR,   [vk_right], []);
+    // O DIRECIONAL VALE PARA OS DOIS, cada um no proprio dispositivo. Antes o jogador 2
+    // nao tinha vinculo de controle nenhum: com dois manches no gabinete, o dele
+    // simplesmente nao fazia nada, e a saida era mapear a mao antes de cada dupla.
+    input_bind(ACAO.LANE2_CIMA,  [vk_up],    [gp_padu]);
+    input_bind(ACAO.LANE2_BAIXO, [vk_down],  [gp_padd]);
+    input_bind(ACAO.LANE2_ESQ,   [vk_left],  [gp_padl]);
+    input_bind(ACAO.LANE2_DIR,   [vk_right], [gp_padr]);
 
     // Comandos do jogador 2, do lado DIREITO do teclado, como as faixas dele.
     //
@@ -146,9 +156,9 @@ function input_vinculos_de_fabrica() {
     //
     // Voltar e Pausar compartilham a tecla, espelhando o jogador 1 — la os dois sao
     // ESC desde sempre.
-    input_bind(ACAO.CONFIRMAR2, [vk_rshift],   []);
-    input_bind(ACAO.VOLTAR2,    [vk_rcontrol], []);
-    input_bind(ACAO.PAUSAR2,    [vk_rcontrol], []);
+    input_bind(ACAO.CONFIRMAR2, [vk_rshift],   [gp_face1, gp_start]);
+    input_bind(ACAO.VOLTAR2,    [vk_rcontrol], [gp_face2, gp_select]);
+    input_bind(ACAO.PAUSAR2,    [vk_rcontrol], [gp_start]);
 }
 
 /// O comando equivalente do jogador 2, ou -1 se a acao nao for um comando.
@@ -180,6 +190,57 @@ function input_comando_p2(_acao) {
 /// alcanca a partida do jogador 2 nem as setas alcancam a do jogador 1 no Versus.
 function input_comando_suspenso(_acao) {
     return (_acao == ACAO.PAUSAR) && !versus_ativo() && (solo_jogador() == 1);
+}
+
+/// De qual jogador esta ação é? 0 para o primeiro, 1 para o segundo.
+function input_acao_do_jogador2(_acao) {
+    return (_acao == ACAO.LANE2_CIMA || _acao == ACAO.LANE2_BAIXO
+         || _acao == ACAO.LANE2_ESQ  || _acao == ACAO.LANE2_DIR
+         || _acao == ACAO.CONFIRMAR2 || _acao == ACAO.VOLTAR2
+         || _acao == ACAO.PAUSAR2);
+}
+
+/// Índice do jogador para efeito de LEITURA DE CONTROLE.
+///
+/// Fora do Versus há uma pessoa só na frente do gabinete, e ela usa o primeiro
+/// controle — inclusive quando quem joga é o jogador 2. Só dentro do Versus os dois
+/// dispositivos passam a ter dono.
+function input_jogador_do_dispositivo(_acao) {
+    if (!versus_ativo()) return 0;
+    return input_acao_do_jogador2(_acao) ? 1 : 0;
+}
+
+/// O dispositivo que esta ação lê, ou -1 se não houver controle para ela.
+function input_slot_da_acao(_acao) {
+    return global.input_slots[input_jogador_do_dispositivo(_acao)];
+}
+
+/// No Versus, uma tecla que pertence ao OUTRO jogador não pode acionar esta faixa.
+///
+/// As setas estão na lista do jogador 1 desde a jam — LANE_CIMA nasce como
+/// [vk_up, ord("W")] — e são o vínculo único do jogador 2. Fora do Versus isso é útil:
+/// as setas são a rede de quem nunca abriu a tela de controles. Dentro dele era
+/// interferência pura, e a suspensão que existia só alcançava os vínculos FIXOS, não a
+/// lista configurável: cada seta do jogador 2 acionava TAMBÉM a faixa do jogador 1,
+/// que quase nunca tinha nota ali e levava um erro por toque fora do tempo. Ninguém
+/// via a causa, só o combo do jogador 1 desmoronando sozinho.
+///
+/// O desempate é do jogador 2, e não é arbitrário: é o mesmo que os vínculos fixos já
+/// faziam, e a mão dele está do lado direito do teclado, onde as setas ficam. O
+/// jogador 1 continua com o WASD inteiro.
+function input_tecla_do_jogador2(_acao, _tecla) {
+    if (!versus_ativo()) return false;
+    if (input_acao_do_jogador2(_acao)) return false;
+    if (!input_lane_do_jogador1(_acao)) return false;
+
+    var _lanes = [ACAO.LANE2_CIMA, ACAO.LANE2_BAIXO, ACAO.LANE2_ESQ, ACAO.LANE2_DIR];
+
+    for (var i = 0; i < array_length(_lanes); i++) {
+        if (array_contains(global.input_teclas[_lanes[i]], _tecla))       return true;
+        if (array_contains(global.input_teclas_fixas[_lanes[i]], _tecla)) return true;
+    }
+
+    return false;
 }
 
 /// A ação de faixa de um jogador. _dono é 0 para o jogador 1 e 1 para o 2.
@@ -330,43 +391,59 @@ function input_aplicar_save() {
 /// Índice do eixo analógico correspondente à ação (-1 se a ação não é direcional).
 function input_eixo_indice(_acao) {
     switch (_acao) {
-        case ACAO.LANE_CIMA:  case ACAO.MENU_CIMA:  return 0;
-        case ACAO.LANE_BAIXO: case ACAO.MENU_BAIXO: return 1;
-        case ACAO.LANE_ESQ:   case ACAO.MENU_ESQ:   return 2;
-        case ACAO.LANE_DIR:   case ACAO.MENU_DIR:   return 3;
+        case ACAO.LANE_CIMA:  case ACAO.MENU_CIMA:  case ACAO.LANE2_CIMA:  return 0;
+        case ACAO.LANE_BAIXO: case ACAO.MENU_BAIXO: case ACAO.LANE2_BAIXO: return 1;
+        case ACAO.LANE_ESQ:   case ACAO.MENU_ESQ:   case ACAO.LANE2_ESQ:   return 2;
+        case ACAO.LANE_DIR:   case ACAO.MENU_DIR:   case ACAO.LANE2_DIR:   return 3;
         default: return -1;
     }
 }
 
 /// Atualiza o slot do controle e o estado do analógico. Chamado uma vez por frame.
 function input_update() {
-    // Procura um controle conectado (suporta plugar/desplugar durante o jogo).
-    if (global.input_slot < 0 || !gamepad_is_connected(global.input_slot)) {
-        global.input_slot = -1;
-        var _total = gamepad_get_device_count();
-        for (var i = 0; i < _total; i++) {
-            if (gamepad_is_connected(i)) {
-                global.input_slot = i;
-                break;
-            }
+    // OS DOIS PRIMEIROS DISPOSITIVOS CONECTADOS, na ordem em que o sistema os enumera:
+    // o primeiro e do jogador 1, o segundo do jogador 2. Refeito todo quadro, para
+    // continuar suportando plugar e desplugar durante a feira.
+    //
+    // Com um controle so, o slot do jogador 2 fica em -1 e ele simplesmente nao le
+    // controle nenhum — que e o comportamento certo. O erro a evitar aqui e o oposto:
+    // os dois lendo o MESMO dispositivo, com o manche de um marretando na pista do
+    // outro.
+    var _achados = 0;
+    global.input_slots[0] = -1;
+    global.input_slots[1] = -1;
+
+    var _total = gamepad_get_device_count();
+    for (var i = 0; i < _total && _achados < 2; i++) {
+        if (gamepad_is_connected(i)) {
+            global.input_slots[_achados] = i;
+            _achados++;
         }
     }
 
-    array_copy(global.input_eixo_antes, 0, global.input_eixo_agora, 0, 4);
+    global.input_slot = global.input_slots[0];   // apelido, para a UI
 
-    if (global.input_slot >= 0) {
-        var _s = global.input_slot;
+    array_copy(global.input_eixo_antes, 0, global.input_eixo_agora, 0, 8);
+
+    // O analogico de cada jogador vai para o proprio bloco de quatro.
+    for (var _j = 0; _j < 2; _j++) {
+        var _s = global.input_slots[_j];
+        var _b = _j * 4;
+
+        if (_s < 0) {
+            global.input_eixo_agora[_b + 0] = false;
+            global.input_eixo_agora[_b + 1] = false;
+            global.input_eixo_agora[_b + 2] = false;
+            global.input_eixo_agora[_b + 3] = false;
+            continue;
+        }
+
         var _h = gamepad_axis_value(_s, gp_axislh);
         var _v = gamepad_axis_value(_s, gp_axislv);
-        global.input_eixo_agora[0] = (_v < -INPUT_DEADZONE);
-        global.input_eixo_agora[1] = (_v >  INPUT_DEADZONE);
-        global.input_eixo_agora[2] = (_h < -INPUT_DEADZONE);
-        global.input_eixo_agora[3] = (_h >  INPUT_DEADZONE);
-    } else {
-        global.input_eixo_agora[0] = false;
-        global.input_eixo_agora[1] = false;
-        global.input_eixo_agora[2] = false;
-        global.input_eixo_agora[3] = false;
+        global.input_eixo_agora[_b + 0] = (_v < -INPUT_DEADZONE);
+        global.input_eixo_agora[_b + 1] = (_v >  INPUT_DEADZONE);
+        global.input_eixo_agora[_b + 2] = (_h < -INPUT_DEADZONE);
+        global.input_eixo_agora[_b + 3] = (_h >  INPUT_DEADZONE);
     }
 }
 
@@ -382,6 +459,8 @@ function input_pressed(_acao) {
 
     var _teclas = global.input_teclas[_acao];
     for (var i = 0; i < array_length(_teclas); i++) {
+        if (input_tecla_do_jogador2(_acao, _teclas[i])) continue;
+
         if (keyboard_check_pressed(_teclas[i])) {
             global.input_dispositivo = "teclado";
             return true;
@@ -401,7 +480,7 @@ function input_pressed(_acao) {
         }
     }
 
-    var _s = global.input_slot;
+    var _s = input_slot_da_acao(_acao);
     if (_s >= 0) {
         var _botoes = global.input_botoes[_acao];
         for (var i = 0; i < array_length(_botoes); i++) {
@@ -411,9 +490,13 @@ function input_pressed(_acao) {
             }
         }
         var _eixo = input_eixo_indice(_acao);
-        if (_eixo >= 0 && global.input_eixo_agora[_eixo] && !global.input_eixo_antes[_eixo]) {
-            global.input_dispositivo = "gamepad";
-            return true;
+        if (_eixo >= 0) {
+            _eixo += input_jogador_do_dispositivo(_acao) * 4;
+
+            if (global.input_eixo_agora[_eixo] && !global.input_eixo_antes[_eixo]) {
+                global.input_dispositivo = "gamepad";
+                return true;
+            }
         }
     }
 
@@ -432,6 +515,7 @@ function input_held(_acao) {
 
     var _teclas = global.input_teclas[_acao];
     for (var i = 0; i < array_length(_teclas); i++) {
+        if (input_tecla_do_jogador2(_acao, _teclas[i])) continue;
         if (keyboard_check(_teclas[i])) return true;
     }
 
@@ -445,14 +529,16 @@ function input_held(_acao) {
         }
     }
 
-    var _s = global.input_slot;
+    var _s = input_slot_da_acao(_acao);
     if (_s >= 0) {
         var _botoes = global.input_botoes[_acao];
         for (var i = 0; i < array_length(_botoes); i++) {
             if (gamepad_button_check(_s, _botoes[i])) return true;
         }
         var _eixo = input_eixo_indice(_acao);
-        if (_eixo >= 0 && global.input_eixo_agora[_eixo]) return true;
+        if (_eixo >= 0 && global.input_eixo_agora[_eixo + (input_jogador_do_dispositivo(_acao) * 4)]) {
+            return true;
+        }
     }
 
     return false;
@@ -600,13 +686,20 @@ function input_botoes_conhecidos() {
 
 /// Primeiro botão do controle ativo pressionado neste frame, ou -1.
 function input_botao_pressionado() {
-    var _s = global.input_slot;
-    if (_s < 0) return -1;
-
+    // VARRE OS DOIS DISPOSITIVOS. Quem esta remapeando pode ser o jogador 2, com o
+    // controle dele no segundo slot — ler so o primeiro deixava a tela de controles
+    // surda justamente para quem mais precisa dela no gabinete.
     var _lista = input_botoes_conhecidos();
-    for (var i = 0; i < array_length(_lista); i++) {
-        if (gamepad_button_check_pressed(_s, _lista[i])) return _lista[i];
+
+    for (var _j = 0; _j < 2; _j++) {
+        var _s = global.input_slots[_j];
+        if (_s < 0) continue;
+
+        for (var i = 0; i < array_length(_lista); i++) {
+            if (gamepad_button_check_pressed(_s, _lista[i])) return _lista[i];
+        }
     }
+
     return -1;
 }
 

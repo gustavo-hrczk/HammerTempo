@@ -115,7 +115,11 @@ function debug_draw() {
         "recordes gravados: " + string(debug_total_recordes()) +
             "   [SHIFT+F3 zera]",
         "input: " + global.input_dispositivo +
-            (input_tem_gamepad() ? "  [gamepad slot " + string(global.input_slot) + "]" : "  [sem gamepad]")
+            // OS DOIS SLOTS, e nao so o ativo: no gabinete a pergunta e sempre "cada
+            // manche esta no proprio dispositivo?", e essa linha responde de uma olhada.
+            ("  [ctrl J1 " + ((global.input_slots[0] >= 0) ? string(global.input_slots[0]) : "-")
+                    + " / J2 " + ((global.input_slots[1] >= 0) ? string(global.input_slots[1]) : "-")
+                    + " de " + string(gamepad_get_device_count()) + "]")
     ];
 
     draw_set_font(f_padrao_pequena);
