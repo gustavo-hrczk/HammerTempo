@@ -178,7 +178,7 @@ martelada_direcao = 1;
 // das fases, e encobriam a música. 0,32 equivale a -9,9 dB, que é o suficiente para
 // derrubar o volume aparente pela metade — 0,55 (-5,2 dB) mal era perceptível.
 // Ponto único de ajuste até existirem volumes separados de música e efeitos.
-ganho_martelada = 0.32;
+ganho_martelada = 0.256;   // 20% abaixo dos 0,32 anteriores, ou -1,94 dB
 
 // Toca os sons de martelada em vai-e-vem, dando variação a cada acerto.
 // Variação de pitch foi testada e descartada: descaracterizava o som da martelada.

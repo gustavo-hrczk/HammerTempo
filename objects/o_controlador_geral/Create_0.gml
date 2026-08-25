@@ -113,6 +113,24 @@ arcade_registrar_forjada = function(_pontos_da_fase) {
     });
 }
 
+/// Ainda ha arma depois desta no percurso?
+arcade_tem_proxima = function() {
+    if (modo_jogo != MODO.ARCADE || fase_falhou) {
+        return false;
+    }
+    return (arcade_indice + 1) < min(ARCADE_TOTAL_FASES, array_length(fases_data));
+}
+
+/// Total que o jogador tem AGORA, ja contando a fase que acabou de terminar.
+///
+/// A fase corrente ainda nao entrou em arcade_pontos — ela so e somada quando o
+/// percurso emenda a proxima, ou quando a tela de resultado fecha o total. Aqui ela e
+/// projetada, para o menu de intervalo poder mostrar o numero real.
+arcade_total_projetado = function() {
+    var _b = fase_bonus(pontuacao);
+    return arcade_pontos + pontuacao + _b.sem_erro + _b.impecavel;
+}
+
 /// Fecha a fase corrente do percurso e emenda a proxima, se houver.
 /// Devolve true quando emendou; false quando o percurso acabou aqui.
 ///

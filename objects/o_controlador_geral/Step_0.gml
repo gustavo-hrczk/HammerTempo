@@ -37,7 +37,13 @@ if (pausa) {
 }
 
 // Entrar em pausa só faz sentido com a partida em andamento e ainda não perdida.
-if (estado_jogo == MINIGAME.RITMO && !fase_falhou && input_pressed(ACAO.PAUSAR)) {
+//
+// O intervalo do Arcade também bloqueia: o estado ainda é RITMO enquanto ele está
+// aberto, e sem isto o jogador empilharia o menu de pausa por cima do de intervalo,
+// com os dois respondendo ao mesmo direcional.
+if (estado_jogo == MINIGAME.RITMO && !fase_falhou
+    && !instance_exists(o_tela_intervalo)
+    && input_pressed(ACAO.PAUSAR)) {
     o_audio_manager.play_sfx(snd_menu_confirm);
     pausar_partida();
     exit;

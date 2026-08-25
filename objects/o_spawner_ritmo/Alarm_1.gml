@@ -18,12 +18,15 @@ if (!esperando_respiro) {
     exit;
 }
 
-// No Arcade o percurso emenda a proxima fase aqui, sem passar pela tela de resultado:
-// ela custa ~5,5 s por fase e corta o embalo justamente entre uma arma e outra. A
-// faixa com o nome da proxima aparece na contagem, que ja comeca dentro de
-// arcade_avancar.
-if (o_controlador_geral.arcade_avancar()) {
-    show_debug_message("Percurso Arcade: emendando a proxima fase.");
+// No Arcade, entre uma arma e a proxima vem o INTERVALO: o total ate aqui e a escolha
+// de seguir ou encerrar. O percurso completo leva quase seis minutos, e quem nao esta
+// gostando nao deve precisar perder a partida de proposito para sair.
+//
+// Quem escolhe seguir cai em arcade_avancar, que emenda a proxima fase pela contagem —
+// sem passar pela tela de resultado, que custaria ~5,5 s por fase.
+if (o_controlador_geral.arcade_tem_proxima()) {
+    show_debug_message("Percurso Arcade: intervalo entre fases.");
+    instance_create_depth(0, 0, -9000, o_tela_intervalo);
     instance_destroy();
     exit;
 }
