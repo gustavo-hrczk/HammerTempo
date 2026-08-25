@@ -53,16 +53,26 @@ var _nota = ritmo_nota_alcancavel(meu_tipo, dono);
 if (_nota == noone) {
     // Toque sem nota alcançável: custa pontos e quebra o combo, mas não encerra
     // a partida (auditoria GP-04).
-    jogador(dono).stats_toques_invalidos++;
+    // UM ERRO E UM ERRO, indiferente do motivo.
+    //
+    // Deixar a nota passar e apertar a tecla errada eram contados como coisas
+    // diferentes, e so o primeiro entrava em stats_erros. O resultado de um Versus saiu
+    // com um jogador de ZERO erros e quatro mil pontos a menos que o adversario: ele
+    // martelava fora do tempo, quebrava o proprio combo — que e quase toda a pontuacao
+    // — e ainda levava nota S, porque a precisao nao enxergava aquilo.
+    //
+    // Duas categorias para uma falha so nao descreviam melhor o que aconteceu; apenas
+    // escondiam metade dela. Agora conta como erro, entra na precisao e no rank.
+    jogador(dono).stats_erros++;
+    jogador(dono).stats_toques_invalidos++;   // so para o diagnostico do F3
     jogador(dono).pontuacao = max(0, jogador(dono).pontuacao - 10);
     jogador(dono).stats_sequencia = 0;
 
-    // O TOQUE INVALIDO PRECISA APARECER. Ele quebra o combo igual a uma nota perdida,
-    // mas nao contava como "Erro" em lugar nenhum: no resultado de um Versus deu um
-    // jogador com zero erros e quatro mil pontos a menos que o adversario, sem nada na
-    // tela explicando a diferenca. O combo e quase toda a pontuacao, e o que o derruba
-    // tem de ser visivel na hora em que acontece.
-    hud_registrar_julgamento("FORA!", COR_ERRO, false, dono);
+    // stats_sequencia_errada NAO entra aqui, e e a unica coisa que continua separada:
+    // ela leva ao game over, e a auditoria GP-04 decidiu que quem esta experimentando
+    // as teclas nao pode ser expulso da fase por isso. Contar o erro e uma coisa,
+    // encerrar a partida e outra.
+    hud_registrar_julgamento("ERRO", COR_ERRO, false, dono);
 
     debug_registrar_julgamento("inválido", 0);
     exit;

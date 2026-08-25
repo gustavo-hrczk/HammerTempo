@@ -89,18 +89,10 @@ for (var i = 0; i < 2; i++) {
             _tx += string_width(_txt) + 26;
         }
 
-        var _te = "Erros " + string(erros[i]);
-        hud_texto(_tx, _yd, _te, COR_ERRO, 1, fa_left);
-        _tx += string_width(_te) + 26;
-
-        // TOQUES FORA DA NOTA. Quebram o combo exatamente como uma nota perdida, mas
-        // nunca apareceram em lugar nenhum: deu um resultado com um jogador de zero
-        // erros e quatro mil pontos a menos que o adversario, sem nada explicando a
-        // diferenca. Como o combo e quase toda a pontuacao, esta e a linha que fecha a
-        // conta.
-        if (fora[i] > 0) {
-            hud_texto(_tx, _yd, "Fora " + string(fora[i]), UI_COR_APAGADA, 1, fa_left);
-        }
+        // UMA COLUNA SO DE ERRO. Nota perdida e tecla errada entram juntas: um erro e
+        // um erro, indiferente do motivo, e separar as duas so escondia metade da
+        // falha de quem lia o resultado.
+        hud_texto(_tx, _yd, "Erros " + string(erros[i]), COR_ERRO, 1, fa_left);
 
         // A NOTA E O VEREDITO, e ganha o corpo de veredito: a letra sai em escala 2,
         // com o rotulo pequeno ao lado.

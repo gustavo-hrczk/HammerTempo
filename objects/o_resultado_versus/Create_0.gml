@@ -24,7 +24,6 @@ perfeitas = [_j1.stats_acertos_perfeitos, _j2.stats_acertos_perfeitos];
 otimas    = [_j1.stats_acertos_otimos,    _j2.stats_acertos_otimos];
 boas      = [_j1.stats_acertos_bons,      _j2.stats_acertos_bons];
 erros = [_j1.stats_erros, _j2.stats_erros];
-fora  = [_j1.stats_toques_invalidos, _j2.stats_toques_invalidos];
 notas = [icone_rank(precisoes[0]), icone_rank(precisoes[1])];
 
 // -1 é empate. Empate acontece de verdade quando ninguém toca, então precisa de um

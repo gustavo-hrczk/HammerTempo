@@ -29,7 +29,10 @@ function EstadoJogador() constructor {
     stats_sequencia = 0;
     stats_sequencia_errada = 0;
 
-    // toque sem nota alcançável: custa pontos, não encerra a fase (GP-04)
+    // Toque sem nota alcançável. CONTA COMO ERRO em stats_erros, como qualquer outra
+    // falha; este campo sobrevive só para o diagnóstico do F3 saber de que espécie o
+    // erro foi. O que ele continua NÃO fazendo é somar em stats_sequencia_errada, que
+    // é a contagem que leva ao game over (GP-04).
     stats_toques_invalidos = 0;
 
     /// Zera tudo para o começo de uma fase.
