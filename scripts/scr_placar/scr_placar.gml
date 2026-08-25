@@ -144,7 +144,7 @@ function placar_desenhar_nome(_x, _y, _nome, _slot = 18) {
 function placar_arcade() {
     var _l = global.save.leaderboard;
 
-    if (!variable_struct_exists(_l, arcade) || !is_array(_l.arcade)) {
+    if (!variable_struct_exists(_l, "arcade") || !is_array(_l.arcade)) {
         return [];
     }
     return _l.arcade;
@@ -179,7 +179,7 @@ function placar_arcade_registrar(_nome, _pontos, _armas, _completou) {
 
     var _l = global.save.leaderboard;
 
-    if (!variable_struct_exists(_l, arcade) || !is_array(_l.arcade)) {
+    if (!variable_struct_exists(_l, "arcade") || !is_array(_l.arcade)) {
         _l.arcade = [];
     }
 
