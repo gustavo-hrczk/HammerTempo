@@ -45,7 +45,8 @@ enum FERREIRO_ESTADO {
 /// reordene: acrescente no final.
 enum MODO {
     LIVRE,
-    ARCADE
+    ARCADE,
+    VERSUS
 }
 
 // =================================================================
@@ -103,4 +104,20 @@ function gameplay_congelado() {
         return true;
     }
     return o_controlador_geral.pausa || instance_exists(o_tela_intervalo);
+}
+
+
+/// A partida corrente e de dois jogadores?
+///
+/// Consultada em todo lugar que hoje assume um jogador so. Ler o modo direto
+/// espalharia a comparacao por dezenas de arquivos, e o dia em que o Versus ganhasse
+/// uma variante nenhum deles saberia.
+function versus_ativo() {
+    return instance_exists(o_controlador_geral)
+        && o_controlador_geral.modo_jogo == MODO.VERSUS;
+}
+
+/// Quantos jogadores estao em jogo agora.
+function jogadores_em_jogo() {
+    return versus_ativo() ? 2 : 1;
 }

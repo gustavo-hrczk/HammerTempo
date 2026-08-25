@@ -30,6 +30,16 @@ enum ACAO {
     MENU_ESQ,
     MENU_DIR,
 
+    // Faixas do JOGADOR 2. Existem só no Versus, e são remapeáveis como as do 1.
+    //
+    // A divisão de fábrica segue o teclado compartilhado: WASD à esquerda para o
+    // jogador 1, setas à direita para o jogador 2 — cada um alcança as suas sem
+    // disputar espaço com o outro.
+    LANE2_CIMA,
+    LANE2_BAIXO,
+    LANE2_ESQ,
+    LANE2_DIR,
+
     __COUNT
 }
 
@@ -103,6 +113,45 @@ function input_vinculos_de_fabrica() {
     input_bind(ACAO.MENU_BAIXO, [vk_down,  ord("S")], [gp_padd]);
     input_bind(ACAO.MENU_ESQ,   [vk_left,  ord("A")], [gp_padl]);
     input_bind(ACAO.MENU_DIR,   [vk_right, ord("D")], [gp_padr]);
+
+    // Faixas do jogador 2: as setas, do lado direito do teclado. Sem botão de
+    // controle por padrão — um segundo gamepad precisa ser mapeado à mão.
+    input_bind(ACAO.LANE2_CIMA,  [vk_up],    []);
+    input_bind(ACAO.LANE2_BAIXO, [vk_down],  []);
+    input_bind(ACAO.LANE2_ESQ,   [vk_left],  []);
+    input_bind(ACAO.LANE2_DIR,   [vk_right], []);
+}
+
+/// A ação de faixa de um jogador. _dono é 0 para o jogador 1 e 1 para o 2.
+///
+/// Todo o gameplay pergunta por aqui em vez de nomear ACAO.LANE_* direto: é o que
+/// permite o mesmo código de julgamento servir aos dois jogadores.
+function input_lane(_dono, _tipo) {
+    if (_dono == 0) {
+        switch (_tipo) {
+            case 0: return ACAO.LANE_BAIXO;
+            case 1: return ACAO.LANE_CIMA;
+            case 2: return ACAO.LANE_ESQ;
+            case 3: return ACAO.LANE_DIR;
+        }
+    }
+    switch (_tipo) {
+        case 0: return ACAO.LANE2_BAIXO;
+        case 1: return ACAO.LANE2_CIMA;
+        case 2: return ACAO.LANE2_ESQ;
+        case 3: return ACAO.LANE2_DIR;
+    }
+    return ACAO.LANE_CIMA;
+}
+
+/// A ação é uma faixa da forja do jogador 1?
+///
+/// Usada para suspender os vínculos FIXOS dentro do Versus: as setas são vínculo fixo
+/// das faixas do jogador 1 desde sempre, e no Versus elas pertencem ao jogador 2 —
+/// sem isto, cada tecla do jogador 2 martelaria também para o jogador 1.
+function input_lane_do_jogador1(_acao) {
+    return (_acao == ACAO.LANE_CIMA || _acao == ACAO.LANE_BAIXO
+         || _acao == ACAO.LANE_ESQ  || _acao == ACAO.LANE_DIR);
 }
 
 /// Identificador estável da ação no save. Não usa o índice do enum de propósito:
@@ -117,6 +166,11 @@ function input_id_acao(_acao) {
         case ACAO.CONFIRMAR:  return "confirmar";
         case ACAO.VOLTAR:     return "voltar";
         case ACAO.PAUSAR:     return "pausar";
+
+        case ACAO.LANE2_CIMA:  return "lane2_cima";
+        case ACAO.LANE2_BAIXO: return "lane2_baixo";
+        case ACAO.LANE2_ESQ:   return "lane2_esq";
+        case ACAO.LANE2_DIR:   return "lane2_dir";
     }
 
     // MENU_* cai aqui de propósito: sem identificador, input_aplicar_save() e
@@ -136,6 +190,11 @@ function input_rotulo_acao(_acao) {
         case ACAO.CONFIRMAR:  return "Confirmar";
         case ACAO.VOLTAR:     return "Voltar";
         case ACAO.PAUSAR:     return "Pausar";
+
+        case ACAO.LANE2_CIMA:  return "P2 Faixa 1";
+        case ACAO.LANE2_ESQ:   return "P2 Faixa 2";
+        case ACAO.LANE2_DIR:   return "P2 Faixa 3";
+        case ACAO.LANE2_BAIXO: return "P2 Faixa 4";
     }
     return "?";
 }
@@ -145,6 +204,15 @@ function input_rotulo_acao(_acao) {
 function input_acoes_configuraveis() {
     return [ACAO.LANE_CIMA, ACAO.LANE_ESQ, ACAO.LANE_DIR, ACAO.LANE_BAIXO,
             ACAO.CONFIRMAR, ACAO.VOLTAR, ACAO.PAUSAR];
+}
+
+/// As faixas do jogador 2, numa segunda pagina da tela de controles.
+///
+/// Ficam separadas em vez de somadas a lista acima porque onze linhas nao cabem na
+/// moldura — e porque quem esta configurando o jogador 1 raramente quer o 2 na mesma
+/// tela.
+function input_acoes_configuraveis_p2() {
+    return [ACAO.LANE2_CIMA, ACAO.LANE2_ESQ, ACAO.LANE2_DIR, ACAO.LANE2_BAIXO];
 }
 
 /// Aplica sobre os vínculos de fábrica o que estiver gravado no save.
@@ -229,11 +297,16 @@ function input_pressed(_acao) {
         }
     }
 
-    var _fixas = global.input_teclas_fixas[_acao];
-    for (var i = 0; i < array_length(_fixas); i++) {
-        if (keyboard_check_pressed(_fixas[i])) {
-            global.input_dispositivo = "teclado";
-            return true;
+    // Os vínculos FIXOS (as setas) valem para as faixas do jogador 1 fora do Versus.
+    // Dentro dele as setas pertencem ao jogador 2, e mantê-las aqui faria cada tecla
+    // dele martelar para os dois.
+    if (!(versus_ativo() && input_lane_do_jogador1(_acao))) {
+        var _fixas = global.input_teclas_fixas[_acao];
+        for (var i = 0; i < array_length(_fixas); i++) {
+            if (keyboard_check_pressed(_fixas[i])) {
+                global.input_dispositivo = "teclado";
+                return true;
+            }
         }
     }
 
@@ -263,9 +336,14 @@ function input_held(_acao) {
         if (keyboard_check(_teclas[i])) return true;
     }
 
-    var _fixas = global.input_teclas_fixas[_acao];
-    for (var i = 0; i < array_length(_fixas); i++) {
-        if (keyboard_check(_fixas[i])) return true;
+    // Os vínculos FIXOS (as setas) valem para as faixas do jogador 1 fora do Versus.
+    // Dentro dele as setas pertencem ao jogador 2, e mantê-las aqui faria cada tecla
+    // dele martelar para os dois.
+    if (!(versus_ativo() && input_lane_do_jogador1(_acao))) {
+        var _fixas = global.input_teclas_fixas[_acao];
+        for (var i = 0; i < array_length(_fixas); i++) {
+            if (keyboard_check(_fixas[i])) return true;
+        }
     }
 
     var _s = global.input_slot;

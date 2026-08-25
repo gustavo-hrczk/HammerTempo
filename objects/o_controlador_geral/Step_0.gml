@@ -138,7 +138,11 @@ switch (estado_jogo) {
         // aprendizado. A Adaga falha com 4 notas perdidas seguidas, o que a 2,25
         // notas/s sao 1,8 segundo sem acertar nada — quem nunca jogou seria ejetado
         // em vinte segundos, sem ter jogado.
-        if (!fase_falhou && !arcade_fase_imune()
+        //
+        // No VERSUS ninguem perde por falha: a partida e uma disputa entre os dois, e
+        // encerra-la porque UM deles errou demais tiraria o outro do jogo junto. Quem
+        // decide o Versus e a comparacao no fim, nao a sobrevivencia.
+        if (!fase_falhou && !arcade_fase_imune() && !versus_ativo()
             && jogador().stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
             show_debug_message("Game Over por excesso de notas perdidas!");
 
