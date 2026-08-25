@@ -150,12 +150,28 @@ molduras_resultado = [s_canva01, s_canva02, s_canva03, s_canva04, s_canva05];
 
 fases_data = [];
 
-// Fase 1: Adaga (Fácil) - BPM: 88
+// ORDENADAS POR DIFICULDADE MEDIDA, nao por ordem de criacao.
+//
+// O indice composto (densidade x faixas / tempo de leitura, ajustado pela tolerancia
+// a erro) mostrou que os rotulos estavam trocados: a Espada marca 1,94 e o Machado
+// 1,73, entao a Espada e a mais dificil das cinco — e nao o Machado, que carregava
+// o rotulo "Mestre".
+//
+//   Adaga 0,89 | Maca 1,61 | Lanca 1,63 | Machado 1,73 | Espada 1,94
+//
+// "Mestre" fica vago de proposito, para a sexta faixa.
+//
+// O campo `id` e o identificador do placar e NAO PODE mudar com a ordem. Antes ele
+// era derivado do indice, e esta reordenacao teria embaralhado os recordes ja
+// gravados: quem fez placar na fase 3 apareceria na fase 3 nova, que e outra arma.
+
+// 1: Adaga (Facil) - 90 BPM
 fases_data[0] = {
+    id: "adaga",
     nome: "Forjar Adaga",
     dificuldade: "Fácil",
     musica_fase: snd_fase_01,
-    ganho_musica: 0.951,   // nivelamento medido (ver o_audio_manager)
+    ganho_musica: 0.951,
     sprites_resultado: [s_adaga01, s_adaga02, s_adaga03, s_adaga04, s_adaga05],
     duracao_segundos: 40,
     velocidade_notas: 4,
@@ -170,12 +186,35 @@ fases_data[0] = {
     ]
 };
 
-// Fase 2: Lança (Médio - BPM: 100)
+// 2: Maca (Medio) - 100 BPM | Saltarello II
+// Sem arte de arma ainda: sprites_resultado vazio e tratado (D-107).
 fases_data[1] = {
+    id: "maca",
+    nome: "Forjar Maca",
+    dificuldade: "Médio",
+    musica_fase: snd_fase_05,
+    ganho_musica: 0.544,
+    sprites_resultado: [],
+    duracao_segundos: 45,
+    velocidade_notas: 5,
+    tipos_seta_permitidos: 3,
+    stats_limite_sequencia_errada: 5,
+    beat_tempo_bpm: 99.99,
+    primeira_batida_ms: 348.3,
+    primeira_nota_seg: 8.0,
+    ritmo_patterns: [
+        [1, 1, 1, 0.5, 0.5, 1, 0.5, 0.5],
+        [1, 1, 1, 1, 0.5, 0.5]
+    ]
+};
+
+// 3: Lanca (Medio) - 100 BPM
+fases_data[2] = {
+    id: "lanca",
     nome: "Forjar Lança",
     dificuldade: "Médio",
     musica_fase: snd_fase_02,
-    ganho_musica: 0.703,   // nivelamento medido (ver o_audio_manager)
+    ganho_musica: 0.703,
     sprites_resultado: [s_lanca01, s_lanca02, s_lanca03, s_lanca04, s_lanca05],
     duracao_segundos: 40,
     velocidade_notas: 5,
@@ -188,12 +227,37 @@ fases_data[1] = {
     ]
 };
 
-// Fase 3: Espada (Difícil - BPM: 108)
-fases_data[2] = {
-    nome: "Forjar Espada",
+// 4: Machado (Dificil) - 130 BPM | Il Trotto
+// Contraste tempo/contratempo de 24,16, o melhor material do projeto: so ha ataque
+// nos tempos, entao o padrao e todo em seminima (D-112).
+fases_data[3] = {
+    id: "machado",
+    nome: "Forjar Machado",
     dificuldade: "Difícil",
+    musica_fase: snd_fase_04,
+    ganho_musica: 1.0,
+    sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
+    duracao_segundos: 60,
+    velocidade_notas: 5,
+    tipos_seta_permitidos: 4,
+    stats_limite_sequencia_errada: 6,
+    beat_tempo_bpm: 130.01,
+    primeira_batida_ms: 0,
+    ritmo_patterns: [
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 2, 1, 1, 1]
+    ]
+};
+
+// 5: Espada (Muito Dificil) - 110 BPM
+// A mais dificil das cinco pelo indice medido (1,94), apesar de nao ser a mais
+// rapida: 4 faixas, 2,29 notas/s e o menor tempo de leitura do conjunto.
+fases_data[4] = {
+    id: "espada",
+    nome: "Forjar Espada",
+    dificuldade: "Muito Difícil",
     musica_fase: snd_fase_03,
-    ganho_musica: 0.917,   // nivelamento medido (ver o_audio_manager)
+    ganho_musica: 0.917,
     sprites_resultado: [s_espada01, s_espada02, s_espada03, s_espada04, s_espada05],
     duracao_segundos: 60,
     velocidade_notas: 5,
@@ -203,89 +267,6 @@ fases_data[2] = {
     primeira_batida_ms: 383.1,
     ritmo_patterns: [
         [1, 1, 0.5, 0.5, 1]
-    ]
-};
-
-// Fase 4: Machado (Mestre - BPM: 130)
-// Faixa TROCADA. A anterior media contraste tempo/contratempo de 0,77 — pulso
-// continuo, sem tempo forte —, que e o pior material possivel para um mapa: nao ha
-// onde o jogador ancorar. Nenhum padrao a fez funcionar.
-//
-// Il Trotto mede contraste 24,16: energia quase exclusivamente NOS TEMPOS, nada nos
-// contratempos. E confianca 14,6x, a mais alta do projeto. Pulso limpo e marcado.
-fases_data[3] = {
-    nome: "Forjar Machado",
-    dificuldade: "Mestre",
-    musica_fase: snd_fase_04,
-    ganho_musica: 1.0,   // nivelamento medido: a faixa ja esta no nivel do tema
-    sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
-    duracao_segundos: 60,
-    velocidade_notas: 5,
-    tipos_seta_permitidos: 4,
-    stats_limite_sequencia_errada: 6,
-    beat_tempo_bpm: 130.01,
-    primeira_batida_ms: 0,
-
-    // TUDO EM SEMINIMA, e isso e o que a faixa pede. Com contraste 24, colcheia
-    // cairia em silencio: a musica so tem ataque nos tempos.
-    //
-    // Somam 7 e 9 tempos, entao giram contra o compasso de 4 e a repeticao nao fica
-    // identica. Medido: 11,34x e 11,56x de aderencia — atras so da Adaga (12,86x).
-    ritmo_patterns: [
-        [1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 2, 1, 1, 1]
-    ]
-};
-
-// Fase 5: Maca (Medio - BPM: 100)
-// Faixa: Saltarello II, danca italiana do seculo XIII (dominio publico).
-// Medido em tools/analisar_faixa.py: 100,01 BPM, primeira batida 568,9 ms,
-// confianca 10,3x.
-//
-// SEM ARTE DE ARMA AINDA. sprites_resultado vazio e tratado: o seletor e a tela de
-// resultado desenham a moldura com um "?" dentro, em vez de quebrar ou deixar buraco.
-fases_data[4] = {
-    nome: "Forjar Maca",
-    dificuldade: "Medio",
-    musica_fase: snd_fase_05,
-    ganho_musica: 0.544,   // nivelamento medido (ver o_audio_manager)
-    sprites_resultado: [],
-    duracao_segundos: 45,
-    velocidade_notas: 5,
-    tipos_seta_permitidos: 3,
-    stats_limite_sequencia_errada: 5,
-    beat_tempo_bpm: 99.99,
-    primeira_batida_ms: 348.3,
-
-    // Esta faixa ja entra tocando, e esperar os 5,3 s do respiro padrao deixava a
-    // tela vazia com a musica correndo. Com 2 s, a primeira nota cai na 3a batida da
-    // faixa. Como e menos que o tempo de viagem (4,34 s), as primeiras notas nascem
-    // ja no meio do caminho — o que funciona porque a posicao vem do relogio (D-94).
-    primeira_nota_seg: 8.0,
-
-    // OS PADROES NAO FECHAM NO COMPASSO, e isso e o ponto.
-    //
-    // O primeiro que escrevi somava 4 tempos: travado no compasso, repetindo
-    // identico por 45 s. Media 8,55x de aderencia (energia de ataque nos instantes
-    // de nota, contra o piso da faixa) e soava "quase certo, fora do lugar".
-    //
-    // Estes somam 6 e 7 tempos. Como nao dividem o compasso de 4, giram contra ele:
-    // cada repeticao cai numa posicao metrica diferente, entao o mesmo padrao produz
-    // variacao sozinho. E a propriedade do padrao da Lanca, [0.5 x8, 3] = 7 tempos,
-    // que e a fase de melhor aderencia depois da Adaga.
-    //
-    // Escolhidos por busca automatica sobre o espaco de padroes, maximizando
-    // aderencia: 9,82x e 9,90x contra 8,55x do anterior. Referencias medidas —
-    // Adaga 12,86x, Lanca 11,19x, Espada 8,54x.
-    // Os dois somam 6 e 5 tempos: continuam girando contra o compasso de 4, mas com
-    // densidade de 2,22 e 2,00 notas por segundo, contra 1,69 dos anteriores. A
-    // aderencia cai de 9,82x para 9,15x e 9,34x — e a troca declarada: mais notas
-    // significam mais notas em posicao fraca, entao densidade e aderencia se opoem.
-    //
-    // 2,22 notas/s e exatamente a densidade da Lanca.
-    ritmo_patterns: [
-        [1, 1, 1, 0.5, 0.5, 1, 0.5, 0.5],
-        [1, 1, 1, 1, 0.5, 0.5]
     ]
 };
 

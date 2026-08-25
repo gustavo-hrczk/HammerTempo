@@ -1275,3 +1275,34 @@ ser exercido aqui, mas o mecanismo continua valendo para quem precisar.
 
 Os padrões foram rebuscados contra a amostra nova: 10,17x e 10,35x, contra 9,15x e 9,34x da
 anterior.
+
+**D-114 · Fases reordenadas pela dificuldade medida, e os rótulos estavam trocados.** Índice
+composto — densidade × faixas ÷ tempo de leitura, ajustado pela tolerância a erro:
+
+| Fase | BPM | Faixas | Notas/s | Leitura | Índice | Rótulo |
+|---|---|---|---|---|---|---|
+| Adaga | 90 | 2 | 1,75 | 4,92 s | **0,89** | Fácil |
+| Maça | 100 | 3 | 2,11 | 3,94 s | **1,61** | Médio |
+| Lança | 100 | 3 | 2,14 | 3,94 s | **1,63** | Médio |
+| Machado | 130 | 4 | 2,05 | 3,94 s | **1,73** | Difícil |
+| Espada | 110 | 4 | 2,29 | 3,94 s | **1,94** | Muito Difícil |
+
+O achado: **a Espada é a mais difícil, não o Machado** — apesar de ser 20 BPM mais lenta. Ela
+tem mais notas por segundo e o mesmo tempo de leitura, e andamento alto não é dificuldade
+quando o padrão é todo em semínima. O Machado carregava "Mestre" sem ser sequer o segundo
+mais difícil.
+
+"Mestre" ficou **vago de propósito**, à espera da sexta faixa.
+
+**D-115 · O id do placar deixou de vir do índice.** `save_id_fase()` derivava "fase_01" da
+posição na lista. Já era frágil — inserir fase no meio embaralharia recordes —, mas virou
+defeito concreto nesta reordenação: quem tinha placar na terceira fase apareceria na terceira
+fase nova, que é outra arma.
+
+Cada fase declara agora um `id` estável ("adaga", "maca", …), e o placar usa ele. Efeito
+colateral esperado: os placares gravados sob as chaves antigas ficam órfãos — o que é o
+resultado **correto**, já que a associação anterior passou a estar errada. SHIFT+F3 limpa.
+
+Os BPM passaram a ser arredondados na exibição, no cartão e na entrada da fase. O valor
+medido tem casas decimais (89,99 · 99,99 · 130,01) que são necessárias no cálculo e viram
+ruído na leitura.

@@ -57,7 +57,9 @@ for (var i = _primeiro; i <= _ultimo; i++) {
     var _fase = opcoes_fase[i];
     var _selecionada = (i == opcao_selecionada);
 
-    var _txt_detalhe = _fase.dificuldade + "  -  " + string(_fase.beat_tempo_bpm) + " BPM";
+    // BPM arredondado: o valor medido tem casas decimais (89,99 / 130,01) que sao
+    // necessarias no calculo e viram ruido na leitura.
+    var _txt_detalhe = _fase.dificuldade + "  -  " + string(round(_fase.beat_tempo_bpm)) + " BPM";
 
     // O cartao mostra o CAMPEAO da fase, nao o recorde pessoal: aqui a pergunta do
     // jogador e "quem eu preciso bater", e a resposta e o primeiro do placar.

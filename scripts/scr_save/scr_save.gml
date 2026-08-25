@@ -163,9 +163,23 @@ function save_texto_janela(_indice = undefined) {
     return _tamanhos[clamp(_i, 0, array_length(_tamanhos) - 1)][2];
 }
 
-/// Identificador estável da fase. Não usa o índice direto de propósito: inserir uma
-/// fase no meio da lista não pode embaralhar os recordes já conquistados.
+/// Identificador estável da fase, para o placar.
+///
+/// Vem do campo `id` de fases_data, e NAO do índice. Derivar do índice já era ruim
+/// (inserir fase no meio embaralhava os recordes), mas virou defeito concreto quando
+/// as fases foram reordenadas por dificuldade medida: quem tinha placar na terceira
+/// fase apareceria na terceira fase nova, que é outra arma.
 function save_id_fase(_indice) {
+    if (instance_exists(o_controlador_geral)) {
+        var _fases = o_controlador_geral.fases_data;
+
+        if (_indice >= 0 && _indice < array_length(_fases)
+            && variable_struct_exists(_fases[_indice], "id")) {
+            return _fases[_indice].id;
+        }
+    }
+
+    // reserva, para fase que ainda não declare id
     var _n = _indice + 1;
     return (_n < 10) ? ("fase_0" + string(_n)) : ("fase_" + string(_n));
 }

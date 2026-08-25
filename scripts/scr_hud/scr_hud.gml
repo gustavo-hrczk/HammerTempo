@@ -440,7 +440,7 @@ function hud_draw() {
         draw_set_font(f_padrao);
         hud_texto(_gw / 2, 40, string_upper(_fase.nome), c_white, 1);
         draw_set_font(f_padrao_pequena);
-        hud_texto(_gw / 2, 74, _fase.dificuldade + "  -  " + string(_fase.beat_tempo_bpm) + " BPM", c_white, 1);
+        hud_texto(_gw / 2, 74, _fase.dificuldade + "  -  " + string(round(_fase.beat_tempo_bpm)) + " BPM", c_white, 1);
         draw_set_alpha(1);
     }
 
