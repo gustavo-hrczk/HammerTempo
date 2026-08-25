@@ -206,39 +206,34 @@ fases_data[2] = {
     ]
 };
 
-// Fase 4: Machado (Mestre - BPM: 115)
-// Primeira fase montada com o processo de medicao: BPM e primeira batida vieram de
-// tools/analisar_faixa.py, com confianca de 7,7x acima do piso de ruido. A faixa e o
-// conjunto de armas ja estavam no projeto, sem uso.
+// Fase 4: Machado (Mestre - BPM: 130)
+// Faixa TROCADA. A anterior media contraste tempo/contratempo de 0,77 — pulso
+// continuo, sem tempo forte —, que e o pior material possivel para um mapa: nao ha
+// onde o jogador ancorar. Nenhum padrao a fez funcionar.
+//
+// Il Trotto mede contraste 24,16: energia quase exclusivamente NOS TEMPOS, nada nos
+// contratempos. E confianca 14,6x, a mais alta do projeto. Pulso limpo e marcado.
 fases_data[3] = {
     nome: "Forjar Machado",
     dificuldade: "Mestre",
     musica_fase: snd_fase_04,
-    ganho_musica: 0.869,   // nivelamento medido (ver o_audio_manager)
+    ganho_musica: 1.0,   // nivelamento medido: a faixa ja esta no nivel do tema
     sprites_resultado: [s_machado01, s_machado02, s_machado03, s_machado04, s_machado05],
     duracao_segundos: 60,
     velocidade_notas: 5,
     tipos_seta_permitidos: 4,
     stats_limite_sequencia_errada: 6,
-    beat_tempo_bpm: 115,
-    primeira_batida_ms: 220.6,
+    beat_tempo_bpm: 130.01,
+    primeira_batida_ms: 0,
 
-    // PADRAO EM COLCHEIAS, e isso foi medido, nao escolhido por gosto.
+    // TUDO EM SEMINIMA, e isso e o que a faixa pede. Com contraste 24, colcheia
+    // cairia em silencio: a musica so tem ataque nos tempos.
     //
-    // O perfil de acento desta faixa no trecho jogado e |# + + # + # + # |: energia
-    // em TODA colcheia, com contraste tempo/contratempo de 0,77 — ou seja, pulso
-    // continuo, sem tempo forte. As fases 1 e 2 medem 1,25 e 1,18, que e musica com
-    // hierarquia, e por isso os padroes delas em seminima funcionam.
-    //
-    // O padrao anterior era de seminimas contra uma musica de colcheias: ela fazia
-    // "ta-ta-ta-ta-ta-ta-ta-ta" e o mapa fazia "ta - ta-ta - ta - ta". Era
-    // literalmente tocar outra coisa.
-    //
-    // As seminimas do fim de cada padrao sao respiro: colcheia direto por 60 s nao
-    // deixa o jogador tirar a mao.
+    // Somam 7 e 9 tempos, entao giram contra o compasso de 4 e a repeticao nao fica
+    // identica. Medido: 11,34x e 11,56x de aderencia — atras so da Adaga (12,86x).
     ritmo_patterns: [
-        [0.5, 0.5, 0.5, 0.5, 1, 1],
-        [0.5, 0.5, 1, 0.5, 0.5, 1]
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 2, 1, 1, 1]
     ]
 };
 
@@ -253,20 +248,20 @@ fases_data[4] = {
     nome: "Forjar Maca",
     dificuldade: "Medio",
     musica_fase: snd_fase_05,
-    ganho_musica: 0.550,   // nivelamento medido (ver o_audio_manager)
+    ganho_musica: 0.544,   // nivelamento medido (ver o_audio_manager)
     sprites_resultado: [],
     duracao_segundos: 45,
     velocidade_notas: 5,
     tipos_seta_permitidos: 3,
     stats_limite_sequencia_errada: 5,
-    beat_tempo_bpm: 100.01,
-    primeira_batida_ms: 568.9,
+    beat_tempo_bpm: 99.99,
+    primeira_batida_ms: 348.3,
 
     // Esta faixa ja entra tocando, e esperar os 5,3 s do respiro padrao deixava a
     // tela vazia com a musica correndo. Com 2 s, a primeira nota cai na 3a batida da
     // faixa. Como e menos que o tempo de viagem (4,34 s), as primeiras notas nascem
     // ja no meio do caminho — o que funciona porque a posicao vem do relogio (D-94).
-    primeira_nota_seg: 2.0,
+    primeira_nota_seg: 8.0,
 
     // OS PADROES NAO FECHAM NO COMPASSO, e isso e o ponto.
     //
@@ -289,7 +284,7 @@ fases_data[4] = {
     //
     // 2,22 notas/s e exatamente a densidade da Lanca.
     ritmo_patterns: [
-        [0.5, 0.5, 1, 1, 1, 0.5, 0.5, 1],
+        [1, 1, 1, 0.5, 0.5, 1, 0.5, 0.5],
         [1, 1, 1, 1, 0.5, 0.5]
     ]
 };

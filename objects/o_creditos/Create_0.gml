@@ -137,7 +137,11 @@ credit_text = "CREDITOS \n"+
 "Compositor: Desconhecido.\n" +
 "Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
 
-"Fase 5: Saltarello II - Medieval Tunes Vol.1 (12 of 12)\n" +
+"Fase 4 Machado: Il Trotto - Medieval Tunes Vol.1 (10 of 12)\n" +
+"Compositor: Desconhecido (danca italiana medieval). Dominio publico.\n" +
+"Arranjos e gravacao: The Recorder Maniac \n\n" +
+
+"Fase 5 Maça: Saltarello II - Medieval Tunes Vol.1 (12 of 12)\n" +
 "Compositor: Desconhecido (dança italiana, século XIII). Domínio público.\n" +
 "Arranjos e gravação: The Recorder Maniac \n" +
 "Fonte: https://cuidado-arte-vicia.sellfy.store/p/saltarello-ii-13th-century-medieval-dance-soprano-or-other-instrument/ \n\n" +

@@ -9,7 +9,7 @@
   "bitRate":128,
   "compression":3,
   "conversionMode":0,
-  "duration":198.1649,
+  "duration":66.9231,
   "name":"snd_fase_04",
   "parent":{
     "name":"Sounds",

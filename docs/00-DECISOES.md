@@ -1247,3 +1247,31 @@ passaram para 2,22 e 2,00 notas por segundo, contra 1,69 dos anteriores. A ader�
 Isso não é regressão, é o formato da troca: mais notas significam necessariamente mais notas
 em posição fraca. 2,22 notas/s é exatamente a densidade da Lança, e os dois padrões continuam
 somando 5 e 6 tempos — seguem girando contra o compasso de 4.
+
+**D-112 · Faixa do Machado trocada, e a nova é a melhor material do projeto.** A anterior
+media contraste tempo/contratempo de 0,77 — pulso contínuo, sem tempo forte —, que é o pior
+material possível para um mapa: não existe onde o jogador ancorar. Nenhum padrão a fez
+funcionar, e a conclusão certa foi trocar a faixa em vez de insistir.
+
+Il Trotto mede **contraste 24,16** e **confiança 14,6x**, ambos os melhores do projeto:
+energia quase exclusivamente nos tempos, praticamente nada nos contratempos.
+
+O andamento exigiu cuidado. A busca automática devolveu 65,01 BPM com força 14,6x, mas o
+nome do arquivo diz 130 — e 65 × 2 = 130. É a ambiguidade de oitava: a grade de meia
+velocidade acerta as mesmas batidas e pontua alto por acertar menos posições fracas. A 130,01
+o perfil fica `|.   #   +   #   |`, que é a leitura correta.
+
+Com contraste 24, o padrão **tem de ser em semínima**: colcheia cairia em silêncio, porque a
+música só tem ataque nos tempos. Os dois padrões somam 7 e 9 tempos, então continuam girando
+contra o compasso de 4. Aderência medida de 11,34x e 11,56x — atrás apenas da Adaga (12,86x).
+
+**D-113 · Amostra nova do Saltarello, com respiro de 8 s.** A gravação anterior foi
+substituída por outra da mesma peça, com mais silêncio inicial. Medida: 99,99 BPM, primeira
+batida em 348,3 ms, confiança 9,5x, ganho 0,544.
+
+`primeira_nota_seg` foi para 8,0 s a pedido. Como 8 s é maior que os 4,34 s de viagem, as
+notas voltam a nascer na borda direita — o nascimento no meio do caminho (D-110) deixa de
+ser exercido aqui, mas o mecanismo continua valendo para quem precisar.
+
+Os padrões foram rebuscados contra a amostra nova: 10,17x e 10,35x, contra 9,15x e 9,34x da
+anterior.
