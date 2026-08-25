@@ -339,7 +339,6 @@ function hud_draw() {
         // fica com o painel acima do corredor dele, o 2 com o painel abaixo do dele.
         hud_painel_jogador(0, _e);
         hud_painel_jogador(1, _e);
-        versus_faixa_vez(_e);
 
         // barra de progresso da fase, no rodape, igual ao modo de um jogador
         var _prog = 1;
@@ -611,8 +610,8 @@ function hud_titulo_fase() {
 /// jogador 1 e o cobre que o jogo inteiro usa, e o jogador 2 e o verde-oliva do
 /// ferreiro de paleta trocada.
 function versus_cor(_dono) {
-    return (_dono == 0) ? make_colour_rgb(212, 122, 40)
-                        : make_colour_rgb(120, 170, 96);
+    return (_dono == 0) ? make_colour_rgb(198,  56,  48)    // jogador 1, vermelho
+                        : make_colour_rgb( 62, 108, 190);   // jogador 2, azul
 }
 
 function versus_nome(_dono) {
@@ -653,12 +652,14 @@ function hud_painel_jogador(_dono, _alpha) {
     var _j = jogador(_dono);
     var _y = hud_bloco_y(_dono);
 
-    // O jogador 2 fica com o painel do lado DIREITO da tela, embaixo do corredor dele:
-    // ele esta a direita do gabinete, e a leitura dele acompanha.
-    var _x = (_dono == 0) ? HUD_BLOCO_X
-                          : (display_get_gui_width() - HUD_BLOCO_X - HUD_BLOCO_W);
+    // AS DUAS CAIXAS CENTRADAS na propria metade da tela, e nao encostadas nas bordas:
+    // cada painel fica em cima do meio do corredor a que pertence, entao a leitura
+    // acompanha a pista em vez de fugir para o canto.
+    var _cx = display_get_gui_width() / 2;
+    var _x = _cx - (HUD_BLOCO_W / 2);
 
     var _tinta = make_colour_rgb(40, 28, 18);
+    var _meio = _x + (HUD_BLOCO_W / 2);
 
     draw_set_alpha(_alpha);
     draw_sprite_stretched(s_menu_background_panel, 0, _x, _y, HUD_BLOCO_W, HUD_BLOCO_H);
@@ -666,17 +667,16 @@ function hud_painel_jogador(_dono, _alpha) {
     var _esq = _x + 20;
     var _dir = _x + HUD_BLOCO_W - 20;
 
-    hud_texto_painel(_esq, _y + 20, versus_nome(_dono), versus_cor(_dono),
-                     f_padrao_pequena, fa_left);
+    hud_texto_painel(_meio, _y + 22, versus_nome(_dono), versus_cor(_dono),
+                     f_padrao_pequena, fa_center);
 
-    hud_texto_painel(_esq, _y + 58, "Pontos", _tinta, f_padrao_pequena, fa_left);
-    hud_texto_painel(_dir, _y + 58, string(_j.pontuacao), _tinta, f_padrao, fa_right);
+    hud_texto_painel(_esq, _y + 60, "Pontos", _tinta, f_padrao_pequena, fa_left);
+    hud_texto_painel(_dir, _y + 60, string(_j.pontuacao), _tinta, f_padrao, fa_right);
 
     var _seq = _j.stats_sequencia;
     if (_seq >= HUD_COMBO_MINIMO) {
-        hud_texto_painel(_x + (HUD_BLOCO_W / 2), _y + 98,
-                         "Combo x" + string(_seq), hud_cor_combo(_seq),
-                         f_padrao, fa_center);
+        hud_texto_painel(_meio, _y + 100, "Combo x" + string(_seq),
+                         hud_cor_combo(_seq), f_padrao, fa_center);
     }
 
     draw_set_alpha(1);
@@ -710,32 +710,36 @@ function versus_placar(_dono, _alpha) {
     draw_set_alpha(1);
 }
 
-/// De quem e a vez agora. Some quando os dois estao tocando, porque ai a faixa
-/// "OS DOIS!" ja diz tudo e mais texto so disputaria atencao com as notas.
-function versus_faixa_vez(_alpha) {
-    var _gw = display_get_gui_width();
-    var _t = versus_trecho();
-
-    var _cor = (_t == 2) ? c_white : versus_cor(_t);
-
-    draw_set_font(f_padrao);
-    draw_set_alpha(_alpha);
-    ui_texto_flutuante(_gw / 2, 258, versus_rotulo_trecho(), _alpha, f_padrao, _cor);
-    draw_set_alpha(1);
-}
-
 /// Diz de quem e cada pista, durante a preparacao.
 ///
-/// Aparece junto com a contagem e some com ela: quem chega no gabinete precisa saber
-/// qual das duas pistas e a sua ANTES da primeira nota, e depois disso o rotulo vira
-/// ruido sobre a partida.
+/// Mesmo tratamento do "Prepare-se para forjar em..." da contagem: texto preto direto
+/// sobre o pergaminho do corredor, sem placa. A placa flutuante ficava pesada e
+/// deslocada — ela existe para texto sobre fundo DESCONHECIDO, e aqui o fundo e o
+/// corredor, cuja cor o jogo conhece.
+///
+/// Duas linhas: o nome do jogador por cima, em cor propria, e a instrucao embaixo.
 function versus_marcar_pistas(_alpha) {
     if (_alpha <= 0) return;
 
-    for (var _d = 0; _d < 2; _d++) {
-        var _x = (_d == 0) ? 260 : (display_get_gui_width() - 260);
-        var _y = ritmo_corredor_topo(_d) + 100;
+    var _cx = display_get_gui_width() / 2;
 
-        ui_texto_flutuante(_x, _y, versus_nome(_d), _alpha, f_padrao, versus_cor(_d));
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_set_alpha(_alpha);
+
+    for (var _d = 0; _d < 2; _d++) {
+        var _y = ritmo_corredor_topo(_d) + 96;
+
+        draw_set_font(f_padrao);
+        draw_set_color(versus_cor(_d));
+        draw_text(_cx, _y - 22, versus_nome(_d));
+
+        draw_set_font(f_padrao_pequena);
+        draw_set_color(c_black);
+        draw_text(_cx, _y + 16, "esta e a sua pista");
     }
+
+    draw_set_alpha(1);
+    ui_reset();
 }
+

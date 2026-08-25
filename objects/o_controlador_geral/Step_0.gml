@@ -79,6 +79,11 @@ if (estado_jogo != estado_anterior) {
     estado_anterior = estado_jogo;
 }
 
+// A CENA SE SINCRONIZA TODO QUADRO, fora do switch de estados: quem monta o Versus e
+// quem entrega a cena ao jogador do solo nao pode depender de a virada de estado ter
+// calhado no quadro em que a sala ja existia.
+cena_sincronizar();
+
 // =================================================================
 // COMPORTAMENTO CONTÍNUO DE CADA ESTADO
 // =================================================================
@@ -98,13 +103,6 @@ switch (estado_jogo) {
             // O Versus reaproveita esta sala e reposiciona os dois lados. Feito aqui,
             // no estado que antecede a partida, para a cena ja estar montada quando a
             // contagem comecar.
-            versus_montar_cena();
-            versus_revelar_cena();
-
-            // Fora do Versus, a cena inteira passa a pertencer a quem esta jogando —
-            // o que so muda alguma coisa quando o jogador 2 comeca a partida sozinho.
-            if (!versus_ativo()) solo_adotar_dono(solo_dono);
-
             // No Arcade o seletor de armas nao existe: o percurso e a lista inteira,
             // em ordem, e comeca na primeira. Os dois modos entram por este mesmo
             // estado justamente para a contagem so comecar com a sala ja montada.
@@ -117,9 +115,6 @@ switch (estado_jogo) {
         break;
 
     case MINIGAME.CONTAGEM:
-        // o par do jogador 2 continua ganhando corpo durante a contagem
-        versus_revelar_cena();
-
         if (contagem_timer > 0) {
             contagem_timer--;
         } else {

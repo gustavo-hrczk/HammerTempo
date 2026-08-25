@@ -134,10 +134,43 @@ function bigorna_de(_dono = 0) {
 /// enquadramento de sempre, que ja esta validado. O que muda e de quem sao o ferreiro,
 /// a bigorna e os alvos que a sala criou, e a paleta que o ferreiro veste.
 function solo_adotar_dono(_dono) {
-    with (o_ferreiro)      { dono = _dono; adotar_sprites(); }
-    with (o_bigorna)         dono = _dono;
-    with (o_buttons_forja)   dono = _dono;
-    with (o_fundo_ui)        dono = _dono;
+    // So remonta quem MUDOU de dono. adotar_sprites reposiciona sprite e espelho, e
+    // chama-la todo quadro reiniciaria a animacao do ferreiro sem parar.
+    with (o_ferreiro) {
+        if (dono != _dono) {
+            dono = _dono;
+            adotar_sprites();
+        }
+    }
+
+    with (o_bigorna)       dono = _dono;
+    with (o_buttons_forja) dono = _dono;
+    with (o_fundo_ui)      { dono = _dono; image_alpha = 1; }
+}
+
+/// Poe a cena de acordo com o modo e o dono atuais. Chamada TODO QUADRO em rm_forja.
+///
+/// Substituiu a montagem feita uma vez na virada de estado, que dependia de a sala ja
+/// existir naquele quadro exato — e nao dependia so disso: trocar de modo ou de dono
+/// entre uma partida e outra deixava a cena com a configuracao anterior, porque a
+/// virada ja tinha passado.
+///
+/// Sincronizar todo quadro e barato (as funcoes saem cedo quando nada mudou) e o
+/// resultado nunca fica dessincronizado do estado, seja qual for o caminho que o
+/// jogador tenha feito para chegar ali.
+function cena_sincronizar() {
+    if (room != rm_forja) return;
+
+    if (versus_ativo()) {
+        versus_montar_cena();
+        versus_revelar_cena();
+        return;
+    }
+
+    // fora do Versus, o par do jogador 2 nao existe e a cena e de quem esta jogando
+    if (bigorna_de(1) != noone) versus_desmontar_cena();
+
+    solo_adotar_dono(o_controlador_geral.solo_dono);
 }
 
 /// Reposiciona o jogador 1 e cria o jogador 2. Idempotente.
@@ -201,7 +234,9 @@ function versus_montar_cena() {
 
     var _fundo2 = instance_create_layer(0, RITMO_CORREDOR_P2, "Gameplay", o_fundo_ui);
     _fundo2.dono = 1;
-    _fundo2.image_yscale = -1;   // a moldura do corredor aponta para dentro da tela
+    // SEM espelho vertical: a origem do sprite fica no topo, entao yscale -1 desenhava
+    // a faixa inteira para cima, fora da tela — era por isso que o corredor do jogador
+    // 2 aparecia sem fundo, so com as notas soltas no ceu.
     _fundo2.image_alpha = 0;
 
     with (o_buttons_forja) { if (dono == 1) image_alpha = 0; }

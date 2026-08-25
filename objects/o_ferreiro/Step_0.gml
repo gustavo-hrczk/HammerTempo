@@ -121,7 +121,10 @@ switch (estado) {
         var _dir = sign(_alvo - x);
 
         x += _dir * _vel;
-        image_xscale = (_dir < 0) ? -frente() : frente();
+        // ANDANDO ele olha para onde ANDA, e nao para o oponente. frente() aqui
+        // invertia o jogador 2: ele caminhava de costas, porque o espelho da pose de
+        // repouso nao vale para o passo.
+        image_xscale = (_dir < 0) ? -1 : 1;
 
         if (abs(_alvo - x) <= _vel) {
             x = _alvo;
