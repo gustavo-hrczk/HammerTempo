@@ -32,7 +32,7 @@ erros = [_j1.stats_erros, _j2.stats_erros];
 // letra. E o mesmo par que a tela de um jogador mostra — as duas passam a falar a
 // mesma lingua.
 //
-// A escala do tier inclui o S+, que icone_rank sozinho nunca devolve: a precisao nao
+// A escala do tier inclui o S+, que a precisao sozinha nunca alcanca: ela nao
 // diz quantas notas sairam perfeitas, e numa disputa entre dois jogadores de 100% e
 // exatamente isso que decide quem forjou melhor.
 arma = o_controlador_geral.fases_data[o_controlador_geral.fase_atual].icone;

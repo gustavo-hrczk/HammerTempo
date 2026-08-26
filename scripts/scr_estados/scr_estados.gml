@@ -117,11 +117,6 @@ function versus_ativo() {
         && o_controlador_geral.modo_jogo == MODO.VERSUS;
 }
 
-/// Quantos jogadores estao em jogo agora.
-function jogadores_em_jogo() {
-    return versus_ativo() ? 2 : 1;
-}
-
 /// Quais jogadores estao em jogo, por indice.
 ///
 /// No solo NAO e sempre [0]: o jogador 2 pode iniciar uma partida sozinho, e nesse
@@ -233,21 +228,4 @@ function versus_recebe_nota(_dono, _indice = 0) {
     var _estrofe = floor(_indice / max(1, _tamanho));
 
     return ((_estrofe mod 2) == _dono);
-}
-
-/// Em que trecho a partida esta: 0 solo do 1, 1 solo do 2, 2 os dois.
-function versus_trecho() {
-    var _i = instance_exists(o_spawner_ritmo) ? o_spawner_ritmo.notas_criadas : 0;
-
-    if (versus_recebe_nota(0, _i) && versus_recebe_nota(1, _i)) return 2;
-    return versus_recebe_nota(1, _i) ? 1 : 0;
-}
-
-/// Rotulo do trecho atual, para a tela mostrar de quem e a vez.
-function versus_rotulo_trecho() {
-    switch (versus_trecho()) {
-        case 0: return "VEZ DO JOGADOR 1";
-        case 1: return "VEZ DO JOGADOR 2";
-    }
-    return "OS DOIS!";
 }

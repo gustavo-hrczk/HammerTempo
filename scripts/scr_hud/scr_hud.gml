@@ -771,15 +771,6 @@ function hud_bloco_y(_dono) {
         : (RITMO_CORREDOR_P2 + RITMO_CORREDOR_ALTURA + 20);
 }
 
-/// Para que lado sobe o texto de julgamento deste jogador.
-///
-/// Sobe no jogador 1 e DESCE no jogador 2: em cada metade da tela o texto se afasta da
-/// pista em vez de atravessa-la, e o gesto fica espelhado como o resto do layout.
-function hud_sentido_julgamento(_dono) {
-    if (!versus_ativo()) return -1;
-    return (_dono == 0) ? -1 : 1;
-}
-
 /// O painel de pergaminho de um jogador, com pontos, precisao e combo.
 ///
 /// E o MESMO painel do modo de um jogador, so que posicionado pelo dono. Reaproveita-lo
@@ -825,34 +816,6 @@ function hud_painel_jogador(_dono, _alpha) {
     if (_seq >= HUD_COMBO_MINIMO) {
         hud_texto_painel(_meio, _y + 100, "Combo x" + string(_seq),
                          hud_cor_combo(_seq), f_padrao, fa_center);
-    }
-
-    draw_set_alpha(1);
-}
-
-/// Placar compacto de um jogador, ancorado no corredor dele.
-function versus_placar(_dono, _alpha) {
-    var _gw = display_get_gui_width();
-    var _j = jogador(_dono);
-
-    // fica na ponta OPOSTA a linha de acerto, onde a pista esta vazia
-    var _x = (_dono == 0) ? (_gw - 30) : 30;
-    var _halign = (_dono == 0) ? fa_right : fa_left;
-
-    var _y = ritmo_corredor_topo(_dono) + ((_dono == 0) ? -34 : 202);
-
-    draw_set_alpha(_alpha);
-
-    draw_set_font(f_padrao_pequena);
-    hud_texto(_x, _y - 22, versus_nome(_dono), versus_cor(_dono), 1, _halign);
-
-    draw_set_font(f_padrao);
-    hud_texto(_x, _y + 8, string(_j.pontuacao), versus_cor(_dono), 1, _halign);
-
-    if (_j.stats_sequencia >= HUD_COMBO_MINIMO) {
-        draw_set_font(f_padrao_pequena);
-        hud_texto(_x, _y + 36, "x" + string(_j.stats_sequencia),
-                  hud_cor_combo(_j.stats_sequencia), 1, _halign);
     }
 
     draw_set_alpha(1);

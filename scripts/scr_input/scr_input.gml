@@ -643,11 +643,6 @@ function input_eixo_v() {
     return input_pressed(ACAO.MENU_BAIXO) - input_pressed(ACAO.MENU_CIMA);
 }
 
-/// Há um controle conectado?
-function input_tem_gamepad() {
-    return (global.input_slot >= 0);
-}
-
 // =====================================================================
 // NOMES LEGÍVEIS DOS CONTROLES
 // A tela de tutorial escrevia "W A D S" na unha. Assim que o remapeamento existir
