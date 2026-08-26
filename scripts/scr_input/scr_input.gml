@@ -99,6 +99,16 @@ function input_vinculos_fixos() {
     //
     // No Versus estes vinculos ficam suspensos, senao as setas martelariam nas duas
     // pistas ao mesmo tempo.
+    // ENTER E A SALVAGUARDA DO CONFIRMAR, para os dois jogadores.
+    //
+    // No gabinete so existem alavanca e botoes, e o remapeamento pode levar o confirmar
+    // para qualquer um deles — inclusive para um botao que depois quebre ou fique
+    // trocado. Um vinculo fixo garante que sempre haja uma tecla capaz de destravar
+    // qualquer tela, sem depender de configuracao. E o mesmo papel que as setas fazem
+    // para as faixas.
+    global.input_teclas_fixas[ACAO.CONFIRMAR]  = [vk_enter];
+    global.input_teclas_fixas[ACAO.CONFIRMAR2] = [vk_enter];
+
     global.input_teclas_fixas[ACAO.LANE2_CIMA]  = [vk_up];
     global.input_teclas_fixas[ACAO.LANE2_BAIXO] = [vk_down];
     global.input_teclas_fixas[ACAO.LANE2_ESQ]   = [vk_left];

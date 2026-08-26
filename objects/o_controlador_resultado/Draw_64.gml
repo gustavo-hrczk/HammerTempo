@@ -40,8 +40,8 @@ if (tempo >= RESULTADO_T_ESTATISTICAS) {
     draw_text(_col_dir, _linha1, "Boas: " + string(_boas));
 
     draw_text(_col_esq, _linha2, "Erros: " + string(_erros));
-    draw_text(_cx,      _linha2, "Total: " + string(jogador().stats_total_notas));
-    draw_text(_col_dir, _linha2, "Precisão: " + string(round(_precisao)) + "%");
+    draw_text(_cx,      _linha2, "Total: " + string(_tot.notas));
+    draw_text(_col_dir, _linha2, "Precisão: " + ui_pct(_precisao));
 }
 
 // --- NOTA DA FORJA ---

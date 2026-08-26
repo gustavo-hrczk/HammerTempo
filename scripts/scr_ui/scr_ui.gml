@@ -167,10 +167,46 @@ function ui_prompt(_cx, _cy, _texto, _pad_h = 40, _altura = 50) {
 }
 
 /// Texto do prompt de confirmação conforme o dispositivo em uso.
-function ui_texto_confirmar() {
-    return (global.input_dispositivo == "gamepad")
-        ? "Pressione o BOTÃO 1 ou START"
-        : "Pressione ENTER ou ESPAÇO";
+/// "Pressione X" com o comando REAL de quem esta jogando.
+///
+/// Era texto fixo — "Pressione ENTER ou ESPAÇO" —, e no gabinete nao existe teclado:
+/// so alavanca e botoes, cada jogador com os seus. A tela prometia uma tecla que nao
+/// esta ali e escondia o botao que esta.
+///
+/// Le o vinculo em vigor, entao acompanha o remapeamento sozinha. E le o vinculo DO
+/// JOGADOR CERTO: no Versus e numa partida solo do jogador 2, quem tem de agir e ele,
+/// e mandar o outro apertar nao ajuda ninguem.
+function ui_texto_confirmar(_dono = undefined) {
+    if (is_undefined(_dono)) _dono = solo_jogador();
+
+    var _acao = (_dono == 1) ? ACAO.CONFIRMAR2 : ACAO.CONFIRMAR;
+
+    return "Pressione " + input_nome_da_acao(_acao);
+}
+
+/// O mesmo para o Versus, onde os dois precisam saber o proprio botao.
+///
+/// Quando os dois estao no mesmo vinculo — o padrao de fabrica com um controle so —
+/// nao ha o que separar, e repetir o mesmo nome duas vezes so faria a linha crescer.
+function ui_texto_confirmar_dupla() {
+    var _a = input_nome_da_acao(ACAO.CONFIRMAR);
+    var _b = input_nome_da_acao(ACAO.CONFIRMAR2);
+
+    if (_a == _b) return "Pressione " + _a;
+
+    return "Pressione " + _a + " ou " + _b;
+}
+
+/// Porcentagem de precisão como texto, TRUNCADA e nunca arredondada.
+///
+/// Um percurso com 651 acertos e 3 erros da 99,54%, e round() mostrava 100% ao lado de
+/// "Erros: 3" — a tela se contradizia sozinha, e o rank saia A porque ele le o valor
+/// cheio. 100% passa a significar exatamente o que diz: nenhum erro.
+///
+/// Truncar tambem e o que o genero faz. Arredondar para cima uma precisao e prometer
+/// uma partida perfeita que nao aconteceu.
+function ui_pct(_valor) {
+    return string(floor(_valor)) + "%";
 }
 
 /// Devolve o desenho ao estado padrão, para não vazar configuração entre objetos.

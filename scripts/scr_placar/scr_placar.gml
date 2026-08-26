@@ -81,7 +81,10 @@ function placar_registrar(_indice, _nome, _pontos, _precisao, _nivel = 0) {
     array_insert(_lista, _pos - 1, {
         nome: string_copy(string_upper(_nome), 1, PLACAR_NOME_TAMANHO),
         pontos: _pontos,
-        precisao: round(_precisao),
+        // TRUNCADA, como toda precisao exibida: gravar arredondado deixava uma partida
+        // de 99,5% registrada como 100% no placar, e o rank lido dali contradizia o da
+        // tela de resultado, que le o valor cheio.
+        precisao: floor(_precisao),
 
         // O nivel da arma forjada. Guardado em vez de reconstruido da precisao porque
         // as duas medidas tem denominadores diferentes — ver icone_nivel_por_precisao.

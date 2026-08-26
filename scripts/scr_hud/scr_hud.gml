@@ -494,7 +494,7 @@ function hud_draw() {
 
     var _precisao = hud_precisao();
     hud_texto_painel(_esq, _bloco_y + 72, "Precisão", _tinta, f_padrao_pequena, fa_left);
-    hud_texto_painel(_dir, _bloco_y + 72, string(round(_precisao)) + "%", _tinta, f_padrao, fa_right);
+    hud_texto_painel(_dir, _bloco_y + 72, ui_pct(_precisao), _tinta, f_padrao, fa_right);
 
     // linha separando os dados fixos do combo
     draw_set_alpha(0.25 * _entrada);

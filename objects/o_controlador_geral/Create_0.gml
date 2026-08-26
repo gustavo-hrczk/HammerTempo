@@ -81,7 +81,7 @@ arcade_pontos = 0;    // total acumulado ate aqui
 // Sao os quatro contadores, e nao so um par de totais: a tela de resultado mostra a
 // divisao por tier, e mostrar a precisao do percurso ao lado das contagens de uma fase
 // so faria os numeros da mesma tela discordarem entre si.
-arcade_stats_base = { perfeitas: 0, otimas: 0, boas: 0, erros: 0 };
+arcade_stats_base = { perfeitas: 0, otimas: 0, boas: 0, erros: 0, notas: 0 };
 
 /// Uma entrada por fase JA CONCLUIDA do percurso: { icone, nivel, pontos }.
 ///
@@ -145,7 +145,8 @@ arcade_stats_totais = function(_dono = undefined) {
         perfeitas: _j.stats_acertos_perfeitos,
         otimas:    _j.stats_acertos_otimos,
         boas:      _j.stats_acertos_bons,
-        erros:     _j.stats_erros
+        erros:     _j.stats_erros,
+        notas:     _j.stats_total_notas
     };
 
     if (modo_jogo == MODO.ARCADE) {
@@ -153,6 +154,7 @@ arcade_stats_totais = function(_dono = undefined) {
         _t.otimas    += arcade_stats_base.otimas;
         _t.boas      += arcade_stats_base.boas;
         _t.erros     += arcade_stats_base.erros;
+        _t.notas     += arcade_stats_base.notas;
     }
 
     return _t;
@@ -244,6 +246,7 @@ arcade_avancar = function() {
     arcade_stats_base.otimas    += _jf.stats_acertos_otimos;
     arcade_stats_base.boas      += _jf.stats_acertos_bons;
     arcade_stats_base.erros     += _jf.stats_erros;
+    arcade_stats_base.notas     += _jf.stats_total_notas;
 
     var _combo = jogador().stats_sequencia;
     resetar_estatisticas();
@@ -267,7 +270,7 @@ arcade_avancar = function() {
 arcade_iniciar_percurso = function() {
     arcade_indice = 0;
     arcade_pontos = 0;
-    arcade_stats_base = { perfeitas: 0, otimas: 0, boas: 0, erros: 0 };
+    arcade_stats_base = { perfeitas: 0, otimas: 0, boas: 0, erros: 0, notas: 0 };
     arcade_forjadas = [];
 
     resetar_estatisticas();

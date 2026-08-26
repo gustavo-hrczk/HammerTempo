@@ -132,7 +132,7 @@ if (tempo >= VERSUS_T_VENCEDOR) {
 if (revelacao_pronta) {
     draw_set_font(f_padrao_pequena);
     draw_set_color(UI_COR_DESTAQUE);
-    draw_text(_cx, _cm + 62, ui_texto_confirmar() + " para continuar");
+    draw_text(_cx, _cm + 62, ui_texto_confirmar_dupla() + " para continuar");
 }
 
 ui_reset();
