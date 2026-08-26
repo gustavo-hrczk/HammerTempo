@@ -120,7 +120,16 @@ draw_set_halign(fa_center);
 // a forja inteira, cheia de detalhe e contraste, e o degrade padrao nao dava conta.
 var _cm = (RITMO_CORREDOR_P2 + 228 + 492) / 2;
 
-hud_placa_suave(0, _cm - 92, _gw, _cm + 92, c_black, 0.78, 300, 40);
+// A FAIXA PREENCHE O VAO INTEIRO ENTRE OS CORREDORES, de 228 a 492.
+//
+// Ela media 184 px de altura com 40 de queda, o que deixava o miolo em 308..412 — e os
+// tres textos ocupam de 287 a 435. O titulo em cima e o aviso embaixo ficavam ambos
+// dentro do degrade, em meia-luz, exatamente as duas linhas que precisam ser lidas de
+// longe. Ocupando o vao todo, o miolo vai a 258..462 e sobra margem para os tres.
+var _faixa_a = RITMO_CORREDOR_P2 + RITMO_CORREDOR_ALTURA;
+var _faixa_b = RITMO_CORREDOR_P1;
+
+hud_placa_suave(0, _faixa_a, _gw, _faixa_b, c_black, 0.78, 300, 30);
 
 draw_set_font(f_padrao);
 draw_set_color(c_white);

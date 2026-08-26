@@ -2,8 +2,18 @@
 // acabou. Eram dois numeros diferentes — 980 no desenho e 1080 na verificacao —, e
 // como a largura maior produz menos linhas, a sala se dava por encerrada antes de o
 // fim dos creditos sair da tela. Os ultimos nomes eram cortados.
-#macro CREDITOS_X 160
-#macro CREDITOS_LARGURA 980
+// A COLUNA ENCOLHEU PARA A PLACA CABER EM VOLTA DELA.
+//
+// Com 980 px de texto sobravam 150 de cada lado, e a queda da placa precisa de mais que
+// isso: o miolo de alpha cheio ficava em 240..1060 enquanto o texto ia de 160 a 1140,
+// entao as primeiras e as ultimas colunas de cada linha caiam dentro do degrade, com
+// menos contraste que o resto. Em 880 sobram 200 por lado — 40 de margem cheia mais
+// 140 de queda, tudo dentro da tela.
+#macro CREDITOS_X 200
+#macro CREDITOS_LARGURA 880
+
+#macro CREDITOS_MARGEM 40
+#macro CREDITOS_QUEDA 140
 
 // Variáveis para controlar a posição e a velocidade
 y_pos = display_get_gui_height() + 40; // começa logo abaixo da tela

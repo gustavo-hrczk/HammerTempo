@@ -20,8 +20,11 @@ var _gh = display_get_gui_height();
 // SEM QUEDA NA VERTICAL: em cima e embaixo quem corta é a borda da tela, e ali não há
 // nada do outro lado para a transição suavizar. Reservar 90 px de degradê para as duas
 // pontas só tirava contraste das primeiras e das últimas linhas do texto.
-hud_placa_suave(CREDITOS_X - 110, -4, CREDITOS_X + CREDITOS_LARGURA + 110, _gh + 4,
-                c_black, 0.68, 190, 0);
+// O MIOLO DE ALPHA CHEIO COMECA FORA DO TEXTO: margem primeiro, queda depois. Somar a
+// queda dentro da margem era o que deixava as pontas de cada linha em meia-luz.
+hud_placa_suave(CREDITOS_X - CREDITOS_MARGEM - CREDITOS_QUEDA, -4,
+                CREDITOS_X + CREDITOS_LARGURA + CREDITOS_MARGEM + CREDITOS_QUEDA, _gh + 4,
+                c_black, 0.68, CREDITOS_QUEDA, 0);
 
 draw_set_font(f_padrao);
 draw_set_halign(fa_left);

@@ -115,9 +115,14 @@ for (var i = _primeiro; i <= _ultimo; i++) {
     // fundo e a moldura tambem mudam com o desempenho, o cartao vira o registro da
     // melhor forja. Antes ele mostrava sempre a arma perfeita, o que anunciava uma
     // conquista que podia nunca ter acontecido.
+    // O SELO TAMBEM ENTRA NO CARTAO, com o maior degrau ja alcancado na fase. O cartao
+    // e o registro da melhor forja, e a nota faz parte desse registro — sem ela o
+    // jogador via a arma que conquistou mas nao a letra, que e como ele guarda o
+    // resultado de cabeca. Sem campeao nao ha selo: o quadro fica vazio, como a arma.
     icone_desenhar(_tem_campeao ? _fase.icone : -1,
                    _tem_campeao ? icone_nivel_do_placar(i) : 0,
-                   _pos_x, _y_icone, 3);
+                   _pos_x, _y_icone, 3, 1,
+                   _tem_campeao ? icone_tier_do_placar(i) : -1);
 
     // nome
     draw_set_font(f_padrao);

@@ -71,6 +71,29 @@ function icone_nivel_do_placar(_indice_fase) {
     return _melhor;
 }
 
+/// Maior DEGRAU ja alcancado numa fase, lido do placar.
+///
+/// Entradas gravadas antes de o degrau existir so tem o nivel da arma, que e o mesmo
+/// numero de 0 a 4 — elas nunca devolvem S+, e nao ha como saber se mereciam: a
+/// quantidade de notas perfeitas nao era guardada.
+function icone_tier_do_placar(_indice_fase) {
+    var _lista = placar_livre(_indice_fase);
+    var _melhor = 0;
+
+    for (var i = 0; i < array_length(_lista); i++) {
+        var _e = _lista[i];
+
+        if (variable_struct_exists(_e, "tier")) {
+            _melhor = max(_melhor, _e.tier);
+        } else if (variable_struct_exists(_e, "nivel")) {
+            _melhor = max(_melhor, _e.nivel);
+        } else {
+            _melhor = max(_melhor, icone_nivel_por_precisao(_e.precisao));
+        }
+    }
+    return _melhor;
+}
+
 /// Desenha o ícone montado, centrado em (_x, _y).
 ///
 /// _arma aceita -1 para "arma ainda sem arte": o fundo e a moldura aparecem assim
@@ -101,6 +124,35 @@ function icone_desenhar(_arma, _nivel, _x, _y, _escala, _alpha = 1, _tier = -1) 
         draw_sprite_ext(s_icone_tier, clamp(_tier, 0, ICONE_TIER_MAX),
                         _px, _py, _e, _e, 0, c_white, _alpha);
     }
+}
+
+/// Centro do MIOLO do selo dentro do quadro de 26x26. A arte fica no canto inferior
+/// direito, entao o miolo nao coincide com o centro do quadro.
+#macro ICONE_TIER_CX 18.5
+#macro ICONE_TIER_CY 20.5
+
+/// O selo sozinho, sem medalhao, com o miolo centrado em (_x, _y).
+///
+/// Existe para a tabela de recordes, onde a nota era uma letra colorida sobre o
+/// pergaminho: medido, o ouro do S dava 1,09:1 de contraste e o cobre do A dava 2,70:1,
+/// os dois muito abaixo do minimo de 4,5:1. Escurecer as cores mataria a leitura, que
+/// vem do calor, e contorno nao serve para uma tabela — vira ruido em dez linhas
+/// seguidas.
+///
+/// O selo resolve sem nenhum dos dois: ele traz a propria chapa escura atras da letra,
+/// entao le em qualquer fundo pelo desenho e nao pela cor. E de quebra a tabela passa a
+/// mostrar a MESMA marca que as duas telas de resultado estampam na peca.
+function icone_tier_desenhar(_tier, _x, _y, _escala) {
+    var _e = max(1, floor(_escala));
+    var _t = clamp(_tier, 0, ICONE_TIER_MAX);
+
+    // o S+ e quatro pixels mais largo, entao o miolo dele fica dois a direita
+    var _cx = (_t == ICONE_TIER_MAX) ? (ICONE_TIER_CX + 2) : ICONE_TIER_CX;
+
+    draw_sprite_ext(s_icone_tier, _t,
+                    floor(_x - ((_cx - 13) * _e)),
+                    floor(_y - ((ICONE_TIER_CY - 13) * _e)),
+                    _e, _e, 0, c_white, 1);
 }
 
 /// Largura (e altura) que o ícone ocupa numa dada escala.

@@ -56,11 +56,19 @@ confirmar = function() {
             ? o_controlador_resultado.nivel_forjado
             : 0;
 
+        // O degrau vem do julgamento cheio da fase, com a contagem de perfeitas — que e
+        // a unica coisa capaz de distinguir S+ de S, e que deixa de existir assim que as
+        // estatisticas sao zeradas.
+        var _j = jogador();
+        var _tier = icone_tier(precisao, _j.stats_acertos_perfeitos, _j.julgadas(),
+                               o_controlador_geral.fase_falhou);
+
         _pos = placar_registrar(o_controlador_geral.fase_atual,
                                 _nome,
                                 jogador().pontuacao,
                                 precisao,
-                                _nivel);
+                                _nivel,
+                                _tier);
     }
 
     // so o primeiro lugar vira anuncio na tela de resultado

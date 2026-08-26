@@ -106,12 +106,21 @@ if (array_length(_lista) == 0) {
             draw_text(_col_nota, _y, string(_armas) + _fim);
 
         } else {
-            // A nota tem cor própria, que não obedece à tinta da posição: ela é a
-            // informação da linha, não a decoração dela.
-            var _rank = icone_rank(_e.precisao);
-            draw_set_color(icone_rank_cor(_rank));
-            draw_text(_col_nota, _y, _rank);
-            draw_set_color(_tinta);
+            // O SELO, e nao uma letra colorida. Medido sobre o pergaminho, o ouro do S
+            // dava 1,09:1 de contraste e o cobre do A dava 2,70:1 — os dois muito abaixo
+            // do minimo de 4,5:1. Escurecer as cores mataria a leitura, que vem do
+            // calor, e contorno vira ruido em dez linhas seguidas.
+            //
+            // O selo traz a propria chapa escura atras da letra, entao le pelo desenho e
+            // nao pela cor. E e a MESMA marca que as telas de resultado estampam na
+            // peca: o jogador ve a nota la e a procura aqui.
+            var _tier = variable_struct_exists(_e, "tier")
+                ? _e.tier
+                : (variable_struct_exists(_e, "nivel")
+                    ? _e.nivel
+                    : icone_nivel_por_precisao(_e.precisao));
+
+            icone_tier_desenhar(_tier, _col_nota - 6, _y, 3);
         }
 
         _y += _podio ? _gap_topo : _gap_resto;

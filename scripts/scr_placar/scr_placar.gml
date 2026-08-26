@@ -72,7 +72,7 @@ function placar_posicao(_indice, _pontos) {
 }
 
 /// Insere e grava. Devolve a posição obtida, ou 0 se não entrou.
-function placar_registrar(_indice, _nome, _pontos, _precisao, _nivel = 0) {
+function placar_registrar(_indice, _nome, _pontos, _precisao, _nivel = 0, _tier = -1) {
     var _pos = placar_posicao(_indice, _pontos);
     if (_pos == 0) return 0;
 
@@ -88,7 +88,12 @@ function placar_registrar(_indice, _nome, _pontos, _precisao, _nivel = 0) {
 
         // O nivel da arma forjada. Guardado em vez de reconstruido da precisao porque
         // as duas medidas tem denominadores diferentes — ver icone_nivel_por_precisao.
-        nivel: _nivel
+        nivel: _nivel,
+
+        // O DEGRAU, que nao da para reconstruir depois: S+ depende de quantas notas
+        // sairam perfeitas, e esse numero nao sobrevive ao fim da partida. Sem -1 o
+        // padrao seria o nivel, e todo S+ viraria S ao ser lido de volta.
+        tier: (_tier >= 0) ? _tier : _nivel
     });
 
     // a lista não cresce: o décimo primeiro cai fora
