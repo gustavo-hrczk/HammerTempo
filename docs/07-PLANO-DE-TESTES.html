@@ -344,11 +344,11 @@ footer {
 <div class="wrap">
 
 <header>
-  <p class="eyebrow">HammerTempo · branch <code>versus</code> · 68 commits à frente de <code>main</code></p>
+  <p class="eyebrow">HammerTempo · v1.0 · 80 commits desde a tag <code>estavel-feira</code></p>
   <h1>Bancada HammerTempo</h1>
-  <p class="lede">Roteiro de testes para validar a branch <code>versus</code> antes da feira. Cada caso diz o que fazer, o que deve acontecer e qual defeito ele guarda.</p>
+  <p class="lede">Roteiro de testes para validar a v1.0 antes da feira. Cada caso diz o que fazer, o que deve acontecer e qual defeito ele guarda.</p>
   <div class="meta">
-    <span><b>Build</b> 375a62e</span>
+    <span><b>Build</b> v1.0</span>
     <span><b>Data</b> 25/08/2026</span>
     <span><b>Alvo</b> 1280×720 · vsync ligado</span>
     <span><b>Estável anterior</b> tag <code>estavel-feira</code></span>
@@ -432,6 +432,119 @@ footer {
     <div class="col"><h5>Esperado</h5><p>Nenhuma pasta de áudio solta ao lado do executável. As notas rolam liso, sem arrasto. O Defender não bloqueia (ou a exclusão já foi criada).</p></div>
   </div>
   <div class="guard"><b>Guarda</b>As faixas passaram de streaming externo para embutidas e o vsync foi ligado. As duas coisas só se manifestam fora da máquina de desenvolvimento.</div>
+</div>
+</div>
+
+<div class="s-blo">
+<div class="suite-head"><span class="tag">V1</span><h2>Última rodada</h2></div>
+<p class="suite-note">Dezessete commits entraram <strong>depois</strong> do teste com quatro usuários, e nenhum deles foi visto rodando. São os únicos casos deste documento que ninguém validou ainda — comece por aqui.</p>
+
+<div class="case">
+  <div class="case-top"><span class="id">V1-01</span><h4>Navegar com setas e ENTER entra como jogador 1</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>No menu, escolher um modo usando <strong>só setas e ENTER</strong>.</li>
+      <li>Entrar numa fase e olhar de quem é o painel e a paleta do ferreiro.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Jogador 1. Painel no canto de sempre, ferreiro com a roupa do jogador 1, WASD funcionando.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>ENTER virou vínculo fixo do confirmar dos DOIS jogadores, e a tela de modos perguntava "foi o jogador 2?" de um jeito que o ENTER dele respondia. Toda navegação por teclado começava a partida como segundo jogador.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">V1-02</span><h4>Confirmar com as teclas do jogador 2 ainda entra como jogador 2</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Navegar o menu e confirmar com o botão configurado do jogador 2.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Entra como jogador 2. É o simétrico de V1-01 — a correção não pode ter matado a reivindicação legítima.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Só os vínculos próprios do jogador 2 reivindicam agora. Com dois controles o dele também reivindica; com um só, não.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">V1-03</span><h4>ESC funciona jogando como jogador 2</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Partida solo do jogador 2, em qualquer modo.</li><li>Apertar ESC no meio da fase.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Pausa. Antes ficava suspenso e a tecla não fazia absolutamente nada.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>É a saída de emergência do gabinete. Se ela não responder e o botão configurado estiver errado, o visitante fica preso na tela.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">V1-04</span><h4>O tutorial aparece a cada entrada em qualquer modo</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Entrar na Forja Livre, ver o tutorial, jogar uma fase e voltar ao menu.</li>
+      <li>Entrar na Forja Livre de novo.</li>
+      <li>Depois, jogar duas armas seguidas sem voltar ao menu.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Tutorial nas duas entradas. Mas <strong>não</strong> entre uma arma e outra dentro da mesma sessão.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Na feira cada entrada é um visitante novo, e antes só o primeiro via as teclas. O erro oposto — repetir a cada fase — cansaria quem está jogando as seis.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">V1-05</span><h4>A roupa do ferreiro não pisca ao sair</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Jogar como jogador 2 e sair da partida.</li><li>Observar o ferreiro durante o fade.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>A paleta não volta para a do jogador 1 antes de a tela apagar.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>A cena parou de se remontar durante transições. Vale conferir o oposto também: entrar numa partida deve montar a cena normalmente.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">V1-06</span><h4>O selo aparece nas quatro telas, com a letra certa</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Terminar uma fase do Livre e olhar o medalhão.</li>
+      <li>Abrir a tabela de recordes.</li>
+      <li>Olhar o cartão da fase no seletor.</li>
+      <li>Terminar uma partida de Versus.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Selo legível nas quatro, centrado, com a mesma letra para a mesma forja. Na fileira do percurso do Arcade <strong>não</strong> deve haver selo.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>É arte nova em quatro pontos de desenho diferentes, nenhum visto rodando. F com a espada partida, C enferrujada, B aço, A azulada, S e S+ dourada.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">V1-07</span><h4>S+ sai só com 100% de perfeitas</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Fechar uma fase curta sem errar, mas com algumas "ótimas".</li><li>Depois, tentar uma com todas perfeitas.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>A primeira dá <strong>S</strong>. Só a segunda dá <strong>S+</strong>.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Degrau novo, sem histórico. Recordes antigos nunca recebem S+ — a contagem de perfeitas não era gravada na época.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">V1-08</span><h4>Créditos do começo ao fim</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Abrir os créditos pelo menu e deixar rolar <strong>até o fim</strong>.</li>
+      <li>Observar o texto contra o céu em pontos diferentes do ciclo.</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Legível do início ao fim, inclusive nas pontas de cada linha. As últimas linhas aparecem antes de a tela fechar. A numeração vai de 1 a 4 sem repetir, com sete assets numerados dentro da seção 2.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>Três defeitos foram corrigidos aqui de uma vez: contraste sobre o céu variável, texto cortado no fim por duas larguras diferentes, e posição em meio pixel borrando a fonte.</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">V1-09</span><h4>O total e a precisão do Arcade fecham a conta</h4><span class="blocker">Bloqueador</span></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol>
+      <li>Fechar um percurso inteiro, errando de propósito em alguma arma.</li>
+      <li>Na tela final, somar perfeitas + ótimas + boas + erros e comparar com "Total".</li>
+    </ol></div>
+    <div class="col"><h5>Esperado</h5><p>Os dois batem. A precisão <strong>não</strong> mostra 100% se houver qualquer erro.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>"Total" mostrava só a última fase, e a precisão arredondava 99,54% para 100% ao lado de "Erros: 3".</div>
+</div>
+
+<div class="case">
+  <div class="case-top"><span class="id">V1-10</span><h4>Os prompts nomeiam o botão que existe</h4></div>
+  <div class="cols">
+    <div class="col"><h5>Passos</h5><ol><li>Remapear o confirmar de cada jogador.</li><li>Percorrer tutorial, resultado do Livre, resultado do Versus e créditos.</li></ol></div>
+    <div class="col"><h5>Esperado</h5><p>Cada tela nomeia o vínculo em vigor, do jogador certo. ENTER continua funcionando em todas, mesmo sem estar escrito.</p></div>
+  </div>
+  <div class="guard"><b>Guarda</b>No gabinete não há teclado. A tela prometia ENTER e ESPAÇO e escondia o botão que o visitante tem na frente.</div>
 </div>
 </div>
 
@@ -775,7 +888,8 @@ footer {
   <h2>O que este plano não cobre</h2>
   <p>Dito com clareza, para ninguém contar com o que não existe:</p>
   <ul>
-    <li><strong>Tutorial unificado.</strong> Foi pedido e não foi feito. Hoje o Versus mostra o tutorial de um jogador por vez, alternando.</li>
+    <li><strong>Tutorial unificado.</strong> Foi pedido e adiado para depois da feira. Hoje o Versus mostra o tutorial de um jogador por vez, alternando — funciona e foi testado.</li>
+    <li><strong>A cedilha.</strong> A fonte do jogo não desenha <code>ç</code> nem <code>Ç</code>: o glifo existe, mas sem a marca. "Maça" sai "Maca". Decisão tomada de deixar como está. <em>Não reportar.</em></li>
     <li><strong>Créditos.</strong> O arranjador de duas faixas é desconhecido, e o crédito da Espada repete o título da Lança. É anterior a esta branch.</li>
     <li><strong>Ajustes finos de HUD.</strong> Enquadramento e tamanho de fonte foram apontados de forma geral e não foram tratados.</li>
     <li><strong>Nota do Modo Livre.</strong> A letra do rank ao lado da arma forjada está com acabamento provisório — uma placa de degradê sem borda, ao lado de um medalhão emoldurado. Aguarda arte nova. <em>Não reportar como defeito.</em></li>
@@ -784,7 +898,7 @@ footer {
 </section>
 
 <footer>
-  <p>HammerTempo · branch <code>versus</code> em <code>375a62e</code> · plano gerado em 25 de agosto de 2026.<br>
+  <p>HammerTempo · branch <code>main</code>, tag <code>v1.0</code> · plano gerado em 25 de agosto de 2026.<br>
   Todas as correções desta branch foram feitas por leitura de código e compilação limpa. <strong>Nenhuma foi verificada com o jogo em execução</strong> — é o que este documento pede que se faça.</p>
 </footer>
 
