@@ -44,36 +44,15 @@ if (tempo >= RESULTADO_T_ESTATISTICAS) {
     draw_text(_col_dir, _linha2, "Precisão: " + ui_pct(_precisao));
 }
 
-// --- NOTA DA FORJA ---
-// A mesma letra que a tabela de recordes mostra, pela mesma função. As duas telas
-// precisam dizer a mesma coisa do mesmo jeito: o jogador vê a nota aqui e a procura
-// lá, e porcentagem de um lado com letra do outro quebraria essa ponte.
+// A NOTA DEIXOU DE SER TEXTO AO LADO DA ARMA.
 //
-// Fica AO LADO DA ARMA, e não na grade de estatísticas: a nota é o veredito sobre a
-// peça forjada, então ela pertence à peça. Em escala 2, inteira (D-33).
+// Era uma letra grande sobre uma placa de degrade, flutuando ao lado de um medalhao
+// emoldurado — dois objetos com linguagens visuais opostas na mesma tela, e o de menor
+// estrutura era justamente o que carregava o veredito.
 //
-// Só no Modo Livre. Num percurso a precisão é a da ÚLTIMA fase, e uma nota grande ao
-// lado de seis armas diria que ela vale para todas — quem conta a história do
-// percurso ali é a fileira.
-if (array_length(fileira) == 0 && tempo >= RESULTADO_T_ESTATISTICAS) {
-    var _rank = icone_rank(_precisao);
-    var _nota_x = _cx + 150;
-
-    // A nota fica sobre o CENARIO, e nao sobre o painel: sem placa, a letra dourada do
-    // S sumia contra o ceu claro do ciclo. Mesmo padrao de ui_texto_flutuante.
-    hud_placa_suave(_nota_x - 74, 122, _nota_x + 74, 250,
-                    c_black, UI_PLACA_ALPHA, 30, 22);
-
-    draw_set_font(f_padrao_pequena);
-    draw_set_color(UI_COR_APAGADA);
-    draw_text(_nota_x, 152, "NOTA");
-
-    draw_set_font(f_padrao);
-    draw_set_color(icone_rank_cor(_rank));
-    draw_text_transformed(floor(_nota_x), floor(212), _rank, 2, 2, 0);
-
-    draw_set_color(c_black);
-}
+// Agora ela e um SELO estampado no proprio medalhao, quarta fatia do sanduiche. A peca
+// e a nota viraram uma coisa so, que e o que elas sempre foram: a letra e o julgamento
+// daquela forja, nao um numero ao lado dela. Ver icone_desenhar e icone_tier.
 
 // --- PONTUAÇÃO EM DESTAQUE ---
 // Era preta, igual à grade de estatísticas acima, e sumia no meio delas. O cobre
@@ -195,7 +174,11 @@ if (_n_fileira > 0) {
     }
 
 } else {
-    icone_desenhar(arma_forjada, nivel_forjado, _cx, 190, 6);
+    // O SELO SO APARECE AQUI, na arma unica do Modo Livre. Na fileira do percurso cada
+    // medalhao ja diz o proprio nivel pela arte, e seis selos competindo entre si
+    // trocariam a leitura da sequencia por uma tabela.
+    icone_desenhar(arma_forjada, nivel_forjado, _cx, 190, 6, 1,
+                   icone_tier(_precisao, _perfeitas, _julgadas, o_controlador_geral.fase_falhou));
 }
 
 ui_reset();

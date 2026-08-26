@@ -78,7 +78,10 @@ function icone_nivel_do_placar(_indice_fase) {
 /// pareceria defeito, não pendência (D-107).
 ///
 /// Posição arredondada porque a arte é pixel art: meio pixel borra o traço.
-function icone_desenhar(_arma, _nivel, _x, _y, _escala, _alpha = 1) {
+/// _tier e a QUARTA FATIA: o selo da nota, no canto do medalhao. Aceita -1 para nao
+/// desenhar selo nenhum — e o que a miniatura do seletor de armas usa, onde o icone
+/// anuncia o melhor nivel ja atingido e nao o resultado de uma partida.
+function icone_desenhar(_arma, _nivel, _x, _y, _escala, _alpha = 1, _tier = -1) {
     var _px = floor(_x);
     var _py = floor(_y);
     var _e = max(1, floor(_escala));
@@ -91,6 +94,13 @@ function icone_desenhar(_arma, _nivel, _x, _y, _escala, _alpha = 1) {
     }
 
     draw_sprite_ext(s_icone_moldura, _n, _px, _py, _e, _e, 0, c_white, _alpha);
+
+    // POR CIMA DA MOLDURA, de proposito: o selo e uma marca puncionada na peca depois
+    // de pronta, entao ele encosta na borda em vez de ficar contido por ela.
+    if (_tier != -1) {
+        draw_sprite_ext(s_icone_tier, clamp(_tier, 0, ICONE_TIER_MAX),
+                        _px, _py, _e, _e, 0, c_white, _alpha);
+    }
 }
 
 /// Largura (e altura) que o ícone ocupa numa dada escala.
@@ -102,22 +112,59 @@ function icone_tamanho(_escala) {
 // NOTA DA FORJA
 // =====================================================================
 
-/// Nota em letra, de F a S, a partir da precisao em porcentagem.
+/// Ultimo quadro de s_icone_tier. O 5 e o S+, que nao tem nivel de arma correspondente.
+#macro ICONE_TIER_MAX 5
+
+/// O DEGRAU DA FORJA, de 0 a 5 — o indice do selo em s_icone_tier.
+///
+/// Os quadros 0 a 4 sao os MESMOS indices do nivel da arma, um a um: a arte da peca e
+/// a letra estampada nela contam a mesma historia, e nao duas. O 5 e o degrau que so
+/// existe na letra.
+///
+///     0  F   falha, ou precisao abaixo de 40%
+///     1  C   ate 70%
+///     2  B   ate 95%
+///     3  A   abaixo de 100%
+///     4  S   100% das notas acertadas
+///     5  S+  100% e TODAS perfeitas
+///
+/// S+ nao e "quase S". Ele exige que nenhuma nota tenha saido como otima ou boa, o que
+/// e muito mais raro que nao errar — e por isso ele vale um degrau proprio em vez de
+/// um enfeite no S.
+function icone_tier(_pct, _perfeitas, _julgadas, _falhou = false) {
+    if (_falhou) return 0;
+
+    var _n = icone_nivel_por_precisao(_pct);
+
+    if (_n >= 4 && _julgadas > 0 && _perfeitas >= _julgadas) {
+        return 5;
+    }
+
+    return _n;
+}
+
+/// Nota em letra, a partir do degrau.
+function icone_rank_do_tier(_tier) {
+    switch (clamp(_tier, 0, ICONE_TIER_MAX)) {
+        case 0: return "F";
+        case 1: return "C";
+        case 2: return "B";
+        case 3: return "A";
+        case 4: return "S";
+    }
+    return "S+";
+}
+
+/// Nota em letra a partir da precisao, sem informacao de perfeitos.
 ///
 /// Porcentagem e um numero que o jogador precisa INTERPRETAR: 87% e bom? e ruim? Ele
 /// nao tem com o que comparar. A letra ele le de relance e compara com a do vizinho
 /// na fila, que numa feira e exatamente o que acontece.
 ///
-/// Seis faixas contra os cinco niveis de arte de proposito: a nota e mais fina que a
-/// arma. C e B dividem o mesmo nivel de arma (o 2), o que da ao jogador um degrau
-/// intermediario para perseguir sem prometer arma nova.
+/// Nunca devolve S+, porque S+ depende de quantas notas sairam perfeitas e isso a
+/// precisao sozinha nao diz. Quem tem o dado usa icone_tier.
 function icone_rank(_pct) {
-    if (_pct < 40)  return "F";
-    if (_pct < 70)  return "D";
-    if (_pct < 85)  return "C";
-    if (_pct < 95)  return "B";
-    if (_pct < 100) return "A";
-    return "S";
+    return icone_rank_do_tier(icone_nivel_por_precisao(_pct));
 }
 
 /// Cor da nota. Segue a rampa de calor da forja: frio embaixo, incandescente no topo.
@@ -126,11 +173,11 @@ function icone_rank(_pct) {
 /// mesmo motivo que as bolhas de julgamento deixaram de depender so de cor.
 function icone_rank_cor(_rank) {
     switch (_rank) {
-        case "S": return make_colour_rgb(255, 196,  64);   // ouro incandescente
-        case "A": return make_colour_rgb(212,  92,  32);   // cobre quente
-        case "B": return make_colour_rgb(150,  66,  24);   // cobre, a tinta do jogo
-        case "C": return make_colour_rgb(120, 105,  95);   // apagada
-        case "D": return make_colour_rgb(110,  96,  86);
+        case "S+": return make_colour_rgb(255, 232, 128);  // ouro claro, acima do S
+        case "S":  return make_colour_rgb(255, 196,  64);  // ouro incandescente
+        case "A":  return make_colour_rgb(212,  92,  32);  // cobre quente
+        case "B":  return make_colour_rgb(150,  66,  24);  // cobre, a tinta do jogo
+        case "C":  return make_colour_rgb(120, 105,  95);  // apagada
     }
     return make_colour_rgb(128,  40,  44);                 // F, carmim escuro
 }

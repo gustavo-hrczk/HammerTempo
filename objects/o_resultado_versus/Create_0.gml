@@ -24,7 +24,13 @@ perfeitas = [_j1.stats_acertos_perfeitos, _j2.stats_acertos_perfeitos];
 otimas    = [_j1.stats_acertos_otimos,    _j2.stats_acertos_otimos];
 boas      = [_j1.stats_acertos_bons,      _j2.stats_acertos_bons];
 erros = [_j1.stats_erros, _j2.stats_erros];
-notas = [icone_rank(precisoes[0]), icone_rank(precisoes[1])];
+// PELA MESMA ESCALA DA TELA DE UM JOGADOR, incluindo o S+. icone_rank sozinho nunca
+// devolve S+, porque a precisao nao diz quantas notas sairam perfeitas — e num Versus
+// entre dois jogadores de 100% e exatamente isso que decide quem forjou melhor.
+notas = [
+    icone_rank_do_tier(icone_tier(precisoes[0], perfeitas[0], _j1.julgadas())),
+    icone_rank_do_tier(icone_tier(precisoes[1], perfeitas[1], _j2.julgadas()))
+];
 
 // -1 é empate. Empate acontece de verdade quando ninguém toca, então precisa de um
 // caminho próprio em vez de virar vitória de quem calhou de ser o índice 0.
