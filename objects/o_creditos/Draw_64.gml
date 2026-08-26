@@ -16,8 +16,12 @@ var _gh = display_get_gui_height();
 
 // Coluna do texto, com folga dos dois lados. O degradê largo faz a placa ler como
 // penumbra e não como uma caixa retangular no meio da tela.
-hud_placa_suave(CREDITOS_X - 60, -80, CREDITOS_X + CREDITOS_LARGURA + 60, _gh + 80,
-                c_black, 0.68, 130, 90);
+//
+// SEM QUEDA NA VERTICAL: em cima e embaixo quem corta é a borda da tela, e ali não há
+// nada do outro lado para a transição suavizar. Reservar 90 px de degradê para as duas
+// pontas só tirava contraste das primeiras e das últimas linhas do texto.
+hud_placa_suave(CREDITOS_X - 110, -4, CREDITOS_X + CREDITOS_LARGURA + 110, _gh + 4,
+                c_black, 0.68, 190, 0);
 
 draw_set_font(f_padrao);
 draw_set_halign(fa_left);

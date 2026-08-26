@@ -412,25 +412,80 @@ function hud_perigo_estagio(_erros, _limite) {
     return { estagio: _erros - _inicio + 1, total: _total };
 }
 
+/// Quantas paradas cada borda da placa tem. Seis basta para a rampa parecer contínua;
+/// abaixo de quatro a suavização volta a mostrar degrau.
+#macro PLACA_PASSOS 6
+
+/// As paradas de um eixo da placa: posição e peso do alpha, com a rampa SUAVIZADA.
+///
+/// Uma rampa linear vai de zero ao pico em linha reta, e a quebra de derivada nas duas
+/// pontas — onde ela sai do zero e onde encosta no pico — aparece como um risco. É a
+/// banda de Mach, e era o que fazia a placa dos créditos ter uma aresta visível de cada
+/// lado apesar de tecnicamente não ter borda nenhuma.
+///
+/// smoothstep chega e sai com derivada zero, então não há onde o olho fisgar.
+function hud_placa_eixo(_a, _b, _fade) {
+    _fade = min(_fade, (_b - _a) / 2);
+
+    if (_fade <= 0) {
+        return { pos: [_a, _b], peso: [1, 1] };
+    }
+
+    var _n = PLACA_PASSOS;
+    var _pos = [];
+    var _peso = [];
+
+    for (var i = 0; i <= _n; i++) {
+        var _t = i / _n;
+        array_push(_pos, _a + (_fade * _t));
+        array_push(_peso, _t * _t * (3 - 2 * _t));
+    }
+
+    // o miolo, onde o alpha fica no pico. Some quando a borda ocupa a placa inteira.
+    if ((_b - _fade) > (_a + _fade)) {
+        array_push(_pos, _b - _fade);
+        array_push(_peso, 1);
+    }
+
+    for (var i = 1; i <= _n; i++) {
+        var _t = i / _n;
+        var _s = 1 - _t;
+        array_push(_pos, _b - _fade + (_fade * _t));
+        array_push(_peso, _s * _s * (3 - 2 * _s));
+    }
+
+    return { pos: _pos, peso: _peso };
+}
+
 /// Placa escura de bordas suaves, para dar fundo a um texto sem virar uma tarja.
 ///
 /// O alpha é cheio num miolo e cai a zero nas quatro bordas, então a placa não tem
-/// aresta em lugar nenhum. É uma grade 3x3 de quadriláteros com cor por vértice: as
-/// nove peças encostam sem se cobrir, o que evita alpha somado nas emendas.
+/// aresta em lugar nenhum — desde que a queda seja suavizada, ver hud_placa_eixo.
+///
+/// Desenhada uma FAIXA POR VEZ, e não um quadrilátero por célula: a faixa inteira sai
+/// num trianglestrip só, os vértices são compartilhados entre as colunas e não existe
+/// emenda onde o alpha possa somar. Treze primitivas no lugar de cento e sessenta e
+/// nove, que é o que a mesma grade custaria célula a célula.
 function hud_placa_suave(_x1, _y1, _x2, _y2, _cor, _pico, _fade_x, _fade_y) {
-    var _xs = [_x1, _x1 + _fade_x, _x2 - _fade_x, _x2];
-    var _ys = [_y1, _y1 + _fade_y, _y2 - _fade_y, _y2];
-    var _f  = [0, 1, 1, 0];   // peso do alpha em cada linha da grade
+    var _ex = hud_placa_eixo(_x1, _x2, _fade_x);
+    var _ey = hud_placa_eixo(_y1, _y2, _fade_y);
 
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            draw_primitive_begin(pr_trianglestrip);
-            draw_vertex_colour(_xs[i],     _ys[j],     _cor, _pico * _f[i]     * _f[j]);
-            draw_vertex_colour(_xs[i],     _ys[j + 1], _cor, _pico * _f[i]     * _f[j + 1]);
-            draw_vertex_colour(_xs[i + 1], _ys[j],     _cor, _pico * _f[i + 1] * _f[j]);
-            draw_vertex_colour(_xs[i + 1], _ys[j + 1], _cor, _pico * _f[i + 1] * _f[j + 1]);
-            draw_primitive_end();
+    var _nc = array_length(_ex.pos);
+    var _nl = array_length(_ey.pos);
+
+    for (var j = 0; j < _nl - 1; j++) {
+        var _a0 = _pico * _ey.peso[j];
+        var _a1 = _pico * _ey.peso[j + 1];
+
+        draw_primitive_begin(pr_trianglestrip);
+
+        for (var i = 0; i < _nc; i++) {
+            var _w = _ex.peso[i];
+            draw_vertex_colour(_ex.pos[i], _ey.pos[j],     _cor, _a0 * _w);
+            draw_vertex_colour(_ex.pos[i], _ey.pos[j + 1], _cor, _a1 * _w);
         }
+
+        draw_primitive_end();
     }
 
     draw_set_alpha(1);
