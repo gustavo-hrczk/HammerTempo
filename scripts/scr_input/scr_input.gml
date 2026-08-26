@@ -193,13 +193,49 @@ function input_comando_p2(_acao) {
     return -1;
 }
 
-/// O comando do jogador 1 fica suspenso enquanto o jogador 2 joga sozinho.
+/// NADA MAIS FICA SUSPENSO.
 ///
-/// So vale para PAUSAR, pelo mesmo motivo acima. As faixas ja estao isoladas por
-/// construcao: os alvos perguntam pelas acoes do proprio dono, entao o WASD nao
-/// alcanca a partida do jogador 2 nem as setas alcancam a do jogador 1 no Versus.
+/// PAUSAR do jogador 1 ficava mudo durante uma partida solo do jogador 2, para um nao
+/// pausar o jogo do outro. Isso protegia contra um problema que so existe no Versus — e
+/// no Versus os dois pausam de proposito, porque a partida e dos dois. No solo ha uma
+/// pessoa so na frente do gabinete, e a unica coisa que a regra fazia era desligar o
+/// ESC: a tecla que todo mundo aperta quando quer sair, e que precisa funcionar sempre,
+/// exatamente como o ENTER.
+///
+/// As faixas continuam isoladas por construcao — os alvos perguntam pelas acoes do
+/// proprio dono —, e e ali que a interferencia entre dois jogadores realmente importa.
 function input_comando_suspenso(_acao) {
-    return (_acao == ACAO.PAUSAR) && !versus_ativo() && (solo_jogador() == 1);
+    return false;
+}
+
+/// Quem apertou o confirmar: 0 para o jogador 1, 1 para o 2.
+///
+/// ENTER e vinculo FIXO dos dois de proposito: e a salvaguarda que destrava qualquer
+/// tela sem depender de configuracao. Justamente por ser dos dois, ela nao pode
+/// responder "quem foi" — perguntar por CONFIRMAR2 fazia TODA navegacao por teclado
+/// cair como jogador 2, porque o ENTER dele tambem respondia, e quem escolhia um modo
+/// com setas e ENTER comecava a partida como se fosse o segundo jogador.
+///
+/// So os vinculos PROPRIOS do jogador 2 reivindicam a partida.
+function input_dono_do_confirmar() {
+    var _teclas = global.input_teclas[ACAO.CONFIRMAR2];
+
+    for (var i = 0; i < array_length(_teclas); i++) {
+        if (keyboard_check_pressed(_teclas[i])) return 1;
+    }
+
+    // O controle so reivindica quando o jogador 2 tem o PROPRIO dispositivo. Com um
+    // controle so, ele e do jogador 1 — e os botoes de fabrica sao os mesmos nos dois,
+    // entao ler o slot compartilhado faria todo confirmar de controle virar jogador 2.
+    if (global.input_slots[1] >= 0) {
+        var _botoes = global.input_botoes[ACAO.CONFIRMAR2];
+
+        for (var i = 0; i < array_length(_botoes); i++) {
+            if (gamepad_button_check_pressed(global.input_slots[1], _botoes[i])) return 1;
+        }
+    }
+
+    return 0;
 }
 
 /// De qual jogador esta ação é? 0 para o primeiro, 1 para o segundo.

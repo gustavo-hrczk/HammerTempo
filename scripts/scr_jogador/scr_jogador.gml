@@ -172,6 +172,12 @@ function solo_adotar_dono(_dono) {
 function cena_sincronizar() {
     if (room != rm_forja) return;
 
+    // NADA MUDA DURANTE UMA TRANSICAO. A sala ainda existe e ainda esta na tela durante
+    // o fade de saida, entao remontar a cena ali faz o jogador ver a mudanca antes de a
+    // tela apagar — era o que fazia a roupa do ferreiro piscar de volta para a paleta
+    // do jogador 1 ao sair de uma partida do jogador 2.
+    if (fluxo_ocupado()) return;
+
     if (versus_ativo()) {
         versus_montar_cena();
         versus_revelar_cena();

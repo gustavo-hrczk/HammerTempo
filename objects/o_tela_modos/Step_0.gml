@@ -35,10 +35,10 @@ if (input_pressed(ACAO.CONFIRMAR)) {
 
     o_audio_manager.play_sfx(snd_menu_confirm);
 
-    // QUEM confirmou decide quem joga no solo. input_pressed(CONFIRMAR) responde aos
-    // dois jogadores de proposito, entao a pergunta especifica precisa ser feita a
-    // acao do jogador 2 — que so responde as teclas dele.
-    var _dono = input_pressed(ACAO.CONFIRMAR2) ? 1 : 0;
+    // QUEM confirmou decide quem joga no solo — ver input_dono_do_confirmar, que ignora
+    // o ENTER de proposito: ele e vinculo fixo dos DOIS, e perguntar por ele fazia toda
+    // navegacao por teclado cair como jogador 2.
+    var _dono = input_dono_do_confirmar();
 
     var _arcade = (opcao_selecionada == 0);
 
@@ -59,12 +59,17 @@ if (input_pressed(ACAO.CONFIRMAR)) {
     // O VERSUS TAMBEM refaz o tutorial, e por um motivo mais forte que o do Arcade:
     // sao DOIS jogadores dividindo um teclado, e cada um precisa achar as proprias
     // teclas antes da primeira nota. Sem isso o segundo descobre errando.
-    var _refaz = (o_controlador_geral.modo_jogo == MODO.VERSUS)
-              || (_arcade && ARCADE_SEMPRE_TUTORIAL);
-
-    if (_refaz) {
-        o_controlador_geral.tutorial_ja_foi_visto = false;
-    }
+    // O TUTORIAL VOLTA EM TODOS OS MODOS, e nao so no Arcade e no Versus.
+    //
+    // tutorial_ja_foi_visto guarda a sessao inteira, o que serve para quem joga em casa
+    // e atrapalha na feira: ali cada entrada e um visitante novo, que alem de nao
+    // conhecer o jogo nao conhece os botoes do gabinete. Na Forja Livre o segundo
+    // visitante em diante caia direto no seletor de armas sem nunca ver quais teclas
+    // sao as dele.
+    //
+    // E uma vez por ENTRADA no modo, e nao por fase: quem esta jogando varias armas
+    // seguidas volta ao seletor, nao ao menu, entao nao reve o tutorial no meio.
+    o_controlador_geral.tutorial_ja_foi_visto = false;
 
     // Os dois modos entram pelo MESMO estado. Quem decide se o seletor de armas
     // aparece ou se o percurso começa direto é o controlador, já dentro da forja —
