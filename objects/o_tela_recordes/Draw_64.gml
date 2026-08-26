@@ -12,14 +12,25 @@ draw_text(_cx, _topo + 40, "RECORDES");
 
 // --- PÁGINA EXIBIDA ---
 // As setas laterais só aparecem quando há para onde ir.
+// SO O NOME, e na mesma caixa dos outros.
+//
+// Era "MODO ARCADE" em caixa alta ao lado de "Forjar Espada" em caixa mista: duas
+// paginas da mesma tabela escritas em convencoes diferentes, e o olho lia isso como
+// duas telas. "Forjar" e "Modo" tambem sairam — o primeiro se repete em todas as
+// paginas de arma e o segundo em nenhuma outra, e nenhum dos dois distingue coisa
+// alguma. Sobra o nome, que e o que o jogador procura.
 var _arcade = (pagina == 0);
 var _nome_pagina = _arcade
-    ? "MODO ARCADE"
-    : o_controlador_geral.fases_data[pagina - 1].nome;
+    ? "Arcade"
+    : fase_nome_curto(o_controlador_geral.fases_data[pagina - 1].nome);
 
 var _rotulo = (total_paginas > 1) ? ("<  " + _nome_pagina + "  >") : _nome_pagina;
 
-draw_set_color(UI_COR_DESTAQUE);
+// PRETO, e nao o amarelo de destaque. O amarelo existe para marcar o item selecionado
+// de um menu, contra um fundo que pode ser qualquer um; aqui o fundo e o pergaminho,
+// claro, e ele dava 1,8:1 de contraste. Nesta tela nao ha o que selecionar — o titulo
+// so diz de que pagina e a tabela.
+draw_set_color(c_black);
 draw_text(_cx, _topo + 82, _rotulo);
 
 // =================================================================
@@ -57,7 +68,14 @@ draw_set_halign(fa_left);
 draw_text(_col_nome, _y_cabecalho, "Nome");
 draw_set_halign(fa_right);
 draw_text(_col_pontos, _y_cabecalho, "Pontos");
-draw_text(_col_nota, _y_cabecalho, _arcade ? "Armas" : "Nota");
+
+// O SELO E CENTRADO SOB O ROTULO, e nao encostado na margem direita da coluna. O
+// rotulo e alinhado a direita, entao o meio dele fica meia largura antes do fim — e
+// era essa meia largura que faltava, deixando o selo visivelmente fora de prumo.
+var _rot_nota = _arcade ? "Armas" : "Nota";
+draw_text(_col_nota, _y_cabecalho, _rot_nota);
+
+var _nota_centro = _col_nota - (string_width(_rot_nota) / 2);
 draw_set_alpha(1);
 
 draw_set_alpha(0.25);
@@ -120,7 +138,7 @@ if (array_length(_lista) == 0) {
                     ? _e.nivel
                     : icone_nivel_por_precisao(_e.precisao));
 
-            icone_tier_desenhar(_tier, _col_nota - 6, _y, 3);
+            icone_tier_desenhar(_tier, _nota_centro, _y, 3);
         }
 
         _y += _podio ? _gap_topo : _gap_resto;

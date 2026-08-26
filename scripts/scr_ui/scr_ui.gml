@@ -197,6 +197,23 @@ function ui_texto_confirmar_dupla() {
     return "Pressione " + _a + " ou " + _b;
 }
 
+/// O nome da arma, sem o verbo.
+///
+/// fases_data guarda "Forjar Espada", que é o rótulo do BOTÃO do seletor — ali ele
+/// descreve a ação, e a ação é o ponto. Numa tabela de recordes vira ruído: todas as
+/// páginas começam com a mesma palavra, que por isso não distingue nenhuma. Sobra o
+/// nome, que é o que o jogador procura.
+function fase_nome_curto(_nome) {
+    var _verbo = "Forjar ";
+    var _n = string_length(_verbo);
+
+    if (string_copy(_nome, 1, _n) == _verbo) {
+        return string_delete(_nome, 1, _n);
+    }
+
+    return _nome;
+}
+
 /// Porcentagem de precisão como texto, TRUNCADA e nunca arredondada.
 ///
 /// Um percurso com 651 acertos e 3 erros da 99,54%, e round() mostrava 100% ao lado de
