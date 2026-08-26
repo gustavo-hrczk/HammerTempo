@@ -19,19 +19,42 @@ draw_text(_cx, _topo + 40, "RECORDES");
 // duas telas. "Forjar" e "Modo" tambem sairam — o primeiro se repete em todas as
 // paginas de arma e o segundo em nenhuma outra, e nenhum dos dois distingue coisa
 // alguma. Sobra o nome, que e o que o jogador procura.
+//
+// A COR CONTINUA SENDO O AMARELO DE DESTAQUE. Ele da 1,37:1 sobre o pergaminho e eu
+// tinha trocado por preto, que da 14,46:1 — e o preto ficou pior de ler na tela, nao
+// melhor: ele apagava o unico sinal de que aquela linha muda, e o titulo passava a
+// parecer um cabecalho fixo. O amarelo aqui nao esta decorando, esta dizendo que ha
+// setas para os lados.
 var _arcade = (pagina == 0);
 var _nome_pagina = _arcade
     ? "Arcade"
     : fase_nome_curto(o_controlador_geral.fases_data[pagina - 1].nome);
 
-var _rotulo = (total_paginas > 1) ? ("<  " + _nome_pagina + "  >") : _nome_pagina;
+// AS SETAS NAO ANDAM COM A PALAVRA.
+//
+// O rotulo era "<  nome  >" numa string so, centrada — entao cada pagina punha as setas
+// num lugar diferente, e trocar de arma fazia as duas pularem de um lado para o outro.
+// Elas sao controles: a mao aprende onde ficam e volta ali. Medidas contra o rotulo
+// MAIS LARGO de todos, cada pagina desloca so o proprio nome.
+var _y_rotulo = _topo + 82;
 
-// PRETO, e nao o amarelo de destaque. O amarelo existe para marcar o item selecionado
-// de um menu, contra um fundo que pode ser qualquer um; aqui o fundo e o pergaminho,
-// claro, e ele dava 1,8:1 de contraste. Nesta tela nao ha o que selecionar — o titulo
-// so diz de que pagina e a tabela.
-draw_set_color(c_black);
-draw_text(_cx, _topo + 82, _rotulo);
+var _mais_largo = string_width("Arcade");
+var _fases = o_controlador_geral.fases_data;
+
+for (var _i = 0; _i < array_length(_fases); _i++) {
+    _mais_largo = max(_mais_largo, string_width(fase_nome_curto(_fases[_i].nome)));
+}
+
+draw_set_color(UI_COR_DESTAQUE);
+draw_text(_cx, _y_rotulo, _nome_pagina);
+
+// As setas so aparecem quando ha para onde ir.
+if (total_paginas > 1) {
+    var _seta_dx = (_mais_largo / 2) + 30;
+
+    draw_text(_cx - _seta_dx, _y_rotulo, "<");
+    draw_text(_cx + _seta_dx, _y_rotulo, ">");
+}
 
 // =================================================================
 // TABELA
