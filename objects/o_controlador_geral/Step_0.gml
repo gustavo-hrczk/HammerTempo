@@ -12,7 +12,7 @@ if (pausa) {
 
     var _mv = input_eixo_v();
     if (_mv != 0) {
-        var _total = array_length(pausa_opcoes);
+        var _total = array_length(pausa_opcoes_agora());
         pausa_opcao = (pausa_opcao + _mv + _total) mod _total;
         o_audio_manager.play_sfx(nav_sounds[nav_sound_index]);
         nav_sound_index = 1 - nav_sound_index;
@@ -26,18 +26,20 @@ if (pausa) {
     }
     else if (input_pressed(ACAO.CONFIRMAR)) {
         o_audio_manager.play_sfx(snd_menu_confirm);
-        switch (pausa_opcao) {
-            case 0: retomar_partida();   break;
-            case 1: reiniciar_partida(); break;
-            case 2: abandonar_partida(); break;
-        }
+        pausa_executar(pausa_opcao);
     }
 
     exit; // pausado: nada mais roda
 }
 
 // Entrar em pausa só faz sentido com a partida em andamento e ainda não perdida.
-if (estado_jogo == MINIGAME.RITMO && !fase_falhou && input_pressed(ACAO.PAUSAR)) {
+//
+// O intervalo do Arcade também bloqueia: o estado ainda é RITMO enquanto ele está
+// aberto, e sem isto o jogador empilharia o menu de pausa por cima do de intervalo,
+// com os dois respondendo ao mesmo direcional.
+if (estado_jogo == MINIGAME.RITMO && !fase_falhou
+    && !instance_exists(o_tela_intervalo)
+    && input_pressed(ACAO.PAUSAR)) {
     o_audio_manager.play_sfx(snd_menu_confirm);
     pausar_partida();
     exit;
@@ -77,6 +79,11 @@ if (estado_jogo != estado_anterior) {
     estado_anterior = estado_jogo;
 }
 
+// A CENA SE SINCRONIZA TODO QUADRO, fora do switch de estados: quem monta o Versus e
+// quem entrega a cena ao jogador do solo nao pode depender de a virada de estado ter
+// calhado no quadro em que a sala ja existia.
+cena_sincronizar();
+
 // =================================================================
 // COMPORTAMENTO CONTÍNUO DE CADA ESTADO
 // =================================================================
@@ -93,13 +100,25 @@ switch (estado_jogo) {
     case MINIGAME.SELECAO_FASE:
         // Só cria o seletor se estivermos na sala da forja.
         if (room == rm_forja) {
-            if (!instance_exists(o_seletor_fases)) {
+            // O Versus reaproveita esta sala e reposiciona os dois lados. Feito aqui,
+            // no estado que antecede a partida, para a cena ja estar montada quando a
+            // contagem comecar.
+            // No Arcade o seletor de armas nao existe: o percurso e a lista inteira,
+            // em ordem, e comeca na primeira. Os dois modos entram por este mesmo
+            // estado justamente para a contagem so comecar com a sala ja montada.
+            if (modo_jogo == MODO.ARCADE) {
+                arcade_iniciar_percurso();
+            } else if (!instance_exists(o_seletor_fases)) {
                 instance_create_layer(0, 0, "Gameplay", o_seletor_fases);
             }
         }
         break;
 
     case MINIGAME.CONTAGEM:
+        // A pista do jogador 2 nasce com a fase, e nao no seletor de armas: la ela
+        // ficaria desenhada por cima do ceu, sem nota nenhuma para receber.
+        versus_montar_pista();
+
         if (contagem_timer > 0) {
             contagem_timer--;
         } else {
@@ -108,13 +127,26 @@ switch (estado_jogo) {
         break;
 
     case MINIGAME.RITMO:
+        versus_montar_pista();
         hud_update();
 
         // Garante que o spawner seja criado apenas uma vez.
         // A checagem de fase_falhou é essencial: no game over o estado continua
         // sendo RITMO durante o respiro, e sem ela o spawner destruído voltava no
         // frame seguinte, gerando notas por cima da tela de resultado.
-        if (room == rm_forja && !fase_falhou && !instance_exists(o_spawner_ritmo)) {
+        // O INTERVALO DO ARCADE SEGURA A PROXIMA FASE.
+        //
+        // O estado continua sendo RITMO enquanto o menu de intervalo esta aberto, e o
+        // spawner da fase que acabou ja se destruiu ao abri-lo. Sem esta condicao o
+        // controlador via "estado RITMO, sem spawner" no quadro seguinte e comecava a
+        // proxima fase ali mesmo, atras do menu: a musica voltava a tocar e as notas
+        // corriam enquanto o jogador ainda estava escolhendo se queria continuar.
+        //
+        // Era tambem a causa das notas fora de compasso na fase seguinte — quando o
+        // jogador confirmava, a fase ja estava rodando ha vinte ou trinta segundos, e
+        // a contagem de arcade_avancar criava um SEGUNDO spawner por cima do primeiro.
+        if (room == rm_forja && !fase_falhou && !gameplay_congelado()
+            && !instance_exists(o_spawner_ritmo)) {
             show_debug_message("Iniciando minigame de ritmo para a fase: " + fases_data[fase_atual].nome);
             var _spawn_x = room_width + 120;
             instance_create_layer(_spawn_x, 0, "Gameplay", o_spawner_ritmo);
@@ -123,7 +155,16 @@ switch (estado_jogo) {
         // Lógica de Fim de Jogo por notas perdidas em sequência.
         // Toques inválidos não encerram mais a partida (auditoria GP-04): eles só
         // custam pontos, para não expulsar quem está experimentando o jogo.
-        if (!fase_falhou && stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
+        // A primeira fase do percurso Arcade nao expulsa ninguem: ela E a rampa de
+        // aprendizado. A Adaga falha com 4 notas perdidas seguidas, o que a 2,25
+        // notas/s sao 1,8 segundo sem acertar nada — quem nunca jogou seria ejetado
+        // em vinte segundos, sem ter jogado.
+        //
+        // No VERSUS ninguem perde por falha: a partida e uma disputa entre os dois, e
+        // encerra-la porque UM deles errou demais tiraria o outro do jogo junto. Quem
+        // decide o Versus e a comparacao no fim, nao a sobrevivencia.
+        if (!fase_falhou && !arcade_fase_imune() && !versus_ativo()
+            && jogador().stats_sequencia_errada >= fases_data[fase_atual].stats_limite_sequencia_errada) {
             show_debug_message("Game Over por excesso de notas perdidas!");
 
             fase_falhou = true;
@@ -136,7 +177,7 @@ switch (estado_jogo) {
 
             // A derrota já acontece aqui, durante o respiro: o ferreiro reage e a
             // música sai em fade, em vez de a fase ser cortada em seco.
-            if (instance_exists(o_ferreiro)) { o_ferreiro.iniciar_animacao_falha(); }
+            with (o_ferreiro) iniciar_animacao_falha();
             o_audio_manager.fade_out_music(1.4);
         }
 

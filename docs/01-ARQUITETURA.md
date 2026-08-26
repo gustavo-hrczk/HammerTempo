@@ -321,3 +321,86 @@ Constantes medidas a partir do código e da room:
 - Volume e tela cheia voltam ao padrão a cada execução.
 - Não há recordes, progresso ou desbloqueios.
 - Não há base sobre a qual construir o leaderboard (Sprint 4) — precisará ser criada do zero.
+
+---
+
+## 10. Dois jogadores (v1)
+
+O que mudou na arquitetura quando o Versus entrou. Vale para quem for mexer em qualquer
+coisa de gameplay: **nada mais assume que existe um jogador só**.
+
+### 10.1 Estado por jogador
+
+`scr_jogador` guarda um `EstadoJogador()` por jogador em `o_controlador_geral.jogadores`,
+e `jogador(_n)` devolve o de índice `_n`. Sem argumento devolve o do modo solo — que é o
+1 na maioria das vezes, mas pode ser o 2.
+
+**Todo código de partida passa o índice explicitamente.** Quem omite são as telas de um
+jogador, e para elas "o jogador" é exatamente esse. Escrever `jogador()` dentro de um
+objeto de gameplay é o erro mais caro que esta branch produziu: 23 escritas de pontuação
+iam para o jogador 1 no Versus, sem crash e sem sintoma além do placar errado.
+
+### 10.2 Modos e propriedade da cena
+
+| Conceito | Onde | O que responde |
+|---|---|---|
+| `MODO.LIVRE / ARCADE / VERSUS` | `scr_estados` | qual é a partida |
+| `versus_ativo()` | `scr_estados` | há dois jogadores na tela? |
+| `solo_jogador()` | `scr_estados` | quem joga, quando é um só |
+| `versus_espelhado(_dono)` | `scr_estados` | este jogador está na pista de cima? |
+| `dono` (variável de instância) | ferreiro, bigorna, alvos, corredor | de quem é este objeto |
+| `criado_pelo_versus` | idem | veio da sala ou foi criado em tempo de execução |
+
+`cena_sincronizar()` roda **todo quadro** em `rm_forja` e põe a cena de acordo com o modo
+e o dono atuais. Ela sai cedo quando nada mudou, e não faz nada durante uma transição —
+a sala ainda está na tela durante o fade, e remontar ali faz o jogador ver a mudança
+antes de a tela apagar.
+
+`versus_espelhado()` existe porque a pergunta certa quase nunca é "o dono é 1?": fora do
+Versus o jogador 2 ocupa o corredor de baixo, o mesmo do jogador 1, e tudo que depende do
+espelho tem de continuar valendo como sempre valeu.
+
+### 10.3 Geometria espelhada
+
+A pista de cima é o espelho da de baixo em tudo: sentido das notas, lado da bigorna,
+posição da zona de acerto e direção dos textos. Tudo deriva de `scr_ritmo`:
+
+- `ritmo_linha_x(_dono)` — a zona de acerto, espelhada descontando a largura do alvo
+  (os sprites têm origem na borda esquerda, então espelhar só a coordenada dava margens
+  de 98 px contra 53).
+- `ritmo_sentido(_dono)` — `-1` para a pista de baixo, `+1` para a de cima.
+- `ritmo_corredor_topo(_dono)` — a faixa de cima nasce em **−12**, e não em 0, para
+  repetir o corte de 12 px que a borda da tela já dá na de baixo. O sprite tem 240 px e
+  as duas mostram 228.
+
+### 10.4 Input
+
+`scr_input` isola os dois jogadores por dois mecanismos diferentes — ver D-139 e D-140.
+As funções que respondem "de quem é isto":
+
+- `input_lane(_dono, _tipo)` — a ação de faixa de um jogador. O par tipo→ação **não** é o
+  que a intuição sugere: tipo 2 é DIREITA e tipo 3 é ESQUERDA, convenção do Instance
+  Creation Code de `rm_forja` desde a jam.
+- `input_acao_do_jogador2(_acao)` — a ação pertence ao segundo jogador?
+- `input_dispositivo_da_acao(_acao)` — qual dos dois controles ela lê, ou −1.
+- `input_tecla_do_jogador2(_acao, _tecla)` — no Versus, esta tecla é do outro?
+- `input_dono_do_confirmar()` — quem reivindicou a partida. **Não** é
+  `input_pressed(CONFIRMAR2)`: ver D-140.
+
+### 10.5 O ícone é um sanduíche de QUATRO fatias
+
+`scr_icone` monta o medalhão empilhando, na ordem:
+
+```
+s_icone_fundo     20x20   o fundo
+s_icone_<arma>    16x16   a arma
+s_icone_moldura   26x26   a moldura
+s_icone_tier      26x26   o selo da nota, por cima de tudo
+```
+
+As quatro têm origem no centro, então saem no mesmo x,y e se alinham sozinhas. O quadro
+das três primeiras é o **nível** (0 a 4); o da quarta é o **degrau** (0 a 5, com o 5
+sendo S+). Os índices 0 a 4 são os mesmos nas duas escalas de propósito — ver D-143.
+
+`icone_desenhar(_arma, _nivel, _x, _y, _escala, _alpha, _tier)` aceita `-1` em `_arma`
+(medalhão vazio) e em `_tier` (sem selo).

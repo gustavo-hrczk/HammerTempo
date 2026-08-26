@@ -1,9 +1,26 @@
-if (o_controlador_geral.pausa){
-	exit;
+if (gameplay_congelado()) {
+    exit;
 }
 // Se a fase já estiver no período de tolerância, não faz mais nada aqui.
 if (esta_finalizando) {
     exit;
+}
+
+// =================================================================
+// GERACAO PELO RELOGIO DA FAIXA
+// Nasce a nota quando falta exatamente o tempo de viagem para o instante dela. O
+// laco cobre o caso de varias notas vencerem no mesmo quadro, o que acontece se um
+// frame demorar — e o motivo de a grade nao perder nota sob carga.
+// =================================================================
+var _agora = ritmo_relogio();
+
+if (_agora >= 0) {
+    while (proximo_t - viagem_seg <= _agora) {
+        criar_nota(proximo_t);
+
+        proximo_t += meu_pattern_atual[pattern_index] * beat_seg;
+        pattern_index = (pattern_index + 1) mod array_length(meu_pattern_atual);
+    }
 }
 
 // --- LÓGICA DO MODO INFINITO ---

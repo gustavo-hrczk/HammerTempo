@@ -940,3 +940,956 @@ como depende do tempo de viagem, mexer na velocidade das notas muda o desalinham
 A correção de melhor relação risco/ganho é a primeira da lista e não envolve auto-track:
 trocar o relógio de frames por `audio_sound_get_track_position()` e o agendamento relativo
 por instantes absolutos vindos de um mapa em dados.
+
+**D-94 · Relógio de áudio no lugar do contador de frames.** Passo 1 do plano do
+`06-RITMO-AUTOTRACK.md`, e a correção de melhor relação risco/ganho: muda a sincronização
+sem tocar em como o mapa é composto.
+
+Três mudanças que se sustentam mutuamente:
+
+**A grade passou a ser absoluta.** Cada nota tem um instante em segundos DA FAIXA, e o
+spawner compara esse instante com `audio_sound_get_track_position()`. Antes cada nota era
+agendada a partir da anterior, por alarme em frames — erro acumulado por construção. O laço
+de geração cria todas as notas vencidas no mesmo quadro, então um frame demorado não perde
+nota.
+
+**A posição da nota é derivada, não integrada.** `x = LINHA + (t_alvo − agora) × v × fps`,
+recalculado a cada quadro contra o áudio, em vez de `x -= velocidade` somando erro. O detalhe
+bonito: `ritmo_erro_frames()` já calculava `(x − LINHA) / velocidade`, que com essa fórmula
+vira exatamente o erro de tempo contra a música — **o julgamento ficou preciso sem mudar uma
+linha**.
+
+**A primeira nota cai numa batida de verdade**, e não 1000 ms fixos após o início da faixa. É
+a primeira batida cujo instante deixa espaço para o tempo de viagem mais um segundo de
+respiro. Como as demais somam múltiplos da batida a partir dela, a grade inteira fica
+alinhada.
+
+Medido antes e depois, desvio de cada nota em relação à subdivisão mais próxima da faixa:
+
+| Fase | Antes | Depois |
+|---|---|---|
+| Adaga | 144 ms (além da janela de "bom") | **0,000 ms** em 60 notas |
+| Lança | 60 ms adiantado | **0,000 ms** em 89 notas |
+| Espada | 45 ms | **0,000 ms** em 137 notas |
+
+Os BPM anotados foram trocados pelos medidos (Adaga 88 → 89,95; Espada 108 → 110), o que
+agora é seguro: sob o agendamento absoluto não existe mais o truncamento que os cancelava
+(D-93). `primeira_batida_ms` entrou em `fases_data` como dado da faixa.
+
+`o_audio_manager` passou a guardar a INSTÂNCIA da faixa além do asset, porque
+`audio_sound_get_track_position()` só responde a instância. O `Alarm_0` do spawner, que
+gerava as notas, foi removido — não sobrou nada dele.
+
+**D-95 · O pico de andamento é afiado, e força bruta não compara entre faixas.** Duas
+lições que custaram uma conclusão errada cada, agora embutidas em `tools/analisar_faixa.py`.
+
+**Busca de andamento em duas etapas.** Analisando `snd_fase_04`, testei 115,60 BPM (derivado
+de um candidato de autocorrelação) e obtive força 0,042 — concluí que a faixa não tinha
+batida utilizável. Estava errado: em **115,00** exatos a força é **0,235**. Ao longo de 379
+batidas, um erro de 0,6 BPM perde a fase por completo, então uma varredura grosseira não
+encontra o pico, ela passa ao lado dele. A busca agora é grossa (0,25 BPM) e depois fina
+(0,01 BPM) em torno da região encontrada.
+
+**Confiança é razão, não valor absoluto.** A força bruta depende de quão denso é o envelope
+daquela faixa, então 0,183 numa não significa o mesmo que 0,183 noutra. O que compara é a
+razão contra a média do envelope — quanto a grade de batidas pontua acima do que uma grade
+aleatória pontuaria na mesma faixa. As quatro faixas do projeto medem de 7,7x a 13,7x, e o
+portão ficou em 4x.
+
+Com a busca fina, os valores das três fases foram refinados: Adaga +12,3 ms, Lança −7,9 ms,
+Espada −3,3 ms. Todos dentro dos 11,6 ms de resolução do envelope e da janela de ±33 ms do
+perfeito — é refino de medição, não correção de defeito.
+
+`snd_fase_04` mede 115,00 BPM, primeira batida em 220,6 ms, confiança 7,7x. Está registrada
+no projeto e não é usada por nenhuma fase; o conjunto de armas `s_machado01..05` também está
+completo e ocioso.
+
+**D-96 · Fase 4, montada pelo processo de medição.** "Forjar Machado" é a primeira fase cujo
+andamento não foi anotado a ouvido: 115,00 BPM e primeira batida em 220,6 ms saíram de
+`tools/analisar_faixa.py`, com confiança de 7,7x acima do piso. A faixa (`snd_fase_04`) e o
+conjunto de armas (`s_machado01..05`) já estavam no projeto, sem uso.
+
+Dificuldade "Mestre", acima de Difícil, com velocidade 6 — que dá 3,28 s de leitura visível
+contra 3,94 s da Espada. A colcheia a 115 BPM mede 261 ms, e a martelada agora leva 200 ms
+(D-91), então o ferreiro consegue golpear entre duas notas rápidas.
+
+**D-97 · O seletor pagina de três em três.** Cabem três cartões de 360 px em 1280. Com a
+quarta fase, o quarto cartão nascia em x=1360 — fora da tela. Em vez de espremer, a lista
+pagina.
+
+A página é **derivada da seleção**, não guardada como estado próprio: `opcao_selecionada div
+POR_PAGINA`. Assim o direcional vira a página sozinho ao cruzar a borda, sem tecla nova para
+aprender, e não existe estado inconsistente possível — um cursor fora da página visível não
+tem como acontecer.
+
+Setas nas bordas do pergaminho (x 60 e 1220, fora dos 134..1146 que os cartões ocupam), com
+pulso suave, só quando há mais de uma página. Pontos indicadores embaixo foram a primeira
+ideia e não cabem: a linha do recorde vai até y 711 e o painel acaba em 720.
+
+**D-98 · A tela de resultado revela em etapas, e as iniciais vêm depois.** A entrada de
+iniciais nascia no `Create` da tela de resultado e cobria tudo **antes de o jogador ver a
+própria pontuação** — pedia o nome de um resultado que ele ainda não conhecia. Agora ela
+espera a revelação terminar e o jogador confirmar.
+
+Isso também corrigiu uma ordem errada de cálculo: a bonificação é somada **antes** de o
+placar avaliar a pontuação. Se as iniciais fossem pedidas primeiro, o placar julgaria um
+número que a tela ainda ia aumentar na frente do jogador.
+
+Linha do tempo, em segundos: 0,00 painel e arma · 0,35 grade de estatísticas · 0,90 a
+pontuação começa a contar · 2,00 a contagem assenta · 2,10 SEM ERRO soma · 2,55 IMPECÁVEL
+soma · 3,00 recorde, frase e prompt.
+
+A contagem sobe com desaceleração cúbica: rápida no começo, assentando no fim. Linear parece
+barra de carregamento; desacelerada parece placar.
+
+**CONFIRMAR corta a animação** e mostra tudo — o primeiro toque termina a revelação, o
+segundo sai da tela. Numa feira com fila, esperar animação é imposto; mas nada na tela
+convida a apressar, porque o prompt só aparece no fim.
+
+**D-99 · Bonificação por consistência e por precisão.** Duas faixas, medindo coisas
+diferentes: **sem erro** (nenhuma nota perdida) vale +10%, e **impecável** (todas perfeitas)
+vale +15% adicionais. Proporcionais e não fixas, porque uma fase de 150 notas vale mais que
+uma de 60 e um bônus fixo premiaria desproporcionalmente a fase curta.
+
+Os bônus entram como **linha própria** antes de somarem no total. Ver "SEM ERRO +12675" e ver
+o número subir por causa dele recompensa mais do que um total maior já pronto — é a mesma
+razão pela qual a pontuação conta em vez de aparecer.
+
+Fase perdida não bonifica, pelo mesmo critério do recorde (D-67).
+
+**D-100 · O arranjo estranho da fase 4 é o sorteio, não a música.** `snd_fase_04` mede 7,7x
+de confiança — a faixa está boa. O problema é `irandom(tipos_permitidos - 1)`: sorteio
+uniforme não produz padrão.
+
+Medido sobre sequências geradas: com 2 faixas (Adaga) a repetição de linha é de 59% e o
+sorteio produz corridas naturalmente, o que soa musical. Com 4 faixas (Machado) a repetição
+cai para 19% — sem corrida, sem simetria, sem repetição deliberada. O ouvido espera frase e a
+mão recebe ruído.
+
+É exatamente o que o passo 3 do `06-RITMO-AUTOTRACK.md` resolve, tirando a faixa da banda de
+frequência do onset em vez de sorteá-la.
+
+**D-101 · O mapa passa a sair da percussão da faixa.** A queixa foi precisa: "parece que
+estamos tocando algo e ouvindo outra coisa desconexa". A causa é que **nada no gerador olhava
+para a música** — o ritmo vinha de um padrão curto em laço e a faixa de `irandom()`. A
+martelada tem de ser percussão DA faixa, e para isso as notas precisam sair dos ataques dela.
+
+`tools/gerar_mapa.py` faz a análise offline: envelope de onset por banda, quantização à
+semicolcheia contra a grade medida, e poda por perfil de dificuldade. `tools/emitir_gml.py`
+converte em `scripts/scr_mapas/scr_mapas.gml`.
+
+**Quatro bandas, uma por faixa, com grave embaixo e agudo em cima.** A primeira versão usava
+três bandas e deixava uma faixa vazia, com 54% das notas empilhadas numa só. Com quatro, o
+mapeamento vira leitura e não só distribuição: a faixa de cima está em y=515 e a de baixo em
+y=665, então altura de frequência vira altura de tela — o bumbo desce, o chimbal sobe. A
+pista espelha a música.
+
+**Dificuldade é seleção sobre o mesmo material**, não ritmo diferente: muda a distância
+mínima entre notas e o teto de densidade, tirando sempre os picos mais fracos primeiro. Os
+alvos saíram da densidade dos mapas atuais, que já foram jogados e aprovados.
+
+| Fase | Sorteado hoje | Gerado da música | Repetição de faixa |
+|---|---|---|---|
+| Adaga | 60 notas, 1,50/s | 51 notas, 1,27/s | 64% |
+| Lança | 89 notas, 2,22/s | 76 notas, 1,90/s | 44% |
+| Espada | 137 notas, 2,28/s | 120 notas, 2,00/s | 27% |
+| Machado | 150 notas, 2,50/s | 137 notas, 2,28/s | 24% |
+
+O mapa vira **código**, não arquivo de dados: fica versionado, aparece em diff e não depende
+de leitura de arquivo em tempo de execução — uma coisa a menos para dar errado no gabinete.
+O gerador por padrão rítmico continua como reserva, para faixa nova que ainda não passou pela
+ferramenta.
+
+**D-102 · A contagem da pontuação era apressada por causa da curva.** A desaceleração cúbica
+entrega **87% do número na primeira metade do tempo** — daí a sensação de contagem apressada
+seguida de arrasto. Trocada por smoothstep, que é simétrica: 50% do número em 50% do tempo,
+com partida e chegada macias. A duração subiu de 1,10 s para 2,20 s.
+
+**D-103 · O mapa por bandas de frequência foi revertido.** A execução falhou por premissa,
+não por técnica: os mapas saíam alinhados e com a densidade certa, mas o jogo tem **um só som
+de martelo**. A faixa da nota não representa instrumento nenhum — é só qual botão apertar.
+Separar por canais criou complexidade sem função, e o arranjo saiu pior que os padrões
+escritos à mão.
+
+O que precisa acompanhar a música é o **tempo**, não a distribuição das faixas. Disso os
+`ritmo_patterns` já davam conta nas fases 1 a 3.
+
+**D-104 · O padrão do Machado estava no compasso errado, e isso se mede.** Somando a energia
+de ataque por posição no compasso, no trecho efetivamente jogado:
+
+| Fase | Perfil (16 semicolcheias) | Contraste tempo/contratempo |
+|---|---|---|
+| Adaga | `#  .# + #  .# + ` | 1,25 |
+| Lança | `# ..# + + ..# . ` | 1,18 |
+| Espada | `+   #     .     ` | 0,10 |
+| Machado | `# + + # + # + # ` | **0,77** |
+
+Contraste perto de 1 significa **pulso contínuo, sem tempo forte**. A faixa do Machado tem
+energia em toda colcheia, e o padrão que escrevi era de semínimas: a música fazia
+"tá-tá-tá-tá-tá-tá-tá-tá" e o mapa fazia "tá — tá-tá — tá — tá". Era literalmente tocar outra
+coisa, que foi exatamente a descrição da queixa.
+
+Os padrões passaram para colcheias, com semínimas no fim de cada um como respiro — colcheia
+direto por 60 s não deixa o jogador tirar a mão. A velocidade caiu de 6 para 5, igualando a
+Espada, porque o padrão mais denso já carrega a dificuldade.
+
+Ressalva honesta do método: a Espada mede contraste 0,10 — música quase vazia no trecho
+jogado — e mesmo assim o padrão dela funciona. Ou seja, a medição diz **quando a música
+acentua**, mas não decide sozinha o mapa: onde a faixa é aberta, é o mapa que fornece o ritmo.
+Ela orienta a escolha do padrão; não a substitui.
+
+**D-105 · Nivelamento de volume por faixa, medido.** As faixas vêm de fontes diferentes e
+chegam em volumes diferentes. RMS medido: tema do menu −15,82 dBFS, Adaga −15,38, Espada
+−15,07, Machado −14,60, Lança −12,76 e Saltarello **−10,63** — mais de 5 dB entre a mais
+baixa e a mais alta, o que é uma diferença gritante ao trocar de tela.
+
+A correção é por **ganho, não reencodando o áudio**: reencodar perde qualidade, não volta
+atrás e some do diff. Assim o número fica visível, ajustável e versionado.
+
+O tema do menu é a referência por ser o mais baixo, o que faz todos os ganhos ficarem ≤ 1 e
+elimina qualquer risco de clipping: Adaga 0,951 · Lança 0,703 · Espada 0,917 · Machado 0,869 ·
+Saltarello 0,550.
+
+`alvo_musica()` passou a multiplicar o ganho do jogador pelo da faixa, e
+`play_music_crossfade()` recebe o valor da faixa que ENTRA — os cálculos de `saindo_speed` e
+`entrando_speed` derivam dele, então trocar antes da conta é obrigatório.
+
+Qualidade: todas as faixas são 44100 Hz estéreo. A taxa varia de 169 a 320 kbps, e o
+Saltarello entra em 171 kbps — na mesma faixa das fases 1 e 2. Não há sub-amostragem nem
+mono no conjunto.
+
+**D-106 · Saltarello II: análise e onde ela se encaixa.** Medido: **100,01 BPM**, primeira
+batida em **568,9 ms**, confiança **10,3x**.
+
+O perfil de acento é `|+ . #   + . #  .|`, com contraste tempo/contratempo de **1,33** — o
+mais alto das cinco faixas. Contraste alto significa hierarquia clara, e por isso ela é a
+mais fácil de antecipar apesar do andamento.
+
+A figura que se repete são as posições 0, 2 e 4 de cada meio compasso: colcheia, colcheia,
+semínima. É a célula rítmica característica do saltarello, e o padrão que a acompanha é
+`[0.5, 0.5, 1]` — 2,5 notas por segundo a 100 BPM.
+
+Pelo conjunto — mesmo andamento da Lança, maior previsibilidade de todas, densidade entre a
+Espada e o Machado — ela se enquadra em **Médio**.
+
+**A fase não foi criada**: os quatro conjuntos de arma do projeto (adaga, lança, espada,
+machado) estão todos em uso, e a tela de resultado precisa de cinco sprites de qualidade por
+arma. A faixa está importada, nivelada e creditada, pronta para virar fase assim que houver
+arte.
+
+**D-107 · Fase 5 (Maça) sem arte, e o vazio tratado como pendência.** A faixa Saltarello II
+virou fase antes de existir a arte da arma. `sprites_resultado` vazio é **tratado**, não
+tolerado por acidente: o seletor e a tela de resultado desenham a moldura com um "?" dentro.
+
+Some seria pior. Um cartão com buraco lê como defeito; a moldura com "?" lê como pendência —
+e é literalmente verdade, porque a arma ainda não foi forjada pelo artista.
+
+A arma sugerida é a **maça**. Os quatro conjuntos existentes são lâminas e ponta (adaga,
+lança, espada, machado), então uma arma contundente é a que falta no conjunto, e a silhueta
+se distingue das outras quatro à distância — que é o que importa num cartão de seletor visto
+de relance.
+
+O padrão é `[0.5, 0.5, 1]` repetido: colcheia, colcheia, semínima, a célula característica do
+saltarello. Não é escolha de gosto — o perfil de acento medido é `|+ . #   + . #  .|`, as
+posições 0, 2 e 4 de cada meio compasso, que são exatamente esses valores. Com contraste
+1,33, a música tem hierarquia clara o bastante para o padrão ser regular sem soar mecânico.
+
+Com cinco fases, o seletor pagina em 3 + 2.
+
+**D-108 · Aderência: um número para "o mapa cai no som".** Três hipóteses para o "quase boa,
+fora do lugar" da Maça foram testadas e **as três foram rejeitadas pela medição**:
+
+*A melodia estaria roubando a grade* — não: grave, médio e agudo concordam na batida em todas
+as cinco faixas, dentro de 11,6 ms, que é a resolução do envelope. **Isso rejeita a separação
+de canais como caminho**, pelo menos para encontrar a grade.
+
+*O tempo forte estaria no lugar errado* — não: Lança e Espada também têm o tempo 2 mais forte
+que o 1, e as duas funcionam.
+
+*A dança seria de metro composto* — não: o Saltarello mede 7,00x em divisão binária contra
+3,63x em ternária.
+
+O que resolveu foi medir o **objetivo direto** em vez de procurar proxies: a energia de
+ataque nos instantes exatos onde o padrão coloca nota, dividida pelo piso da faixa. Medido
+nas fases existentes — Adaga 12,86x, Lança 11,19x, Espada 8,54x — e a Maça marcava 8,55x.
+
+**D-109 · Padrão que não fecha no compasso gera variação sozinho.** Buscando automaticamente
+sobre o espaço de padrões, maximizando aderência, os melhores para o Saltarello somam **6 e 7
+tempos**, não 4. E o deslocamento inicial não muda a pontuação deles — justamente porque não
+fecham no compasso de 4 e giram contra ele: cada repetição cai numa posição métrica diferente.
+
+É a propriedade do padrão da Lança, `[0.5 x8, 3]` = 7 tempos, que é a segunda melhor
+aderência do jogo. O padrão que eu tinha escrito somava 4: travado no compasso, repetindo
+idêntico por 45 s.
+
+Os novos medem 9,82x e 9,90x contra 8,55x. A densidade caiu de 2,51 para ~1,67 notas por
+segundo, e essa troca é real: mais notas significam mais notas em posições fracas, então
+aderência e densidade se opõem.
+
+**D-110 · Respiro inicial por fase, e notas que nascem no meio do caminho.** O respiro padrão
+é o tempo de viagem mais um segundo — o mínimo para a nota nascer na borda direita e
+atravessar a tela inteira. Na Maça isso dava 5,4 s de tela vazia com a música já correndo,
+porque a faixa entra tocando.
+
+`primeira_nota_seg` permite à fase pedir menos. Na Maça são 2,0 s, o que põe a primeira nota
+na 3ª batida da faixa, aos 2.368 ms.
+
+Respiro menor que a viagem funciona **por causa da D-94**: a posição da nota é derivada do
+relógio, não integrada. Uma nota criada com o relógio já adiantado nasce na posição correta
+do meio do caminho, em vez de na borda — a de 2.368 ms aparece em x=809 e ainda tem 2,4 s de
+percurso, tempo de reação suficiente. Lê como entrar numa música já em andamento, que é
+exatamente o que é.
+
+**D-111 · Densidade e aderência se opõem, e a troca é declarada.** Os padrões da Maça
+passaram para 2,22 e 2,00 notas por segundo, contra 1,69 dos anteriores. A aderência caiu de
+9,82x para 9,15x e 9,34x.
+
+Isso não é regressão, é o formato da troca: mais notas significam necessariamente mais notas
+em posição fraca. 2,22 notas/s é exatamente a densidade da Lança, e os dois padrões continuam
+somando 5 e 6 tempos — seguem girando contra o compasso de 4.
+
+**D-112 · Faixa do Machado trocada, e a nova é a melhor material do projeto.** A anterior
+media contraste tempo/contratempo de 0,77 — pulso contínuo, sem tempo forte —, que é o pior
+material possível para um mapa: não existe onde o jogador ancorar. Nenhum padrão a fez
+funcionar, e a conclusão certa foi trocar a faixa em vez de insistir.
+
+Il Trotto mede **contraste 24,16** e **confiança 14,6x**, ambos os melhores do projeto:
+energia quase exclusivamente nos tempos, praticamente nada nos contratempos.
+
+O andamento exigiu cuidado. A busca automática devolveu 65,01 BPM com força 14,6x, mas o
+nome do arquivo diz 130 — e 65 × 2 = 130. É a ambiguidade de oitava: a grade de meia
+velocidade acerta as mesmas batidas e pontua alto por acertar menos posições fracas. A 130,01
+o perfil fica `|.   #   +   #   |`, que é a leitura correta.
+
+Com contraste 24, o padrão **tem de ser em semínima**: colcheia cairia em silêncio, porque a
+música só tem ataque nos tempos. Os dois padrões somam 7 e 9 tempos, então continuam girando
+contra o compasso de 4. Aderência medida de 11,34x e 11,56x — atrás apenas da Adaga (12,86x).
+
+**D-113 · Amostra nova do Saltarello, com respiro de 8 s.** A gravação anterior foi
+substituída por outra da mesma peça, com mais silêncio inicial. Medida: 99,99 BPM, primeira
+batida em 348,3 ms, confiança 9,5x, ganho 0,544.
+
+`primeira_nota_seg` foi para 8,0 s a pedido. Como 8 s é maior que os 4,34 s de viagem, as
+notas voltam a nascer na borda direita — o nascimento no meio do caminho (D-110) deixa de
+ser exercido aqui, mas o mecanismo continua valendo para quem precisar.
+
+Os padrões foram rebuscados contra a amostra nova: 10,17x e 10,35x, contra 9,15x e 9,34x da
+anterior.
+
+**D-114 · Fases reordenadas pela dificuldade medida, e os rótulos estavam trocados.** Índice
+composto — densidade × faixas ÷ tempo de leitura, ajustado pela tolerância a erro:
+
+| Fase | BPM | Faixas | Notas/s | Leitura | Índice | Rótulo |
+|---|---|---|---|---|---|---|
+| Adaga | 90 | 2 | 1,75 | 4,92 s | **0,89** | Fácil |
+| Maça | 100 | 3 | 2,11 | 3,94 s | **1,61** | Médio |
+| Lança | 100 | 3 | 2,14 | 3,94 s | **1,63** | Médio |
+| Machado | 130 | 4 | 2,05 | 3,94 s | **1,73** | Difícil |
+| Espada | 110 | 4 | 2,29 | 3,94 s | **1,94** | Muito Difícil |
+
+O achado: **a Espada é a mais difícil, não o Machado** — apesar de ser 20 BPM mais lenta. Ela
+tem mais notas por segundo e o mesmo tempo de leitura, e andamento alto não é dificuldade
+quando o padrão é todo em semínima. O Machado carregava "Mestre" sem ser sequer o segundo
+mais difícil.
+
+"Mestre" ficou **vago de propósito**, à espera da sexta faixa.
+
+**D-115 · O id do placar deixou de vir do índice.** `save_id_fase()` derivava "fase_01" da
+posição na lista. Já era frágil — inserir fase no meio embaralharia recordes —, mas virou
+defeito concreto nesta reordenação: quem tinha placar na terceira fase apareceria na terceira
+fase nova, que é outra arma.
+
+Cada fase declara agora um `id` estável ("adaga", "maca", …), e o placar usa ele. Efeito
+colateral esperado: os placares gravados sob as chaves antigas ficam órfãos — o que é o
+resultado **correto**, já que a associação anterior passou a estar errada. SHIFT+F3 limpa.
+
+Os BPM passaram a ser arredondados na exibição, no cartão e na entrada da fase. O valor
+medido tem casas decimais (89,99 · 99,99 · 130,01) que são necessárias no cálculo e viram
+ruído na leitura.
+
+**D-116 · Nomenclatura de dificuldade por progressão de ofício.** Novato → Aprendiz → Adepto
+→ Veterano → Especialista → Mestre. Cinco fases, cinco níveis ocupados, e "Mestre" vago à
+espera da sexta faixa.
+
+Os dois primeiros níveis são definidos pelo **número de faixas**, que é o degrau que o jogador
+sente primeiro: Novato tem 2, Aprendiz tem 3. Dai em diante a ordem sai do índice medido.
+
+| Nível | Fase | Faixas | Índice |
+|---|---|---|---|
+| Novato | Adaga | 2 | 0,89 |
+| Aprendiz | Lança | 3 | 1,63 |
+| Adepto | Maça | 3 | 1,61 |
+| Veterano | Machado | 4 | 1,73 |
+| Especialista | Espada | 4 | 1,94 |
+
+Ressalva honesta: Maça e Lança diferem em **1,2%**, dentro do ruído da medição. A ordem entre
+as duas é julgamento, não medida — a Lança vem antes por ter 40 s contra os 45 s da Maça, ou
+seja, menos tempo de exigência contínua.
+
+**D-117 · Higiene do diretório.** Varredura completa: nenhum recurso declarado no `.yyp`
+falta no disco, nenhum recurso no disco deixa de ser declarado, nenhuma função de script sem
+chamada, nenhuma macro sem uso, nenhum som sem referência.
+
+Sobrou material sem uso que **não foi removido de propósito**, por ser arte que pode entrar
+na migração para pixel art: `s_alvos_setas`, `s_bg_sky`, `s_linha_nota` e `s_option_menu`. E
+o objeto `o_faisca`, que ficou órfão quando a faísca saiu do acerto perfeito (D-91) — mantido
+porque a restauração dela foi oferecida e continua de pé.
+
+O `03-ROADMAP-SPRINTS.md` descrevia como pendente coisas já entregues, incluindo "reativar o
+Machado". Ganhou um quadro de estado no topo, com as pendências reais e as **limitações
+conhecidas do tracking**, para elas não se perderem: a ambiguidade de oitava no andamento e a
+faixa da nota ainda sorteada.
+
+**D-118 · Fase Mestre: In Taberna, com laço cortado em compasso inteiro.** O trecho entregue
+tinha 15,7 s — curto demais para uma fase. A saída foi repetir o material, e o ponto crítico
+é **onde cortar**: o trecho continha 11,38 compassos, e um laço com meio compasso sobrando
+deslocaria a grade a cada repetição, desfazendo a sincronia absoluta da D-94.
+
+Corte em **10 compassos exatos** (13,7127 s), que também evita o fade do fim do trecho — ele
+começa por volta de 15,3 s e ficaria audível em cada emenda. Repetido 4x, com 3 ms de fade
+nas pontas de cada cópia para matar o estalo sem deslocar o tempo (3 ms são 0,9% de uma
+batida de 343 ms).
+
+Validado no arquivo final, e é o que fecha o argumento: **175,02 BPM, primeira batida em
+0,0 ms, 40,000 compassos inteiros**, emendas todas em −17,8 dBFS sem queda nem pico. A grade
+sobreviveu ao laço.
+
+O perfil é `|#   #   #   #   |` com contraste 5,37 — os quatro tempos fortes e parelhos, os
+contratempos praticamente mudos. Padrão em semínima corrida, que a 175 BPM dá 2,92 notas por
+segundo: **índice 2,47 contra 1,94 da Espada**.
+
+A velocidade ficou em 5, não 6. A 175 BPM as notas já chegam a cada 343 ms, e encurtar o
+tempo de leitura junto tornaria a fase punitiva em vez de difícil — a dificuldade tem de vir
+da densidade, que já é a maior do jogo.
+
+Nota de ferramenta: o escritor Vorbis do libsndfile trava nesta máquina (o processo morre
+depois de criar um arquivo de 4 KB, com código 127). O WAV funciona, então a faixa entrou
+como WAV — 9,7 MB, que o GameMaker comprime no build como as demais.
+
+**D-119 · O laço repetia a introdução, e o "ficou lenta" pedia velocidade e não densidade.**
+Duas correções na fase Mestre, ambas medidas.
+
+**A introdução.** O trecho tem 4 segundos de entrada: até 3,99 s a faixa fica entre −44 e
+−28 dBFS, e em 4,00 s salta para −15 — um degrau de 15 dB. O primeiro laço partia de 0,128 s
+e repetia essa entrada quatro vezes. O corte agora parte de **4,242 s**, a linha de compasso
+onde o groove entra, e leva 8 compassos (10,9702 s) repetidos 6x: **65,821 s, ou 48,000
+compassos inteiros**.
+
+**A densidade não podia subir.** Medindo o perfil só do groove, sem a introdução diluindo, o
+contraste sobe de 5,37 para **6,46** e os contratempos ficam entre 0,06 e 0,12 —
+praticamente mudos. Colcheia aqui cairia em silêncio. As 2,92 notas/s em semínima são o
+**teto musical** da faixa, não uma escolha conservadora.
+
+**Por isso a resposta foi velocidade**, de 5 para 7. E há um segundo motivo, geométrico, que
+só apareceu ao medir: a 175 BPM as notas distam 343 ms, o que na velocidade 5 dava 103 px
+entre elas — **58 px de vão para alvos de 45 px**. A pista embolava justamente na fase mais
+densa do jogo. Na velocidade 7 o vão vai a 99 px.
+
+A mesma mudança que casa com a energia da música também desafoga a leitura. Índice final
+3,46 contra 1,94 da Espada.
+
+**D-120 · A faixa da nota passou a andar por figuras, não por sorteio.** "A disposição das
+notas não está boa" era o sintoma; a causa é `irandom()`. Com 2 ou 3 faixas ele passa, porque
+o sorteio produz corridas por acaso — a Adaga mede 59% de repetição de linha. Com 4 cai para
+19% e vira ruído: sem corrida, sem simetria, sem repetição deliberada.
+
+A sequência agora é montada por **figuras** — repete, sobe, desce, alterna —, que é como uma
+linha de percussão anda. O sorteio decide qual figura vem, não cada nota.
+
+| | Sorteio uniforme | Figuras |
+|---|---|---|
+| Repetição de linha | 32% | 25% |
+| **Salto extremo (topo↔pé)** | **15%** | **0%** |
+| Salto médio | 1,20 linhas | 0,75 |
+
+O ganho decisivo é o salto extremo ir a zero. A 2,92 notas/s e velocidade 7, um pulo do topo
+da pista para o pé a cada 343 ms é fisicamente brutal e não vem de lugar nenhum musicalmente.
+
+Duas decisões dentro da implementação: as figuras andam pela **linha visual**, não pela ordem
+do enum — `rm_forja` põe cima(1) em y=515 e esquerda(3) em 565, então "subir uma faixa" sem
+essa tradução pularia pela tela. E a escada **quica na borda** em vez de dar a volta: saltar
+do pé para o topo lê como erro, não como frase.
+
+**D-121 · O laço tocava a introdução em todas as repetições.** A introdução volta a tocar
+**uma vez**, e só o groove entra em laço: 3 compassos de entrada mais 8 compassos repetidos
+3x = 37,024 s, ou 27,000 compassos inteiros. As seis repetições anteriores tinham ficado
+longas e monótonas — faixa mais curta que as demais não é problema numa fase de nível Mestre.
+
+**D-122 · As figuras ficavam presas no miolo da pista.** O gerador da D-120 resolveu o ruído,
+mas concentrou as notas. Medindo 400 notas geradas:
+
+| Linha | Antes | Depois |
+|---|---|---|
+| 0 (topo) | 14% | **24%** |
+| 1 | 34% | 28% |
+| 2 | 40% | 26% |
+| 3 (pé) | 11% | **21%** |
+
+As duas linhas do meio levavam **74%** das notas. Duas causas, ambas minhas:
+
+**O quique ricocheteava antes de encostar.** `pos < 0` devolvia para a linha 1 e `pos >= n`
+para a penúltima, então a escada nunca pousava na borda. Agora pousa em 0 e em n−1.
+
+**Só o SALTO reposicionava.** As outras figuras se encadeavam onde a anterior parou, e a
+sequência inteira herdava a região da primeira. Agora **toda** figura nova começa na linha
+menos usada nas últimas 16 notas, o que puxa a pista para onde ela anda vazia.
+
+Os pesos também mudaram: REPETIR e ALTERNAR somavam 58% e as duas ficam presas em uma ou
+duas linhas. Agora as figuras que ATRAVESSAM a pista somam 58%, com uma VARREDURA nova que
+vai de ponta a ponta.
+
+Resultado nas janelas de 8 notas: **65% delas usam as quatro linhas**, contra 29% antes, e a
+média sobe de 2,96 para 3,64 linhas distintas.
+
+O salto extremo subiu de 0% para 6%, e essa troca é declarada: cobrir a pista inteira exige
+atravessá-la. Continua bem abaixo dos 15% do sorteio uniforme, e a maior parte da travessia
+acontece por escada, um degrau por vez.
+
+**D-123 · A métrica de aderência estava matando a personalidade.** A observação foi: as fases
+soam coesas mas sem identidade, e a Espada é a que tem mais personalidade. Medindo o que as
+distingue:
+
+| Fase | Valores distintos | Variedade | Fecha no compasso? |
+|---|---|---|---|
+| Espada | 2 | 0,245 | **sim** |
+| Lança | 2 | 0,786 | não |
+| Machado / Alabarda | **1** | **0,000** | não |
+
+A Espada tem **forma** — longa-longa-curta-curta-longa — e fecha no compasso, então repete
+idêntica e vira um gancho reconhecível. Machado e Alabarda eram semínima corrida: variedade
+zero, um metrônomo.
+
+Isso corrige a D-109 pela metade. Padrão que não fecha no compasso evita o passo mecânico,
+mas **rotação disfarça a ausência de forma, não cria identidade**.
+
+E a causa raiz é a métrica. Testado na Alabarda: semínima corrida mede **12,75x** de
+aderência, e qualquer motivo com forma cai para 9,4-10,4x. **A métrica premia dobrar o tambor
+e penaliza contracanto** — maximizá-la produzia metrônomos por construção.
+
+A Espada, a de mais personalidade, mede 8,54x. Ou seja: aderência é **piso**, não objetivo.
+Acima de ~8,5x o mapa está dentro da música; daí para cima quem escolhe é a forma.
+
+**D-124 · Uma identidade por fase, sem sorteio.** O sorteio entre padrões fazia a mesma fase
+soar diferente a cada partida — o oposto de identidade, porque o jogador nunca chegava a
+reconhecer a frase como sendo daquela música. Cada fase passou a ter **um** motivo fixo.
+
+| Fase | Motivo | Caráter | Aderência |
+|---|---|---|---|
+| Adaga | `[1, .5, .5, 1, .5, .5]` | galope | 11,88x |
+| Lança | `[.5 x8, 3]` | rajada e silêncio | 11,19x |
+| Maça | `[.5, .5, 1, .5, .5, 1, 1]` | célula do saltarello | 8,68x |
+| Machado | `[1, 1, .5, .5, 1, 1, 1]` | marcha com tropeço | 9,73x |
+| Espada | `[1, 1, .5, .5, 1]` | **a referência**, intocada | 8,54x |
+| Alabarda | `[1, 1, .5, .5, 1, 2]` | forma com respiro | 10,68x |
+
+A Adaga sobe de 1,50 para 2,23 notas/s — era a queixa de ter ficado agradável e sem
+personalidade ao perder notas. A Alabarda mantém densidade (2,97 contra 2,94) e folga na
+pista (96 px), mas com variedade 0,500, o dobro da Espada.
+
+O movimento também ganhou caráter: `figuras` traz pesos de [escada, varredura, alternar,
+repetir] por fase. A Adaga pende para alternar, porque duas faixas não têm o que atravessar;
+o Machado marcha em escada; a Alabarda varre a pista de ponta a ponta, que é o que dá escala
+ao nível Mestre. Quem não declara herda o perfil da Espada.
+
+**D-125 · A fase Mestre passou a seguir a MELODIA, e a faixa mudou.** In Taberna a 175 BPM
+com semínima corrida virou caos: quatro faixas, 2,94 notas/s e nenhuma forma no motivo. La
+Rotta entrou no lugar.
+
+E a razão para seguir a melodia nesta faixa é medida, não preferência: a banda de percussão
+marca força **2,3x**, contra **10,5x** da melodia. A música não tem tambor forte — mapear a
+percussão aqui daria ruído.
+
+A melodia toca **semínimas**. Nas 16 subdivisões do compasso ela pontua 0,19 / 0,63 / 0,62 /
+1,00 nos quatro tempos, e entre 0,01 e 0,03 em **todos** os contratempos. Motivos com colcheia
+caem para 7,1x porque batem no vazio; a semínima marca 8,82x.
+
+Daí a decisão que resolve a tensão entre forma e aderência: **a forma vem do silêncio, não da
+subdivisão.** O motivo `[1, 1, 1, 2, 1, 1, 1]` toca três semínimas, repousa dois tempos e
+repete — variedade 0,350 contra 0,000 da semínima corrida, sem colocar uma única nota em
+posição muda.
+
+E ele repousa no lugar certo. O perfil mostra o primeiro tempo em 0,19 contra 1,00 do quarto,
+ou seja, a melodia entra em **anacruse**. `primeira_batida_ms` conta a partir do quarto tempo
+(301,9 ms mais 3 batidas = 1501,9), o que põe o repouso do motivo sobre o tempo fraco.
+
+A 7 de velocidade as notas ficam a 168 px uma da outra, 123 px de vão — a pista mais larga do
+jogo, e a 150 BPM isso é o que mantém legível a fase mais difícil. Índice 2,61 contra 1,94 da
+Espada.
+
+**D-126 · Respiro da Adaga.** A 4 de velocidade a viagem leva 5,4 s, e o respiro padrão punha
+a primeira nota aos 6,96 s — quase sete segundos de tela vazia na fase de entrada do jogo,
+que é justamente onde o jogador tem menos paciência. Com `primeira_nota_seg` em 3 s ela cai
+na 5ª batida, aos 3,62 s, nascendo no meio do caminho (D-110).
+
+## D-127 — A media de aderencia foi aposentada como criterio
+
+**Contexto.** A sexta fase saiu como metronomo duas rodadas seguidas. As duas vezes a
+media de aderencia (energia de onset nos instantes das notas / media do envelope)
+apontou para o motivo mais esparso.
+
+**O defeito.** A metrica e uma MEDIA por nota. Acrescentar uma nota real de forca 2,47x
+ao lado de uma de 10,64x derruba o numero mesmo com a nota perfeitamente sobre um
+ataque da faixa. Ela so pode ser maximizada tocando as posicoes mais altas — ou seja,
+**a metrica premia estruturalmente o metronomo**.
+
+**A prova.** Medida posicao a posicao, a Espada — a fase que o usuario apontou como a
+de maior personalidade — toca o tempo 3, que mede 1,90x, e PULA o 4&, que mede 5,43x.
+A fase de referencia toca onde a faixa cala e cala onde a faixa toca. Nenhuma media
+poderia ter recomendado isso.
+
+**O criterio novo.** Nenhuma nota em silencio real (piso ~1,8x acima do ruido), mais
+variedade de frase. Para comparar faixas, normalizar pelo ataque mais forte de cada
+uma: La Rotta chega a 10,6x e a Espada a 22,7x, entao as medias cruas nunca foram
+comparaveis entre si — o que invalida retroativamente o "piso de 8,5x" que eu vinha
+usando como se fosse universal.
+
+## D-128 — Sexta fase escrita sobre o esqueleto medido
+
+Perfil de La Rotta por posicao do compasso, contra o piso de ruido da propria faixa:
+
+    tempo 1  10,64x  ATAQUE      contratempo 1&   1,05x  vazio
+    tempo 2   2,35x  fraco       contratempo 2&   2,47x  fraco
+    tempo 3   8,14x  ATAQUE      contratempo 3&   1,43x  vazio
+    tempo 4   7,24x  ATAQUE      contratempo 4&   3,84x  ATAQUE
+
+A faixa e SINCOPADA. O motivo antigo `[1,1,1,2,1,1,1]` batia duas vezes por ciclo no
+tempo 2, que e fraco, e nunca tocava o 4&.
+
+Motivo novo: `[1.5, 0.5, 1, 0.5, 0.5,  2, 1, 0.5, 0.5]` — frase e resposta em dois
+compassos, ambos fechando no 4&. 2,82 notas/s contra 2,18 (a maior densidade do jogo,
+contra 2,29 da Espada), vao de 39 px contra os 37 px que a Espada ja usa.
+
+**Correcao de uma medicao anterior (D-126).** Eu havia registrado que os contratempos
+mediam 0,01 a 0,03 "todos". Aquilo valia so para a banda de melodia isolada; no
+espectro cheio o 2& e o 4& sao ataques. A subdivisao em tres foi testada e descartada
+(0,01 a 0,05 nos tercos): a faixa nao anda em seis, apesar de ser uma rotta.
+
+## D-129 — O respiro da Adaga foi revertido
+
+`primeira_nota_seg: 3.0` encurtava a entrada de 6,96 s para 3,62 s, mas prejudicava o
+passo: a 4 de velocidade a viagem leva 5,4 s, entao a primeira nota nascia no meio da
+tela em vez da borda. A fase de entrada volta a abrir com a viagem inteira.
+
+## D-130 — A medicao de forca por posicao estava medindo a minha janela de FFT
+
+A mesma batida de In Taberna, mesmo BPM e mesma fase, medida com quatro janelas:
+
+| Janela | 512 | 1024 | 2048 | 4096 |
+|---|---|---|---|---|
+| Forca | 0,08x | 0,45x | **10,15x** | 1,47x |
+
+Uma medida que varia 100x conforme um parametro meu nao estava medindo a musica.
+
+**Causa.** Eu amostrava o fluxo espectral em UM quadro, no instante exato da batida. Os
+quadros ficam a 11,6 ms um do outro; um pico estreito de ataque cai entre dois quadros e
+desaparece. Janela maior borra o pico e faz ele aparecer — dai a dependencia.
+
+**Correcao.** Amostrar o MAXIMO numa vizinhanca de +-40 ms, que por acaso e a propria
+janela de acerto do jogo. Implementado em `tools/perfil_compasso.py`.
+
+**Verificacao independente, imune ao problema:** contar quantas batidas da grade tem um
+ataque real proximo. In Taberna: 93% a menos de 40 ms.
+
+Isto invalida os numeros absolutos de D-128 e das analises anteriores de posicao. As
+CONCLUSOES sobrevivem — a Espada realmente toca posicao muda e pula posicao viva —, mas
+os valores citados la nao devem ser reaproveitados.
+
+## D-131 — O criterio de qualidade e a distribuicao, nao o minimo
+
+O minimo de forca sobre as ~100 notas de uma partida nao serve: uma unica nota que calhe
+num compasso quieto zera a estatistica. Aplicado as fases JA VALIDADAS pelo usuario, o
+criterio do minimo reprovava todas as seis — o que prova que era o criterio que estava
+errado.
+
+O que vale e a fracao de notas mudas ao longo da partida. As tres fases validadas
+(Lanca 21,3%, Maca 14,3%, Machado 19,0%) definem a banda aceitavel: **14% a 21%**.
+Toda faixa tem compassos quietos, e isso e normal.
+
+Ferramenta: `tools/verificar_motivos.py`.
+
+## D-132 — Sexta fase: In Taberna 120, e La Rotta nao era problema de sincronia
+
+Antes de trocar a faixa eu suspeitei do BPM de La Rotta, porque o valor tinha vindo de um
+comb filter que travou na oitava errada e eu havia desempatado pelo nome do arquivo. A
+medicao **derrubou a hipotese**:
+
+| | Desvio da grade | Dispersao |
+|---|---|---|
+| Espada (controle, funcionava) | +83,7 ms | 387,6 ms |
+| La Rotta | **-2,5 ms** | **75,9 ms** |
+
+A grade estava mais travada que a da fase que funcionava. O defeito era outro: **flauta
+solo sem tambor nao produz pulso que o jogador consiga ANTECIPAR**, e antecipar e o que
+o jogo pede. Razao percussao/melodia de La Rotta: 0,22. Nenhum motivo consertaria isso.
+
+In Taberna 120 tem razao 3,87, 93% das batidas com ataque a menos de 40 ms, e a menor
+taxa de notas mudas do jogo (9,7%, contra 14-21% das demais).
+
+## D-133 — Ductia anda em SEIS, e por pouco entrou errada
+
+Subdividida em dois, os contratempos da Ductia medem 0,08 — silencio puro — e a faixa
+parecia so aceitar seminima, o que a tornaria a fase mais leve do jogo. Subdividida em
+TRES eles medem 1,28, e o ultimo terco de cada tempo e ataque de verdade (3,62 / 2,04 /
+1,87 / 1,35). Ela esta em compasso composto.
+
+E o mesmo teste que salvou La Rotta de um erro simetrico: la a subdivisao em tres deu
+falso (0,01 a 0,05 nos tercos), apesar de rotta ser familia que costuma andar em seis.
+**Testar a grade em dois E em tres virou passo obrigatorio para faixa nova.**
+
+Os tercos usam 0,6667 e 0,3333, que somam 4,0000 exatos por compasso: sem acumulo de erro.
+
+## D-134 — Elenco reordenado com a sexta faixa, e o indice do audio passou a seguir a ordem
+
+| # | Fase | Nivel | Faixa | Asset | Indice | Mudas |
+|---|---|---|---|---|---|---|
+| 1 | Adaga | Novato | Istampitta Ghaetta | snd_fase_01 | 1,37 | 25,6% |
+| 2 | Lanca | Aprendiz | Des Oge Mais Quer | snd_fase_02 | 1,69 | 21,3% |
+| 3 | Florete | Adepto | Ductia | snd_fase_03 | 1,74 | 18,4% |
+| 4 | Maca | Veterano | Saltarello II | snd_fase_04 | 1,78 | 14,3% |
+| 5 | Machado | Especialista | Il Trotto | snd_fase_05 | 2,59 | 19,0% |
+| 6 | Espada | Mestre | In Taberna 120 | snd_fase_06 | 3,35 | 9,7% |
+
+Sairam: a faixa de 110 BPM da Espada e La Rotta. Saiu tambem a Alabarda, que nunca teve
+arte; entrou o Florete, que tambem ainda nao tem (tratado com "?" por D-107).
+
+A Adaga passou de 2 para 3 faixas. Ela nao podia receber mais NOTAS: o motivo ja usava os
+seis ataques da faixa (as duas colcheias livres medem 0,68 e 0,61) e semicolcheia daria
+8 px de vao entre sprites de 45 px. Entao ela cresceu pela largura da pista.
+
+Lanca, Florete e Maca ficam em 5% umas das outras — ordem medida, mas por margem estreita.
+
+Os recordes nao foram migrados: o usuario autorizou zera-los. O id "espada" continua o
+mesmo apesar de a fase ter mudado de musica e de nivel.
+
+## D-135 — A taxa de notas mudas NAO mede qualidade: mede o quanto o motivo dobra a faixa
+
+Terceira correcao de metodo desta sequencia, e a mais profunda. Depois de reverter a
+Espada, a verificacao ficou assim:
+
+| Fase | Mudas | Julgamento do usuario |
+|---|---|---|
+| Espada | **33,6%** | a melhor do jogo, a referencia de personalidade |
+| Adaga | **25,6%** | "ficou otima" |
+| Lanca | 21,3% | boa |
+| Machado | 19,0% | boa |
+| Maca | 14,3% | boa |
+| Florete | 12,4% | em avaliacao |
+
+**A metrica classifica as duas fases preferidas do usuario como as duas piores.** Isso
+nao e ruido, e o sentido dela: taxa baixa significa que o motivo cola no tambor. Colar
+no tambor e o metronomo de que ele reclamou tres vezes seguidas.
+
+Entao a leitura correta e:
+
+- **taxa baixa** — o motivo dobra a faixa. Seguro e sem gracia.
+- **taxa alta** — o motivo se afasta da faixa. E onde mora a personalidade, e tambem
+  onde mora o erro.
+
+A metrica **descreve**, nunca serve de alvo. Nao existe valor bom: existe intencao.
+
+**O que separa afastamento de erro.** A Espada se afasta numa posicao FIXA e REPETIDA —
+sempre o tempo 3, que mede 0,81 — e a repeticao transforma o desvio em gancho. O
+Florete se afastava sobre levantamentos de forcas desiguais (3,62 / 2,04 / 1,87 / 1,35),
+inconsistentes de compasso para compasso, e isso le como desleixo, nao como frase.
+
+**Afastamento tem de ser consistente e repetido para soar como intencao.**
+
+Historico das tres correcoes desta sequencia: D-130 (a medida dependia da minha janela
+de FFT), D-131 (o minimo reprovava ate as fases validadas), D-135 (a distribuicao nao
+mede qualidade). Em todas as tres o julgamento do usuario chegou antes da medida.
+
+## D-136 — Elenco final: as teclas sao o eixo, e a Espada volta inteira
+
+A ordem NAO segue o indice, e isso e deliberado. O degrau que o jogador sente primeiro e
+o numero de teclas, entao ele e o eixo principal.
+
+| # | Fase | Nivel | Teclas | Faixa | Asset | Indice | Mudas |
+|---|---|---|---|---|---|---|---|
+| 1 | Adaga | Novato | 2 | Istampitta Ghaetta | snd_fase_01 | 0,91 | 25,6% |
+| 2 | Lanca | Aprendiz | 3 | Des Oge Mais Quer | snd_fase_02 | 1,69 | 21,3% |
+| 3 | Florete | Adepto | 3 | Ductia | snd_fase_03 | 1,60 | 12,4% |
+| 4 | Maca | Veterano | 4 | Saltarello II | snd_fase_04 | 2,37 | 14,3% |
+| 5 | Machado | Especialista | 4 | Il Trotto | snd_fase_05 | 2,59 | 19,0% |
+| 6 | Espada | Mestre | 4 | 110 BPM, a original | snd_fase_06 | 2,32 | 33,6% |
+
+Onde as leituras discordam, fica registrado: o indice bruto poe a Espada abaixo da Maca
+e do Machado, porque o motivo do Machado ganhou densidade em D-112. A Espada fica em
+Mestre assim mesmo.
+
+**A Espada foi revertida por inteiro** — musica, motivo, andamento, velocidade, ganho e
+primeira batida. A troca por In Taberna a 120 BPM foi reprovada no teste. In Taberna sai
+do projeto; a faixa de 110 BPM voltou para snd_fase_06, recuperada do historico do git.
+
+**Florete:** o levantamento do 6/8 nao tem a mesma forca nos quatro tempos (3,62 / 2,04 /
+1,87 / 1,35) e a primeira versao tocava os dois mais fracos. Agora usa so os dois
+primeiros. Preencher os quatro foi testado e e pior — leva a nota mais fraca para 1,35.
+
+**Adaga** voltou para duas teclas, que e a porta do jogo para quem nunca jogou.
+
+---
+
+## Sprint 8 — Modo Versus e fechamento da v1
+
+## D-137 — A alternância do Versus é por CONTAGEM DE NOTA, não por tempo
+
+A partida não é os dois tocando o tempo todo: ela alterna estrofes, e o terço final é
+dos dois juntos. A primeira versão dividia por **tempo**, o que parecia justo e não é.
+
+Os motivos têm densidade irregular — o do Florete vai de um terço de batida a uma batida
+inteira entre notas —, então trechos de igual duração entregam quantidades diferentes.
+Medido em partida real: 74 notas contra 57.
+
+A divisão passou a ser por índice de nota. O spawner conta quantas a fase vai gerar
+percorrendo o próprio motivo na criação, o trecho alternado é cortado para fechar exato
+nas estrofes, e a sobra vai para o terço final. **Diferença zero nas seis fases, por
+construção** — não por medição.
+
+## D-138 — No Versus a autoridade é reivindicada, nunca herdada
+
+As instâncias da sala (ferreiro, bigorna, alvos, corredor) guardam `dono`, e ele
+sobrevivia entre partidas: uma sessão solo do jogador 2 deixava o ferreiro da sala com
+`dono = 1`, e a montagem do Versus seguinte abortava porque `ferreiro_de(0)` devolvia
+`noone` — um ferreiro só, paleta errada, quatro alvos.
+
+Ao montar a cena, o Versus **reivindica** dono 0 para tudo que veio da sala e cria o
+segundo jogador do zero, marcado com `criado_pelo_versus`. Nada depende de quem jogou
+antes. A sugestão foi do usuário, depois de três diagnósticos meus por dedução que
+erraram — o que resolveu foi instrumentar o F3 com a leitura da cena.
+
+## D-139 — Isolamento de input: por vínculo no teclado, por dispositivo no controle
+
+Dois jogadores dividem um teclado, e o gabinete tem dois manches. São dois problemas
+diferentes.
+
+**Teclado:** as setas estão na lista configurável do jogador 1 desde a jam e são o
+vínculo único do jogador 2. A suspensão que existia só alcançava os vínculos FIXOS,
+então cada seta do jogador 2 acionava também a faixa do jogador 1 — que quase nunca
+tinha nota ali e perdia o combo. Aparecia no placar como um jogador com zero notas
+perdidas e milhares de pontos a menos, e a causa não era a mão dele. O desempate é do
+jogador 2; o jogador 1 fica com o WASD inteiro.
+
+**Controle:** havia um slot de gamepad só, compartilhado. O jogador 1 usa o primeiro
+dispositivo e o 2 o segundo; fora do Versus os dois leem o primeiro, porque só há uma
+pessoa ali. Com um controle só dentro do Versus, o jogador 2 fica sem — cair no mesmo
+slot traria de volta exatamente a interferência que a separação evita.
+
+## D-140 — ENTER destrava tudo, e por isso não pode eleger ninguém
+
+No gabinete não existe teclado, e o remapeamento pode levar o confirmar para um botão
+que depois quebre ou fique trocado. ENTER é vínculo **fixo** do confirmar dos dois
+jogadores: sempre há uma tecla capaz de destravar qualquer tela sem depender de
+configuração, o mesmo papel que as setas fazem para as faixas.
+
+A consequência que não foi vista de imediato: a tela de modos perguntava "foi o jogador
+2?" chamando `input_pressed(CONFIRMAR2)`, e o ENTER dele respondia que sim — toda
+navegação por setas e ENTER começava a partida como segundo jogador. **Uma tecla que
+pertence aos dois não pode responder quem foi.** `input_dono_do_confirmar` lê só os
+vínculos próprios, e o controle só reivindica quando o jogador 2 tem o próprio
+dispositivo.
+
+Pelo mesmo motivo o ESC voltou a valer sempre. Ele ficava suspenso durante uma partida
+solo do jogador 2, para um não pausar o jogo do outro — proteção contra um problema que
+só existe no Versus, e no Versus os dois pausam de propósito. No solo há uma pessoa só
+na frente do gabinete, e a regra apenas desligava a tecla que todo mundo aperta ao sair.
+
+## D-141 — Um erro é um erro; a precisão conta só notas
+
+As duas metades desta decisão parecem se contradizer e não se contradizem.
+
+Deixar a nota passar e apertar a tecla errada são a mesma falha, e separá-las em duas
+categorias na tela de resultado só escondia metade dela. O toque fora quebra o combo,
+custa pontos e mostra ERRO na tela — o jogador sente a falha na hora, que é o que
+importa.
+
+O que ele **não** faz é entrar no denominador da precisão. Um denominador que cresce a
+cada tecla apertada não é uma métrica: dá para levar a precisão a zero sem perder uma
+nota sequer, só apoiando a mão no teclado, e num teste real terminou em 77%. É o que
+DDR, Guitar Hero, osu! e Beat Saber fazem, pelo mesmo motivo — a nota é a única unidade
+contável de antemão, então é ela que define o total.
+
+`stats_sequencia_errada` continua de fora dos dois: ela leva ao game over, e quem está
+experimentando as teclas não pode ser expulso da fase. Contar o erro é uma coisa,
+encerrar a partida é outra.
+
+## D-142 — O percurso do Arcade é UMA partida
+
+Placar, combo e precisão atravessam as seis armas. A precisão reiniciava em 100% a cada
+arma e o painel ficava com três números contando histórias diferentes ao mesmo tempo.
+
+São os quatro contadores de julgamento que acumulam, mais o total de notas — e não só um
+par de totais: a tela de resultado mostra a divisão por tier, e a precisão do percurso ao
+lado das contagens de uma fase só faria os números da mesma tela discordarem entre si.
+
+E a precisão é **truncada**, nunca arredondada. 651 acertos e 3 erros dão 99,54%, e
+`round()` mostrava 100% ao lado de "Erros: 3". Arredondar para cima uma precisão é
+prometer uma partida perfeita que não aconteceu.
+
+A sessão também **para de verdade** durante o intervalo entre armas. O estado continuava
+sendo o de partida ali, e o controlador via "estado RITMO, sem spawner" no quadro
+seguinte e começava a próxima fase atrás do menu — era também a causa das notas fora de
+compasso na fase seguinte, porque a contagem criava um segundo spawner por cima do
+primeiro.
+
+## D-143 — A nota é um selo estampado na peça, não um texto ao lado dela
+
+`s_icone_tier` é a quarta fatia do sanduíche do ícone: 26x26 com origem no centro, como
+as outras três, desenhada **depois** da moldura — o selo é uma marca puncionada na peça
+depois de pronta, então ele encosta na borda em vez de ficar contido por ela.
+
+A ordem dos quadros é a ordem do nível da arma, um a um: F com a espada partida, C com a
+enferrujada, B com a de aço, A com a azulada, S com a dourada. A arte da peça e a letra
+estampada nela contam a mesma história, e não duas — antes as duas escalas tinham cortes
+diferentes e podiam discordar sobre a mesma forja. O quadro 5 é o degrau que só existe
+na letra: **S+**, 100% das notas E todas perfeitas. Não é "quase S": não errar é uma
+coisa, não deixar sair nenhuma "ótima" é outra, bem mais rara.
+
+O D saiu da escala, que passou a ter seis degraus. O placar grava o degrau, porque ele
+não dá para reconstruir depois — a contagem de perfeitas não sobrevive ao fim da
+partida, e entradas antigas nunca devolvem S+.
+
+## D-144 — Em fundo claro, calor não vem de luminosidade
+
+A regra já valia para o combo e voltou a aparecer três vezes nesta sprint: a nota S
+dourada dava **1,09:1** sobre o pergaminho, a linha de tiers ficava entre 1,76 e 2,72, e
+o amarelo de destaque da tabela de recordes dava 1,03:1.
+
+Escurecer as cores resolve o contraste e mata a leitura, porque é o calor que diz que
+perfeito vale mais que bom. As três saídas usadas, em ordem de preferência:
+
+1. **O selo**, que traz a própria chapa escura atrás da letra — lê pelo desenho, não
+   pela cor. É o que a tabela de recordes e as duas telas de resultado usam.
+2. **Contorno**, quando o elemento é único na tela e precisa manter a cor quente.
+   Reservado ao veredito: aplicado também às contagens, criava uma segunda linguagem
+   visual competindo com ele.
+3. **Placa**, quando o fundo é o cenário e muda de cor sozinho — os créditos passam por
+   quatro céus, e o cinza escuro ia de 9,09:1 sobre nuvem branca a 1,46:1 na noite.
+
+E a exceção, registrada porque contraria a medida: o título da tabela de recordes voltou
+ao amarelo depois de ter sido trocado por preto. O preto ganhava por 14,46:1 contra
+1,37:1 e ficou **pior** de ler na tela — apagava o único sinal de que aquela linha muda,
+e o título passava a parecer um cabeçalho fixo. É a quarta vez no projeto que o ouvido
+ou o olho do usuário chega antes da medida (ver D-130, D-131, D-135).
+
+## D-145 — A queda de uma placa precisa ser suavizada
+
+A placa não tem borda e mesmo assim mostrava um risco de cada lado. A rampa era linear,
+e as duas pontas — onde sai do zero e onde encosta no pico — são quebras de derivada.
+O olho enxerga isso como uma linha mesmo com o degradê tecnicamente contínuo; é banda de
+Mach, e alargar o fade só afasta os dois riscos um do outro.
+
+`smoothstep` chega e sai com derivada zero. E o miolo de alpha cheio tem de cobrir o
+texto **com margem**: margem primeiro, queda depois. Somar a queda dentro da margem era o
+que deixava as pontas de cada linha em meia-luz.
+
+A grade passou de 3x3 para 13 paradas por eixo, desenhada uma faixa por vez: cada linha
+sai num trianglestrip só, com os vértices compartilhados entre as colunas. Treze
+primitivas em vez das cento e sessenta e nove que a mesma grade custaria célula a
+célula, e nenhuma emenda onde o alpha possa somar.
+
+## D-146 — O que fica para depois da feira
+
+Registrado para ninguém procurar: **tutorial unificado do Versus** (hoje ele alterna um
+jogador por vez, o que funciona e foi testado); **a cedilha**, que a Kobold 7 não desenha
+— o glifo existe no atlas com a mesma largura do `c`, então "Maça" sai "Maca" e não há
+correção sem trocar a fonte ou o nome; **crédito da Espada**, que repete o título da
+Lança, e o **arranjador de Ductia e In Taberna**, que segue desconhecido.

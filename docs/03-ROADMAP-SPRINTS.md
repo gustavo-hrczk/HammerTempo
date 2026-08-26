@@ -1,4 +1,33 @@
-# HammerTempo — Roadmap de Micro Sprints
+# Roadmap por sprints
+
+> **ESTADO EM 24/08/2026.** As seções abaixo são o plano ORIGINAL e ficam como registro
+> histórico. O que vale hoje é este quadro.
+>
+> | Frente | Estado |
+> |---|---|
+> | Sprint 1 — Documentação | concluída |
+> | Sprint 2 — Refino técnico | concluída |
+> | Sprint 3 — UI/UX | concluída |
+> | Sprint 3.5 — Input de arcade | concluída (persistência, remapeamento, captura) |
+> | Sprint 4 — Placar | concluída na frente **Livre**; a frente **Arcade** espera o modo |
+> | Sprint 5 — Ritmo | **superada por outro caminho.** O auto-track por bandas foi tentado e revertido (D-103); o que resolveu foi relógio de áudio com grade absoluta (D-94) mais escolha de padrão por aderência medida (D-108) |
+> | Sprint 6 — Modo Arcade | **pendente** |
+> | Sprint 7 — Mais fases | 5 fases no ar; falta a sexta, de nível Mestre |
+>
+> **Pendências reais:**
+> - Sexta faixa, mais difícil que a Espada (índice acima de 1,94)
+> - Arte da arma da Maça (`sprites_resultado` vazio, tratado — D-107)
+> - Modo Arcade, que habilita a segunda frente do placar
+> - Remapeamento no gabinete físico
+>
+> **Limitações conhecidas do tracking**, para não serem esquecidas:
+> - A detecção de andamento tem ambiguidade de oitava. Il Trotto mediu 65 BPM sendo 130, e
+>   só o nome do arquivo desempatou (D-112). Faixa nova precisa de confirmação humana.
+> - A faixa da nota ainda é `irandom()`. Funciona com 2 e 3 faixas, onde o sorteio produz
+>   corridas naturalmente (59% de repetição na Adaga), mas com 4 vira ruído (19% — D-100).
+
+---
+
 
 > Plano de trabalho derivado de `02-AUDITORIA.md`, organizado nas frentes definidas pela equipe,
 > com a frente de **controle/arcade** acrescentada. Cada sprint termina com uma **validação

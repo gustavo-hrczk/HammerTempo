@@ -13,10 +13,14 @@ var _col_dir = _cx + 300;
 var _linha1 = 522;
 var _linha2 = 558;
 
-var _perfeitas = o_controlador_geral.stats_acertos_perfeitos;
-var _otimas = o_controlador_geral.stats_acertos_otimos;
-var _boas = o_controlador_geral.stats_acertos_bons;
-var _erros = o_controlador_geral.stats_erros;
+// NO ARCADE ESTES SAO OS NUMEROS DO PERCURSO, e nao os da ultima arma — ver
+// arcade_stats_totais. Nos outros modos a fase E a partida, e nada muda.
+var _tot = o_controlador_geral.arcade_stats_totais();
+
+var _perfeitas = _tot.perfeitas;
+var _otimas = _tot.otimas;
+var _boas = _tot.boas;
+var _erros = _tot.erros;
 
 var _julgadas = _perfeitas + _otimas + _boas + _erros;
 var _precisao = (_julgadas > 0) ? ((_perfeitas + _otimas + _boas) / _julgadas) * 100 : 0;
@@ -30,23 +34,62 @@ draw_set_color(c_black);
 // são a informação que o jogador mais quer ler nesta tela.
 draw_set_font(f_padrao);
 
-draw_text(_col_esq, _linha1, "Perfeitas: " + string(_perfeitas));
-draw_text(_cx,      _linha1, "Ótimas: " + string(_otimas));
-draw_text(_col_dir, _linha1, "Boas: " + string(_boas));
+if (tempo >= RESULTADO_T_ESTATISTICAS) {
+    draw_text(_col_esq, _linha1, "Perfeitas: " + string(_perfeitas));
+    draw_text(_cx,      _linha1, "Ótimas: " + string(_otimas));
+    draw_text(_col_dir, _linha1, "Boas: " + string(_boas));
 
-draw_text(_col_esq, _linha2, "Erros: " + string(_erros));
-draw_text(_cx,      _linha2, "Total: " + string(o_controlador_geral.stats_total_notas));
-draw_text(_col_dir, _linha2, "Precisão: " + string(round(_precisao)) + "%");
+    draw_text(_col_esq, _linha2, "Erros: " + string(_erros));
+    draw_text(_cx,      _linha2, "Total: " + string(_tot.notas));
+    draw_text(_col_dir, _linha2, "Precisão: " + ui_pct(_precisao));
+}
+
+// A NOTA DEIXOU DE SER TEXTO AO LADO DA ARMA.
+//
+// Era uma letra grande sobre uma placa de degrade, flutuando ao lado de um medalhao
+// emoldurado — dois objetos com linguagens visuais opostas na mesma tela, e o de menor
+// estrutura era justamente o que carregava o veredito.
+//
+// Agora ela e um SELO estampado no proprio medalhao, quarta fatia do sanduiche. A peca
+// e a nota viraram uma coisa so, que e o que elas sempre foram: a letra e o julgamento
+// daquela forja, nao um numero ao lado dela. Ver icone_desenhar e icone_tier.
 
 // --- PONTUAÇÃO EM DESTAQUE ---
 // Era preta, igual à grade de estatísticas acima, e sumia no meio delas. O cobre
 // vem da rampa do combo, então a paleta da partida e a do resultado são a mesma;
 // mede 4,68:1 sobre o pergaminho (229,214,161).
-var _texto_pontos = "Pontuação: " + string(o_controlador_geral.pontuacao);
+//
+// O número SOBE até o total em vez de aparecer pronto: contar dá peso ao resultado,
+// e é o único momento da tela em que o jogador olha um número mudar.
+var _texto_pontos = "Pontuação: " + string(pontuacao_exibida);
 
 draw_set_font(f_padrao);
 draw_set_color(UI_COR_COBRE);
-draw_text(_cx, 594, _texto_pontos);
+
+if (tempo >= RESULTADO_T_CONTAGEM) {
+    draw_text(_cx, 594, _texto_pontos);
+}
+
+// --- BÔNUS ---
+// Entram como LINHA PRÓPRIA e só depois somam no total. Ver "SEM ERRO +1200" e ver o
+// número subir por causa dele recompensa mais do que um total maior já pronto.
+draw_set_font(f_padrao_pequena);
+
+// No Arcade as duas linhas somem: elas descrevem so a ULTIMA fase, e ao lado de um
+// total de seis fases isso mente sobre de onde vieram os pontos. Quem detalha o
+// percurso ali e a fileira.
+var _mostra_bonus = (array_length(fileira) == 0);
+
+if (_mostra_bonus && bonus_sem_erro > 0 && tempo >= RESULTADO_T_BONUS_1) {
+    draw_set_color(UI_COR_CARMIM);
+    draw_text(_col_esq, 594, "SEM ERRO  +" + string(bonus_sem_erro));
+}
+
+if (_mostra_bonus && bonus_impecavel > 0 && tempo >= RESULTADO_T_BONUS_2) {
+    draw_set_color(UI_COR_CARMIM);
+    draw_text(_col_dir, 594, "IMPECÁVEL  +" + string(bonus_impecavel));
+}
+
 draw_set_color(c_black);
 
 // --- RECORDE NOVO ---
@@ -56,7 +99,7 @@ draw_set_color(c_black);
 // A onda percorre o texto letra a letra. O deslocamento é ARREDONDADO porque Kobold 7
 // é fonte de pixel: posição fracionária suja o traço, que foi o problema do contador
 // dinâmico da contagem regressiva.
-if (recorde_novo) {
+if (recorde_novo && revelacao_pronta) {
     draw_set_font(f_padrao_pequena);
     draw_set_halign(fa_left);
 
@@ -80,37 +123,62 @@ if (recorde_novo) {
 }
 
 // --- FRASE DE FEEDBACK (escolhida no evento Create) ---
-draw_set_font(f_padrao_pequena);
-draw_set_color(c_gray);
-draw_text(_cx, 628, frase_escolhida);
+// Junto com o prompt: ela é o fecho da leitura, não parte dos dados.
+if (revelacao_pronta) {
+    draw_set_font(f_padrao_pequena);
+    draw_set_color(c_gray);
+    draw_text(_cx, 628, frase_escolhida);
+}
 draw_set_color(c_black);
 
 // --- PROMPT PARA CONTINUAR ---
 // A GUI agora tem 720 px de altura (antes herdava os 768 do splash), então o prompt
 // desceu para dentro da tela — auditoria UI-01.
-ui_prompt(_cx, 676, ui_texto_confirmar() + " para continuar", 65);
+// Só aparece quando a revelação termina. Antes disso CONFIRMAR corta a animação —
+// quem tem pressa não espera, mas nada na tela convida a apressar.
+if (revelacao_pronta) {
+    ui_prompt(_cx, 676, ui_texto_confirmar() + " para continuar", 65);
+}
 
 // =================================================================
-// --- DESENHA A ARMA FORJADA E SUA MOLDURA (NOVA SEÇÃO) ---
+// A ARMA FORJADA
+//
+// Sanduiche de fundo, arma e moldura, montado por icone_desenhar. Escala 6 leva os
+// 26 px do icone a 156 px na tela — inteira, pela regra do pixel art (D-33). A arte
+// antiga era de 250x250 e vinha em escala 0,8, o que sujava a grade de pixels.
 // =================================================================
+var _n_fileira = array_length(fileira);
 
-// Posições baseadas no centro superior do painel de resultados (se você tiver um)
-var _panel_top_y = 200; // Altura do topo do seu painel de resultados (ajuste conforme necessário)
-var _center_x = _cx;
+if (_n_fileira > 0) {
+    // ARCADE: as armas do percurso, lado a lado, montando uma a uma da esquerda para
+    // a direita. So as fases JOGADAS aparecem — a fileira registra o que foi forjado,
+    // e nao o que faltava forjar.
+    //
+    // A fase perdida entra com nivel 0, que e a arma QUEBRADA. O quadro 0 de cada arma
+    // existe so para isso.
+    var _lado = icone_tamanho(RESULTADO_ESCALA_FILEIRA);
+    var _passo = _lado + 20;
+    var _inicio = _cx - (((_n_fileira - 1) * _passo) / 2);
 
-// Posição central para a arma e a moldura
-// Ajuste este valor para mover tudo para cima ou para baixo na tela.
-var _pos_y_arma_e_moldura = _panel_top_y - 45; // Por exemplo, 200 pixels acima do topo do painel
+    for (var i = 0; i < _n_fileira; i++) {
+        var _t = RESULTADO_T_CONTAGEM + (i * RESULTADO_GAP_FILEIRA);
+        if (tempo < _t) continue;
 
-// 1. Desenha a arma forjada
-// As sprites fixas de arma têm 250x250.
-// Vamos desenhá-las em sua escala original (1,1) para caberem bem na moldura.
-// Se você quiser que a arma seja menor dentro da moldura, ajuste a escala.
-draw_sprite_ext(sprite_da_arma_final, 0, _center_x, _pos_y_arma_e_moldura, 0.8, 0.8, 0, c_white, 1);
+        // cada arma entra em degrade curto, para a fileira ler como sequencia e nao
+        // como seis coisas piscando
+        var _a = min(1, (tempo - _t) / 0.22);
 
-// 2. Desenha a moldura por cima da arma
-// A moldura tem 300x300. Usaremos escala 1,1 se ela já tiver o tamanho que você quer.
-// Se quiser que a moldura seja um pouco maior ou menor, ajuste a escala.
-draw_sprite_ext(sprite_da_moldura_final, 0, _center_x, _pos_y_arma_e_moldura, 1.1, 1.1, 0, c_white, 1);
+        icone_desenhar(fileira[i].icone, fileira[i].nivel,
+                       _inicio + (i * _passo), 190,
+                       RESULTADO_ESCALA_FILEIRA, _a);
+    }
+
+} else {
+    // O SELO SO APARECE AQUI, na arma unica do Modo Livre. Na fileira do percurso cada
+    // medalhao ja diz o proprio nivel pela arte, e seis selos competindo entre si
+    // trocariam a leitura da sequencia por uma tabela.
+    icone_desenhar(arma_forjada, nivel_forjado, _cx, 190, 6, 1,
+                   icone_tier(_precisao, _perfeitas, _julgadas, o_controlador_geral.fase_falhou));
+}
 
 ui_reset();

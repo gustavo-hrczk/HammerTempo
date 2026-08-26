@@ -1,4 +1,11 @@
 // Este menu só desenha no estado de seleção de fase
+// O ARCADE nao tem selecao de armas: o percurso e a lista inteira. O estado
+// SELECAO_FASE ainda e atravessado por um quadro ate arcade_iniciar_percurso rodar, e
+// nesse quadro o seletor piscava por cima do tutorial que acabava de sair.
+if (o_controlador_geral.modo_jogo == MODO.ARCADE) {
+    exit;
+}
+
 if (o_controlador_geral.estado_jogo != MINIGAME.SELECAO_FASE) {
     exit;
 }
@@ -25,9 +32,10 @@ var _y_nome    = 636;
 var _y_detalhe = 663;
 var _y_recorde = 694;   // em f_padrao, entao precisa de mais linha embaixo
 
-var _escala_moldura = 0.34;             // s_canva01 tem 250px -> 85px na tela
-var _escala_arma    = 0.26;
-var _meia_moldura   = (250 * _escala_moldura) / 2;
+// Miniatura do cartao em escala 3: 26 px do icone viram 78 px na tela, inteira
+// (D-33). A arte antiga vinha em 0,34 e 0,26 — escalas fracionarias que sujavam a
+// grade de pixels da arte.
+var _meia_moldura = icone_tamanho(3) / 2;
 
 var _tinta = UI_COR_TEXTO;
 
@@ -41,16 +49,25 @@ draw_set_font(f_padrao);
 draw_set_color(_tinta);
 draw_text(_cx, _y_titulo, "Selecione a arma para forjar");
 
-// --- cartões ---
-var _inicio_x = _cx - (((min(3, total_opcoes) - 1) * _gap_coluna) / 2);
+// --- cartões da página atual ---
+// A página vem da seleção, não de um estado próprio: assim o direcional vira a
+// página sozinho ao cruzar a borda, e não existe um "cursor fora da página" possível.
+var _pagina = opcao_selecionada div POR_PAGINA;
+var _primeiro = _pagina * POR_PAGINA;
+var _ultimo = min(_primeiro + POR_PAGINA, total_opcoes) - 1;
+var _nesta = _ultimo - _primeiro + 1;
 
-for (var i = 0; i < total_opcoes; i++) {
+var _inicio_x = _cx - (((_nesta - 1) * _gap_coluna) / 2);
 
-    var _pos_x = _inicio_x + (i * _gap_coluna);
+for (var i = _primeiro; i <= _ultimo; i++) {
+
+    var _pos_x = _inicio_x + ((i - _primeiro) * _gap_coluna);
     var _fase = opcoes_fase[i];
     var _selecionada = (i == opcao_selecionada);
 
-    var _txt_detalhe = _fase.dificuldade + "  -  " + string(_fase.beat_tempo_bpm) + " BPM";
+    // BPM arredondado: o valor medido tem casas decimais (89,99 / 130,01) que sao
+    // necessarias no calculo e viram ruido na leitura.
+    var _txt_detalhe = _fase.dificuldade + "  -  " + string(round(_fase.beat_tempo_bpm)) + " BPM";
 
     // O cartao mostra o CAMPEAO da fase, nao o recorde pessoal: aqui a pergunta do
     // jogador e "quem eu preciso bater", e a resposta e o primeiro do placar.
@@ -76,7 +93,7 @@ for (var i = 0; i < total_opcoes; i++) {
         var _conteudo = max(_larg_nome + 70,                  // nome + espaço do cursor
                             string_width(_txt_detalhe),
                             _larg_recorde,
-                            250 * _escala_moldura);
+                            icone_tamanho(3));
 
         var _caixa_topo = _y_icone - _meia_moldura - 5;
         var _caixa_base = _y_recorde + 16;
@@ -87,21 +104,25 @@ for (var i = 0; i < total_opcoes; i++) {
                           _caixa_base - _caixa_topo);
     }
 
-    // Arma e moldura so aparecem em fase ja forjada: sem recorde nao ha o que
-    // exibir, e mostrar a melhor arma de uma fase nunca jogada entregava o premio
-    // antes da conquista.
+    // O icone so aparece em fase JA FORJADA: sem recorde nao ha o que exibir, e
+    // mostrar a melhor arma de uma fase nunca jogada entregava o premio antes da
+    // conquista. Fase sem campeao mostra fundo e moldura de falha, vazios — o lugar
+    // continua ocupado, entao le como pendencia e nao como buraco (D-107).
     //
-    // O par arma+moldura vem sempre do MESMO indice da lista de desempenho. Antes a
-    // moldura era s_canva01 fixa, a de FALHA, enquanto a arma era a ultima da lista,
-    // a melhor — a borda errada que voce viu.
-    if (_tem_campeao) {
-        var _nivel = array_length(_fase.sprites_resultado) - 1;
-        var _arma = _fase.sprites_resultado[_nivel];
-        var _moldura = o_controlador_geral.molduras_resultado[_nivel];
-
-        draw_sprite_ext(_arma, 0, _pos_x, _y_icone, _escala_arma, _escala_arma, 0, c_white, 1);
-        draw_sprite_ext(_moldura, 0, _pos_x, _y_icone, _escala_moldura, _escala_moldura, 0, c_white, 1);
-    }
+    // Miniatura em escala 3: 26 px viram 78 px, inteira (D-33). A arte antiga vinha
+    // em 0,34 e 0,26, escalas fracionarias que sujavam a grade de pixels.
+    // O nivel exibido e o MAIOR ja atingido na fase, e nao um nivel fixo: agora que o
+    // fundo e a moldura tambem mudam com o desempenho, o cartao vira o registro da
+    // melhor forja. Antes ele mostrava sempre a arma perfeita, o que anunciava uma
+    // conquista que podia nunca ter acontecido.
+    // O SELO TAMBEM ENTRA NO CARTAO, com o maior degrau ja alcancado na fase. O cartao
+    // e o registro da melhor forja, e a nota faz parte desse registro — sem ela o
+    // jogador via a arma que conquistou mas nao a letra, que e como ele guarda o
+    // resultado de cabeca. Sem campeao nao ha selo: o quadro fica vazio, como a arma.
+    icone_desenhar(_tem_campeao ? _fase.icone : -1,
+                   _tem_campeao ? icone_nivel_do_placar(i) : 0,
+                   _pos_x, _y_icone, 3, 1,
+                   _tem_campeao ? icone_tier_do_placar(i) : -1);
 
     // nome
     draw_set_font(f_padrao);
@@ -141,6 +162,28 @@ for (var i = 0; i < total_opcoes; i++) {
     }
 
     draw_set_color(_tinta);
+}
+
+// --- SETAS DE PÁGINA ---
+// Nas bordas do pergaminho, fora da largura dos cartões (que ocupam 134..1146).
+// Pontos embaixo foi a primeira ideia e não cabe: a linha do recorde vai até 711 e o
+// painel acaba em 720. Só aparecem com mais de uma página, e a navegação dá a volta,
+// então as duas sempre valem.
+if (total_paginas > 1) {
+    var _y_seta = 600;
+    var _pulso = 0.55 + 0.45 * ((sin(current_time * 0.004) + 1) / 2);
+
+    draw_set_font(f_padrao);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_set_color(UI_COR_COBRE);
+    draw_set_alpha(_pulso);
+
+    // escala inteira e posição inteira, pela regra da fonte de pixel (D-33)
+    draw_text_transformed(60,   _y_seta, "<", 2, 2, 0);
+    draw_text_transformed(1220, _y_seta, ">", 2, 2, 0);
+
+    draw_set_alpha(1);
 }
 
 ui_reset();

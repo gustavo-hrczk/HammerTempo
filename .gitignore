@@ -42,3 +42,4 @@ cache/
 
 # Ambiente isolado das ferramentas de analise (recriavel com tools/README)
 tools/.venv/
+tools/__pycache__/

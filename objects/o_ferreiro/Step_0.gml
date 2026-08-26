@@ -1,5 +1,9 @@
+// O conjunto de sprites so pode ser montado depois de `dono` ter sido definido por
+// quem criou a instancia — no Create ele ainda vale 0 para todos.
+if (is_undefined(meus_sprites)) adotar_sprites();
+
 // --- LÓGICA DE PAUSA ---
-if (instance_exists(o_controlador_geral) && o_controlador_geral.pausa) {
+if (gameplay_congelado()) {
     image_speed = 0;
     exit;
 }
@@ -72,7 +76,7 @@ if (instance_exists(o_controlador_geral)) {
     // animação começa ainda em RITMO, durante o respiro antes do resultado.
     else if (_jogo == MINIGAME.RITMO) {
         x = home_x;
-        image_xscale = 1;
+        image_xscale = frente();
         if (estado != FERREIRO_ESTADO.MARTELANDO
             && estado != FERREIRO_ESTADO.FALHA
             && estado != FERREIRO_ESTADO.FALHOU_ESTATICO) {
@@ -87,12 +91,12 @@ if (instance_exists(o_controlador_geral)) {
 switch (estado) {
 
     case FERREIRO_ESTADO.IDLE:
-        sprite_index = s_ferreiro_idle;
+        sprite_index = meus_sprites.idle;
         image_speed = 0.5;
         break;
 
     case FERREIRO_ESTADO.ANDANDO:
-        sprite_index = s_ferreiro_andando;
+        sprite_index = meus_sprites.andando;
         // O ciclo de 6 quadros a 0,6 fechava em 10 frames, e a 1,2 px/frame ele
         // avançava só 12 px por ciclo completo de passada — os pés patinavam.
         // A 0,35 o ciclo leva 17 frames e ele cobre 27 px, quase o dobro.
@@ -117,6 +121,9 @@ switch (estado) {
         var _dir = sign(_alvo - x);
 
         x += _dir * _vel;
+        // ANDANDO ele olha para onde ANDA, e nao para o oponente. frente() aqui
+        // invertia o jogador 2: ele caminhava de costas, porque o espelho da pose de
+        // repouso nao vale para o passo.
         image_xscale = (_dir < 0) ? -1 : 1;
 
         if (abs(_alvo - x) <= _vel) {
@@ -124,7 +131,7 @@ switch (estado) {
             estado = FERREIRO_ESTADO.IDLE;
 
             if (indo_para_casa) {
-                image_xscale = 1;
+                image_xscale = frente();
             } else {
                 // chegou ao destino: fica um tempo parado antes de decidir de novo
                 ocio_timer = irandom_range(room_speed * 0.6, room_speed * 2.5);
@@ -137,7 +144,7 @@ switch (estado) {
         break;
 
     case FERREIRO_ESTADO.COMEMORANDO:
-        sprite_index = s_ferreiro_win;
+        sprite_index = meus_sprites.win;
         image_speed = 0.2;
         break;
 
@@ -146,8 +153,8 @@ switch (estado) {
         break;
 
     case FERREIRO_ESTADO.FALHOU_ESTATICO:
-        sprite_index = s_ferreiro_falha;
-        image_index = sprite_get_number(s_ferreiro_falha) - 1; // Trava no último frame
+        sprite_index = meus_sprites.falha;
+        image_index = sprite_get_number(meus_sprites.falha) - 1; // Trava no último frame
         image_speed = 0;
         break;
 }

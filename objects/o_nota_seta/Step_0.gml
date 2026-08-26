@@ -1,11 +1,22 @@
-if (o_controlador_geral.pausa) {
+if (gameplay_congelado()) {
     exit;
 }
 
 switch (modo) {
 
     case 0: // viva
-        x -= velocidade;
+        // POSICAO DERIVADA DO RELOGIO DA FAIXA, nao integrada quadro a quadro.
+        // Integrar acumula erro de truncamento e de frame perdido; derivar nao
+        // acumula nada, porque cada quadro recalcula do zero contra o audio.
+        var _agora = ritmo_relogio();
+
+        if (t_alvo >= 0 && _agora >= 0) {
+            x = ritmo_x_da_nota(t_alvo, _agora, velocidade, dono);
+        } else {
+            // sem faixa tocando, segue no modo antigo — mas no sentido do dono
+            x += ritmo_sentido(dono) * velocidade;
+        }
+
         image_index = tipo_seta;
 
         // A nota é dada como perdida assim que passa da janela de acerto — o mesmo
@@ -25,7 +36,7 @@ switch (modo) {
         break;
 
     case 2: // perdida
-        x -= velocidade;
+        x += ritmo_sentido(dono) * velocidade;
         image_alpha -= 0.05;
 
         if (image_alpha <= 0) {
@@ -34,7 +45,7 @@ switch (modo) {
         break;
 
     case 3: // saindo de cena no game over
-        x -= velocidade;
+        x += ritmo_sentido(dono) * velocidade;
         image_alpha -= 0.07;
 
         if (image_alpha <= 0) {

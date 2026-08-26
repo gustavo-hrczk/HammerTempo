@@ -22,6 +22,14 @@ for (var i = 0; i < array_length(lane_acao); i++) {
     lane_pop[i]    = max(0, lane_pop[i] - 0.14);
 }
 
+// No Versus o tutorial tem duas etapas: primeiro o jogador 1 acha as teclas dele,
+// depois o 2. Confirmar avanca de um para o outro antes de sair da tela.
+if (versus_ativo() && lane_dono == 0 && input_pressed(ACAO.CONFIRMAR)) {
+    o_audio_manager.play_sfx(snd_menu_confirm);
+    trocar_de_jogador();
+    exit;
+}
+
 if (input_pressed(ACAO.CONFIRMAR)) {
     o_audio_manager.play_sfx(snd_menu_confirm);
 

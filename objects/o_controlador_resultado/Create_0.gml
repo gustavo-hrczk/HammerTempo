@@ -54,66 +54,112 @@ frase_escolhida = "";
 // Preenchido pela tela de iniciais, que e quem sabe a colocacao obtida.
 recorde_novo = false;
 
-// --- PLACAR ---
-// A tela de resultado não anuncia a colocação: ela já mostra pontuação, precisão e a
-// contagem por julgamento, e "AAA em 2o" ali era mais um número disputando o mesmo
-// olhar. A colocação se lê na tela de Recordes, que existe para isso.
+// =================================================================
+// BONIFICACAO
+// Calculada ANTES de qualquer coisa olhar a pontuacao, senao o placar julgaria um
+// numero que a tela ainda vai aumentar na frente do jogador.
 //
-// A entrada de iniciais so aparece quando a pontuacao entra no top 10 — perguntar o
-// nome de quem nao entrou seria pedir digitacao para nada, e numa feira cada segundo
-// de fila conta.
+// Duas faixas, e elas medem coisas diferentes:
+//   sem erro   — nenhuma nota perdida. E consistencia, e o que a maioria alcanca.
+//   impecavel  — TODAS perfeitas. E precisao, e quase ninguem alcanca.
 //
-// Fase perdida nao entra, pelo mesmo motivo do recorde (D-67): placar e de trabalho
-// concluido.
-if (!o_controlador_geral.fase_falhou
-    && placar_posicao(o_controlador_geral.fase_atual, o_controlador_geral.pontuacao) > 0) {
-    instance_create_depth(0, 0, -9000, o_tela_nome);
+// Proporcionais, nao fixas: uma fase de 137 notas vale mais que uma de 60, e um
+// bonus fixo premiaria desproporcionalmente a fase curta.
+// =================================================================
+pontuacao_base = jogador().pontuacao;
+
+// A regra de bonus mora no controlador porque as fases do meio de um percurso Arcade
+// nao chegam a esta tela — se ela vivesse so aqui, so a ultima seria bonificada.
+var _bonus = o_controlador_geral.fase_bonus(pontuacao_base);
+bonus_sem_erro = _bonus.sem_erro;
+bonus_impecavel = _bonus.impecavel;
+
+// No Arcade o numero que sobe e o TOTAL DO PERCURSO. arcade_pontos guarda o que veio
+// antes desta fase; as duas linhas de bonus continuam sendo as DESTA fase, que e o
+// que o jogador acabou de conquistar.
+arcade_acumulado = (o_controlador_geral.modo_jogo == MODO.ARCADE)
+    ? o_controlador_geral.arcade_pontos
+    : 0;
+
+pontuacao_final = arcade_acumulado + pontuacao_base + bonus_sem_erro + bonus_impecavel;
+jogador().pontuacao = pontuacao_final;
+
+// A ULTIMA fase do percurso entra na fileira aqui, e nao no encadeamento: e esta tela
+// que calcula o bonus dela. Com isso arcade_forjadas passa a ter todas as fases
+// jogadas, e a soma das entradas fecha exatamente com pontuacao_final.
+if (o_controlador_geral.modo_jogo == MODO.ARCADE) {
+    o_controlador_geral.arcade_registrar_forjada(
+        pontuacao_base + bonus_sem_erro + bonus_impecavel);
 }
 
-// Molduras por nivel de desempenho, vindas do controlador geral: o seletor de fases
-// usa a mesma lista, e duas copias da mesma ordem ja renderam moldura trocada.
-sprites_das_molduras = o_controlador_geral.molduras_resultado;
+fileira = (o_controlador_geral.modo_jogo == MODO.ARCADE)
+    ? o_controlador_geral.arcade_forjadas
+    : [];
 
-sprite_da_moldura_final = sprites_das_molduras[0]; // Padrao e a primeira
+// =================================================================
+// REVELACAO
+// A tela conta a pontuacao em vez de exibi-la pronta, e revela uma coisa por vez.
+// O momento de maior peso — o total com os bonus somados — fica por ultimo.
+//
+// A entrada de iniciais NAO nasce aqui. Ela vinha no Create e cobria a tela inteira
+// antes de o jogador ver o proprio resultado. Agora espera a revelacao terminar e o
+// jogador confirmar (ver o Step).
+// =================================================================
+#macro RESULTADO_T_ESTATISTICAS 0.35
+#macro RESULTADO_T_CONTAGEM     0.90
+#macro RESULTADO_DUR_CONTAGEM   2.20
+#macro RESULTADO_T_BONUS_1      3.35
+#macro RESULTADO_T_BONUS_2      3.85
+#macro RESULTADO_T_PROMPT       4.35
 
+/// Ritmo da fileira de armas do Arcade.
+///
+/// Cada arma se monta a partir de RESULTADO_T_CONTAGEM, uma a cada GAP, e o contador
+/// salta para o acumulado daquela arma quando ela pousa — o numero e a fileira contam
+/// a MESMA historia, em vez de duas animacoes correndo lado a lado.
+///
+/// Com seis armas a fileira fecha em 0,90 + 5 x 0,45 = 3,15 s, antes do prompt.
+#macro RESULTADO_GAP_FILEIRA 0.45
 
-// --- LÓGICA DE CÁLCULO DE PERFORMANCE ---
+/// Escala da fileira. 3 leva os 26 px do icone a 78: seis delas com 20 px de vao dao
+/// 568 px, folgados nos 1280 da tela. A arma sozinha do Modo Livre usa 6.
+#macro RESULTADO_ESCALA_FILEIRA 3
+
+tempo = 0;
+revelacao_pronta = false;
+pediu_iniciais = false;
+pontuacao_exibida = 0;
+
+/// Corta a animacao e mostra tudo. Numa feira com fila, esperar animacao e imposto.
+concluir_revelacao = function() {
+    tempo = RESULTADO_T_PROMPT;
+    pontuacao_exibida = pontuacao_final;
+    revelacao_pronta = true;
+}
+
+// --- DESEMPENHO DA FASE ---
+// A regra mora em icone_nivel(), no scr_icone: o resumo do percurso Arcade precisa do
+// mesmo calculo para cada arma da fileira, e duas copias da mesma regra ja renderam
+// moldura trocada neste projeto.
 var _fase_jogada = o_controlador_geral.fase_atual;
-var _total_notas = o_controlador_geral.stats_total_notas;
-var _acertos_perfeitos = o_controlador_geral.stats_acertos_perfeitos;
-var _acertos_otimos = o_controlador_geral.stats_acertos_otimos;
-var _acertos_bons = o_controlador_geral.stats_acertos_bons;
-var _total_acertos = _acertos_perfeitos + _acertos_otimos + _acertos_bons;
+var _total_notas = jogador().stats_total_notas;
+var _total_acertos = jogador().stats_acertos_perfeitos
+                   + jogador().stats_acertos_otimos
+                   + jogador().stats_acertos_bons;
 
-// Calcula a porcentagem de acertos
-var _porcentagem_acerto_total = 0;
-if (_total_notas > 0) {
-    _porcentagem_acerto_total = (_total_acertos / _total_notas) * 100;
-}
-
-// Variável para guardar o índice do resultado (0=Falha, 1=Aceitável, etc.)
-var _resultado_index = 0;
-
-// Define o resultado com base na performance
-if (_porcentagem_acerto_total < 40) { _resultado_index = 0; } // Falha
-else if (_porcentagem_acerto_total < 70) { _resultado_index = 1; } // Aceitável
-else if (_porcentagem_acerto_total < 95) { _resultado_index = 2; } // Bom
-else if (_porcentagem_acerto_total < 100) { _resultado_index = 3; } // Excelente
-else { _resultado_index = 4; } // Perfeito (100% de acertos)
-
-// Game over é game over. Quem perde a fase por excesso de notas perdidas recebe o
-// resultado de falha, mesmo que a precisão até ali estivesse alta — antes o jogador
-// avançado levava jingle de vitória, comemoração e a melhor arma ao ser derrotado.
-if (o_controlador_geral.fase_falhou) {
-    _resultado_index = 0;
-}
+var _resultado_index = icone_nivel(_total_notas, _total_acertos,
+                                   o_controlador_geral.fase_falhou);
 
 // Pega os dados da fase que acabamos de jogar
 var _dados_fase = o_controlador_geral.fases_data[_fase_jogada];
 
-// --- ESCOLHE A FRASE E A ARMA FINAL ---
-sprite_da_arma_final = _dados_fase.sprites_resultado[_resultado_index];
-sprite_da_moldura_final = sprites_das_molduras[_resultado_index];
+// --- A ARMA FORJADA ---
+// A tela guarda a ARMA e o NIVEL, e nao um sprite ja escolhido: quem monta o
+// sanduiche de fundo, arma e moldura e icone_desenhar, e as tres camadas precisam
+// receber o mesmo nivel. Guardar sprites prontos foi o que ja rendeu moldura de
+// falha embaixo da melhor arma.
+arma_forjada = _dados_fase.icone;
+nivel_forjado = _resultado_index;
 
 // A lógica para escolher a frase pode ser baseada no mesmo índice
 if (_resultado_index <= 1) { // Falha ou Aceitável
@@ -130,20 +176,25 @@ if (_resultado_index <= 1) { // Falha ou Aceitável
 // =================================================================
 // --- COMANDA A ANIMAÇÃO DO FERREIRO (NOVA SEÇÃO) ---
 // =================================================================
-if (instance_exists(o_ferreiro)) {
+// Esta tela e do MODO DE UM JOGADOR — o Versus tem a sua. Ainda assim o ferreiro e
+// nomeado pelo dono em vez de pelo objeto: com duas instancias em cena, `o_ferreiro.x`
+// devolve uma qualquer, e um caminho que "nunca acontece" e exatamente o que volta.
+var _ferreiro = ferreiro_de(0);
+
+if (_ferreiro != noone) {
     
     // Se a performance foi "Falha" ou "Aceitável"...
     if (_resultado_index <= 1) {
         // ...manda o ferreiro tocar a animação de falha. No game over ela já
         // começou durante o respiro, então não pode ser reiniciada aqui.
-        if (o_ferreiro.estado != FERREIRO_ESTADO.FALHA
-            && o_ferreiro.estado != FERREIRO_ESTADO.FALHOU_ESTATICO) {
-            o_ferreiro.iniciar_animacao_falha();
+        if (_ferreiro.estado != FERREIRO_ESTADO.FALHA
+            && _ferreiro.estado != FERREIRO_ESTADO.FALHOU_ESTATICO) {
+            with (_ferreiro) iniciar_animacao_falha();
         }
     }
     // Se a performance foi "Bom" ou melhor...
     else {
         // ...manda o ferreiro comemorar.
-        o_ferreiro.iniciar_comemoracao();
+        with (_ferreiro) iniciar_comemoracao();
     }
 }

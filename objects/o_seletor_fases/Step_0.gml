@@ -1,4 +1,11 @@
 // Este objeto só funciona no estado de seleção de fase
+// O ARCADE nao tem selecao de armas: o percurso e a lista inteira. O estado
+// SELECAO_FASE ainda e atravessado por um quadro ate arcade_iniciar_percurso rodar, e
+// nesse quadro o seletor piscava por cima do tutorial que acabava de sair.
+if (o_controlador_geral.modo_jogo == MODO.ARCADE) {
+    exit;
+}
+
 if (o_controlador_geral.estado_jogo != MINIGAME.SELECAO_FASE || fluxo_ocupado()) {
     exit;
 }

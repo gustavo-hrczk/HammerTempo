@@ -1,3 +1,20 @@
+// A LARGURA DE QUEBRA E UMA SO, usada pelo desenho E pela conta de quando o texto
+// acabou. Eram dois numeros diferentes — 980 no desenho e 1080 na verificacao —, e
+// como a largura maior produz menos linhas, a sala se dava por encerrada antes de o
+// fim dos creditos sair da tela. Os ultimos nomes eram cortados.
+// A COLUNA ENCOLHEU PARA A PLACA CABER EM VOLTA DELA.
+//
+// Com 980 px de texto sobravam 150 de cada lado, e a queda da placa precisa de mais que
+// isso: o miolo de alpha cheio ficava em 240..1060 enquanto o texto ia de 160 a 1140,
+// entao as primeiras e as ultimas colunas de cada linha caiam dentro do degrade, com
+// menos contraste que o resto. Em 880 sobram 200 por lado — 40 de margem cheia mais
+// 140 de queda, tudo dentro da tela.
+#macro CREDITOS_X 200
+#macro CREDITOS_LARGURA 880
+
+#macro CREDITOS_MARGEM 40
+#macro CREDITOS_QUEDA 140
+
 // Variáveis para controlar a posição e a velocidade
 y_pos = display_get_gui_height() + 40; // começa logo abaixo da tela
 scroll_speed = 3; // Velocidade de rolagem 
@@ -14,131 +31,146 @@ credit_text = "CREDITOS \n"+
 "Dedicatória: Este projeto foi criado com o propósito de celebrar o processo criativo e colaborativo dentro de uma Game Jam. HammerTempo nasceu da ideia de unir ritmo, precisão e a arte da forja em uma experiência pixelada, simples e divertida. Cada martelada, cada faísca e cada som foram pensados para traduzir o espírito de criar algo com as próprias mãos.Que este jogo inspire outros criadores a continuar forjando suas próprias ideias, uma batida de cada vez." + 
 "\n_____________________________________________________ \n" +
 
-"2. INFORMAÇÕES DO ASSET \n" +
+"2. ASSETS UTILIZADOS \n\n" +
+"ASSET 1 \n" +
 "Nome do Asset: 'Medieval weapons pixel art pack'\n" +
 "Autor/Fonte: ComicOnion \n" +
 "Link para a Licença: https://cosmiconion.itch.io/32x32-medieval-weapons-pixel-art-pack \n\n"+
 
-"3. TERMOS DE USO \n" + 
+"TERMOS DE USO \n" +
 "Este asset foi adquirido/licenciado sob os seguintes termos: \n" +
 "Uso Comercial: Sim\n" + 
 "Atribuição Requerida: Não\n" + 
 "Modificações Permitidas: Sim \n" + 
 "Restrições: não pode revender separadamente, em forma original ou modificada \n\n" +
 
-"4. INFORMAÇÕES ADICIONAIS  \n" +
+"INFORMAÇÕES ADICIONAIS \n" +
 "Data de Aquisição: 21/10/2025 \n" +
 "\n____________________________________________________ \n" +
 
-"2. INFORMAÇÕES DO ASSET \n" +
+"ASSET 2 \n" +
 "Nome do Asset: 'Free Sky with Clouds Backgorund Pixel Art Set' \n" + 
 "Autor/Fonte: CraftPix \n" + 
 "Link para a Licença: https://craftpix.net/freebies/free-sky-with-clouds-background-pixel-art-set/ \n\n" +
 
-"3. TERMOS DE USO \n" +
+"TERMOS DE USO \n" +
 "Este asset foi adquirido/licenciado sob os seguintes termos: \n" +
 "Uso Comercial: Sim \n" + 
 "Atribuição Requerida: Não \n" +
 "Modificações Permitidas: Sim \n" +
 "Restrições: não pode revender separadamente, em forma original ou modificada \n\n" +
 
-"4. INFORMAÇÕES ADICIONAIS \n" +
+"INFORMAÇÕES ADICIONAIS \n" +
 "Data de Aquisição: 21/10/2025 \n" +
 "\n_____________________________________________________ \n" +
-"2. INFORMAÇÕES DO ASSET \n" +
+"ASSET 3 \n" +
 "Nome do Asset: 'Blacksmith Craft Asset Pixel Art Pack' \n" + 
 "Autor/Fonte: CraftPix \n" +
 "Link para a Licença: https://craftpix.net/product/blacksmith-craft-asset-pixel-art-pack/ \n ?utm_campaign=Website&utm_source=itch.io&utm_medium=public \n\n" + 
 
-"3. TERMOS DE USO \n" +
+"TERMOS DE USO \n" +
 "Este asset foi adquirido/licenciado sob os seguintes termos: \n" +
 "Uso Comercial: Sim \n" +
 "Atribuição Requerida: Não \n" +
 "Modificações Permitidas: Sim \n" +
 "Restrições: não pode revender separadamente, em forma original ou modificada \n\n" +
 
-"4. INFORMAÇÕES ADICIONAIS \n" +
+"INFORMAÇÕES ADICIONAIS \n" +
 "Data de Aquisição: 21/10/2025 \n" +
 "\n_____________________________________________________ \n" +
-"2. INFORMAÇÕES DO ASSET \n" +
+"ASSET 4 \n" +
 "Nome do Asset: 'Keyboard Pixel Art' \n" +
 "Autor/Fonte: Ävos Grosimbourg \n" +
 "Link para a Licença: https://avosgrosimbourg.itch.io/keyboard-pixel-art  \n\n" +
 
-"3. TERMOS DE USO \n" + 
+"TERMOS DE USO \n" +
 "Este asset foi adquirido/licenciado sob os seguintes termos: \n" +
 "Uso Comercial: Sim \n" +
 "Atribuição Requerida: Sim. Ävos Grosimbourg \n" +
 "Modificações Permitidas: Sim \n" +
 "Restrições: não pode revender separadamente, em forma original ou modificada \n\n" +
 
-"4. INFORMAÇÕES ADICIONAIS \n" +
+"INFORMAÇÕES ADICIONAIS \n" +
 "Data de Aquisição: 21/10/2025 \n" +
 "\n_____________________________________________________ \n" +
-"2. INFORMAÇÕES DO ASSET \n" +
+"ASSET 5 \n" +
 "Nome do Asset: 'Kobold Pixel Font' \n" + 
 "Autor/Fonte: Ävos Grosimbourg \n" +
 "Link para a Licença: https://somepx.itch.io/pixel-font-kobold  \n\n" +
 
-"3. TERMOS DE USO \n" +
+"TERMOS DE USO \n" +
 "Este asset foi adquirido/licenciado sob os seguintes termos: \n" + 
 "Uso Comercial: Sim  \n" +
 "Atribuição Requerida: Sim. somepx \n" +
 "Modificações Permitidas: Sim \n" +
 "Restrições: não pode revender separadamente, em forma original ou modificada \n\n" +
 
-"4. INFORMAÇÕES ADICIONAIS \n" +
+"INFORMAÇÕES ADICIONAIS \n" +
 "Data de Aquisição: 22/10/2025 \n" +
 "\n_____________________________________________________ \n" +
-"2. INFORMAÇÕES DO ASSET \n" +
+"ASSET 6 \n" +
 "Nome do Asset: 'Bump Sound Effects' \n" +
 "Autor/Fonte: Sound Effects for All \n" +
 "Link para a Licença: https://www.youtube.com/watch?v=0eEAKzZ3SvQ \n\n" +
 
-"3. TERMOS DE USO \n" +
+"TERMOS DE USO \n" +
 "Este asset foi adquirido/licenciado sob os seguintes termos: \n" +
 "Uso Comercial: Sim \n" +
 "Atribuição Requerida: Não \n" +
 "Modificações Permitidas: Sim \n" +
 "Restrições: Não \n\n" + 
 
-"4. INFORMAÇÕES ADICIONAIS \n" +
+"INFORMAÇÕES ADICIONAIS \n" +
 "Data de Aquisição: 21/10/2025 \n" +
 "\n_____________________________________________________ \n" +
-"2. INFORMAÇÕES DO ASSET \n" +
+"ASSET 7 \n" +
 "Nome do Asset: Sons medievais, vila medieval, keyboard \n" +
 "Autor/Fonte: Pixabay \n" +
 "Link: https://pixabay.com/pt/  \n" +
 "Link para a Licença: https://pixabay.com/pt/service/license-summary/ \n\n" +
 
-"3. TERMOS DE USO \n" +
+"TERMOS DE USO \n" +
 "Este asset foi adquirido/licenciado sob os seguintes termos: \n" +
 "Uso Comercial: Sim \n" +
 "Atribuição Requerida: Não \n" +
 "Modificações Permitidas: Sim \n" +
 "Restrições: Não \n\n" +
 
-"4. INFORMAÇÕES ADICIONAIS \n" +
+"INFORMAÇÕES ADICIONAIS \n" +
 "Data de Aquisição: 22/10/2025 \n" + 
 
 "\n_____________________________________________________ \n" +
 
-"5. MÚSICAS E ARRANJOS \n" +
+"3. MÚSICAS E ARRANJOS \n" +
 "Todas as melodias das FASES são de domínio público (Séculos X-XIV). \n\n" +
+
 "Fase 1 Adaga: Istampitta Ghaetta.\n" +
 "Compositor: Desconhecido.\n" +
 "Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
 
-"Fase 2 Lança: Des Oge Mais Quer' Eu Trobar Medieval Tunes Vol.1 (6 of 12) (Trecho)\n" +
+"Fase 2 Lança: Des Oge Mais Quer' Eu Trobar - Medieval Tunes Vol.1 (6 of 12) (Trecho)\n" +
 "Compositor: Desconhecido.\n" +
 "Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
 
-"Fase 3 Espada: Des Oge Mais Quer' Eu Trobar Medieval Tunes Vol.1 (6 of 12) (Trecho)\n" +
+"Fase 3 Florete: Ductia (C) - Medieval Tunes Vol.1 (8 of 12)\n" +
+"Compositor: Desconhecido (dança medieval). Domínio público.\n" +
+"Arranjos e gravação: Medieval Tunes Vol. 1 \n\n" +
+
+"Fase 4 Maça: Saltarello II - Medieval Tunes Vol.1 (12 of 12)\n" +
+"Compositor: Desconhecido (dança italiana, século XIII). Domínio público.\n" +
+"Arranjos e gravação: The Recorder Maniac \n" +
+"Fonte: https://cuidado-arte-vicia.sellfy.store/p/saltarello-ii-13th-century-medieval-dance-soprano-or-other-instrument/ \n\n" +
+
+"Fase 5 Machado: Il Trotto - Medieval Tunes Vol.1 (10 of 12)\n" +
+"Compositor: Desconhecido (dança italiana medieval). Domínio público.\n" +
+"Arranjos e gravação: The Recorder Maniac \n\n" +
+
+"Fase 6 Espada: Des Oge Mais Quer Eu Trobar - Medieval Tunes Vol.1 (6 of 12) (Trecho)\n" +
 "Compositor: Desconhecido.\n" +
 "Arranjos e gravação: Maiko Thomé de Araujo \n\n" +
 
 "\n_____________________________________________________ \n" +
-"6. RECOMENDAÇÃO \n" +
+"4. RECOMENDAÇÃO \n" +
 "É altamente recomendável que o desenvolvedor mantenha uma cópia do arquivo original da licença e dos termos de uso do asset em seu sistema de gerenciamento de arquivos.";
 
 

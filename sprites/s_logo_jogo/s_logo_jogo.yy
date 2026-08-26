@@ -3,8 +3,8 @@
   "%Name":"s_logo_jogo",
   "bboxMode":0,
   "bbox_bottom":407,
-  "bbox_left":85,
-  "bbox_right":445,
+  "bbox_left":79,
+  "bbox_right":433,
   "bbox_top":114,
   "collisionKind":1,
   "collisionTolerance":0,
@@ -12,14 +12,14 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"","%Name":"0601dac5-3d89-44ef-982d-b8c3db5f507a","name":"0601dac5-3d89-44ef-982d-b8c3db5f507a","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"","%Name":"4b1923de-4582-4aa2-8013-1783f49dbf89","name":"4b1923de-4582-4aa2-8013-1783f49dbf89","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,
   "height":488,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"2fe3877e-b062-4432-9f8f-41ad13171baa","blendMode":0,"displayName":"default","isLocked":false,"name":"2fe3877e-b062-4432-9f8f-41ad13171baa","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"31b75a8e-dc45-4d85-8e6a-5c284fdfee5e","blendMode":0,"displayName":"default","isLocked":false,"name":"31b75a8e-dc45-4d85-8e6a-5c284fdfee5e","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"s_logo_jogo",
   "nineSlice":null,
@@ -71,8 +71,8 @@
     "tracks":[
       {"$GMSpriteFramesTrack":"","builtinName":0,"events":[],"inheritsTrackColour":true,"interpolation":1,"isCreationTrack":false,"keyframes":{"$KeyframeStore<SpriteFrameKeyframe>":"","Keyframes":[
             {"$Keyframe<SpriteFrameKeyframe>":"","Channels":{
-                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"0601dac5-3d89-44ef-982d-b8c3db5f507a","path":"sprites/s_logo_jogo/s_logo_jogo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
-              },"Disabled":false,"id":"c9ae2c9f-943e-42b4-a130-2117f926f6f5","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
+                "0":{"$SpriteFrameKeyframe":"","Id":{"name":"4b1923de-4582-4aa2-8013-1783f49dbf89","path":"sprites/s_logo_jogo/s_logo_jogo.yy",},"resourceType":"SpriteFrameKeyframe","resourceVersion":"2.0",},
+              },"Disabled":false,"id":"d32586c2-4c07-42a6-af54-2fb45f64640e","IsCreationKey":false,"Key":0.0,"Length":1.0,"resourceType":"Keyframe<SpriteFrameKeyframe>","resourceVersion":"2.0","Stretch":false,},
           ],"resourceType":"KeyframeStore<SpriteFrameKeyframe>","resourceVersion":"2.0",},"modifiers":[],"name":"frames","resourceType":"GMSpriteFramesTrack","resourceVersion":"2.0","spriteId":null,"trackColour":0,"tracks":[],"traits":0,},
     ],
     "visibleRange":null,

@@ -11,6 +11,89 @@
 /// Posição X da linha de acerto (mesma X das instâncias de o_buttons_forja em rm_forja).
 #macro RITMO_LINHA_X 98
 
+/// Largura do espaço de design. As duas pistas do Versus são simétricas em relação
+/// ao centro dela.
+#macro RITMO_LARGURA 1280
+
+/// Largura da sprite do alvo e da nota. Entra na simetria das duas pistas.
+#macro RITMO_ALVO_LARGURA 45
+
+/// Onde fica a zona de acerto de um jogador.
+///
+/// O jogador 1 acerta à esquerda e as notas dele vêm da direita; o jogador 2 é o
+/// espelho — ele fica à direita da tela e do teclado, então a atenção dele mora no
+/// canto direito, e é de lá que as notas precisam chegar.
+function ritmo_linha_x(_dono = 0) {
+    // FORA DO VERSUS o layout e sempre o mesmo, seja quem for que esta jogando. O
+    // jogador 2 sozinho joga no enquadramento validado — o que muda e a paleta dele,
+    // nao o lugar das coisas. Olhar so para o dono espelhava a pista de quem jogava
+    // sozinho e mandava as notas para o topo da tela.
+    if (!versus_ativo()) return RITMO_LINHA_X;
+
+    // A largura do alvo entra na conta. As sprites tem origem no canto ESQUERDO, entao
+    // a coluna do jogador 1 ocupa 98..143 — 98 px de folga ate a borda. Espelhar so a
+    // coordenada poria a do jogador 2 em 1182..1227, com 53 px de folga do outro lado.
+    // Subtrair a largura devolve os mesmos 98 px nas duas pontas.
+    return (_dono == 0)
+        ? RITMO_LINHA_X
+        : (RITMO_LARGURA - RITMO_LINHA_X - RITMO_ALVO_LARGURA);
+}
+
+/// Sentido de viagem das notas de um jogador: -1 anda para a esquerda, +1 para a
+/// direita.
+function ritmo_sentido(_dono = 0) {
+    if (!versus_ativo()) return -1;
+    return (_dono == 0) ? -1 : 1;
+}
+
+/// Onde comeca o corredor de notas de um jogador.
+///
+/// O do jogador 1 fica embaixo, onde sempre esteve. O do jogador 2 vai para o TOPO da
+/// tela: e la que mora a atencao de quem esta do lado direito do gabinete, e e a
+/// convencao que o Guitar Hero estabeleceu para dois jogadores na mesma tela.
+/// Altura do sprite do corredor (s_fundo_ui).
+#macro RITMO_CORREDOR_ALTURA 240
+
+#macro RITMO_CORREDOR_P1 492
+
+/// O corredor de cima nasce em -12, e nao em 0.
+///
+/// O sprite tem 240 px, mas o do jogador 1 nasce em 492 e a tela acaba em 720: 12 px
+/// dele ficam FORA da tela desde sempre, e a faixa visivel tem 228. O de cima, nascendo
+/// em 0, mostrava os 240 inteiros — 12 px a mais de moldura de um lado so.
+///
+/// Em vez de consertar o corte do jogador 1, que ja e o enquadramento validado, o
+/// jogador 2 REPETE o mesmo corte. As duas faixas passam a ter 228 px visiveis, e o
+/// desequilibrio que a medicao acusou (242 contra 256 px medidos) desaparece.
+#macro RITMO_CORREDOR_P2 (-12)
+
+function ritmo_corredor_topo(_dono = 0) {
+    if (!versus_ativo()) return RITMO_CORREDOR_P1;
+    return (_dono == 0) ? RITMO_CORREDOR_P1 : RITMO_CORREDOR_P2;
+}
+
+/// Y de cada faixa, na ORDEM DO TIPO (0 baixo, 1 cima, 2 esq, 3 dir).
+///
+/// A pista do jogador 2 NAO e espelhada na vertical: a ordem visual das faixas e a
+/// mesma dos dois lados, so o corredor inteiro que muda de lugar. Espelhar tambem na
+/// vertical obrigaria cada jogador a aprender uma leitura diferente da do vizinho.
+function ritmo_lane_y(_tipo, _dono = 0) {
+    var _topo = ritmo_corredor_topo(_dono);
+
+    switch (_tipo) {
+        case 1: return _topo + 23;   // cima
+        case 3: return _topo + 73;   // dir
+        case 2: return _topo + 123;  // esq
+    }
+    return _topo + 173;              // baixo
+}
+
+/// As quatro faixas na ordem VISUAL, de cima para baixo.
+function ritmo_lanes_y(_dono = 0) {
+    var _topo = ritmo_corredor_topo(_dono);
+    return [_topo + 23, _topo + 73, _topo + 123, _topo + 173];
+}
+
 /// Janelas de julgamento, em frames a 60 fps.
 /// Três faixas: o "perfeito" antigo (+-50 ms) saía com frequência alta demais para
 /// quem já pegou o ritmo, então virou o intervalo do "ótimo" e o perfeito apertou.
@@ -28,9 +111,14 @@ enum JULGAMENTO {
 
 /// Erro de tempo de uma nota, em frames.
 /// Positivo = adiantado (a nota ainda não chegou), negativo = atrasado.
+/// O SINAL depende do dono, e não da posição: para o jogador 1 a nota que ainda não
+/// chegou está à direita da linha, para o jogador 2 está à esquerda. Sem isto o
+/// julgamento do jogador 2 sairia invertido — adiantado lido como atrasado.
 function ritmo_erro_frames(_nota) {
     if (_nota.velocidade <= 0) return 0;
-    return (_nota.x - RITMO_LINHA_X) / _nota.velocidade;
+
+    var _d = (_nota.x - ritmo_linha_x(_nota.dono)) / _nota.velocidade;
+    return _d * -ritmo_sentido(_nota.dono);
 }
 
 /// Converte frames em milissegundos, respeitando o game speed configurado.
@@ -40,14 +128,16 @@ function ritmo_frames_ms(_frames) {
 
 /// Nota viva do tipo pedido cujo erro de tempo é o menor.
 /// Retorna noone se não houver nenhuma dentro da janela de acerto.
-function ritmo_nota_alcancavel(_tipo) {
+/// _dono limita a busca à pista daquele jogador: no Versus os dois recebem o mesmo
+/// padrão ao mesmo tempo, e sem este filtro um jogador acertaria a nota do outro.
+function ritmo_nota_alcancavel(_tipo, _dono = 0) {
     var _melhor = noone;
     var _menor_erro = RITMO_JANELA_BOM + 1;
 
     with (o_nota_seta) {
-        if (modo != 0 || tipo_seta != _tipo) continue;
+        if (modo != 0 || tipo_seta != _tipo || dono != _dono) continue;
 
-        var _erro = abs((x - RITMO_LINHA_X) / velocidade);
+        var _erro = abs(ritmo_erro_frames(id));
         if (_erro <= RITMO_JANELA_BOM && _erro < _menor_erro) {
             _menor_erro = _erro;
             _melhor = id;
@@ -106,8 +196,8 @@ function ritmo_nota_perdida(_nota) {
 
 /// Deslocamento do centro do efeito em relacao ao canto da bigorna, que mede 120x70
 /// com origem no canto superior esquerdo. E o ponto onde o martelo a encontra.
-#macro IMPACTO_DX 55
-#macro IMPACTO_DY 0
+#macro IMPACTO_DX 65
+#macro IMPACTO_DY -5
 
 /// Frames de espera ate o martelo encostar na bigorna.
 ///
@@ -130,13 +220,24 @@ function ritmo_tabela_impacto() {
     static _tabela = undefined;
 
     if (is_undefined(_tabela)) {
-        // conjunto base, o unico que existe por enquanto
-        var _base = [s_impacto_baixo, s_impacto_cima, s_impacto_dir, s_impacto_esq];
-
+        // Um conjunto POR QUALIDADE, indexado pelo tipo da faixa. Os sprites novos ja
+        // sao nomeados pelo tipo, entao o indice e direto.
+        //
+        // O conjunto anterior era um so para as tres qualidades, e vinha com os
+        // indices 2 e 3 invertidos DE PROPOSITO: naqueles sprites o "esq" era verde e
+        // o "dir" era azul, enquanto a faixa 2 (ESQ) usa nota azul e a 3 (DIR) usa
+        // verde — a inversao na tabela consertava a troca no nome. Eles estao na
+        // pasta Legado, e aqui essa compensacao deixa de existir.
         _tabela = {};
-        _tabela[$ string(JULGAMENTO.BOM)]      = _base;   // <- trocar quando chegarem
-        _tabela[$ string(JULGAMENTO.OTIMO)]    = _base;
-        _tabela[$ string(JULGAMENTO.PERFEITO)] = _base;
+
+        _tabela[$ string(JULGAMENTO.BOM)] =
+            [s_vfx_bom_0, s_vfx_bom_1, s_vfx_bom_2, s_vfx_bom_3];
+
+        _tabela[$ string(JULGAMENTO.OTIMO)] =
+            [s_vfx_otimo_0, s_vfx_otimo_1, s_vfx_otimo_2, s_vfx_otimo_3];
+
+        _tabela[$ string(JULGAMENTO.PERFEITO)] =
+            [s_vfx_perfeito_0, s_vfx_perfeito_1, s_vfx_perfeito_2, s_vfx_perfeito_3];
     }
 
     return _tabela;
@@ -168,17 +269,123 @@ function ritmo_sprite_impacto(_tipo, _julgamento = JULGAMENTO.PERFEITO) {
 ///
 /// O alvo pressionado NAO espera: resposta de input tem de ser imediata, senao o
 /// jogo parece atrasado. Quem espera e o que representa o golpe.
-function ritmo_impacto_bigorna(_tipo, _julgamento, _forca, _atraso) {
-    if (!instance_exists(o_bigorna)) exit;
+function ritmo_impacto_bigorna(_tipo, _julgamento, _forca, _atraso, _dono = 0) {
+    var _b = bigorna_de(_dono);
+    if (_b == noone) exit;
 
-    var _e = instance_create_layer(o_bigorna.x + IMPACTO_DX,
-                                   o_bigorna.y + IMPACTO_DY,
+    // O deslocamento acompanha o espelho da bigorna: no jogador 2 o ponto de contato
+    // fica do outro lado dela.
+    var _lado = (_b.image_xscale < 0) ? -1 : 1;
+
+    var _e = instance_create_layer(_b.x + (_lado * IMPACTO_DX),
+                                   _b.y + IMPACTO_DY,
                                    "Gameplay", o_impacto_bigorna);
 
+    _e.dono = _dono;
+
     _e.sprite_index = ritmo_sprite_impacto(_tipo, _julgamento);
-    _e.image_xscale = IMPACTO_ESCALA;
+    // Na frente da propria bigorna. Sem isto o clarao do jogador 2 nascia em depth 0 e
+    // sumia atras da bigorna dele, que esta em -1.
+    _e.depth = _b.depth - 1;
+
+    _e.image_xscale = IMPACTO_ESCALA * _lado;
     _e.image_yscale = IMPACTO_ESCALA;
     _e.atraso = _atraso;
     _e.forca = _forca;
 }
+
+
+// =====================================================================
+// RELOGIO DE RITMO
+//
+// A posicao da propria faixa e a unica referencia que nao deriva: e o audio se
+// contando. O contador de frames deriva por truncamento e por frame perdido, e o
+// agendamento relativo (cada nota a partir da anterior) soma o erro por construcao.
+// Ver 06-RITMO-AUTOTRACK.md.
+// =====================================================================
+
+/// Posicao da faixa da fase, em segundos, ou -1 se nao ha faixa tocando.
+///
+/// Le a INSTANCIA, nao o asset: audio_sound_get_track_position() so responde a
+/// instancia devolvida por audio_play_sound.
+function ritmo_relogio() {
+    if (!instance_exists(o_audio_manager)) return -1;
+
+    var _i = o_audio_manager.musica_instancia;
+    if (_i == -1 || !audio_is_playing(_i)) return -1;
+
+    return audio_sound_get_track_position(_i);
+}
+
+/// Onde a nota deve estar AGORA, dado o instante em que ela precisa chegar a zona.
+///
+/// Posicao derivada do relogio em vez de integrada quadro a quadro. Como
+/// ritmo_erro_frames() calcula (x - LINHA) / velocidade, esta formula faz o erro de
+/// julgamento virar exatamente o erro de tempo contra a musica — o julgamento nao
+/// precisou mudar uma linha para ficar preciso.
+function ritmo_x_da_nota(_t_alvo, _agora, _velocidade, _dono = 0) {
+    var _avanco = (_t_alvo - _agora) * _velocidade * game_get_speed(gamespeed_fps);
+    return ritmo_linha_x(_dono) - (ritmo_sentido(_dono) * _avanco);
+}
+
+// =====================================================================
+// DISPOSICAO DAS FAIXAS
+//
+// A faixa da nota era irandom(). Com 2 ou 3 faixas isso passa, porque o sorteio
+// produz corridas por acaso — a Adaga mede 59% de repeticao de linha. Com 4 faixas
+// cai para 19% e vira ruido: sem corrida, sem simetria, sem repeticao deliberada.
+// O ouvido espera frase e a mao recebe aleatoriedade.
+//
+// Aqui a sequencia e montada por FIGURAS, que e como uma linha de percussao anda:
+// repete, sobe, desce, alterna. O sorteio decide qual figura vem, nao cada nota.
+// =====================================================================
+
+/// Tipos de seta ordenados pela LINHA VISUAL, de cima para baixo.
+///
+/// rm_forja poe cima(1) em y=515, esquerda(3) em 565, direita(2) em 615 e baixo(0)
+/// em 665. Sem esta traducao, "subir uma faixa" andaria na ordem do enum e pularia
+/// pela tela.
+function ritmo_linhas_permitidas(_tipos) {
+    var _visual = [1, 3, 2, 0];
+    var _out = [];
+
+    for (var i = 0; i < array_length(_visual); i++) {
+        if (_visual[i] < _tipos) array_push(_out, _visual[i]);
+    }
+    return _out;
+}
+
+enum FIGURA { REPETIR, ESCADA, ALTERNAR, VARREDURA }
+
+/// Sorteia a proxima figura, com pesos da FASE.
+///
+/// Os pesos sao [escada, varredura, alternar, repetir], em porcentagem. Eles dao
+/// caracter de MOVIMENTO a cada fase: uma anda em escada, outra varre a pista de
+/// ponta a ponta, outra alterna. Sem isso as seis fases se moviam igual, e a
+/// identidade ficava so no ritmo.
+///
+/// Escada e varredura ATRAVESSAM a pista; alternar e repetir ficam em uma regiao.
+/// Uma fase de 2 faixas nao tem o que atravessar, entao pende para alternar.
+function ritmo_sortear_figura(_pesos) {
+    var _r = irandom(99);
+    var _acc = _pesos[0];
+
+    if (_r < _acc) return { tipo: FIGURA.ESCADA, notas: irandom_range(4, 7) };
+
+    _acc += _pesos[1];
+    if (_r < _acc) return { tipo: FIGURA.VARREDURA, notas: 0 };
+
+    _acc += _pesos[2];
+    if (_r < _acc) return { tipo: FIGURA.ALTERNAR, notas: irandom_range(4, 6) };
+
+    return { tipo: FIGURA.REPETIR, notas: irandom_range(2, 3) };
+}
+
+/// Pesos de figura de uma fase, com o perfil da Espada como padrao — ela e a
+/// referencia de personalidade do jogo.
+function ritmo_pesos_figura(_fase) {
+    if (variable_struct_exists(_fase, "figuras")) return _fase.figuras;
+    return [34, 24, 24, 18];
+}
+
 

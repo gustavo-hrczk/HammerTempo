@@ -1,0 +1,2 @@
+@echo off
+"C:\ProgramData\GameMakerStudio2\Cache\runtimes\runtime-2024.13.1.242\bin\igor\windows\x64\Igor.exe" -rp="C:\ProgramData\GameMakerStudio2\Cache\runtimes\runtime-2024.13.1.242" -uf="C:\Users\Gustavo\AppData\Roaming\GameMakerStudio2\gustavo.h_4943534" -lf="C:\Users\Gustavo\AppData\Roaming\GameMakerStudio2\gustavo.h_4943534\licence.plist" -project="C:\Users\Gustavo\Desktop\HammerTempo\HammerTempo\HammerTempo.yyp" -- Windows PackageZip

@@ -1,5 +1,14 @@
+// De quem e esta nota. No Versus os dois recebem o mesmo padrao, mas cada nota
+// pertence a uma pista so — e o erro dela penaliza um jogador so.
+dono = 0;
+
 velocidade = 5;
 tipo_seta = 0;
+
+// Instante, em segundos da faixa, em que esta nota deve encostar na zona de acerto.
+// -1 significa "sem relogio": a nota volta a andar quadro a quadro, que e o que
+// acontece se a faixa nao estiver tocando.
+t_alvo = -1;
 image_speed = 0;
 escala = 1;
 
@@ -28,14 +37,15 @@ registrar_erro = function() {
     modo = 2;
     image_blend = c_red;
 
-    o_controlador_geral.stats_erros++;
-    o_controlador_geral.pontuacao = max(0, o_controlador_geral.pontuacao - 50);
-    o_controlador_geral.stats_sequencia_errada++;
-    o_controlador_geral.stats_sequencia = 0;
+    jogador(dono).stats_erros++;
+    jogador(dono).pontuacao = max(0, jogador(dono).pontuacao - 50);
+    jogador(dono).stats_sequencia_errada++;
+    jogador(dono).stats_sequencia = 0;
 
-    if (instance_exists(o_ferreiro)) {
-        o_ferreiro.aplicar_dano();
+    var _f = ferreiro_de(dono);
+    if (_f != noone) {
+        with (_f) aplicar_dano();
     }
 
-    hud_registrar_julgamento("ERRO", COR_ERRO, false);
+    hud_registrar_julgamento("ERRO", COR_ERRO, false, dono);
 }

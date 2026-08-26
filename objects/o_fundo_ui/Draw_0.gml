@@ -1,20 +1,40 @@
+// O corredor do jogador 2 SO existe durante a partida. O do jogador 1 e mobilia da
+// sala e aparece sempre — sobre ele ficam os cartoes da selecao de armas —, mas o de
+// cima nao tem nada para mostrar fora da fase e ficava pendurado no ceu depois dela.
+// A condicao e criado_pelo_versus, e NAO dono == 1. Quando o jogador 2 joga sozinho,
+// a faixa da sala passa a ser dele — e com a regra antiga ela se escondia no seletor de
+// armas, deixando os cartoes das armas flutuando sobre o ceu. Quem some fora da partida
+// e o corredor de cima, que o Versus cria e destroi; o da sala e mobilia e fica sempre.
+if (criado_pelo_versus && instance_exists(o_controlador_geral)) {
+    var _e = o_controlador_geral.estado_jogo;
+
+    if (_e != MINIGAME.CONTAGEM && _e != MINIGAME.RITMO && _e != MINIGAME.RESULTADO) {
+        exit;
+    }
+}
+
 draw_self();
 
 // --- TRILHOS DAS LANES ---
 // O trilho começa na zona de acerto e se desfaz à direita: ele existe para guiar a
 // chegada da nota, não para riscar a tela de ponta a ponta. É mais estreito que a
 // lane e fica centralizado nela, passando por baixo da nota.
+// Os TRILHOS so aparecem durante a partida. A faixa de pergaminho em si (draw_self,
+// acima) continua sempre — e ela que recebe o resultado do Versus, projetado no
+// corredor de cada jogador.
 if (!instance_exists(o_controlador_geral) || o_controlador_geral.estado_jogo != MINIGAME.RITMO) {
     exit;
 }
 
-var _lanes = [515, 565, 615, 665];
+var _lanes = ritmo_lanes_y(dono);
 var _lane_altura = 42;
 var _altura = 26;                       // mais estreito que a lane
 var _offset = (_lane_altura - _altura) / 2;
 
-var _x_inicio = RITMO_LINHA_X;          // nasce na zona de acerto
-var _x_fim = 820;                       // e se desfaz bem antes da borda direita
+// O trilho nasce na zona de acerto do DONO e se desfaz na direcao de onde as notas
+// vem — para o jogador 2 isso e o lado oposto, porque a pista dele e o espelho.
+var _x_inicio = ritmo_linha_x(dono);
+var _x_fim = _x_inicio - (ritmo_sentido(dono) * 722);
 // segue o mesmo fade de entrada do HUD, para nada aparecer de uma vez só
 var _alpha_inicio = 0.10 * global.hud_entrada;
 var _cor = c_black;

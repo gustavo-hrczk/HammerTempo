@@ -35,13 +35,13 @@ if (input_pressed(ACAO.CONFIRMAR)) {
 
     switch (opcao_selecionada) {
         case 0: // Começar Jogo
-            // Se o tutorial ainda não foi visto, ele vem antes da seleção de fase.
-            if (o_controlador_geral.tutorial_ja_foi_visto == false) {
-                o_controlador_geral.estado_jogo = MINIGAME.TUTORIAL;
-            } else {
-                o_controlador_geral.estado_jogo = MINIGAME.SELECAO_FASE;
-            }
-            ir_para_sala(rm_forja, 0, false);
+            // Vai para a escolha de MODO. É ela que decide o destino e cuida do
+            // tutorial, porque a pergunta "Arcade ou Livre" vem antes de qualquer
+            // coisa que aconteça dentro da forja.
+            //
+            // Sem fade, como a tela de opções: as duas compartilham logo e moldura,
+            // então o corte seco lê como troca de conteúdo e o fade leria como piscada.
+            ir_para_sala(rm_modos, 0, false);
             break;
 
         case 1: // Recordes
