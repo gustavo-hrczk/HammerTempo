@@ -24,12 +24,27 @@ perfeitas = [_j1.stats_acertos_perfeitos, _j2.stats_acertos_perfeitos];
 otimas    = [_j1.stats_acertos_otimos,    _j2.stats_acertos_otimos];
 boas      = [_j1.stats_acertos_bons,      _j2.stats_acertos_bons];
 erros = [_j1.stats_erros, _j2.stats_erros];
-// PELA MESMA ESCALA DA TELA DE UM JOGADOR, incluindo o S+. icone_rank sozinho nunca
-// devolve S+, porque a precisao nao diz quantas notas sairam perfeitas — e num Versus
-// entre dois jogadores de 100% e exatamente isso que decide quem forjou melhor.
-notas = [
-    icone_rank_do_tier(icone_tier(precisoes[0], perfeitas[0], _j1.julgadas())),
-    icone_rank_do_tier(icone_tier(precisoes[1], perfeitas[1], _j2.julgadas()))
+// A PECA FORJADA POR CADA UM, com a nota estampada nela.
+//
+// A nota era um "Nota S" em texto na ponta da linha. Cada jogador acabou de forjar uma
+// arma, e mostrar so a letra jogava fora a metade da informacao que o medalhao carrega
+// de graca: a arte da peca ja diz o desempenho pela propria aparencia, e o selo diz a
+// letra. E o mesmo par que a tela de um jogador mostra — as duas passam a falar a
+// mesma lingua.
+//
+// A escala do tier inclui o S+, que icone_rank sozinho nunca devolve: a precisao nao
+// diz quantas notas sairam perfeitas, e numa disputa entre dois jogadores de 100% e
+// exatamente isso que decide quem forjou melhor.
+arma = o_controlador_geral.fases_data[o_controlador_geral.fase_atual].icone;
+
+niveis = [
+    icone_nivel(_j1.stats_total_notas, _j1.acertos(), false),
+    icone_nivel(_j2.stats_total_notas, _j2.acertos(), false)
+];
+
+tiers = [
+    icone_tier(precisoes[0], perfeitas[0], _j1.julgadas()),
+    icone_tier(precisoes[1], perfeitas[1], _j2.julgadas())
 ];
 
 // -1 é empate. Empate acontece de verdade quando ninguém toca, então precisa de um
@@ -62,6 +77,10 @@ o_audio_manager.play_sfx((vencedor == -1) ? snd_resultado_bom : snd_resultado_bo
 // o vencedor é anunciado. Ver a diferença aparecer vale mais que ler o nome de quem
 // ganhou — a barra é a única coisa desta tela que os dois vão olhar juntos.
 // =================================================================
+// 26 px de arte em escala 4 dao 104 px — visivel de longe sem dominar um corredor de
+// 228 px de altura.
+#macro VERSUS_ESCALA_ICONE 4
+
 #macro VERSUS_T_BARRAS   0.30
 #macro VERSUS_DUR_BARRAS 1.60
 #macro VERSUS_T_DETALHE  2.10

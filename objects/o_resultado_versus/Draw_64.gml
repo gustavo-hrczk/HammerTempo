@@ -31,7 +31,13 @@ for (var i = 0; i < 2; i++) {
     // deixam o bloco centrado nele sem encostar nas bordas da faixa.
     var _topo = ritmo_corredor_topo(i);
     var _esq = 150;
-    var _dir = _gw - 150;
+
+    // A COLUNA DE TEXTO PARA ANTES DO MEDALHAO. Ele fica encostado na margem direita,
+    // centrado na altura do corredor, e tudo o mais — nome, total, barra e contagens —
+    // recua para nao passar por baixo dele.
+    var _med_lado = icone_tamanho(VERSUS_ESCALA_ICONE);
+    var _med_x = _gw - 150 - (_med_lado / 2);
+    var _dir = _med_x - (_med_lado / 2) - 26;
 
     // --- nome e total ---
     draw_set_font(f_padrao);
@@ -73,7 +79,11 @@ for (var i = 0; i < 2; i++) {
         // criava uma segunda linguagem visual na mesma tela, competindo com a nota.
         //
         // O contorno fica reservado para UMA coisa so, que e o veredito.
-        draw_set_font(f_padrao_pequena);
+        // f_padrao, o MESMO corpo da grade de estatisticas da tela de um jogador. Estava
+        // em f_padrao_pequena para caber junto com o "Nota S" na ponta; sem ele a linha
+        // sobra espaco, e nao ha motivo para os dois modos lerem em tamanhos
+        // diferentes a mesma informacao.
+        draw_set_font(f_padrao);
 
         var _tx = _esq;
         var _campos = ["Perfeitas: " + string(perfeitas[i]),
@@ -82,21 +92,17 @@ for (var i = 0; i < 2; i++) {
                        "Erros: "     + string(erros[i])];
 
         for (var _k = 0; _k < array_length(_campos); _k++) {
-            hud_texto_painel(_tx, _yd, _campos[_k], _tinta, f_padrao_pequena, fa_left);
+            hud_texto_painel(_tx, _yd, _campos[_k], _tinta, f_padrao, fa_left);
             _tx += string_width(_campos[_k]) + 30;
         }
+    }
 
-        // A NOTA E O VEREDITO, e e a unica coisa desta linha com tratamento proprio: a
-        // letra em escala 2, na cor do rank, com contorno. Medido, o ouro do S dava
-        // 1,09:1 sobre o pergaminho — invisivel sem a borda.
-        draw_set_font(f_padrao);
-        var _letra = notas[i];
-        var _lw = string_width(_letra) * 2;
-
-        hud_texto_painel(_dir - _lw - 8, _yd, "Nota", _tinta, f_padrao_pequena, fa_right);
-
-        draw_set_font(f_padrao);
-        hud_texto(_dir, _yd, _letra, icone_rank_cor(_letra), 2, fa_right);
+    // --- A PECA FORJADA, com a nota estampada ---
+    // Entra junto com o detalhe, no mesmo instante das contagens: a peca e a leitura de
+    // "como foi", e ela nao pode chegar antes de os numeros que a explicam.
+    if (tempo >= VERSUS_T_DETALHE) {
+        icone_desenhar(arma, niveis[i], _med_x, _topo + (RITMO_CORREDOR_ALTURA / 2) - 6,
+                       VERSUS_ESCALA_ICONE, 1, tiers[i]);
     }
 }
 
