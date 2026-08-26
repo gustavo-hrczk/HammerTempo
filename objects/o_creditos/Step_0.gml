@@ -2,7 +2,7 @@
 y_pos -= scroll_speed / 2;
 
 // Verifica se os créditos já passaram completamente
-if (y_pos < -string_height_ext(credit_text, line_height, 1080) ) {
+if (y_pos < -string_height_ext(credit_text, line_height, CREDITOS_LARGURA)) {
     ir_para_sala(rm_menu);
 }
 

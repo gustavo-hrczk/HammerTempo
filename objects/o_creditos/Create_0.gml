@@ -1,3 +1,10 @@
+// A LARGURA DE QUEBRA E UMA SO, usada pelo desenho E pela conta de quando o texto
+// acabou. Eram dois numeros diferentes — 980 no desenho e 1080 na verificacao —, e
+// como a largura maior produz menos linhas, a sala se dava por encerrada antes de o
+// fim dos creditos sair da tela. Os ultimos nomes eram cortados.
+#macro CREDITOS_X 160
+#macro CREDITOS_LARGURA 980
+
 // Variáveis para controlar a posição e a velocidade
 y_pos = display_get_gui_height() + 40; // começa logo abaixo da tela
 scroll_speed = 3; // Velocidade de rolagem 
