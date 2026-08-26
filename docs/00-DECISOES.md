@@ -1725,3 +1725,171 @@ do projeto; a faixa de 110 BPM voltou para snd_fase_06, recuperada do historico 
 primeiros. Preencher os quatro foi testado e e pior — leva a nota mais fraca para 1,35.
 
 **Adaga** voltou para duas teclas, que e a porta do jogo para quem nunca jogou.
+
+---
+
+## Sprint 8 — Modo Versus e fechamento da v1
+
+## D-137 — A alternância do Versus é por CONTAGEM DE NOTA, não por tempo
+
+A partida não é os dois tocando o tempo todo: ela alterna estrofes, e o terço final é
+dos dois juntos. A primeira versão dividia por **tempo**, o que parecia justo e não é.
+
+Os motivos têm densidade irregular — o do Florete vai de um terço de batida a uma batida
+inteira entre notas —, então trechos de igual duração entregam quantidades diferentes.
+Medido em partida real: 74 notas contra 57.
+
+A divisão passou a ser por índice de nota. O spawner conta quantas a fase vai gerar
+percorrendo o próprio motivo na criação, o trecho alternado é cortado para fechar exato
+nas estrofes, e a sobra vai para o terço final. **Diferença zero nas seis fases, por
+construção** — não por medição.
+
+## D-138 — No Versus a autoridade é reivindicada, nunca herdada
+
+As instâncias da sala (ferreiro, bigorna, alvos, corredor) guardam `dono`, e ele
+sobrevivia entre partidas: uma sessão solo do jogador 2 deixava o ferreiro da sala com
+`dono = 1`, e a montagem do Versus seguinte abortava porque `ferreiro_de(0)` devolvia
+`noone` — um ferreiro só, paleta errada, quatro alvos.
+
+Ao montar a cena, o Versus **reivindica** dono 0 para tudo que veio da sala e cria o
+segundo jogador do zero, marcado com `criado_pelo_versus`. Nada depende de quem jogou
+antes. A sugestão foi do usuário, depois de três diagnósticos meus por dedução que
+erraram — o que resolveu foi instrumentar o F3 com a leitura da cena.
+
+## D-139 — Isolamento de input: por vínculo no teclado, por dispositivo no controle
+
+Dois jogadores dividem um teclado, e o gabinete tem dois manches. São dois problemas
+diferentes.
+
+**Teclado:** as setas estão na lista configurável do jogador 1 desde a jam e são o
+vínculo único do jogador 2. A suspensão que existia só alcançava os vínculos FIXOS,
+então cada seta do jogador 2 acionava também a faixa do jogador 1 — que quase nunca
+tinha nota ali e perdia o combo. Aparecia no placar como um jogador com zero notas
+perdidas e milhares de pontos a menos, e a causa não era a mão dele. O desempate é do
+jogador 2; o jogador 1 fica com o WASD inteiro.
+
+**Controle:** havia um slot de gamepad só, compartilhado. O jogador 1 usa o primeiro
+dispositivo e o 2 o segundo; fora do Versus os dois leem o primeiro, porque só há uma
+pessoa ali. Com um controle só dentro do Versus, o jogador 2 fica sem — cair no mesmo
+slot traria de volta exatamente a interferência que a separação evita.
+
+## D-140 — ENTER destrava tudo, e por isso não pode eleger ninguém
+
+No gabinete não existe teclado, e o remapeamento pode levar o confirmar para um botão
+que depois quebre ou fique trocado. ENTER é vínculo **fixo** do confirmar dos dois
+jogadores: sempre há uma tecla capaz de destravar qualquer tela sem depender de
+configuração, o mesmo papel que as setas fazem para as faixas.
+
+A consequência que não foi vista de imediato: a tela de modos perguntava "foi o jogador
+2?" chamando `input_pressed(CONFIRMAR2)`, e o ENTER dele respondia que sim — toda
+navegação por setas e ENTER começava a partida como segundo jogador. **Uma tecla que
+pertence aos dois não pode responder quem foi.** `input_dono_do_confirmar` lê só os
+vínculos próprios, e o controle só reivindica quando o jogador 2 tem o próprio
+dispositivo.
+
+Pelo mesmo motivo o ESC voltou a valer sempre. Ele ficava suspenso durante uma partida
+solo do jogador 2, para um não pausar o jogo do outro — proteção contra um problema que
+só existe no Versus, e no Versus os dois pausam de propósito. No solo há uma pessoa só
+na frente do gabinete, e a regra apenas desligava a tecla que todo mundo aperta ao sair.
+
+## D-141 — Um erro é um erro; a precisão conta só notas
+
+As duas metades desta decisão parecem se contradizer e não se contradizem.
+
+Deixar a nota passar e apertar a tecla errada são a mesma falha, e separá-las em duas
+categorias na tela de resultado só escondia metade dela. O toque fora quebra o combo,
+custa pontos e mostra ERRO na tela — o jogador sente a falha na hora, que é o que
+importa.
+
+O que ele **não** faz é entrar no denominador da precisão. Um denominador que cresce a
+cada tecla apertada não é uma métrica: dá para levar a precisão a zero sem perder uma
+nota sequer, só apoiando a mão no teclado, e num teste real terminou em 77%. É o que
+DDR, Guitar Hero, osu! e Beat Saber fazem, pelo mesmo motivo — a nota é a única unidade
+contável de antemão, então é ela que define o total.
+
+`stats_sequencia_errada` continua de fora dos dois: ela leva ao game over, e quem está
+experimentando as teclas não pode ser expulso da fase. Contar o erro é uma coisa,
+encerrar a partida é outra.
+
+## D-142 — O percurso do Arcade é UMA partida
+
+Placar, combo e precisão atravessam as seis armas. A precisão reiniciava em 100% a cada
+arma e o painel ficava com três números contando histórias diferentes ao mesmo tempo.
+
+São os quatro contadores de julgamento que acumulam, mais o total de notas — e não só um
+par de totais: a tela de resultado mostra a divisão por tier, e a precisão do percurso ao
+lado das contagens de uma fase só faria os números da mesma tela discordarem entre si.
+
+E a precisão é **truncada**, nunca arredondada. 651 acertos e 3 erros dão 99,54%, e
+`round()` mostrava 100% ao lado de "Erros: 3". Arredondar para cima uma precisão é
+prometer uma partida perfeita que não aconteceu.
+
+A sessão também **para de verdade** durante o intervalo entre armas. O estado continuava
+sendo o de partida ali, e o controlador via "estado RITMO, sem spawner" no quadro
+seguinte e começava a próxima fase atrás do menu — era também a causa das notas fora de
+compasso na fase seguinte, porque a contagem criava um segundo spawner por cima do
+primeiro.
+
+## D-143 — A nota é um selo estampado na peça, não um texto ao lado dela
+
+`s_icone_tier` é a quarta fatia do sanduíche do ícone: 26x26 com origem no centro, como
+as outras três, desenhada **depois** da moldura — o selo é uma marca puncionada na peça
+depois de pronta, então ele encosta na borda em vez de ficar contido por ela.
+
+A ordem dos quadros é a ordem do nível da arma, um a um: F com a espada partida, C com a
+enferrujada, B com a de aço, A com a azulada, S com a dourada. A arte da peça e a letra
+estampada nela contam a mesma história, e não duas — antes as duas escalas tinham cortes
+diferentes e podiam discordar sobre a mesma forja. O quadro 5 é o degrau que só existe
+na letra: **S+**, 100% das notas E todas perfeitas. Não é "quase S": não errar é uma
+coisa, não deixar sair nenhuma "ótima" é outra, bem mais rara.
+
+O D saiu da escala, que passou a ter seis degraus. O placar grava o degrau, porque ele
+não dá para reconstruir depois — a contagem de perfeitas não sobrevive ao fim da
+partida, e entradas antigas nunca devolvem S+.
+
+## D-144 — Em fundo claro, calor não vem de luminosidade
+
+A regra já valia para o combo e voltou a aparecer três vezes nesta sprint: a nota S
+dourada dava **1,09:1** sobre o pergaminho, a linha de tiers ficava entre 1,76 e 2,72, e
+o amarelo de destaque da tabela de recordes dava 1,03:1.
+
+Escurecer as cores resolve o contraste e mata a leitura, porque é o calor que diz que
+perfeito vale mais que bom. As três saídas usadas, em ordem de preferência:
+
+1. **O selo**, que traz a própria chapa escura atrás da letra — lê pelo desenho, não
+   pela cor. É o que a tabela de recordes e as duas telas de resultado usam.
+2. **Contorno**, quando o elemento é único na tela e precisa manter a cor quente.
+   Reservado ao veredito: aplicado também às contagens, criava uma segunda linguagem
+   visual competindo com ele.
+3. **Placa**, quando o fundo é o cenário e muda de cor sozinho — os créditos passam por
+   quatro céus, e o cinza escuro ia de 9,09:1 sobre nuvem branca a 1,46:1 na noite.
+
+E a exceção, registrada porque contraria a medida: o título da tabela de recordes voltou
+ao amarelo depois de ter sido trocado por preto. O preto ganhava por 14,46:1 contra
+1,37:1 e ficou **pior** de ler na tela — apagava o único sinal de que aquela linha muda,
+e o título passava a parecer um cabeçalho fixo. É a quarta vez no projeto que o ouvido
+ou o olho do usuário chega antes da medida (ver D-130, D-131, D-135).
+
+## D-145 — A queda de uma placa precisa ser suavizada
+
+A placa não tem borda e mesmo assim mostrava um risco de cada lado. A rampa era linear,
+e as duas pontas — onde sai do zero e onde encosta no pico — são quebras de derivada.
+O olho enxerga isso como uma linha mesmo com o degradê tecnicamente contínuo; é banda de
+Mach, e alargar o fade só afasta os dois riscos um do outro.
+
+`smoothstep` chega e sai com derivada zero. E o miolo de alpha cheio tem de cobrir o
+texto **com margem**: margem primeiro, queda depois. Somar a queda dentro da margem era o
+que deixava as pontas de cada linha em meia-luz.
+
+A grade passou de 3x3 para 13 paradas por eixo, desenhada uma faixa por vez: cada linha
+sai num trianglestrip só, com os vértices compartilhados entre as colunas. Treze
+primitivas em vez das cento e sessenta e nove que a mesma grade custaria célula a
+célula, e nenhuma emenda onde o alpha possa somar.
+
+## D-146 — O que fica para depois da feira
+
+Registrado para ninguém procurar: **tutorial unificado do Versus** (hoje ele alterna um
+jogador por vez, o que funciona e foi testado); **a cedilha**, que a Kobold 7 não desenha
+— o glifo existe no atlas com a mesma largura do `c`, então "Maça" sai "Maca" e não há
+correção sem trocar a fonte ou o nome; **crédito da Espada**, que repete o título da
+Lança, e o **arranjador de Ductia e In Taberna**, que segue desconhecido.
